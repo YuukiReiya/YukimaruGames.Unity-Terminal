@@ -46,6 +46,7 @@ Runtime .down.> PackageCore:全てのレイヤーに依存
 DomainService -[hidden]right-> Infrastructure
 Application -[hidden]right-> RuntimeShared
 Infrastructure -[hidden]down-> Application
+Presentation -[hidden]down-> RuntimeShared
 
 DomainService -down->DomainModel
 Infrastructure -right-> Presentation
@@ -54,7 +55,6 @@ Infrastructure -down-> RuntimeShared
 Infrastructure -down-> DomainModel
 
 Presentation -down-> Application
-Presentation -down-> RuntimeShared
 
 Application -left-> DomainModel
 
