@@ -1,0 +1,17 @@
+{
+    "name": "YukimaruGames.Terminal.UI",
+    "rootNamespace": "YukimaruGames.Terminal.UI",
+    "references": [
+        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa",
+        "GUID:d764c6ed281635040b4758671293b427"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
