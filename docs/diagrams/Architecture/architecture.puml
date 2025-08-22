@@ -1,0 +1,65 @@
+@startuml
+!theme plain
+title Terminal Package Architecture
+
+' === Color Palette & Style ===
+skinparam component {
+  ArrowColor #444444
+  BorderColor #444444
+  BackgroundColor<<EntryPoint>> #F5B7B1
+  BackgroundColor<<UI>> #FEF9E7
+  BackgroundColor<<Infra>> #F2F3F4
+  BackgroundColor<<App>> #D5F5E3
+  BackgroundColor<<Core>> #D6EAF8
+}
+
+' === Legend ===
+legend top right
+  | Color | Layer Type |
+  |<#F5B7B1>| EntryPoint/Runtime |
+  |<#F2F3F4>| Concrete/Infrastructure |
+  |<#FEF9E7>| Presentation/UI Logic |
+  |<#D5F5E3>| Application Logic |
+  |<#D6EAF8>| Core Logic |
+end legend
+
+' === Components (Layers) ===
+component "<b>Runtime</b>" as Runtime <<EntryPoint>>
+frame "<b>Package.Core</b>" as PackageCore{
+  component "<b>Infrastructure</b>" as Infrastructure <<Infra>>
+  component "<b>Presentation</b>" as Presentation <<UI>>
+  component "<b>RuntimeShared</b>" as RuntimeShared <<Infra>>
+  component "<b>Application</b>" as Application <<App>>
+  component "<b>Domain.Service</b>" as DomainService <<Core>>
+  component "<b>Domain.Model</b>" as DomainModel <<Core>>
+  component "<b>SharedKernel</b>" as SharedKernel <<Core>>
+
+  note bottom of SharedKernel
+  上層レイヤーからの矢印を省いているが
+  全てのレイヤー(パッケージ)から依存される
+  endnote
+}
+
+' === Primary Relationships ===
+Runtime .down.> PackageCore:全てのレイヤーに依存
+
+DomainService -[hidden]right-> Infrastructure
+Application -[hidden]right-> RuntimeShared
+Infrastructure -[hidden]down-> Application
+Presentation -[hidden]down-> RuntimeShared
+
+DomainService -down->DomainModel
+Infrastructure -right-> Presentation
+
+Infrastructure -down-> RuntimeShared
+Infrastructure -down-> DomainModel
+
+Presentation -down-> Application
+
+Application -left-> DomainModel
+
+Application -down-> SharedKernel
+DomainModel -down-> SharedKernel
+RuntimeShared -down-> SharedKernel
+
+@enduml

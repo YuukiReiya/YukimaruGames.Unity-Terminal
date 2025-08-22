@@ -1,0 +1,14 @@
+@startuml
+!theme plain
+
+' === Color Palette & Style ===
+skinparam package {
+  ArrowColor #555555
+  BorderColor #555555
+  FontColor #222222
+  BackgroundColor<<Shared>> #D6EAF8
+}
+
+package "<b>YukimaruGames.Terminal.SharedKernel</b>" <<Shared>> as SharedKernel
+
+@enduml
