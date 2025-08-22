@@ -1,0 +1,24 @@
+{
+    "name": "YukimaruGames.Terminal.Runtime",
+    "rootNamespace": "YukimaruGames.Terminal.Runtime",
+    "references": [
+        "GUID:e219bb3678c74bd4bab8e224eb77b2ad",
+        "GUID:9a1c0da629cf2be4ea8d541b76388497",
+        "GUID:d764c6ed281635040b4758671293b427",
+        "GUID:8cdfd3def8351ed488e1c6d514048c43",
+        "GUID:b91bfe61ad34c074d9f0d4e53cb288f0",
+        "GUID:8ec3eb264e595ce40a396804df86acbb",
+        "GUID:cb54995de5c084b418f88c3dd96cc047",
+        "GUID:eab4e453f9271524f92de015e989e1c5",
+        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
