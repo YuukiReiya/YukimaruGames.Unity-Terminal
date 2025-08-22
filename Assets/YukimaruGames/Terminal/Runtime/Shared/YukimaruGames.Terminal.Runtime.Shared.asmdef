@@ -1,0 +1,16 @@
+{
+    "name": "YukimaruGames.Terminal.Runtime.Shared",
+    "rootNamespace": "YukimaruGames.Terminal.Runtime.Shared",
+    "references": [
+        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,11 @@
+{
+    "name": "com.yukimaru-games.terminal",
+    "displayName": "Terminal", 
+    "version": "1.0.0",               
+    "unity": "6000.0",
+    "description": "A simple runtime tool for adding basic Terminal-like interactions to Unity projects with minimal setup.",
+    "author": {
+        "name": "YuukiReiya",
+        "url": "https://github.com/YuukiReiya"
+    }
+}

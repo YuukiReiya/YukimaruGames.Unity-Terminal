@@ -1,0 +1,14 @@
+{
+    "name": "YukimaruGames.Terminal.SharedKernel",
+    "rootNamespace": "YukimaruGames.Terminal.SharedKernel",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

@@ -1,0 +1,17 @@
+{
+    "name": "YukimaruGames.Terminal.Runtime.Input.LegacyInput",
+    "rootNamespace": "YukimaruGames.Terminal.Runtime.Input.LegacyInput",
+    "references": [
+        "GUID:8ec3eb264e595ce40a396804df86acbb",
+        "GUID:e219bb3678c74bd4bab8e224eb77b2ad"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
