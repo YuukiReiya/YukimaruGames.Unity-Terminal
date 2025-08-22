@@ -1,0 +1,15 @@
+@startuml Packages
+
+title Terminal Package - Assembly Dependencies
+
+!include ./SharedKernel/sharedkernel.puml
+!include ./Domain/domain.puml
+!include ./Application/application.puml
+!include ./UI/ui.puml
+!include ./Infrastructure/infra.puml
+!include ./Runtime/runtime.puml
+!include ./Runtime/runtimeshared.puml
+!include ./Input/inputsystem.puml
+!include ./Input/legacyinput.puml
+
+@enduml

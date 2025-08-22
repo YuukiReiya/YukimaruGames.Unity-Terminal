@@ -1,0 +1,181 @@
+@startuml
+!theme plain
+
+' === Color Palette & Style ===
+skinparam package {
+  ArrowColor #555555
+  BorderColor #555555
+  FontColor #222222
+  BackgroundColor<<EntryPoint>> #F5B7B1
+  BackgroundColor<<Infra>> #F2F3F4
+  BackgroundColor<<Presentation>> #FFFDE7
+  BackgroundColor<<Application>> #D5F5E3
+  BackgroundColor<<Domain>> #DCD8F8FF
+  BackgroundColor<<Concrete>> #B9A7ECFF
+  BackgroundColor<<Abstraction>> #D6D1FFFF
+  BackgroundColor<<Shared>> #D6EAF8
+}
+
+package "<b>YukimaruGames.Terminal.Runtime</b>" <<EntryPoint>> as Runtime
+
+frame Input{
+  package "<b>YukimaruGames.Terminal.Runtime.Input.InputSystem</b>"<<Infra>> as InputSystem
+  package "<b>YukimaruGames.Terminal.Runtime.Input.LegacyInput</b>"<<Infra>> as LegacyInput
+}
+package "<b>YukimaruGames.Terminal.Infrastructure</b>"<<Infra>> as Infra
+package "<b>YukimaruGames.Terminal.UI</b>" <<Presentation>> as Presentation
+package "<b>YukimaruGames.Terminal.Runtime.Shared</b>" <<Infra>> as RuntimeShared
+package "<b>YukimaruGames.Terminal.Domain.API</b>"<<Abstraction>> as API
+package "<b>YukimaruGames.Terminal.SharedKernel</b>" <<Shared>> as SharedKernel
+package "<b>YukimaruGames.Terminal.Application</b>" <<Application>> as Application
+package "<b>YukimaruGames.Terminal.Domain.Core</b>"<<Concrete>>as Core
+package "<b>YukimaruGames.Terminal.Domain.API</b>"<<Abstraction>> as API
+package "<b>YukimaruGames.Terminal.SharedKernel</b>" <<Shared>> as SharedKernel
+
+Infra -[hidden]right-> RuntimeShared
+RuntimeShared -[hidden]right-> InputSystem
+InputSystem -[hidden]right-> LegacyInput
+RuntimeShared -[hidden]right-> Input
+
+Infra -[hidden]down-> Presentation
+
+Presentation -[hidden]right-> Runtime
+Runtime -[hidden]right-> Application
+
+Presentation -[hidden]down-> Core
+Core -[hidden]right-> API
+API -[hidden]right-> SharedKernel
+
+Runtime -up-> Infra
+Runtime -up-> RuntimeShared
+Runtime --up--> Input
+Runtime --left--> Presentation
+Runtime --right--> Application
+Runtime -down-> Core
+Runtime -down-> API
+Runtime -down-> SharedKernel
+
+@enduml
+
+@startuml
+!theme plain
+title Runtime Dependencies
+
+' === Color Palette & Style ===
+skinparam package {
+  ArrowColor #555555
+  BorderColor #555555
+  FontColor #222222
+  BackgroundColor<<EntryPoint>> #F5B7B1
+  BackgroundColor<<Infra>> #F2F3F4
+  BackgroundColor<<Presentation>> #FFFDE7
+  BackgroundColor<<Application>> #D5F5E3
+  BackgroundColor<<Domain>> #DCD8F8FF
+  BackgroundColor<<Concrete>> #B9A7ECFF
+  BackgroundColor<<Abstraction>> #D6D1FFFF
+  BackgroundColor<<Shared>> #D6EAF8
+}
+
+' === 論理的な階層に基づいたパッケージの配置 ===
+' 最外層: Runtime
+package "<b>YukimaruGames.Terminal.Runtime</b>" <<EntryPoint>> as Runtime
+
+' 中間層: Presentation, Infrastructure, Application
+' 非表示リンクを使って横に並べる
+package "<b>YukimaruGames.Terminal.UI</b>" <<Presentation>> as Presentation
+package "<b>YukimaruGames.Terminal.Infrastructure</b>" <<Infra>> as Infra
+package "<b>YukimaruGames.Terminal.Runtime.Shared</b>" <<Infra>> as RuntimeShared
+package "<b>YukimaruGames.Terminal.Runtime.Input.InputSystem</b>" <<Infra>> as InputSystem
+package "<b>YukimaruGames.Terminal.Runtime.Input.LegacyInput</b>" <<Infra>> as LegacyInput
+package "<b>YukimaruGames.Terminal.Application</b>" <<Application>> as Application
+
+' 最内層: Domain, SharedKernel
+' 非表示リンクで横に並べる
+package "<b>YukimaruGames.Terminal.Domain.Core</b>" <<Concrete>> as Core
+package "<b>YukimaruGames.Terminal.Domain.API</b>" <<Abstraction>> as API
+package "<b>YukimaruGames.Terminal.SharedKernel</b>" <<Shared>> as SharedKernel
+
+' === レイアウト制御 ===
+' Runtimeと各層のパッケージを縦に並べる
+Runtime -[hidden]down- Presentation
+Presentation -[hidden]right- Infra
+Infra -[hidden]right- RuntimeShared
+RuntimeShared -[hidden]right- InputSystem
+InputSystem -[hidden]right- LegacyInput
+LegacyInput -[hidden]down- Application
+Application -[hidden]down- Core
+Core -[hidden]right- API
+API -[hidden]right- SharedKernel
+
+' === 依存関係 (Runtimeから各パッケージへ) ===
+' 矢印を適切なターゲットに向けて描画
+Runtime --> Presentation
+Runtime --> Infra
+Runtime --> RuntimeShared
+Runtime --> InputSystem
+Runtime --> LegacyInput
+Runtime --> Application
+Runtime --> Core
+Runtime --> API
+Runtime --> SharedKernel
+
+@enduml
+
+@startuml
+!theme plain
+title Layered Dependencies
+
+' === Color Palette & Style ===
+skinparam package {
+  ArrowColor #555555
+  BorderColor #555555
+  FontColor #222222
+  BackgroundColor<<EntryPoint>> #F5B7B1
+  BackgroundColor<<Infra>> #F2F3F4
+  BackgroundColor<<Presentation>> #FFFDE7
+  BackgroundColor<<Application>> #D5F5E3
+  BackgroundColor<<Domain>> #DCD8F8FF
+  BackgroundColor<<Concrete>> #B9A7ECFF
+  BackgroundColor<<Abstraction>> #D6D1FFFF
+  BackgroundColor<<Shared>> #D6EAF8
+}
+
+' === パッケージの論理的な配置 ===
+
+' 1層目: Runtime
+package "<b>YukimaruGames.Terminal.Runtime</b>" <<EntryPoint>> as Runtime
+
+' 2層目: Input
+package "<b>Input</b>" as Input {
+  package "<b>YukimaruGames.Terminal.Runtime.Input.InputSystem</b>"<<Infra>> as InputSystem
+  package "<b>YukimaruGames.Terminal.Runtime.Input.LegacyInput</b>"<<Infra>> as LegacyInput
+}
+
+' 3層目: UI, Infrastructure
+package "<b>UI & Infrastructure</b>" as UIInfra {
+  package "<b>YukimaruGames.Terminal.UI</b>" <<Presentation>> as Presentation
+  package "<b>YukimaruGames.Terminal.Infrastructure</b>" <<Infra>> as Infra
+  package "<b>YukimaruGames.Terminal.Runtime.Shared</b>" <<Infra>> as RuntimeShared
+}
+
+' 4層目: Application
+package "<b>YukimaruGames.Terminal.Application</b>" <<Application>> as Application
+
+' 5層目: Domain Service, Domain Model
+package "<b>Domain</b>" <<Domain>> As Domain{
+  package "<b>YukimaruGames.Terminal.Domain.Core</b>"<<Concrete>>as Core
+  package "<b>YukimaruGames.Terminal.Domain.API</b>"<<Abstraction>> as API
+}
+
+' 6層目: SharedKernel
+package "<b>YukimaruGames.Terminal.SharedKernel</b>" <<Shared>> as SharedKernel
+
+
+' 各層を縦に整列させるための非表示リンク
+Runtime -[hidden]down- Input
+Input -[hidden]down- UIInfra
+UIInfra -[hidden]down- Application
+Application -[hidden]down- Domain
+Domain -[hidden]down- SharedKernel
+
+@enduml

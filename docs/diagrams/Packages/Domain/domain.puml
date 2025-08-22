@@ -1,0 +1,37 @@
+@startuml
+!theme plain
+
+' === Color Palette & Style ===
+skinparam package {
+  ArrowColor #555555
+  BorderColor #555555
+  FontColor #222222
+  BackgroundColor<<Domain>> #DCD8F8FF
+  BackgroundColor<<Concrete>> #B9A7ECFF
+  BackgroundColor<<Abstraction>> #D6D1FFFF
+  BackgroundColor<<Shared>> #D6EAF8
+}
+
+package "<b>YukimaruGames.Terminal.Domain</b>" <<Domain>> as Domain{
+  package "<b>YukimaruGames.Terminal.Domain.Core</b>"<<Concrete>>as Core
+  package "<b>YukimaruGames.Terminal.Domain.API</b>"<<Abstraction>> as API
+
+  note left of Core
+  ・Concrete
+  ・Logic
+  endnote
+
+  note right of API
+  ・Model
+  ・Enum
+  ・Interface
+  endnote
+}
+
+package "<b>YukimaruGames.Terminal.SharedKernel</b>" <<Shared>> as SharedKernel
+
+Core .right.> API
+Core -down-> SharedKernel
+API -down-> SharedKernel
+
+@enduml

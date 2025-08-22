@@ -1,0 +1,31 @@
+@startuml
+!theme plain
+
+' === Color Palette & Style ===
+skinparam package {
+  ArrowColor #555555
+  BorderColor #555555
+  FontColor #222222
+  BackgroundColor<<Infra>> #F2F3F4
+  BackgroundColor<<Presentation>> #FFFDE7
+  BackgroundColor<<Application>> #D5F5E3
+  BackgroundColor<<Domain>> #DCD8F8FF
+  BackgroundColor<<Concrete>> #B9A7ECFF
+  BackgroundColor<<Abstraction>> #D6D1FFFF
+  BackgroundColor<<Shared>> #D6EAF8
+}
+
+package "YukimaruGames.Terminal.Runtime.Input" <<Infra>> as Input{
+  package "<b>YukimaruGames.Terminal.Runtime.Input.InputSystem</b>" as InputSystem
+}
+
+package "<b>Unity.InputSystem</b>" <<Infra>> as UnityInputSystem
+package "<b>YukimaruGames.Terminal.UI</b>" <<Presentation>> as Presentation
+package "<b>YukimaruGames.Terminal.Runtime.Shared</b>" <<Infra>> as RuntimeShared
+
+InputSystem -down-> UnityInputSystem
+InputSystem -down-> Presentation
+InputSystem -down-> RuntimeShared
+
+
+@enduml
