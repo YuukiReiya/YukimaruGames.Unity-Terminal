@@ -1,0 +1,337 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger}{}\label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+
+
+コマンドのログ発行クラス.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=334pt]{db/d9b/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=334pt]{d1/d1c/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a768cb4d056d323d6de7371fb6d567317}{Command\+Logger}} (int max\+Logs)
+\begin{DoxyCompactList}\small\item\em コンストラクタ. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ae2226e0a0b7ccbd327a32b8adc8e36b6}{Clear}} ()
+\begin{DoxyCompactList}\small\item\em ログのクリア. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ab702505cfc7511cd52df39f625f23e27}{Send}} (\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{Message\+Type}} msg\+Type, string message)
+\begin{DoxyCompactList}\small\item\em 外部からのログ出力要求.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg\+Type} & ログ出力種別\\
+\hline
+{\em message} & 出力文字列\\
+\hline
+\end{DoxyParams}
+
+
+継承先で適切に出力先の処理をルーティングする.  \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a144f12e6ef17057b7de9f97a4df526ca}{Max\+Logs}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em バッファーに保存する最大数. (=バッファサイズ) \end{DoxyCompactList}\item 
+IRead\+Only\+Collection$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}} $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a7bbffcd5392cccd2871eefa6f871a246}{Logs}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 保存されたログ. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+Action \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6aed120cc6f31a44376cc9c3edb99523}{On\+Item\+Updated}}\hspace{0.3cm}{\ttfamily  \mbox{[}add, remove\mbox{]}}
+\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a48eaf0a73f8ccd13d265b6c1167245eb}{On\+Item\+Added}}\hspace{0.3cm}{\ttfamily  \mbox{[}add, remove\mbox{]}}
+\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ad8ae0caaa7eb30e13985c25c0832b6f5}{On\+Item\+Removed}}\hspace{0.3cm}{\ttfamily  \mbox{[}add, remove\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Events inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Logger}}}
+\begin{DoxyCompactItemize}
+\item 
+Action \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger_aea3933fe9739c628441dfd50e1bf8252}{On\+Item\+Updated}}
+\begin{DoxyCompactList}\small\item\em ログが更新(追加・削除問わず)された時の通知. \end{DoxyCompactList}\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger_a3e9afde132eeafff862244b34afe9c67}{On\+Item\+Added}}
+\begin{DoxyCompactList}\small\item\em ログが追加された時の通知. \end{DoxyCompactList}\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger_a7aa6e9529fcc51f39e11a9b7077c5e70}{On\+Item\+Removed}}
+\begin{DoxyCompactList}\small\item\em ログが削除された時の通知. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a21fffd4da5c1daf46715fe74d4a747c7}{Add}} (\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{Message\+Type}} type, string message)
+\begin{DoxyCompactList}\small\item\em ログの追加. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly Queue$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}} $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\+\_\+buffer}}
+\begin{DoxyCompactList}\small\item\em ログを保存しておくバッファー. \end{DoxyCompactList}\item 
+Action \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{\+\_\+on\+Item\+Updated}}
+\begin{DoxyCompactList}\small\item\em ログ更新コールバック. \end{DoxyCompactList}\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}{\+\_\+on\+Item\+Added}}
+\begin{DoxyCompactList}\small\item\em ログ追加コールバック. \end{DoxyCompactList}\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{\+\_\+on\+Item\+Removed}}
+\begin{DoxyCompactList}\small\item\em ログ削除コールバック. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+コマンドのログ発行クラス. 
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a768cb4d056d323d6de7371fb6d567317}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!CommandLogger@{CommandLogger}}
+\index{CommandLogger@{CommandLogger}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{CommandLogger()}{CommandLogger()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a768cb4d056d323d6de7371fb6d567317} 
+Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+Command\+Logger (\begin{DoxyParamCaption}\item[{int}]{max\+Logs}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コンストラクタ. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em max\+Logs} & ログを保存しておく上限\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00047}{47}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a21fffd4da5c1daf46715fe74d4a747c7}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!Add@{Add}}
+\index{Add@{Add}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{Add()}{Add()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a21fffd4da5c1daf46715fe74d4a747c7} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+Add (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{Message\+Type}}}]{type}{, }\item[{string}]{message}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+ログの追加. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00086}{86}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ae2226e0a0b7ccbd327a32b8adc8e36b6}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!Clear@{Clear}}
+\index{Clear@{Clear}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{Clear()}{Clear()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ae2226e0a0b7ccbd327a32b8adc8e36b6} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+Clear (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+ログのクリア. 
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger_a422168dcc5e4815b80a8d18221f99223}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Logger}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00108}{108}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ab702505cfc7511cd52df39f625f23e27}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!Send@{Send}}
+\index{Send@{Send}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{Send()}{Send()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ab702505cfc7511cd52df39f625f23e27} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+Send (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{Message\+Type}}}]{msg\+Type}{, }\item[{string}]{message}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+外部からのログ出力要求.
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg\+Type} & ログ出力種別\\
+\hline
+{\em message} & 出力文字列\\
+\hline
+\end{DoxyParams}
+
+
+継承先で適切に出力先の処理をルーティングする.  
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger_a27b9731de02fd853bbe58348a614df59}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Logger}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00119}{119}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!\_buffer@{\_buffer}}
+\index{\_buffer@{\_buffer}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{\_buffer}{\_buffer}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42} 
+readonly Queue$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+\_\+buffer\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+ログを保存しておくバッファー. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!\_onItemAdded@{\_onItemAdded}}
+\index{\_onItemAdded@{\_onItemAdded}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{\_onItemAdded}{\_onItemAdded}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8} 
+Action$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+\_\+on\+Item\+Added\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+ログ追加コールバック. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00036}{36}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!\_onItemRemoved@{\_onItemRemoved}}
+\index{\_onItemRemoved@{\_onItemRemoved}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{\_onItemRemoved}{\_onItemRemoved}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418} 
+Action$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+\_\+on\+Item\+Removed\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+ログ削除コールバック. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00041}{41}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!\_onItemUpdated@{\_onItemUpdated}}
+\index{\_onItemUpdated@{\_onItemUpdated}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{\_onItemUpdated}{\_onItemUpdated}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3} 
+Action Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+\_\+on\+Item\+Updated\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+ログ更新コールバック. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00031}{31}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a7bbffcd5392cccd2871eefa6f871a246}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!Logs@{Logs}}
+\index{Logs@{Logs}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{Logs}{Logs}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a7bbffcd5392cccd2871eefa6f871a246} 
+IRead\+Only\+Collection$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+Logs\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+保存されたログ. 
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger_adeaf800869a41d10cfe8bb3f50fa9878}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Logger}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00056}{56}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a144f12e6ef17057b7de9f97a4df526ca}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!MaxLogs@{MaxLogs}}
+\index{MaxLogs@{MaxLogs}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{MaxLogs}{MaxLogs}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a144f12e6ef17057b7de9f97a4df526ca} 
+int Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+Max\+Logs\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+バッファーに保存する最大数. (=バッファサイズ) 
+
+最大数を超過したら古いものから削除される. 
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger_a2f8a7f9d489da4770e1a12ddf60ae318}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Logger}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00021}{21}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+
+
+\label{doc-event-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_doc-event-members}
+\doxysubsection{Event Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a48eaf0a73f8ccd13d265b6c1167245eb}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!OnItemAdded@{OnItemAdded}}
+\index{OnItemAdded@{OnItemAdded}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{OnItemAdded}{OnItemAdded}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a48eaf0a73f8ccd13d265b6c1167245eb} 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}} \mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+On\+Item\+Added\hspace{0.3cm}{\ttfamily [add]}, {\ttfamily [remove]}}
+
+
+
+
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00070}{70}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ad8ae0caaa7eb30e13985c25c0832b6f5}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!OnItemRemoved@{OnItemRemoved}}
+\index{OnItemRemoved@{OnItemRemoved}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{OnItemRemoved}{OnItemRemoved}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ad8ae0caaa7eb30e13985c25c0832b6f5} 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}} \mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+On\+Item\+Removed\hspace{0.3cm}{\ttfamily [add]}, {\ttfamily [remove]}}
+
+
+
+
+
+
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00077}{77}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6aed120cc6f31a44376cc9c3edb99523}\index{YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}!OnItemUpdated@{OnItemUpdated}}
+\index{OnItemUpdated@{OnItemUpdated}!YukimaruGames.Terminal.Domain.Service.CommandLogger@{YukimaruGames.Terminal.Domain.Service.CommandLogger}}
+\doxysubsubsection{\texorpdfstring{OnItemUpdated}{OnItemUpdated}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6aed120cc6f31a44376cc9c3edb99523} 
+Action Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Logger.\+On\+Item\+Updated\hspace{0.3cm}{\ttfamily [add]}, {\ttfamily [remove]}}
+
+Queueで管理している\doxylink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\+\_\+buffer}の追加・削除のいずれかが呼び出された際に通知する。
+
+追加・削除が同時に行われても一度だけの呼び出し.
+
+Definition at line \mbox{\hyperlink{_command_logger_8cs_source_l00063}{63}} of file \mbox{\hyperlink{_command_logger_8cs_source}{Command\+Logger.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+Core/\+Service/\mbox{\hyperlink{_command_logger_8cs}{Command\+Logger.\+cs}}\end{DoxyCompactItemize}

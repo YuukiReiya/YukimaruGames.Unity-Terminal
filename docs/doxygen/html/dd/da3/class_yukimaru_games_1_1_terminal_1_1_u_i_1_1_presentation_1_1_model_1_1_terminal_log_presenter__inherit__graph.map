@@ -1,0 +1,9 @@
+<map id="YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter" name="YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter">
+<area shape="rect" id="Node000001" title=" " alt="" coords="108,203,315,261"/>
+<area shape="rect" id="Node000002" href="$de/d7b/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_log_presenter.html" title=" " alt="" coords="5,112,234,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="152,164,186,200,182,204,148,168"/>
+<area shape="rect" id="Node000003" href="$d3/db2/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_log_render_data_provider.html" title=" " alt="" coords="12,5,227,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="122,79,122,112,117,112,117,79"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="258,120,349,147"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="283,160,241,204,237,201,279,156"/>
+</map>

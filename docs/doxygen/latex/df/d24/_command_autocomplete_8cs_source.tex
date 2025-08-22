@@ -1,0 +1,54 @@
+\doxysection{Command\+Autocomplete.\+cs}
+\hypertarget{_command_autocomplete_8cs_source}{}\label{_command_autocomplete_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/Core/Service/CommandAutocomplete.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/Core/Service/CommandAutocomplete.cs}}
+\mbox{\hyperlink{_command_autocomplete_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }System.Linq;}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface}{YukimaruGames.Terminal.Domain.Interface}};}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00006}\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_service}{00006}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_service}{YukimaruGames.Terminal.Domain.Service}}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00007}00007\ \{}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00011}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete}{00011}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{sealed}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete}{CommandAutocomplete}}\ :\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete}{ICommandAutocomplete}}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00012}00012\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00013}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aea0d0147d374a97a4f5897513b7726fc}{00013}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ HashSet<string>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aea0d0147d374a97a4f5897513b7726fc}{\_knownWords}}\ =\ \textcolor{keyword}{new}();}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00014}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ac9bf3d24dbe16e9589ecbd8298f4b46a}{00014}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ List<string>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ac9bf3d24dbe16e9589ecbd8298f4b46a}{\_buffer}}\ =\ \textcolor{keyword}{new}();}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00017}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_a3fd8ffaf127fd53e294e5675c7bd9ce4}{00017}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ IEnumerable<string>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_a3fd8ffaf127fd53e294e5675c7bd9ce4}{KnownWords}}\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aea0d0147d374a97a4f5897513b7726fc}{\_knownWords}}\ ??\ Enumerable.Empty<\textcolor{keywordtype}{string}>();}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00020}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ae29f8fdd3064080078cd646bb2c9a0ef}{00020}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ae29f8fdd3064080078cd646bb2c9a0ef}{Register}}(\textcolor{keywordtype}{string}\ word)\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aea0d0147d374a97a4f5897513b7726fc}{\_knownWords}}.Add(word);}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00023}00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{string}[]\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a545a17feb1b2e1a6af4699fa3325353b}{Complete}}(\textcolor{keywordtype}{string}\ text)}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00024}00024\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keywordtype}{string}.IsNullOrEmpty(text))\ \textcolor{keywordflow}{return}\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 部分文字列.}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ var\ partialWord\ =\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aa8cdee28ecdb62ec7856315171eef886}{GetLastWord}}(text);}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keywordtype}{string}.IsNullOrEmpty(partialWord))}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ac9bf3d24dbe16e9589ecbd8298f4b46a}{\_buffer}}.Clear();}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ knownWord\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aea0d0147d374a97a4f5897513b7726fc}{\_knownWords}})}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (knownWord.StartsWith(partialWord,StringComparison.OrdinalIgnoreCase))}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ac9bf3d24dbe16e9589ecbd8298f4b46a}{\_buffer}}.Add(knownWord);}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00041}00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00044}00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ac9bf3d24dbe16e9589ecbd8298f4b46a}{\_buffer}}.ToArray();}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00054}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aa8cdee28ecdb62ec7856315171eef886}{00054}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{string}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_aa8cdee28ecdb62ec7856315171eef886}{GetLastWord}}(\textcolor{keywordtype}{string}\ text)}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00056}00056\ \ \ \ \ \ \ \ \ \ \ \ \ var\ lastIndex\ =\ text.LastIndexOfAny(\textcolor{keyword}{new}[]\ \{\ \textcolor{charliteral}{'\ '},\ \textcolor{stringliteral}{'　'},\ \textcolor{charliteral}{'\(\backslash\)t'},\ \});}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ \ \ \ \ var\ result\ =\ text[(lastIndex\ +\ 1)..];}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00058}00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00059}00059\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00060}00060\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_autocomplete_8cs_source_l00061}00061\ \}}
+
+\end{DoxyCode}

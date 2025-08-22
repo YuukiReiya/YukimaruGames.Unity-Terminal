@@ -1,0 +1,273 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler Struct Reference}
+\hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{}\label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+
+
+コマンドのハンドラー.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{d2/d99/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{d5/d16/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a80356f8dd512b4bdd2f042505921fe4e}{Command\+Handler}} (\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{Command\+Delegate}} proc, string command\+Name, int min\+Arg\+Count, int max\+Arg\+Count, string help)
+\begin{DoxyCompactList}\small\item\em コンストラクタ. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a68f21d7f9efed823c63a4c0811a97f7e}{Command\+Handler}} (\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{Command\+Delegate}} proc, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta}{Command\+Meta}} metadata)
+\item 
+bool \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a17b4b5bfff89caa1213c83578fd760ac}{Equals}} (\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} other)
+\item 
+override bool \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_ac2befd182c35124cc7aa57f7248f37cf}{Equals}} (object obj)
+\item 
+override int \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a1424df861a4e126ceb50b84da256deea}{Get\+Hash\+Code}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a1018bc3c6ed53d1269f854f6667fbebe}{operator==}} (\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} left, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} right)
+\item 
+static bool \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a92dd557b30e17c6e38c4b5e5ddab58b7}{operator!=}} (\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} left, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} right)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{Command\+Delegate}} \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_ad12904f6581ad43307cfc914cf594981}{Proc}}
+\begin{DoxyCompactList}\small\item\em プロシージャ. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta}{Command\+Meta}} \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_aedd51ddbc4a831f28e10908398132489}{Meta}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em メタ情報. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+コマンドのハンドラー. 
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a80356f8dd512b4bdd2f042505921fe4e}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!CommandHandler@{CommandHandler}}
+\index{CommandHandler@{CommandHandler}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{CommandHandler()}{CommandHandler()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a80356f8dd512b4bdd2f042505921fe4e} 
+Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+Command\+Handler (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{Command\+Delegate}}}]{proc}{, }\item[{string}]{command\+Name}{, }\item[{int}]{min\+Arg\+Count}{, }\item[{int}]{max\+Arg\+Count}{, }\item[{string}]{help}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コンストラクタ. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em proc} & プロシージャ\\
+\hline
+{\em command\+Name} & 登録コマンド名\\
+\hline
+{\em min\+Arg\+Count} & メソッド引数の最小数\\
+\hline
+{\em max\+Arg\+Count} & メソッド引数の最大数\\
+\hline
+{\em help} & ヘルプテキスト\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Argument\+Null\+Exception} & \\
+\hline
+\end{DoxyExceptions}
+プロシージャにnullが渡された際の送出例外.
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00036}{36}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a80356f8dd512b4bdd2f042505921fe4e_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a80356f8dd512b4bdd2f042505921fe4e_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a68f21d7f9efed823c63a4c0811a97f7e}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!CommandHandler@{CommandHandler}}
+\index{CommandHandler@{CommandHandler}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{CommandHandler()}{CommandHandler()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a68f21d7f9efed823c63a4c0811a97f7e} 
+Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+Command\+Handler (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{Command\+Delegate}}}]{proc}{, }\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta}{Command\+Meta}}}]{metadata}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00041}{41}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a68f21d7f9efed823c63a4c0811a97f7e_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a17b4b5bfff89caa1213c83578fd760ac}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!Equals@{Equals}}
+\index{Equals@{Equals}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{Equals()}{Equals()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a17b4b5bfff89caa1213c83578fd760ac} 
+bool Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+Equals (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}}}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00047}{47}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a17b4b5bfff89caa1213c83578fd760ac_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a17b4b5bfff89caa1213c83578fd760ac_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_ac2befd182c35124cc7aa57f7248f37cf}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!Equals@{Equals}}
+\index{Equals@{Equals}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{Equals()}{Equals()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_ac2befd182c35124cc7aa57f7248f37cf} 
+override bool Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+Equals (\begin{DoxyParamCaption}\item[{object}]{obj}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00052}{52}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_ac2befd182c35124cc7aa57f7248f37cf_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a1424df861a4e126ceb50b84da256deea}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!GetHashCode@{GetHashCode}}
+\index{GetHashCode@{GetHashCode}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{GetHashCode()}{GetHashCode()}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a1424df861a4e126ceb50b84da256deea} 
+override int Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+Get\+Hash\+Code (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00057}{57}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a92dd557b30e17c6e38c4b5e5ddab58b7}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a92dd557b30e17c6e38c4b5e5ddab58b7} 
+bool Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+operator!= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}}}]{left}{, }\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}}}]{right}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00067}{67}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a92dd557b30e17c6e38c4b5e5ddab58b7_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a1018bc3c6ed53d1269f854f6667fbebe}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!operator==@{operator==}}
+\index{operator==@{operator==}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a1018bc3c6ed53d1269f854f6667fbebe} 
+bool Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+operator== (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}}}]{left}{, }\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}}}]{right}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00062}{62}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_a1018bc3c6ed53d1269f854f6667fbebe_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_ad12904f6581ad43307cfc914cf594981}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!Proc@{Proc}}
+\index{Proc@{Proc}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{Proc}{Proc}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_ad12904f6581ad43307cfc914cf594981} 
+readonly \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{Command\+Delegate}} Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+Proc}
+
+
+
+プロシージャ. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_aedd51ddbc4a831f28e10908398132489}\index{YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}!Meta@{Meta}}
+\index{Meta@{Meta}!YukimaruGames.Terminal.Domain.Model.CommandHandler@{YukimaruGames.Terminal.Domain.Model.CommandHandler}}
+\doxysubsubsection{\texorpdfstring{Meta}{Meta}}
+{\footnotesize\ttfamily \label{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler_aedd51ddbc4a831f28e10908398132489} 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta}{Command\+Meta}} Yukimaru\+Games.\+Terminal.\+Domain.\+Model.\+Command\+Handler.\+Meta\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+メタ情報. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_handler_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_command_handler_8cs_source}{Command\+Handler.\+cs}}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+API/\+Value\+Objects/\mbox{\hyperlink{_command_handler_8cs}{Command\+Handler.\+cs}}\end{DoxyCompactItemize}

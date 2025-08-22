@@ -1,0 +1,117 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Autocomplete Interface Reference}
+\hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete}{}\label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete}\index{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete@{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete}}
+
+
+コマンドの自動補完インターフェイス.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Autocomplete\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{dd/d87/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a424e3c36a859b7834fa42c06796ae943}{Register}} (string word)
+\begin{DoxyCompactList}\small\item\em 補完先の登録. \end{DoxyCompactList}\item 
+string\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a545a17feb1b2e1a6af4699fa3325353b}{Complete}} (string text)
+\begin{DoxyCompactList}\small\item\em 補完. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+IEnumerable$<$ string $>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a4b92cbe667c53472715fad0e1bcc1f33}{Known\+Words}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 登録ワード一覧. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+コマンドの自動補完インターフェイス. 
+
+Definition at line \mbox{\hyperlink{_i_command_autocomplete_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_i_command_autocomplete_8cs_source}{ICommand\+Autocomplete.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a545a17feb1b2e1a6af4699fa3325353b}\index{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete@{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete}!Complete@{Complete}}
+\index{Complete@{Complete}!YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete@{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete}}
+\doxysubsubsection{\texorpdfstring{Complete()}{Complete()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a545a17feb1b2e1a6af4699fa3325353b} 
+string\mbox{[}$\,$\mbox{]} Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Autocomplete.\+Complete (\begin{DoxyParamCaption}\item[{string}]{text}{}\end{DoxyParamCaption})}
+
+
+
+補完. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em text} & 補完判定文字列\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+補完可能なキーワード. 
+\end{DoxyReturn}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a424e3c36a859b7834fa42c06796ae943}\index{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete@{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete}!Register@{Register}}
+\index{Register@{Register}!YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete@{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete}}
+\doxysubsubsection{\texorpdfstring{Register()}{Register()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a424e3c36a859b7834fa42c06796ae943} 
+bool Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Autocomplete.\+Register (\begin{DoxyParamCaption}\item[{string}]{word}{}\end{DoxyParamCaption})}
+
+
+
+補完先の登録. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em word} & 補完出来る文字列として登録する文字列\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+登録の成否 
+
+true \+: 成功
+
+
+
+false \+: 失敗
+
+
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_ae29f8fdd3064080078cd646bb2c9a0ef}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Autocomplete}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a4b92cbe667c53472715fad0e1bcc1f33}\index{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete@{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete}!KnownWords@{KnownWords}}
+\index{KnownWords@{KnownWords}!YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete@{YukimaruGames.Terminal.Domain.Interface.ICommandAutocomplete}}
+\doxysubsubsection{\texorpdfstring{KnownWords}{KnownWords}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete_a4b92cbe667c53472715fad0e1bcc1f33} 
+IEnumerable$<$string$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Autocomplete.\+Known\+Words\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+登録ワード一覧. 
+
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_autocomplete_a3fd8ffaf127fd53e294e5675c7bd9ce4}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Autocomplete}}.
+
+
+
+Definition at line \mbox{\hyperlink{_i_command_autocomplete_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_i_command_autocomplete_8cs_source}{ICommand\+Autocomplete.\+cs}}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+API/\+Interface/\mbox{\hyperlink{_i_command_autocomplete_8cs}{ICommand\+Autocomplete.\+cs}}\end{DoxyCompactItemize}

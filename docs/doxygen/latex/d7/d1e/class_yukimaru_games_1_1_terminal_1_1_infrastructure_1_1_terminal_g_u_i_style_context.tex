@@ -1,0 +1,204 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context}{}\label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=320pt]{d8/d06/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d2/dee/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aaf3dd9ac69f85e1d407a8fee38c5a8c3}{Terminal\+GUIStyle\+Context}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_font_provider}{IFont\+Provider}} provider)
+\item 
+GUIStyle \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a1931cb560bbb4f6e7f18a0d5d2f67388}{Get\+Style}} ()
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a9940bba1549b3ada8852be5f8febd737}{Set\+Color}} (Color color)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+IGUIStyle\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider_aed665eb519412dcd71be450463888c18}{Set\+Padding}} (int padding)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+Action \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a73f3ddb8383d43a305af6523770ca0ac}{On\+Style\+Changed}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Events inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+IGUIStyle\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+Action \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider_a8095bbe5b2079fc035822d0ba13a6225}{On\+Style\+Changed}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aad2c5473aa02b050dc2df60426ff8a26}{Handle\+Font\+Size\+Changed}} (int size)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_font_provider}{IFont\+Provider}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a2c4b163a57ed65feff98b9c7aa6d6bbf}{\+\_\+provider}}
+\item 
+readonly Lazy$<$ GUIStyle $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_ae9b6fb820a66c37530ec0d6ab5d23c28}{\+\_\+style\+Lazy}}
+\item 
+readonly Rect\+Offset \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a2ddefd7bc444929b0a4263f38d3c4ad0}{\+\_\+padding}} = new()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aaf3dd9ac69f85e1d407a8fee38c5a8c3}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!TerminalGUIStyleContext@{TerminalGUIStyleContext}}
+\index{TerminalGUIStyleContext@{TerminalGUIStyleContext}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{TerminalGUIStyleContext()}{TerminalGUIStyleContext()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aaf3dd9ac69f85e1d407a8fee38c5a8c3} 
+Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+Terminal\+GUIStyle\+Context (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_font_provider}{IFont\+Provider}}}]{provider}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d7/d1e/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aaf3dd9ac69f85e1d407a8fee38c5a8c3_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a1931cb560bbb4f6e7f18a0d5d2f67388}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!GetStyle@{GetStyle}}
+\index{GetStyle@{GetStyle}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{GetStyle()}{GetStyle()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a1931cb560bbb4f6e7f18a0d5d2f67388} 
+GUIStyle Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+Get\+Style (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider_a36f8f488bd41c8f5f066ee6c461b104f}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+IGUIStyle\+Provider}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00033}{33}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aad2c5473aa02b050dc2df60426ff8a26}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!HandleFontSizeChanged@{HandleFontSizeChanged}}
+\index{HandleFontSizeChanged@{HandleFontSizeChanged}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{HandleFontSizeChanged()}{HandleFontSizeChanged()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aad2c5473aa02b050dc2df60426ff8a26} 
+void Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+Handle\+Font\+Size\+Changed (\begin{DoxyParamCaption}\item[{int}]{size}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00061}{61}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=281pt]{d7/d1e/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aad2c5473aa02b050dc2df60426ff8a26_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d7/d1e/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_aad2c5473aa02b050dc2df60426ff8a26_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a9940bba1549b3ada8852be5f8febd737}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!SetColor@{SetColor}}
+\index{SetColor@{SetColor}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{SetColor()}{SetColor()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a9940bba1549b3ada8852be5f8febd737} 
+void Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+Set\+Color (\begin{DoxyParamCaption}\item[{Color}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider_a64f635e79369389666792950591a427d}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+IGUIStyle\+Provider}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00053}{53}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a2ddefd7bc444929b0a4263f38d3c4ad0}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!\_padding@{\_padding}}
+\index{\_padding@{\_padding}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{\_padding}{\_padding}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a2ddefd7bc444929b0a4263f38d3c4ad0} 
+readonly Rect\+Offset Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+\_\+padding = new()\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a2c4b163a57ed65feff98b9c7aa6d6bbf}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!\_provider@{\_provider}}
+\index{\_provider@{\_provider}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{\_provider}{\_provider}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a2c4b163a57ed65feff98b9c7aa6d6bbf} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_font_provider}{IFont\+Provider}} Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+\_\+provider\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_ae9b6fb820a66c37530ec0d6ab5d23c28}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!\_styleLazy@{\_styleLazy}}
+\index{\_styleLazy@{\_styleLazy}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{\_styleLazy}{\_styleLazy}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_ae9b6fb820a66c37530ec0d6ab5d23c28} 
+readonly Lazy$<$GUIStyle$>$ Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+\_\+style\+Lazy\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+
+
+\label{doc-event-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_doc-event-members}
+\doxysubsection{Event Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a73f3ddb8383d43a305af6523770ca0ac}\index{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}!OnStyleChanged@{OnStyleChanged}}
+\index{OnStyleChanged@{OnStyleChanged}!YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext@{YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext}}
+\doxysubsubsection{\texorpdfstring{OnStyleChanged}{OnStyleChanged}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_terminal_g_u_i_style_context_a73f3ddb8383d43a305af6523770ca0ac} 
+Action Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Terminal\+GUIStyle\+Context.\+On\+Style\+Changed}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_terminal_g_u_i_style_context_8cs_source}{Terminal\+GUIStyle\+Context.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Infrastructure/\+Context/\mbox{\hyperlink{_terminal_g_u_i_style_context_8cs}{Terminal\+GUIStyle\+Context.\+cs}}\end{DoxyCompactItemize}

@@ -1,0 +1,8 @@
+<map id="YukimaruGames.Terminal.Runtime.TerminalBootstrapper.Awake" name="YukimaruGames.Terminal.Runtime.TerminalBootstrapper.Awake">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,35,233,77"/>
+<area shape="rect" id="Node000002" href="$d8/df1/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_bootstrapper.html#a29ea6690d856c29d67dbac289e1e5928" title=" " alt="" coords="281,5,508,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="233,41,265,38,265,43,233,47"/>
+<area shape="rect" id="Node000003" href="$d8/df1/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_bootstrapper.html#a467957a125ba1b62f868dfaa5d9acfa4" title=" " alt="" coords="556,35,817,77"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="233,57,281,57,508,57,540,57,541,62,508,63,281,63,233,62"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="509,35,541,39,540,44,508,41"/>
+</map>

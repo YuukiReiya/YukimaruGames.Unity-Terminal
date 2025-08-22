@@ -1,0 +1,37 @@
+\doxysection{Scroll\+Configurator.\+cs}
+\hypertarget{_scroll_configurator_8cs_source}{}\label{_scroll_configurator_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/UI/View/Configurator/ScrollConfigurator.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/UI/View/Configurator/ScrollConfigurator.cs}}
+\mbox{\hyperlink{_scroll_configurator_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00004}00004\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation}{YukimaruGames.Terminal.UI.Presentation}}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00005}00005\ \{}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00006}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator}{00006}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{sealed}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator}{ScrollConfigurator}}\ :\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_scroll_configurator}{IScrollConfigurator}}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00007}00007\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00008}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_ad31d6006ebf19e70ef42835e94743aee}{00008}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ Vector2\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_ad31d6006ebf19e70ef42835e94743aee}{\_scrollPosition}};}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00010}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a01aa7ea9a125406833189f186bfd4251}{00010}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ Vector2\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a01aa7ea9a125406833189f186bfd4251}{ScrollPosition}}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00011}00011\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00012}00012\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{get}\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_ad31d6006ebf19e70ef42835e94743aee}{\_scrollPosition}};}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00013}00013\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{set}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00014}00014\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00015}00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_ad31d6006ebf19e70ef42835e94743aee}{\_scrollPosition}}\ ==\ value)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00017}00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_ad31d6006ebf19e70ef42835e94743aee}{\_scrollPosition}}\ =\ value;}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a72f4a0e560ef21195507a19c2c7517a5}{OnScrollChanged}}?.Invoke(value);}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00019}00019\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00022}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a72f4a0e560ef21195507a19c2c7517a5}{00022}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ Action<Vector2>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a72f4a0e560ef21195507a19c2c7517a5}{OnScrollChanged}};}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00024}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a8378710f5a941a7def170dd677b86712}{00024}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a8378710f5a941a7def170dd677b86712}{ScrollToEnd}}()}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Mathf.Approximately(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_ad31d6006ebf19e70ef42835e94743aee}{\_scrollPosition}}.y,\ \textcolor{keywordtype}{float}.MaxValue))\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ \_scrollPosition.y\ =\ \textcolor{keywordtype}{float}.MaxValue;}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_a72f4a0e560ef21195507a19c2c7517a5}{OnScrollChanged}}?.Invoke(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_scroll_configurator_ad31d6006ebf19e70ef42835e94743aee}{\_scrollPosition}});}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00030}00030\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_scroll_configurator_8cs_source_l00031}00031\ \}}
+
+\end{DoxyCode}

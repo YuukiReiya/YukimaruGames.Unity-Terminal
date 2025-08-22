@@ -1,0 +1,71 @@
+\doxysection{Terminal\+Keyboard\+Factory.\+cs}
+\hypertarget{_terminal_keyboard_factory_8cs_source}{}\label{_terminal_keyboard_factory_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Runtime/Input/Factory/TerminalKeyboardFactory.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Runtime/Input/Factory/TerminalKeyboardFactory.cs}}
+\mbox{\hyperlink{_terminal_keyboard_factory_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00001}00001\ \textcolor{comment}{//\#undef\ ENABLE\_INPUT\_SYSTEM}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00002}00002\ \textcolor{comment}{//\#undef\ ENABLE\_LEGACY\_INPUT\_MANAGER}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared}{YukimaruGames.Terminal.Runtime.Shared}};}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00006}00006\ \textcolor{preprocessor}{\#if\ ENABLE\_INPUT\_SYSTEM}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00007}00007\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_input_system}{YukimaruGames.Terminal.Runtime.Input.InputSystem}};}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00008}00008\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00009}00009\ \textcolor{preprocessor}{\#if\ ENABLE\_LEGACY\_INPUT\_MANAGER}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00010}00010\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input}{YukimaruGames.Terminal.Runtime.Input.LegacyInput}};}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00011}00011\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00013}00013\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime}{YukimaruGames.Terminal.Runtime}}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00014}00014\ \{}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00015}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_keyboard_factory}{00015}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{sealed}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_keyboard_factory}{TerminalKeyboardFactory}}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00016}00016\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00017}00017\ \textcolor{preprocessor}{\#if\ ENABLE\_INPUT\_SYSTEM}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_input_system_1_1_input_system_key}{InputSystemKey}}\ \_inputSystemKey;}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00019}00019\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00021}00021\ \textcolor{preprocessor}{\#if\ ENABLE\_LEGACY\_INPUT\_MANAGER}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_key}{LegacyInputKey}}\ \_legacyInputKey;}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00023}00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00025}00025\ \textcolor{preprocessor}{\#if\ ENABLE\_INPUT\_SYSTEM\ \&\&\ ENABLE\_LEGACY\_INPUT\_MANAGER}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_keyboard_factory}{TerminalKeyboardFactory}}(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_input_system_1_1_input_system_key}{InputSystemKey}}\ inputSystemKey,\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_key}{LegacyInputKey}}\ legacyInputKey)}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ \_inputSystemKey\ =\ inputSystemKey;}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \ \ \ \ \_legacyInputKey\ =\ legacyInputKey;}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00031}00031\ \textcolor{preprocessor}{\#elif\ ENABLE\_INPUT\_SYSTEM}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_keyboard_factory}{TerminalKeyboardFactory}}(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_input_system_1_1_input_system_key}{InputSystemKey}}\ inputSystemKey)}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \_inputSystemKey\ =\ inputSystemKey;}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00036}00036\ \textcolor{preprocessor}{\#elif\ ENABLE\_LEGACY\_INPUT\_MANAGER}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_keyboard_factory}{TerminalKeyboardFactory}}(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_key}{LegacyInputKey}}\ legacyInputKey)}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ \_legacyInputKey\ =\ legacyInputKey;}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00041}00041\ \textcolor{preprocessor}{\#else\ }\textcolor{comment}{//\ 両未定義であれば空コンストラクタのみのサポートなので暗黙的なコンストラクタで事足りる.}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00042}00042\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00044}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_keyboard_factory_a3d213bbe881c57d1c733b6ff9ef23d9d}{00044}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_i_keyboard_input_handler}{IKeyboardInputHandler}}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_terminal_keyboard_factory_a3d213bbe881c57d1c733b6ff9ef23d9d}{Create}}(\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_afe9d3ea56e4fd3116f6ac9d32a94a393}{InputKeyboardType}}\ keyboardType)\ =>}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ keyboardType\ \textcolor{keywordflow}{switch}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_afe9d3ea56e4fd3116f6ac9d32a94a393a6adf97f83acf6453d4a6a4b1070f3754}{InputKeyboardType.None}}\ =>\ \textcolor{keyword}{null},}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_afe9d3ea56e4fd3116f6ac9d32a94a393a863d946b1c6b2ae15f66ef51be0a52fa}{InputKeyboardType.InputSystem}}\ =>}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00049}00049\ \textcolor{preprocessor}{\#if\ ENABLE\_INPUT\_SYSTEM}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_system_keyboard_handler}{InputSystemKeyboardHandler}}(\_inputSystemKey)}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00051}00051\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00052}00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ \textcolor{keyword}{new}\ NotSupportedException(\$\textcolor{stringliteral}{"{}InputKeyboardType.InputSystem\ is\ selected,\ but\ the\ 'Input\ System'\ package\ is\ not\ installed.\{Environment.NewLine\}Please\ install\ the\ package\ via\ the\ Package\ Manager\ or\ switch\ to\ 'Legacy'."{}})}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00053}00053\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00054}00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_afe9d3ea56e4fd3116f6ac9d32a94a393a0cc0a0507cf3d31e5089f420a4cf8b4b}{InputKeyboardType.Legacy}}\ =>}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00056}00056\ \textcolor{preprocessor}{\#if\ ENABLE\_LEGACY\_INPUT\_MANAGER}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_keyboard_handler}{LegacyInputKeyboardHandler}}(\_legacyInputKey)}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00058}00058\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00059}00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ \textcolor{keyword}{new}\ NotSupportedException(\$\textcolor{stringliteral}{"{}InputKeyboardType.Legacy\ is\ selected,\ but\ 'Enable\ Legacy\ Input\ Manager'\ is\ not\ active\ in\ Project\ Settings."{}})}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00060}00060\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ,}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_\ =>\ \textcolor{keywordflow}{throw}\ \textcolor{keyword}{new}\ ArgumentOutOfRangeException(nameof(keyboardType),\ keyboardType,\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00063}00063\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00064}00064\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_terminal_keyboard_factory_8cs_source_l00065}00065\ \}}
+
+\end{DoxyCode}

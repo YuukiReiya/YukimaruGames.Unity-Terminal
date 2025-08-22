@@ -1,0 +1,21 @@
+<map id="YukimaruGames.Terminal.Application.TerminalService" name="YukimaruGames.Terminal.Application.TerminalService">
+<area shape="rect" id="Node000001" title="ドメインサービスを全般を統括し、外部へAPIを提供するアプリケーションサービス." alt="" coords="389,256,631,299"/>
+<area shape="rect" id="Node000002" href="$d8/dc9/interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service.html" title=" " alt="" coords="5,5,248,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="249,50,310,73,366,106,408,142,445,183,497,254,493,257,441,186,404,146,363,110,307,78,247,55"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="81,72,172,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,89,274,107,321,122,366,143,404,169,440,199,493,254,489,258,436,203,401,173,363,148,319,127,273,112,186,94"/>
+<area shape="rect" id="Node000004" href="$d1/dba/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger.html" title="コマンドのログ発行インターフェイス." alt="" coords="15,123,238,165"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="254,167,366,200,423,226,474,253,471,258,421,231,364,205,253,172"/>
+<area shape="rect" id="Node000005" href="$d4/d32/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry.html" title="登録されたコマンドの保存クラス." alt="" coords="15,189,238,232"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="253,227,365,245,404,253,403,258,364,251,253,232"/>
+<area shape="rect" id="Node000006" href="$d3/d43/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_invoker.html" title="コマンドの実行インターフェイス." alt="" coords="15,256,238,299"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="254,275,388,275,388,280,254,280"/>
+<area shape="rect" id="Node000007" href="$d2/d9e/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser.html" title="コマンド引数のパーサーインターフェイス." alt="" coords="15,323,238,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="253,323,364,304,403,297,404,302,365,309,253,328"/>
+<area shape="rect" id="Node000008" href="$da/ddb/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history.html" title="入力コマンドの履歴管理インターフェイス." alt="" coords="15,389,238,432"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="253,383,364,350,421,324,471,297,474,301,423,329,366,354,254,388"/>
+<area shape="rect" id="Node000009" href="$d6/db2/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete.html" title="コマンドの自動補完インターフェイス." alt="" coords="15,456,238,499"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="253,450,309,432,363,407,401,382,436,352,489,297,493,301,440,356,404,386,366,412,311,437,254,456"/>
+<area shape="rect" id="Node000010" href="$d9/d62/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_discoverer.html" title="コマンドを検出するためのインターフェイス." alt="" coords="15,523,238,565"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="252,521,310,502,363,472,409,431,447,383,476,336,496,298,501,301,481,339,451,386,413,435,366,477,312,507,254,526"/>
+</map>

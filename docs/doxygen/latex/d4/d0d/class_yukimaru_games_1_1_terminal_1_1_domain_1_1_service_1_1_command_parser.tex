@@ -1,0 +1,198 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser}{}\label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser}\index{YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}}
+
+
+コマンド引数のパーサー.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{dc/dde/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{dc/da7/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{ICommand\+Parser.\+Parse\+Status\+Code}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a06e98f1736098284cc4237054873ecbf}{Parse}} (string str, out(string Command, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_argument}{Command\+Argument}}\mbox{[}$\,$\mbox{]}Arguments) tuple)
+\begin{DoxyCompactList}\small\item\em 文字列からコマンド引数型へパース. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+char\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a2568123adfdc8de33032173f23015e59}{Delimiters}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{ICommand\+Parser.\+Parse\+Status\+Code}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_aa7594376d526faa2f1475c707604702a}{Try\+Extract\+Arguments}} (string text, out string\mbox{[}$\,$\mbox{]}args)
+\begin{DoxyCompactList}\small\item\em 文字列の中から引数を取得. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_argument}{Command\+Argument}}\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a1428386c5b8c296017c3937eb8f1e303}{Convert}} (string\mbox{[}$\,$\mbox{]} arguments)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+char\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a92af5b2f5a850a24ecae06221f3ddc23}{\+\_\+delimiters}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Public Types inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Parser}}}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{Parse\+Status\+Code}} \+: byte \{ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aa60852f204ed8028c1c58808b746d115}{Ok}} = 1
+, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aece592fd242f4ba674cc9da539a625a7}{Syntax\+Error}} = 2
+, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a41ecc5ed813e532ce57a4312fc75d332}{Malformed\+Input}} = 4
+, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a8462b58246e70e5c83e5b939a9332cb5}{Internal\+Error}} = 255
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+コマンド引数のパーサー. 
+
+Definition at line \mbox{\hyperlink{_command_parser_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_command_parser_8cs_source}{Command\+Parser.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a1428386c5b8c296017c3937eb8f1e303}\index{YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}!Convert@{Convert}}
+\index{Convert@{Convert}!YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}}
+\doxysubsubsection{\texorpdfstring{Convert()}{Convert()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a1428386c5b8c296017c3937eb8f1e303} 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_argument}{Command\+Argument}}\mbox{[}$\,$\mbox{]} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser.\+Convert (\begin{DoxyParamCaption}\item[{string\mbox{[}$\,$\mbox{]}}]{arguments}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_parser_8cs_source_l00154}{154}} of file \mbox{\hyperlink{_command_parser_8cs_source}{Command\+Parser.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/d0d/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a1428386c5b8c296017c3937eb8f1e303_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a06e98f1736098284cc4237054873ecbf}\index{YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}!Parse@{Parse}}
+\index{Parse@{Parse}!YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}}
+\doxysubsubsection{\texorpdfstring{Parse()}{Parse()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a06e98f1736098284cc4237054873ecbf} 
+\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{ICommand\+Parser.\+Parse\+Status\+Code}} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser.\+Parse (\begin{DoxyParamCaption}\item[{string}]{str}{, }\item[{out(string Command, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_argument}{Command\+Argument}}\mbox{[}$\,$\mbox{]}Arguments)}]{tuple}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+文字列からコマンド引数型へパース. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & 解析文字列\\
+\hline
+{\em tuple} & \\
+\hline
+\end{DoxyParams}
+Command\+:コマンド名
+
+Arguments\+:引数
+
+\begin{DoxyReturn}{Returns}
+Parseの成功可否. 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a8ea256371c0da0aeb58a691f5d9e9f0c}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Parser}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_parser_8cs_source_l00037}{37}} of file \mbox{\hyperlink{_command_parser_8cs_source}{Command\+Parser.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/d0d/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a06e98f1736098284cc4237054873ecbf_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_aa7594376d526faa2f1475c707604702a}\index{YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}!TryExtractArguments@{TryExtractArguments}}
+\index{TryExtractArguments@{TryExtractArguments}!YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}}
+\doxysubsubsection{\texorpdfstring{TryExtractArguments()}{TryExtractArguments()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_aa7594376d526faa2f1475c707604702a} 
+\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{ICommand\+Parser.\+Parse\+Status\+Code}} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser.\+Try\+Extract\+Arguments (\begin{DoxyParamCaption}\item[{string}]{text}{, }\item[{out string\mbox{[}$\,$\mbox{]}}]{args}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+文字列の中から引数を取得. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em text} & 文字列\\
+\hline
+{\em args} & 引数\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+解析された引数
+\end{DoxyReturn}
+
+
+"{}"{}(ダブルクォート),\textquotesingle{}\textquotesingle{}(シングルクォート)で括られた空白文字は考慮する. 
+
+Definition at line \mbox{\hyperlink{_command_parser_8cs_source_l00077}{77}} of file \mbox{\hyperlink{_command_parser_8cs_source}{Command\+Parser.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/d0d/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_aa7594376d526faa2f1475c707604702a_icgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a92af5b2f5a850a24ecae06221f3ddc23}\index{YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}!\_delimiters@{\_delimiters}}
+\index{\_delimiters@{\_delimiters}!YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}}
+\doxysubsubsection{\texorpdfstring{\_delimiters}{\_delimiters}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a92af5b2f5a850a24ecae06221f3ddc23} 
+char \mbox{[}$\,$\mbox{]} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser.\+\_\+delimiters\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_parser_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_command_parser_8cs_source}{Command\+Parser.\+cs}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a2568123adfdc8de33032173f23015e59}\index{YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}!Delimiters@{Delimiters}}
+\index{Delimiters@{Delimiters}!YukimaruGames.Terminal.Domain.Service.CommandParser@{YukimaruGames.Terminal.Domain.Service.CommandParser}}
+\doxysubsubsection{\texorpdfstring{Delimiters}{Delimiters}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a2568123adfdc8de33032173f23015e59} 
+char \mbox{[}$\,$\mbox{]} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser.\+Delimiters\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_parser_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_command_parser_8cs_source}{Command\+Parser.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+Core/\+Service/\mbox{\hyperlink{_command_parser_8cs}{Command\+Parser.\+cs}}\end{DoxyCompactItemize}

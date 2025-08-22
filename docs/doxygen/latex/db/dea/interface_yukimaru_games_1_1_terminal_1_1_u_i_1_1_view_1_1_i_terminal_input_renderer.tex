@@ -1,0 +1,120 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Input\+Renderer Interface Reference}
+\hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer}{}\label{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer}\index{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}}
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Input\+Renderer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{dd/d78/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a69c740789fc0468bd8a0c782e8ff2932}{Render}} (\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_input_render_data}{Terminal\+Input\+Render\+Data}} data)
+\begin{DoxyCompactList}\small\item\em 描画. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+Action$<$ string $>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a8c33bd67450e78191c9fe2dd96933720}{On\+Input\+Text\+Changed}}
+\begin{DoxyCompactList}\small\item\em 入力文字の更新を通知. \end{DoxyCompactList}\item 
+Action$<$ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Focus\+Control}} $>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a02f32f57ade85d90625ce34d70b87f1f}{On\+Focus\+Control\+Changed}}
+\begin{DoxyCompactList}\small\item\em フォーカス状況の更新を通知. \end{DoxyCompactList}\item 
+Action$<$ bool $>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a176fa0bc0582758daf755dfa39d7101e}{On\+Move\+Cursor\+To\+End\+Trigger\+Changed}}
+\begin{DoxyCompactList}\small\item\em カーソル位置の終端トリガーの変更通知. \end{DoxyCompactList}\item 
+Action$<$ bool $>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a236c68e0143c2fd7c93281fc2e10e4c1}{On\+Ime\+Composing\+State\+Changed}}
+\begin{DoxyCompactList}\small\item\em IME変換状態の変更通知. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source}{ITerminal\+Input\+Renderer.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a69c740789fc0468bd8a0c782e8ff2932}\index{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}!Render@{Render}}
+\index{Render@{Render}!YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}}
+\doxysubsubsection{\texorpdfstring{Render()}{Render()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a69c740789fc0468bd8a0c782e8ff2932} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Input\+Renderer.\+Render (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_input_render_data}{Terminal\+Input\+Render\+Data}}}]{data}{}\end{DoxyParamCaption})}
+
+
+
+描画. 
+
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_input_renderer_a4cab373786f3ba19faab39d578c1854a}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Input\+Renderer}}.
+
+
+
+\label{doc-event-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_doc-event-members}
+\doxysubsection{Event Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a02f32f57ade85d90625ce34d70b87f1f}\index{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}!OnFocusControlChanged@{OnFocusControlChanged}}
+\index{OnFocusControlChanged@{OnFocusControlChanged}!YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}}
+\doxysubsubsection{\texorpdfstring{OnFocusControlChanged}{OnFocusControlChanged}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a02f32f57ade85d90625ce34d70b87f1f} 
+Action$<$ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Focus\+Control}}$>$ Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Input\+Renderer.\+On\+Focus\+Control\+Changed}
+
+
+
+フォーカス状況の更新を通知. 
+
+
+
+Definition at line \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source}{ITerminal\+Input\+Renderer.\+cs}}.
+
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a236c68e0143c2fd7c93281fc2e10e4c1}\index{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}!OnImeComposingStateChanged@{OnImeComposingStateChanged}}
+\index{OnImeComposingStateChanged@{OnImeComposingStateChanged}!YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}}
+\doxysubsubsection{\texorpdfstring{OnImeComposingStateChanged}{OnImeComposingStateChanged}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a236c68e0143c2fd7c93281fc2e10e4c1} 
+Action$<$ bool$>$ Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Input\+Renderer.\+On\+Ime\+Composing\+State\+Changed}
+
+
+
+IME変換状態の変更通知. 
+
+この値がtrueのときは「ユーザーがまだテキストの確定前(e.\+g.\+変換候補の選択など)」 
+
+Definition at line \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source}{ITerminal\+Input\+Renderer.\+cs}}.
+
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a8c33bd67450e78191c9fe2dd96933720}\index{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}!OnInputTextChanged@{OnInputTextChanged}}
+\index{OnInputTextChanged@{OnInputTextChanged}!YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}}
+\doxysubsubsection{\texorpdfstring{OnInputTextChanged}{OnInputTextChanged}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a8c33bd67450e78191c9fe2dd96933720} 
+Action$<$ string$>$ Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Input\+Renderer.\+On\+Input\+Text\+Changed}
+
+
+
+入力文字の更新を通知. 
+
+
+
+Definition at line \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source}{ITerminal\+Input\+Renderer.\+cs}}.
+
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a176fa0bc0582758daf755dfa39d7101e}\index{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}!OnMoveCursorToEndTriggerChanged@{OnMoveCursorToEndTriggerChanged}}
+\index{OnMoveCursorToEndTriggerChanged@{OnMoveCursorToEndTriggerChanged}!YukimaruGames.Terminal.UI.View.ITerminalInputRenderer@{YukimaruGames.Terminal.UI.View.ITerminalInputRenderer}}
+\doxysubsubsection{\texorpdfstring{OnMoveCursorToEndTriggerChanged}{OnMoveCursorToEndTriggerChanged}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer_a176fa0bc0582758daf755dfa39d7101e} 
+Action$<$ bool$>$ Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Input\+Renderer.\+On\+Move\+Cursor\+To\+End\+Trigger\+Changed}
+
+
+
+カーソル位置の終端トリガーの変更通知. 
+
+
+
+Definition at line \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_i_terminal_input_renderer_8cs_source}{ITerminal\+Input\+Renderer.\+cs}}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+UI/\+View/\+Interface/\mbox{\hyperlink{_i_terminal_input_renderer_8cs}{ITerminal\+Input\+Renderer.\+cs}}\end{DoxyCompactItemize}

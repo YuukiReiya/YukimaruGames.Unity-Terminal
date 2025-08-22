@@ -1,0 +1,51 @@
+\doxysection{Pixel\+Texture2\+DHandle.\+cs}
+\hypertarget{_pixel_texture2_d_handle_8cs_source}{}\label{_pixel_texture2_d_handle_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Infrastructure/Handle/PixelTexture2DHandle.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Infrastructure/Handle/PixelTexture2DHandle.cs}}
+\mbox{\hyperlink{_pixel_texture2_d_handle_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_extensions}{YukimaruGames.Terminal.Runtime.Shared.Extensions}};}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00005}00005\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_infrastructure}{YukimaruGames.Terminal.Infrastructure}}}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00006}00006\ \{}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00007}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle}{00007}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{sealed}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a8a0c366a0ad73dc6f1728cbbdaadeb22}{PixelTexture2DHandle}}\ :\ IDisposable}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00008}00008\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00009}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{00009}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ Texture2D\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}};}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00010}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_ab836aa66d15209363df0d061feafc577}{00010}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_ab836aa66d15209363df0d061feafc577}{Width}}\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00011}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a6e76414a68aec0b070e7b5ef83ee135d}{00011}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a6e76414a68aec0b070e7b5ef83ee135d}{Height}}\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00013}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a8a0c366a0ad73dc6f1728cbbdaadeb22}{00013}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a8a0c366a0ad73dc6f1728cbbdaadeb22}{PixelTexture2DHandle}}(Color\ color)}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00014}00014\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00015}00015\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a41fe673a98b20d20387e5967438234f1}{Create}}(color);}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00016}00016\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00017}00017\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00018}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a4d32aa59068da68de7a3097df6aa86a0}{00018}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a4d32aa59068da68de7a3097df6aa86a0}{Dispose}}()}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00019}00019\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_ae7a92206b04203f2ae82f52f2a9a5047}{Release}}();}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00021}00021\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00023}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a41fe673a98b20d20387e5967438234f1}{00023}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a41fe673a98b20d20387e5967438234f1}{Create}}(in\ Color\ color)}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00024}00024\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}}\ =\ \textcolor{keyword}{new}\ Texture2D(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_ab836aa66d15209363df0d061feafc577}{Width}},\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a6e76414a68aec0b070e7b5ef83ee135d}{Height}},\ TextureFormat.RGBA32,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \ \ \ \ SetColor(color);}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00029}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_ae7a92206b04203f2ae82f52f2a9a5047}{00029}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_ae7a92206b04203f2ae82f52f2a9a5047}{Release}}()}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}}.Destroy();}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}}\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00035}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a139ab2e33d3f67a1b2e80ddf620ecc55}{00035}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ Texture2D\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_a139ab2e33d3f67a1b2e80ddf620ecc55}{GetTexture2D}}()\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}};}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00036}00036\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ SetColor(in\ Color\ color)}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}}\ ==\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00041}00041\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}}.SetPixel(0,\ 0,\ color);}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_pixel_texture2_d_handle_adcb1553b84c0a1cd595ff59fdcc4027e}{\_content}}.Apply();}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00043}00043\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00044}00044\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_pixel_texture2_d_handle_8cs_source_l00045}00045\ \}}
+
+\end{DoxyCode}

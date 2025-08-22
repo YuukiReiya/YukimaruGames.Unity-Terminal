@@ -1,0 +1,9 @@
+<map id="YukimaruGames.Terminal.Runtime.Input.LegacyInput.LegacyInputKeyboardHandler" name="YukimaruGames.Terminal.Runtime.Input.LegacyInput.LegacyInputKeyboardHandler">
+<area shape="rect" id="Node000001" title=" " alt="" coords="651,31,907,89"/>
+<area shape="rect" id="Node000002" href="$d2/de1/interface_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_i_keyboard_input_handler.html" title=" " alt="" coords="271,5,498,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="514,35,651,47,651,52,513,40"/>
+<area shape="rect" id="Node000003" href="$d5/dbe/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_key.html" title=" " alt="" coords="271,72,498,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="513,82,627,73,651,71,651,76,628,79,514,88"/>
+<area shape="rect" id="Node000004" href="$dc/d30/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_input_1_1_i_terminal_input_key_map-1-g.html" title=" " alt="" coords="5,64,222,123"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="237,91,271,91,271,96,237,96"/>
+</map>

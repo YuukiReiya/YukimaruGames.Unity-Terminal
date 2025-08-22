@@ -1,0 +1,23 @@
+<map id="YukimaruGames.Terminal.UI.Presentation.TerminalCoordinator.TerminalCoordinator" name="YukimaruGames.Terminal.UI.Presentation.TerminalCoordinator.TerminalCoordinator">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,332,224,391"/>
+<area shape="rect" id="Node000002" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#a669317eba0185a2b91c9270e87375bfa" title=" " alt="" coords="284,295,502,353"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="224,344,268,338,268,343,224,349"/>
+<area shape="rect" id="Node000011" href="$d8/dc9/interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service.html#a1667aaef63a21e90ecdedeb2068b50a1" title="システムログの発行." alt="" coords="272,377,514,420"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="224,373,256,378,256,383,224,379"/>
+<area shape="rect" id="Node000003" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#ae9f5d37a16fca15f2e134701e6920a0e" title=" " alt="" coords="562,5,780,64"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="405,293,428,246,462,187,507,127,560,74,565,70,568,75,564,78,511,130,467,190,433,248,409,295"/>
+<area shape="rect" id="Node000004" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#a0373e3b21dc0284b5152c887292a7ebf" title=" " alt="" coords="562,88,780,147"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="415,293,477,225,517,189,561,156,568,152,571,156,563,161,520,193,481,229,419,296"/>
+<area shape="rect" id="Node000005" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#aec11306549fc386ae5d7ebd95bed57a9" title=" " alt="" coords="562,171,780,229"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="450,292,561,239,574,233,577,238,563,244,453,297"/>
+<area shape="rect" id="Node000006" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#af3906b1f4181d1504755da6349ffd7d5" title=" " alt="" coords="562,253,780,312"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="502,305,546,298,547,304,503,310"/>
+<area shape="rect" id="Node000007" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#a56f5e0cf2d4b4a3e3caaead70b759ad3" title=" " alt="" coords="562,336,780,395"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="503,338,547,344,546,350,502,343"/>
+<area shape="rect" id="Node000008" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#a0d4900d7002481ed209e07ae968826a6" title=" " alt="" coords="562,419,780,477"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="492,351,515,363,540,384,564,404,572,409,569,414,560,409,536,388,513,368,490,356"/>
+<area shape="rect" id="Node000009" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#a5db71d83227d58d41c25bbc85b34521d" title=" " alt="" coords="562,501,780,560"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="501,352,516,363,529,379,536,395,541,427,545,457,552,472,564,488,566,489,562,493,560,491,547,475,540,459,536,427,531,397,524,382,512,367,498,356"/>
+<area shape="rect" id="Node000010" href="$d8/d29/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_coordinator.html#abe6651b30864b9c86b359267010ac227" title=" " alt="" coords="562,584,780,643"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="503,352,516,364,534,390,542,417,543,443,541,468,539,494,540,519,547,544,564,570,565,571,561,575,560,574,542,547,535,520,534,494,536,468,538,443,537,418,529,393,512,367,499,356"/>
+</map>

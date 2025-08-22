@@ -1,0 +1,12 @@
+<map id="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Register" name="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Register">
+<area shape="rect" id="Node000001" title="Assemblyから利用できるメソッドを登録." alt="" coords="5,104,236,147"/>
+<area shape="rect" id="Node000002" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a4b1d761c366cee37fd6af7baeb128a02" title="コマンドの追加." alt="" coords="298,29,522,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,101,309,74,310,79,207,106"/>
+<area shape="rect" id="Node000004" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#abdfd9bd7ca9e60a38ca3c07abeb07b26" title="Typeから安全にメソッドを取り出す." alt="" coords="284,96,536,155"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="236,123,268,123,268,128,236,128"/>
+<area shape="rect" id="Node000005" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a1aa2d96d5a90c7b0a274ffa9b8a25377" title="Assemblyから有効な型を取得." alt="" coords="291,179,528,237"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="199,145,291,171,289,176,197,150"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="356,29,354,19,363,10,382,5,410,3,440,5,459,11,457,16,439,10,410,8,383,10,366,15,359,21,361,28"/>
+<area shape="rect" id="Node000003" href="$d3/d73/namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model.html#a455c33f782c36a8df125271d2a033fcc" title="コマンドのデリゲート." alt="" coords="584,29,807,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="522,48,569,48,569,53,522,53"/>
+</map>
