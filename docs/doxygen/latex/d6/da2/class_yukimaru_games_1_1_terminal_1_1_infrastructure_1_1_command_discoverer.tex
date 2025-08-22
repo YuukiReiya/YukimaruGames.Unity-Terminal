@@ -1,0 +1,307 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer}{}\label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+
+
+コマンドを検出するためのクラス.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=272pt]{dd/d57/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d0e/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8741d93237cf978ee5694bb8b0e195e3}{Command\+Discoverer}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} logger)
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a330db6d1363a0839c12c77b6fc1d0526}{Command\+Discoverer}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} logger, IEnumerable$<$ string $>$ assembly\+Names)
+\item 
+IEnumerable$<$ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_specification}{Command\+Specification}} $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8004877927cc62fc9538b6242979ff0d}{Discover}} ()
+\begin{DoxyCompactList}\small\item\em 指定された\+Assemblyからコマンドを検出.
+
+\begin{DoxyReturn}{Returns}
+検出したコマンドハンドラーのコレクション
+\end{DoxyReturn}
+ \end{DoxyCompactList}\item 
+IEnumerable$<$ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_specification}{Command\+Specification}} $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a5a5cf6ede16af5271bb068fa2c0eb2f1}{Discover}} (string assembly\+Name)
+\begin{DoxyCompactList}\small\item\em アセンブリ名からコマンドのハンドラーを検出. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+IEnumerable$<$ Type $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a58db3cd254eb25449f6b81ee6e4cfe20}{Get\+Types\+Safely}} (Assembly assembly)
+\begin{DoxyCompactList}\small\item\em Assemblyから有効な型を取得. \end{DoxyCompactList}\item 
+IEnumerable$<$ Method\+Info $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a296af3dc356880230bbb087b886a9a5b}{Get\+Methods\+Safely}} (Type type, Binding\+Flags binding\+Flags)
+\begin{DoxyCompactList}\small\item\em Typeから安全にメソッドを取り出す. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a92f0d7ccf85f0279808a74c8e8baceea}{Try\+Get\+Attribute}} (Method\+Info method\+Info, out \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{Register\+Attribute}} attribute)
+\begin{DoxyCompactList}\small\item\em アトリビュート取得の試行. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a91a83ab1ba34e088157bedc835872c5b}{Is\+Discoverable}} (Method\+Info method\+Info, \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{Register\+Attribute}} attribute)
+\begin{DoxyCompactList}\small\item\em 発見可能か. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a0fe6ceed212be356983008722aa69968}{\+\_\+logger}}
+\item 
+readonly IEnumerable$<$ string $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_ae45b2c8f2efb3590bf031d937f55dae9}{\+\_\+assembly\+Names}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const Binding\+Flags \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a359920edd1891f35b8e2522fd1c84d3c}{k\+Binding\+Flags}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+コマンドを検出するためのクラス. 
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8741d93237cf978ee5694bb8b0e195e3}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!CommandDiscoverer@{CommandDiscoverer}}
+\index{CommandDiscoverer@{CommandDiscoverer}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{CommandDiscoverer()}{CommandDiscoverer()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8741d93237cf978ee5694bb8b0e195e3} 
+Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Command\+Discoverer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}}}]{logger}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a330db6d1363a0839c12c77b6fc1d0526}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!CommandDiscoverer@{CommandDiscoverer}}
+\index{CommandDiscoverer@{CommandDiscoverer}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{CommandDiscoverer()}{CommandDiscoverer()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a330db6d1363a0839c12c77b6fc1d0526} 
+Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Command\+Discoverer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}}}]{logger}{, }\item[{IEnumerable$<$ string $>$}]{assembly\+Names}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00030}{30}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8004877927cc62fc9538b6242979ff0d}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!Discover@{Discover}}
+\index{Discover@{Discover}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{Discover()}{Discover()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8004877927cc62fc9538b6242979ff0d} 
+IEnumerable$<$ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_specification}{Command\+Specification}} $>$ Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Discover (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+指定された\+Assemblyからコマンドを検出.
+
+\begin{DoxyReturn}{Returns}
+検出したコマンドハンドラーのコレクション
+\end{DoxyReturn}
+ 
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_discoverer_a5566316f31dcaf331581180382e60603}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Discoverer}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00037}{37}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=272pt]{d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8004877927cc62fc9538b6242979ff0d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=272pt]{d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a8004877927cc62fc9538b6242979ff0d_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a5a5cf6ede16af5271bb068fa2c0eb2f1}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!Discover@{Discover}}
+\index{Discover@{Discover}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{Discover()}{Discover()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a5a5cf6ede16af5271bb068fa2c0eb2f1} 
+IEnumerable$<$ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_specification}{Command\+Specification}} $>$ Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Discover (\begin{DoxyParamCaption}\item[{string}]{assembly\+Name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+アセンブリ名からコマンドのハンドラーを検出. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em assembly\+Name} & スキャン対象の\+Assembly名\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+取得した設計データを返す
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00047}{47}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a5a5cf6ede16af5271bb068fa2c0eb2f1_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a296af3dc356880230bbb087b886a9a5b}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!GetMethodsSafely@{GetMethodsSafely}}
+\index{GetMethodsSafely@{GetMethodsSafely}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{GetMethodsSafely()}{GetMethodsSafely()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a296af3dc356880230bbb087b886a9a5b} 
+IEnumerable$<$ Method\+Info $>$ Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Get\+Methods\+Safely (\begin{DoxyParamCaption}\item[{Type}]{type}{, }\item[{Binding\+Flags}]{binding\+Flags}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Typeから安全にメソッドを取り出す. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00137}{137}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a296af3dc356880230bbb087b886a9a5b_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a58db3cd254eb25449f6b81ee6e4cfe20}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!GetTypesSafely@{GetTypesSafely}}
+\index{GetTypesSafely@{GetTypesSafely}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{GetTypesSafely()}{GetTypesSafely()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a58db3cd254eb25449f6b81ee6e4cfe20} 
+IEnumerable$<$ Type $>$ Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Get\+Types\+Safely (\begin{DoxyParamCaption}\item[{Assembly}]{assembly}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Assemblyから有効な型を取得. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00112}{112}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a58db3cd254eb25449f6b81ee6e4cfe20_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a91a83ab1ba34e088157bedc835872c5b}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!IsDiscoverable@{IsDiscoverable}}
+\index{IsDiscoverable@{IsDiscoverable}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{IsDiscoverable()}{IsDiscoverable()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a91a83ab1ba34e088157bedc835872c5b} 
+bool Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Is\+Discoverable (\begin{DoxyParamCaption}\item[{Method\+Info}]{method\+Info}{, }\item[{\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{Register\+Attribute}}}]{attribute}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+発見可能か. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00175}{175}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a91a83ab1ba34e088157bedc835872c5b_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a92f0d7ccf85f0279808a74c8e8baceea}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!TryGetAttribute@{TryGetAttribute}}
+\index{TryGetAttribute@{TryGetAttribute}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{TryGetAttribute()}{TryGetAttribute()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a92f0d7ccf85f0279808a74c8e8baceea} 
+bool Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+Try\+Get\+Attribute (\begin{DoxyParamCaption}\item[{Method\+Info}]{method\+Info}{, }\item[{out \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{Register\+Attribute}}}]{attribute}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+アトリビュート取得の試行. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00155}{155}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a92f0d7ccf85f0279808a74c8e8baceea_icgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_ae45b2c8f2efb3590bf031d937f55dae9}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!\_assemblyNames@{\_assemblyNames}}
+\index{\_assemblyNames@{\_assemblyNames}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{\_assemblyNames}{\_assemblyNames}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_ae45b2c8f2efb3590bf031d937f55dae9} 
+readonly IEnumerable$<$string$>$ Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+\_\+assembly\+Names\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a0fe6ceed212be356983008722aa69968}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!\_logger@{\_logger}}
+\index{\_logger@{\_logger}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{\_logger}{\_logger}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a0fe6ceed212be356983008722aa69968} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+\_\+logger\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a359920edd1891f35b8e2522fd1c84d3c}\index{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}!kBindingFlags@{kBindingFlags}}
+\index{kBindingFlags@{kBindingFlags}!YukimaruGames.Terminal.Infrastructure.CommandDiscoverer@{YukimaruGames.Terminal.Infrastructure.CommandDiscoverer}}
+\doxysubsubsection{\texorpdfstring{kBindingFlags}{kBindingFlags}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer_a359920edd1891f35b8e2522fd1c84d3c} 
+const Binding\+Flags Yukimaru\+Games.\+Terminal.\+Infrastructure.\+Command\+Discoverer.\+k\+Binding\+Flags\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ BindingFlags.Public\ |\ BindingFlags.Static\ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ BindingFlags.InvokeMethod\ |\ BindingFlags.NonPublic}
+
+\end{DoxyCode}
+
+
+Definition at line \mbox{\hyperlink{_command_discoverer_8cs_source_l00021}{21}} of file \mbox{\hyperlink{_command_discoverer_8cs_source}{Command\+Discoverer.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Infrastructure/\+Discovery/\mbox{\hyperlink{_command_discoverer_8cs}{Command\+Discoverer.\+cs}}\end{DoxyCompactItemize}

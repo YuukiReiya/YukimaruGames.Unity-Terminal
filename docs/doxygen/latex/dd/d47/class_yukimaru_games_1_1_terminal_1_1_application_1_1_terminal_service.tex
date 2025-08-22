@@ -1,0 +1,511 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service}{}\label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+
+
+ドメインサービスを全般を統括し、外部へ\+APIを提供するアプリケーションサービス.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{d6/d40/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/d29/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_acbe48e4aa766beb2fc043775351d63fb}{Terminal\+Service}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} logger, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry}{ICommand\+Registry}} registry, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_invoker}{ICommand\+Invoker}} invoker, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{ICommand\+Parser}} parser, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history}{ICommand\+History}} history, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete}{ICommand\+Autocomplete}} autocomplete)
+\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a0703432c71af1a24952fdec56608e098}{Register}} (string command, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} handler, bool supports\+Autocomplete=true)
+\begin{DoxyCompactList}\small\item\em コマンドの登録. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service}{Yukimaru\+Games.\+Terminal.\+Application.\+ITerminal\+Service}}}
+\begin{DoxyCompactItemize}
+\item 
+string\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_a59e7d3d206b20f89d49cb0338729bc57}{Autocomplete}} (string partial\+Word)
+\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_a287c92128d4b90f43cc876d65ac825e8}{Message}} (string message)
+\begin{DoxyCompactList}\small\item\em 通常ログの発行. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_acd6233b96b27895d41cde91c3055d5fc}{Warning}} (string message)
+\begin{DoxyCompactList}\small\item\em 警告ログの発行. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_ab294cc92af0024de9184b8266f08be77}{Error}} (string message)
+\begin{DoxyCompactList}\small\item\em エラーログの発行. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_ae0d282f1b959ff92b5bc6b2d180e85f2}{Assert}} (string message)
+\begin{DoxyCompactList}\small\item\em アサートログの発行. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_a497adc62e2d963508f900c1aaa0f282d}{Exception}} (string message)
+\begin{DoxyCompactList}\small\item\em 例外ログの発行. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_a996fbe79b16f0876d2241e1d81315ccd}{Input\+Message}} (string message)
+\begin{DoxyCompactList}\small\item\em 入力ログの発行. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_a1667aaef63a21e90ecdedeb2068b50a1}{System\+Message}} (string message)
+\begin{DoxyCompactList}\small\item\em システムログの発行. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_acfa5f5df9b98ead33bd69fdede18dfbd}{Next\+History}} ()
+\item 
+string \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_aa84b931749e2846cce58e72087e4312a}{Prev\+History}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+IRead\+Only\+Collection$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}} $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_acf7f5e644004a9a09241b57fe08b3017}{Logs}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+int ITerminal\+Service. \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a2e01ab16b383542427f3dbd416a374df}{Log\+Buffer\+Size}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em ログのバッファーサイズ.
+
+保存しておくログの最大数.  \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+Action \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a437d5365f590cd01832ae18dee27bd97}{On\+Log\+Updated}}\hspace{0.3cm}{\ttfamily  \mbox{[}add, remove\mbox{]}}
+\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a11b579b984d25af2e0db36139c0fe016}{On\+Log\+Added}}\hspace{0.3cm}{\ttfamily  \mbox{[}add, remove\mbox{]}}
+\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a1eb2657b5582d7a8732cf708fc93d27d}{On\+Log\+Removed}}\hspace{0.3cm}{\ttfamily  \mbox{[}add, remove\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Events inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service}{Yukimaru\+Games.\+Terminal.\+Application.\+ITerminal\+Service}}}
+\begin{DoxyCompactItemize}
+\item 
+System.\+Action \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_aa6c256000c402d1341017cddf6e04361}{On\+Log\+Updated}}
+\begin{DoxyCompactList}\small\item\em ログの更新通知. \end{DoxyCompactList}\item 
+System.\+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_ad2f7bbaf6d23294f1448a70324cb204e}{On\+Log\+Added}}
+\begin{DoxyCompactList}\small\item\em ログの追加通知. \end{DoxyCompactList}\item 
+System.\+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_aad60f934633eb8541e4d91d24a092177}{On\+Log\+Removed}}
+\begin{DoxyCompactList}\small\item\em ログの削除通知. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void ITerminal\+Service. \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a78380a34132631bc2169986b6d02fa82}{Execute}} (string str)
+\begin{DoxyCompactList}\small\item\em コマンドの実行.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & 入力文字列\\
+\hline
+\end{DoxyParams}
+ \end{DoxyCompactList}\item 
+void ITerminal\+Service. \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_abc6093a6f6f009708824b36cf30f40e4}{Reset\+Logs}} ()
+\begin{DoxyCompactList}\small\item\em ログクリア. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a063cbf0fa7998262fa7a80c4f08b961d}{On\+Log\+Item\+Updated}} ()
+\begin{DoxyCompactList}\small\item\em ロガーの要素が追加・削除された後の呼び出し. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae5cd05ad32bc7e05b56b97ad2b0e446f}{On\+Log\+Item\+Removed}} (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]} log\+Entries)
+\begin{DoxyCompactList}\small\item\em ロガーの要素が削除された後の呼び出し. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ad1022fa4afe7e51f9561f36dc92e8b5d}{\+\_\+logger}}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry}{ICommand\+Registry}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ac697fd76996a30cd32b3f92b2286ade8}{\+\_\+registry}}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_invoker}{ICommand\+Invoker}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a30ab08e5ffb5e563cbc6109ac4ba66ed}{\+\_\+invoker}}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{ICommand\+Parser}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a8490ba971e118b1a9f70e247a650083f}{\+\_\+parser}}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history}{ICommand\+History}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a60b11fdb7b656e10f56c878de4c80efb}{\+\_\+history}}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete}{ICommand\+Autocomplete}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_afd7e801c9ccc05fe1269afa4b1c7e524}{\+\_\+autocomplete}}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_discoverer}{ICommand\+Discoverer}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae24e405fdea06c9d29f27eb2c4677806}{\+\_\+discoverer}}
+\item 
+Action \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_aff5419311f89a8d9b111ec49db80cfab}{\+\_\+on\+Log\+Updated}}
+\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a9eaf819562fd8f62fd3d339eeee08eb8}{\+\_\+on\+Log\+Added}}
+\item 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ad7e61315d7950b9ceb93504d39150a8c}{\+\_\+on\+Log\+Removed}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+ドメインサービスを全般を統括し、外部へ\+APIを提供するアプリケーションサービス. 
+
+Facade\texorpdfstring{$<$}{<}窓口\texorpdfstring{$>$}{>}
+
+上位レイヤーはドメイン層へ直接アクセスするのではなく、本クラスを介してその機能を利用する。 
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_acbe48e4aa766beb2fc043775351d63fb}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!TerminalService@{TerminalService}}
+\index{TerminalService@{TerminalService}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{TerminalService()}{TerminalService()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_acbe48e4aa766beb2fc043775351d63fb} 
+Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+Terminal\+Service (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}}}]{logger}{, }\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry}{ICommand\+Registry}}}]{registry}{, }\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_invoker}{ICommand\+Invoker}}}]{invoker}{, }\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{ICommand\+Parser}}}]{parser}{, }\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history}{ICommand\+History}}}]{history}{, }\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete}{ICommand\+Autocomplete}}}]{autocomplete}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00066}{66}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_acbe48e4aa766beb2fc043775351d63fb_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a78380a34132631bc2169986b6d02fa82}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!Execute@{Execute}}
+\index{Execute@{Execute}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{Execute()}{Execute()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a78380a34132631bc2169986b6d02fa82} 
+void ITerminal\+Service. Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+Execute (\begin{DoxyParamCaption}\item[{string}]{str}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+コマンドの実行.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & 入力文字列\\
+\hline
+\end{DoxyParams}
+ 
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_ac67bbb7ca75752951ee1d1e6802619e7}{Yukimaru\+Games.\+Terminal.\+Application.\+ITerminal\+Service}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00110}{110}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a78380a34132631bc2169986b6d02fa82_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae5cd05ad32bc7e05b56b97ad2b0e446f}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!OnLogItemRemoved@{OnLogItemRemoved}}
+\index{OnLogItemRemoved@{OnLogItemRemoved}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{OnLogItemRemoved()}{OnLogItemRemoved()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae5cd05ad32bc7e05b56b97ad2b0e446f} 
+void Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+On\+Log\+Item\+Removed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{Command\+Log}}\mbox{[}$\,$\mbox{]}}]{log\+Entries}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+ロガーの要素が削除された後の呼び出し. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em log\+Entries} & 削除された要素\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00224}{224}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae5cd05ad32bc7e05b56b97ad2b0e446f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae5cd05ad32bc7e05b56b97ad2b0e446f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a063cbf0fa7998262fa7a80c4f08b961d}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!OnLogItemUpdated@{OnLogItemUpdated}}
+\index{OnLogItemUpdated@{OnLogItemUpdated}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{OnLogItemUpdated()}{OnLogItemUpdated()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a063cbf0fa7998262fa7a80c4f08b961d} 
+void Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+On\+Log\+Item\+Updated (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+ロガーの要素が追加・削除された後の呼び出し. 
+
+Queueを利用した実装の都合上、削除が行われる際は削除＋追加が発生するが、その際も呼び出しは一度だけ. 
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00208}{208}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a063cbf0fa7998262fa7a80c4f08b961d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a063cbf0fa7998262fa7a80c4f08b961d_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a0703432c71af1a24952fdec56608e098}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!Register@{Register}}
+\index{Register@{Register}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{Register()}{Register()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a0703432c71af1a24952fdec56608e098} 
+bool Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+Register (\begin{DoxyParamCaption}\item[{string}]{command}{, }\item[{\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}}}]{handler}{, }\item[{bool}]{supports\+Autocomplete}{ = {\ttfamily true}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コマンドの登録. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & 登録コマンド名\\
+\hline
+{\em handler} & 登録ハンドラー\\
+\hline
+{\em supports\+Autocomplete} & コマンドを自動補完の補完先として登録するか\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00097}{97}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_abc6093a6f6f009708824b36cf30f40e4}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!ResetLogs@{ResetLogs}}
+\index{ResetLogs@{ResetLogs}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{ResetLogs()}{ResetLogs()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_abc6093a6f6f009708824b36cf30f40e4} 
+void ITerminal\+Service. Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+Reset\+Logs (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+ログクリア. 
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_af5ea6da75d883344720970eb2cb80792}{Yukimaru\+Games.\+Terminal.\+Application.\+ITerminal\+Service}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00158}{158}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_abc6093a6f6f009708824b36cf30f40e4_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_afd7e801c9ccc05fe1269afa4b1c7e524}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_autocomplete@{\_autocomplete}}
+\index{\_autocomplete@{\_autocomplete}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_autocomplete}{\_autocomplete}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_afd7e801c9ccc05fe1269afa4b1c7e524} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_autocomplete}{ICommand\+Autocomplete}} Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+autocomplete\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00027}{27}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae24e405fdea06c9d29f27eb2c4677806}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_discoverer@{\_discoverer}}
+\index{\_discoverer@{\_discoverer}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_discoverer}{\_discoverer}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ae24e405fdea06c9d29f27eb2c4677806} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_discoverer}{ICommand\+Discoverer}} Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+discoverer\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00028}{28}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a60b11fdb7b656e10f56c878de4c80efb}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_history@{\_history}}
+\index{\_history@{\_history}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_history}{\_history}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a60b11fdb7b656e10f56c878de4c80efb} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history}{ICommand\+History}} Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+history\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a30ab08e5ffb5e563cbc6109ac4ba66ed}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_invoker@{\_invoker}}
+\index{\_invoker@{\_invoker}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_invoker}{\_invoker}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a30ab08e5ffb5e563cbc6109ac4ba66ed} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_invoker}{ICommand\+Invoker}} Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+invoker\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ad1022fa4afe7e51f9561f36dc92e8b5d}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_logger@{\_logger}}
+\index{\_logger@{\_logger}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_logger}{\_logger}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ad1022fa4afe7e51f9561f36dc92e8b5d} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+logger\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00022}{22}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a9eaf819562fd8f62fd3d339eeee08eb8}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_onLogAdded@{\_onLogAdded}}
+\index{\_onLogAdded@{\_onLogAdded}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_onLogAdded}{\_onLogAdded}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a9eaf819562fd8f62fd3d339eeee08eb8} 
+Action$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+on\+Log\+Added\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00031}{31}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ad7e61315d7950b9ceb93504d39150a8c}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_onLogRemoved@{\_onLogRemoved}}
+\index{\_onLogRemoved@{\_onLogRemoved}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_onLogRemoved}{\_onLogRemoved}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ad7e61315d7950b9ceb93504d39150a8c} 
+Action$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+on\+Log\+Removed\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00032}{32}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_aff5419311f89a8d9b111ec49db80cfab}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_onLogUpdated@{\_onLogUpdated}}
+\index{\_onLogUpdated@{\_onLogUpdated}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_onLogUpdated}{\_onLogUpdated}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_aff5419311f89a8d9b111ec49db80cfab} 
+Action Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+on\+Log\+Updated\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00030}{30}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a8490ba971e118b1a9f70e247a650083f}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_parser@{\_parser}}
+\index{\_parser@{\_parser}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_parser}{\_parser}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a8490ba971e118b1a9f70e247a650083f} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{ICommand\+Parser}} Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+parser\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ac697fd76996a30cd32b3f92b2286ade8}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!\_registry@{\_registry}}
+\index{\_registry@{\_registry}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{\_registry}{\_registry}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_ac697fd76996a30cd32b3f92b2286ade8} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry}{ICommand\+Registry}} Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+\_\+registry\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a2e01ab16b383542427f3dbd416a374df}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!LogBufferSize@{LogBufferSize}}
+\index{LogBufferSize@{LogBufferSize}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{LogBufferSize}{LogBufferSize}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a2e01ab16b383542427f3dbd416a374df} 
+int ITerminal\+Service. Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+Log\+Buffer\+Size\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [private]}}
+
+
+
+ログのバッファーサイズ.
+
+保存しておくログの最大数.  
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_a8105f2f148892ab47d74919466230ba5}{Yukimaru\+Games.\+Terminal.\+Application.\+ITerminal\+Service}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00155}{155}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_acf7f5e644004a9a09241b57fe08b3017}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!Logs@{Logs}}
+\index{Logs@{Logs}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{Logs}{Logs}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_acf7f5e644004a9a09241b57fe08b3017} 
+IRead\+Only\+Collection$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}$>$ Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+Logs\hspace{0.3cm}{\ttfamily [get]}}
+
+描画ログ情報.
+
+Dto 
+
+ステートレス
+
+プロパティの呼び出しの度に\+Mapperを介した\+Dtoのマッピングが行われるため呼び出し側でキャッシュする機構が望まれる
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service_a980e688342a316bca47e58a77706d126}{Yukimaru\+Games.\+Terminal.\+Application.\+ITerminal\+Service}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00039}{39}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+
+
+\label{doc-event-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_doc-event-members}
+\doxysubsection{Event Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a11b579b984d25af2e0db36139c0fe016}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!OnLogAdded@{OnLogAdded}}
+\index{OnLogAdded@{OnLogAdded}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{OnLogAdded}{OnLogAdded}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a11b579b984d25af2e0db36139c0fe016} 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}} \mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+On\+Log\+Added\hspace{0.3cm}{\ttfamily [add]}, {\ttfamily [remove]}}
+
+
+
+
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00053}{53}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a1eb2657b5582d7a8732cf708fc93d27d}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!OnLogRemoved@{OnLogRemoved}}
+\index{OnLogRemoved@{OnLogRemoved}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{OnLogRemoved}{OnLogRemoved}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a1eb2657b5582d7a8732cf708fc93d27d} 
+Action$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}} \mbox{[}$\,$\mbox{]}$>$ Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+On\+Log\+Removed\hspace{0.3cm}{\ttfamily [add]}, {\ttfamily [remove]}}
+
+
+
+
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00060}{60}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a437d5365f590cd01832ae18dee27bd97}\index{YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}!OnLogUpdated@{OnLogUpdated}}
+\index{OnLogUpdated@{OnLogUpdated}!YukimaruGames.Terminal.Application.TerminalService@{YukimaruGames.Terminal.Application.TerminalService}}
+\doxysubsubsection{\texorpdfstring{OnLogUpdated}{OnLogUpdated}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service_a437d5365f590cd01832ae18dee27bd97} 
+Action Yukimaru\+Games.\+Terminal.\+Application.\+Terminal\+Service.\+On\+Log\+Updated\hspace{0.3cm}{\ttfamily [add]}, {\ttfamily [remove]}}
+
+Queueを利用した
+
+削除・追加が同時に行われても変わらず一度だけの呼び出し.
+
+Definition at line \mbox{\hyperlink{_terminal_service_8cs_source_l00046}{46}} of file \mbox{\hyperlink{_terminal_service_8cs_source}{Terminal\+Service.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Application/\+Service/\mbox{\hyperlink{_terminal_service_8cs}{Terminal\+Service.\+cs}}\end{DoxyCompactItemize}

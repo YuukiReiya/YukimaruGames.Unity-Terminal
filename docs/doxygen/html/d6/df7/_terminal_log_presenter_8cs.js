@@ -1,0 +1,4 @@
+var _terminal_log_presenter_8cs =
+[
+    [ "YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter", "d0/d0a/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter.html", "d0/d0a/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter" ]
+];

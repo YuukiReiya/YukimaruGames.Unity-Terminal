@@ -1,0 +1,4 @@
+var interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_log_render_data_provider =
+[
+    [ "GetRenderData", "d3/db2/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_log_render_data_provider.html#a62bf4dfc92fb74c404cf208089ed1cd4", null ]
+];

@@ -1,0 +1,91 @@
+\doxysection{Command\+Logger.\+cs}
+\hypertarget{_command_logger_8cs_source}{}\label{_command_logger_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/Core/Service/CommandLogger.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/Core/Service/CommandLogger.cs}}
+\mbox{\hyperlink{_command_logger_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface}{YukimaruGames.Terminal.Domain.Interface}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model}{YukimaruGames.Terminal.Domain.Model}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00005}00005\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel}{YukimaruGames.Terminal.SharedKernel}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00007}00007\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_service}{YukimaruGames.Terminal.Domain.Service}}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00008}00008\ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00012}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger}{00012}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a768cb4d056d323d6de7371fb6d567317}{CommandLogger}}\ :\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommandLogger}},\ IDisposable}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00013}00013\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00021}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a144f12e6ef17057b7de9f97a4df526ca}{00021}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a144f12e6ef17057b7de9f97a4df526ca}{MaxLogs}}\ \{\ \textcolor{keyword}{get};\ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00026}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{00026}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ Queue<CommandLog>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00031}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{00031}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ Action\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{\_onItemUpdated}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00036}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}{00036}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ Action<CommandLog[]>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}{\_onItemAdded}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00041}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{00041}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ Action<CommandLog[]>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{\_onItemRemoved}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00047}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a768cb4d056d323d6de7371fb6d567317}{00047}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a768cb4d056d323d6de7371fb6d567317}{CommandLogger}}(\textcolor{keywordtype}{int}\ maxLogs)}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a144f12e6ef17057b7de9f97a4df526ca}{MaxLogs}}\ =\ maxLogs;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}}\ =\ \textcolor{keyword}{new}\ Queue<CommandLog>(maxLogs);}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00051}00051\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00056}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a7bbffcd5392cccd2871eefa6f871a246}{00056}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ IReadOnlyCollection<CommandLog>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a7bbffcd5392cccd2871eefa6f871a246}{Logs}}\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00057}00057\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00063}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6aed120cc6f31a44376cc9c3edb99523}{00063}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ Action\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6aed120cc6f31a44376cc9c3edb99523}{OnItemUpdated}}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00065}00065\ \ \ \ \ \ \ \ \ \ \ \ \ add\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{\_onItemUpdated}}\ +=\ value;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00066}00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{remove}\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{\_onItemUpdated}}\ -\/=\ value;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00067}00067\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00068}00068\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00070}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a48eaf0a73f8ccd13d265b6c1167245eb}{00070}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ Action<CommandLog[]>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a48eaf0a73f8ccd13d265b6c1167245eb}{OnItemAdded}}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00071}00071\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ add\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}{\_onItemAdded}}\ +=\ value;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{remove}\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}{\_onItemAdded}}\ -\/=\ value;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00074}00074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00075}00075\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00077}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ad8ae0caaa7eb30e13985c25c0832b6f5}{00077}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{event}\ Action<CommandLog[]>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ad8ae0caaa7eb30e13985c25c0832b6f5}{OnItemRemoved}}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00078}00078\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00079}00079\ \ \ \ \ \ \ \ \ \ \ \ \ add\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{\_onItemRemoved}}\ +=\ value;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{remove}\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{\_onItemRemoved}}\ -\/=\ value;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00081}00081\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00086}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a21fffd4da5c1daf46715fe74d4a747c7}{00086}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a21fffd4da5c1daf46715fe74d4a747c7}{Add}}(\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}\ type,\ \textcolor{keywordtype}{string}\ message)}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00087}00087\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00088}00088\ \ \ \ \ \ \ \ \ \ \ \ \ var\ \textcolor{keywordtype}{id}\ =\ \_buffer.Count\ +\ 1;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00089}00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a144f12e6ef17057b7de9f97a4df526ca}{MaxLogs}}\ <\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}}.Count\ +\ 1)}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00090}00090\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00091}00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ item\ =\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}}.Dequeue();}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00092}00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{\_onItemRemoved}}?.Invoke(\textcolor{keyword}{new}[]\ \{\ item\ \});}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{id}\ =\ item.Id;}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00095}00095\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00096}00096\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00097}00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ item\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_log}{CommandLog}}(\textcolor{keywordtype}{id},\ type,\ DateTimeOffset.Now,\ message);}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00098}00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}}.Enqueue(item);}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00099}00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}{\_onItemAdded}}?.Invoke(\textcolor{keyword}{new}[]\ \{\ item\ \});}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00100}00100\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{\_onItemUpdated}}?.Invoke();}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00103}00103\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00104}00104\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00108}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ae2226e0a0b7ccbd327a32b8adc8e36b6}{00108}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ae2226e0a0b7ccbd327a32b8adc8e36b6}{Clear}}()}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00109}00109\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}}.Count\ ==\ 0)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00111}00111\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ var\ array\ =\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}}.ToArray();}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00113}00113\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_acaa38b8e301d8b720376b47ba33e5c42}{\_buffer}}.Clear();}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00114}00114\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{\_onItemRemoved}}?.Invoke(array);}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{\_onItemUpdated}}?.Invoke();}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00116}00116\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00117}00117\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00119}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ab702505cfc7511cd52df39f625f23e27}{00119}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_ab702505cfc7511cd52df39f625f23e27}{Send}}(\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}\ msgType,\ \textcolor{keywordtype}{string}\ message)\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a21fffd4da5c1daf46715fe74d4a747c7}{Add}}(msgType,\ message);}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00120}00120\ }
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00122}00122\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ Dispose()}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00123}00123\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a27b90943227ee79fbe7b45d92b29e9f8}{\_onItemAdded}}\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00125}00125\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a6a39f2d4dcff702de8412c9665de5418}{\_onItemRemoved}}\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_logger_a638a76f8a2ff30443ed3ea1d28a15ef3}{\_onItemUpdated}}\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00127}00127\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00128}00128\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_logger_8cs_source_l00129}00129\ \}}
+
+\end{DoxyCode}

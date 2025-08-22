@@ -1,0 +1,9 @@
+<map id="YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext" name="YukimaruGames.Terminal.Infrastructure.TerminalGUIStyleContext">
+<area shape="rect" id="Node000001" title=" " alt="" coords="319,64,574,107"/>
+<area shape="rect" id="Node000002" href="$db/dd0/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider.html" title=" " alt="" coords="5,5,210,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,44,320,61,319,66,224,50"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="62,72,153,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="168,83,318,83,318,88,168,88"/>
+<area shape="rect" id="Node000004" href="$d6/d32/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_font_provider.html" title=" " alt="" coords="11,123,204,165"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="218,125,294,112,335,105,336,110,295,117,219,130"/>
+</map>

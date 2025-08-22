@@ -1,0 +1,190 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter}{}\label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=338pt]{dd/da3/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{de/d68/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a989c93b10c829c1c7bd130d4eff0b3a6}{Terminal\+Log\+Presenter}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service}{ITerminal\+Service}} service)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_render_data}{Terminal\+Log\+Render\+Data}} ITerminal\+Log\+Render\+Data\+Provider. \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7514d1df38ef9af13427fdc1994662d0}{Get\+Render\+Data}} ()
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a0182f601c77788e5c6b7fe34722071f8}{Handle\+Log\+Updated}} ()
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7d76bf84783531e1124b0b4b76119244}{Handle\+Log\+Removed}} (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]} render\+Data\+Array)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service}{ITerminal\+Service}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a0f28a085661300400809e91d9ecdd5fb}{\+\_\+service}}
+\item 
+readonly List$<$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}} $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a9d26de830bc8768e9c9f8bd52ddba9a1}{\+\_\+logs}}
+\begin{DoxyCompactList}\small\item\em ログの描画データを構築する上で必要な\+Dto. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_render_data}{Terminal\+Log\+Render\+Data}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_ade584c13755aceb34c4e4f6cecefb87f}{\+\_\+cached\+Log\+Render\+Data}}
+\begin{DoxyCompactList}\small\item\em ログの描画データのキャッシュ. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a989c93b10c829c1c7bd130d4eff0b3a6}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}!TerminalLogPresenter@{TerminalLogPresenter}}
+\index{TerminalLogPresenter@{TerminalLogPresenter}!YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+\doxysubsubsection{\texorpdfstring{TerminalLogPresenter()}{TerminalLogPresenter()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a989c93b10c829c1c7bd130d4eff0b3a6} 
+Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter.\+Terminal\+Log\+Presenter (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service}{ITerminal\+Service}}}]{service}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d0/d0a/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a989c93b10c829c1c7bd130d4eff0b3a6_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7514d1df38ef9af13427fdc1994662d0}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}!GetRenderData@{GetRenderData}}
+\index{GetRenderData@{GetRenderData}!YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+\doxysubsubsection{\texorpdfstring{GetRenderData()}{GetRenderData()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7514d1df38ef9af13427fdc1994662d0} 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_render_data}{Terminal\+Log\+Render\+Data}} ITerminal\+Log\+Render\+Data\+Provider. Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter.\+Get\+Render\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+ログ表示のための描画データの取得. 
+
+On\+GUIを介して毎フレーム呼び出される想定のため、ここでは new せずにキャッシュを返す。
+
+キャッシュは更新
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_log_render_data_provider_a62bf4dfc92fb74c404cf208089ed1cd4}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+ITerminal\+Log\+Render\+Data\+Provider}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00043}{43}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d0/d0a/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7514d1df38ef9af13427fdc1994662d0_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7d76bf84783531e1124b0b4b76119244}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}!HandleLogRemoved@{HandleLogRemoved}}
+\index{HandleLogRemoved@{HandleLogRemoved}!YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+\doxysubsubsection{\texorpdfstring{HandleLogRemoved()}{HandleLogRemoved()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7d76bf84783531e1124b0b4b76119244} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter.\+Handle\+Log\+Removed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}\mbox{[}$\,$\mbox{]}}]{render\+Data\+Array}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00059}{59}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d0/d0a/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a7d76bf84783531e1124b0b4b76119244_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a0182f601c77788e5c6b7fe34722071f8}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}!HandleLogUpdated@{HandleLogUpdated}}
+\index{HandleLogUpdated@{HandleLogUpdated}!YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+\doxysubsubsection{\texorpdfstring{HandleLogUpdated()}{HandleLogUpdated()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a0182f601c77788e5c6b7fe34722071f8} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter.\+Handle\+Log\+Updated (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00052}{52}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d0/d0a/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a0182f601c77788e5c6b7fe34722071f8_icgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_ade584c13755aceb34c4e4f6cecefb87f}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}!\_cachedLogRenderData@{\_cachedLogRenderData}}
+\index{\_cachedLogRenderData@{\_cachedLogRenderData}!YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+\doxysubsubsection{\texorpdfstring{\_cachedLogRenderData}{\_cachedLogRenderData}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_ade584c13755aceb34c4e4f6cecefb87f} 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_render_data}{Terminal\+Log\+Render\+Data}} Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter.\+\_\+cached\+Log\+Render\+Data\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+ログの描画データのキャッシュ. 
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a9d26de830bc8768e9c9f8bd52ddba9a1}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}!\_logs@{\_logs}}
+\index{\_logs@{\_logs}!YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+\doxysubsubsection{\texorpdfstring{\_logs}{\_logs}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a9d26de830bc8768e9c9f8bd52ddba9a1} 
+readonly List$<$\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_application_1_1_model_1_1_log_render_data}{Log\+Render\+Data}}$>$ Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter.\+\_\+logs\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+ログの描画データを構築する上で必要な\+Dto. 
+
+Terminal\+Service.\+Logsのプロパティを介してデータを取得するとアクセスの度に\+Mappingによるコストが掛かるためキャッシュの役割も兼ねる. 
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a0f28a085661300400809e91d9ecdd5fb}\index{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}!\_service@{\_service}}
+\index{\_service@{\_service}!YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter@{YukimaruGames.Terminal.UI.Presentation.Model.TerminalLogPresenter}}
+\doxysubsubsection{\texorpdfstring{\_service}{\_service}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_log_presenter_a0f28a085661300400809e91d9ecdd5fb} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_application_1_1_i_terminal_service}{ITerminal\+Service}} Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Model.\+Terminal\+Log\+Presenter.\+\_\+service\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_log_presenter_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_terminal_log_presenter_8cs_source}{Terminal\+Log\+Presenter.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+UI/\+Presentation/\+Presenter/\mbox{\hyperlink{_terminal_log_presenter_8cs}{Terminal\+Log\+Presenter.\+cs}}\end{DoxyCompactItemize}

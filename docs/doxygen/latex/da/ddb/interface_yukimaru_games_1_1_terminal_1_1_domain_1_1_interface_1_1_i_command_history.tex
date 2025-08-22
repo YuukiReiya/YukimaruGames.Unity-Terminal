@@ -1,0 +1,145 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+History Interface Reference}
+\hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history}{}\label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history}\index{YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}}
+
+
+入力コマンドの履歴管理インターフェイス.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+History\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{dc/d00/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ac23e77c7ce0b30f495f574244d905899}{Clear}} ()
+\begin{DoxyCompactList}\small\item\em 登録内容のクリア. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ab3205a845c32a4f9fd4cbdaa266301e9}{Add}} (string str)
+\begin{DoxyCompactList}\small\item\em 履歴の登録. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ae968de6ac95411353145120ff852bb17}{Next}} ()
+\begin{DoxyCompactList}\small\item\em 次の履歴を返す. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_a9c3f776461bddde4d0516076296f75de}{Previous}} ()
+\begin{DoxyCompactList}\small\item\em 前の履歴を返す. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+IRead\+Only\+Collection$<$ string $>$ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_a2fd1c08e59664acb0e86cccc8ae6fc54}{Histories}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 履歴. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+入力コマンドの履歴管理インターフェイス. 
+
+Definition at line \mbox{\hyperlink{_i_command_history_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_i_command_history_8cs_source}{ICommand\+History.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ab3205a845c32a4f9fd4cbdaa266301e9}\index{YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}!Add@{Add}}
+\index{Add@{Add}!YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}}
+\doxysubsubsection{\texorpdfstring{Add()}{Add()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ab3205a845c32a4f9fd4cbdaa266301e9} 
+bool Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+History.\+Add (\begin{DoxyParamCaption}\item[{string}]{str}{}\end{DoxyParamCaption})}
+
+
+
+履歴の登録. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & 登録文字列\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+登録の成否 
+
+true \+: 成功
+
+
+
+false \+: 失敗
+
+
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_history_af38b8b7e3c649fa4a0d5265acf7f0ae2}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+History}}.
+
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ac23e77c7ce0b30f495f574244d905899}\index{YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}!Clear@{Clear}}
+\index{Clear@{Clear}!YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}}
+\doxysubsubsection{\texorpdfstring{Clear()}{Clear()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ac23e77c7ce0b30f495f574244d905899} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+History.\+Clear (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+登録内容のクリア. 
+
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_history_a46e4cbf7ce953028622601969d0ea1d9}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+History}}.
+
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ae968de6ac95411353145120ff852bb17}\index{YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}!Next@{Next}}
+\index{Next@{Next}!YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}}
+\doxysubsubsection{\texorpdfstring{Next()}{Next()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_ae968de6ac95411353145120ff852bb17} 
+string Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+History.\+Next (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+次の履歴を返す. 
+
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_history_ab7ef7b437c6d138fd1347619341db5ae}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+History}}.
+
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_a9c3f776461bddde4d0516076296f75de}\index{YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}!Previous@{Previous}}
+\index{Previous@{Previous}!YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}}
+\doxysubsubsection{\texorpdfstring{Previous()}{Previous()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_a9c3f776461bddde4d0516076296f75de} 
+string Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+History.\+Previous (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+前の履歴を返す. 
+
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_history_ad4400d735983906384f95b0c5a815b27}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+History}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_a2fd1c08e59664acb0e86cccc8ae6fc54}\index{YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}!Histories@{Histories}}
+\index{Histories@{Histories}!YukimaruGames.Terminal.Domain.Interface.ICommandHistory@{YukimaruGames.Terminal.Domain.Interface.ICommandHistory}}
+\doxysubsubsection{\texorpdfstring{Histories}{Histories}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_history_a2fd1c08e59664acb0e86cccc8ae6fc54} 
+IRead\+Only\+Collection$<$string$>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+History.\+Histories\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+履歴. 
+
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_history_ab52c6c548dccf36415fe56083313c345}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+History}}.
+
+
+
+Definition at line \mbox{\hyperlink{_i_command_history_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_i_command_history_8cs_source}{ICommand\+History.\+cs}}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+API/\+Interface/\mbox{\hyperlink{_i_command_history_8cs}{ICommand\+History.\+cs}}\end{DoxyCompactItemize}

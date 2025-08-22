@@ -1,0 +1,11 @@
+<map id="YukimaruGames.Terminal.Infrastructure.CommandDiscoverer.Discover" name="YukimaruGames.Terminal.Infrastructure.CommandDiscoverer.Discover">
+<area shape="rect" id="Node000001" title="アセンブリ名からコマンドのハンドラーを検出." alt="" coords="5,105,261,148"/>
+<area shape="rect" id="Node000002" href="$d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer.html#a296af3dc356880230bbb087b886a9a5b" title="Typeから安全にメソッドを取り出す." alt="" coords="309,5,565,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="186,102,308,57,332,50,333,55,310,63,188,107"/>
+<area shape="rect" id="Node000003" href="$d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer.html#a58db3cd254eb25449f6b81ee6e4cfe20" title="Assemblyから有効な型を取得." alt="" coords="309,72,564,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="261,110,293,106,294,112,261,115"/>
+<area shape="rect" id="Node000004" href="$d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer.html#a91a83ab1ba34e088157bedc835872c5b" title="発見可能か." alt="" coords="309,139,564,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="261,138,294,142,293,147,261,143"/>
+<area shape="rect" id="Node000005" href="$d6/da2/class_yukimaru_games_1_1_terminal_1_1_infrastructure_1_1_command_discoverer.html#a92f0d7ccf85f0279808a74c8e8baceea" title="アトリビュート取得の試行." alt="" coords="309,205,564,248"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="188,146,310,191,333,198,332,203,308,196,186,151"/>
+</map>

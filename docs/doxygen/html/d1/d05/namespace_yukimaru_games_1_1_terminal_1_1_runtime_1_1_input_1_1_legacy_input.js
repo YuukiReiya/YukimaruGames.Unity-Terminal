@@ -1,0 +1,5 @@
+var namespace_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input =
+[
+    [ "LegacyInputKey", "d5/dbe/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_key.html", "d5/dbe/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_key" ],
+    [ "LegacyInputKeyboardHandler", "d3/d14/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_keyboard_handler.html", "d3/d14/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_keyboard_handler" ]
+];

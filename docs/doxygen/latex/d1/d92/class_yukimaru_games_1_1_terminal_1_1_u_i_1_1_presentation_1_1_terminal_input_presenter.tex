@@ -1,0 +1,331 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter}{}\label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{d3/dd5/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d7/d7c/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a62b4fbf5333590c355eae8df11b1c5f4}{Terminal\+Input\+Presenter}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer}{ITerminal\+Input\+Renderer}} renderer, string bootup\+Command)
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aed4ad613334db5f8fde575df91e62163}{Set\+Input\+Field}} (string input\+Text)
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a4be2d00c3c1c0ee17939ebceca0d0d6f}{Set\+Focus}} (bool focus)
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aece65986a84b4dd13986e4c7bbd02704}{Set\+Move\+Cursor\+To\+End}} ()
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a8c9016a5428cb7b06673e9582e3ef6a6}{Dispose}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_input_render_data_provider}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+ITerminal\+Input\+Render\+Data\+Provider}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_model_1_1_terminal_input_render_data}{Terminal\+Input\+Render\+Data}} \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_input_render_data_provider_ab5d3304a2fcb9110e9856e8d87b407b5}{Get\+Render\+Data}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_ac491f523255992bc3ddcf2644eb62fb6}{Input\+Text}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a47527ee8c91c3cc541e259d4186d590e}{Is\+Ime\+Composing}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\begin{DoxyCompactList}\small\item\em IME入力の変換状態か. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a91d1324a6979270ced6137652d97de3d}{Is\+Editable}} = true\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\item 
+\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Focus\+Control}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_af53a2ab0a60cb8c368d0886b327e8599}{Focus\+Control}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a5ae6e04bc942ed0afbc843db1233fa42}{Handle\+Text\+Changed}} (string input)
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_adbf6d8d4c21bb21444d052ef231fd302}{Handle\+Focus\+Changed}} (\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Focus\+Control}} focus)
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_abda2016073d3854b27ef7b8f6c0933f1}{Handle\+Move\+Cursor\+To\+End\+Trigger\+Changed}} (bool move\+Cursor\+To\+End)
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a14bc2392adaf4d9ae534e168f1f03d17}{Handle\+Ime\+Composing\+State\+Changed}} (bool is\+Ime\+Composing)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer}{ITerminal\+Input\+Renderer}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_acbaa3f568e2ce8a2ca63253c99a74dac}{\+\_\+renderer}}
+\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aa7757ab8f1a4781d328047b1d867b748}{\+\_\+is\+Move\+Cursor\+To\+End}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a62b4fbf5333590c355eae8df11b1c5f4}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!TerminalInputPresenter@{TerminalInputPresenter}}
+\index{TerminalInputPresenter@{TerminalInputPresenter}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{TerminalInputPresenter()}{TerminalInputPresenter()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a62b4fbf5333590c355eae8df11b1c5f4} 
+Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Terminal\+Input\+Presenter (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer}{ITerminal\+Input\+Renderer}}}]{renderer}{, }\item[{string}]{bootup\+Command}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d92/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a62b4fbf5333590c355eae8df11b1c5f4_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a8c9016a5428cb7b06673e9582e3ef6a6}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!Dispose@{Dispose}}
+\index{Dispose@{Dispose}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{Dispose()}{Dispose()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a8c9016a5428cb7b06673e9582e3ef6a6} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Dispose (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00068}{68}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d92/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a8c9016a5428cb7b06673e9582e3ef6a6_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_adbf6d8d4c21bb21444d052ef231fd302}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!HandleFocusChanged@{HandleFocusChanged}}
+\index{HandleFocusChanged@{HandleFocusChanged}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{HandleFocusChanged()}{HandleFocusChanged()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_adbf6d8d4c21bb21444d052ef231fd302} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Handle\+Focus\+Changed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Focus\+Control}}}]{focus}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00053}{53}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d92/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_adbf6d8d4c21bb21444d052ef231fd302_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a14bc2392adaf4d9ae534e168f1f03d17}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!HandleImeComposingStateChanged@{HandleImeComposingStateChanged}}
+\index{HandleImeComposingStateChanged@{HandleImeComposingStateChanged}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{HandleImeComposingStateChanged()}{HandleImeComposingStateChanged()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a14bc2392adaf4d9ae534e168f1f03d17} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Handle\+Ime\+Composing\+State\+Changed (\begin{DoxyParamCaption}\item[{bool}]{is\+Ime\+Composing}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00063}{63}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d92/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a14bc2392adaf4d9ae534e168f1f03d17_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_abda2016073d3854b27ef7b8f6c0933f1}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!HandleMoveCursorToEndTriggerChanged@{HandleMoveCursorToEndTriggerChanged}}
+\index{HandleMoveCursorToEndTriggerChanged@{HandleMoveCursorToEndTriggerChanged}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{HandleMoveCursorToEndTriggerChanged()}{HandleMoveCursorToEndTriggerChanged()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_abda2016073d3854b27ef7b8f6c0933f1} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Handle\+Move\+Cursor\+To\+End\+Trigger\+Changed (\begin{DoxyParamCaption}\item[{bool}]{move\+Cursor\+To\+End}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00058}{58}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d92/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_abda2016073d3854b27ef7b8f6c0933f1_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a5ae6e04bc942ed0afbc843db1233fa42}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!HandleTextChanged@{HandleTextChanged}}
+\index{HandleTextChanged@{HandleTextChanged}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{HandleTextChanged()}{HandleTextChanged()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a5ae6e04bc942ed0afbc843db1233fa42} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Handle\+Text\+Changed (\begin{DoxyParamCaption}\item[{string}]{input}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00048}{48}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d92/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a5ae6e04bc942ed0afbc843db1233fa42_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a4be2d00c3c1c0ee17939ebceca0d0d6f}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!SetFocus@{SetFocus}}
+\index{SetFocus@{SetFocus}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{SetFocus()}{SetFocus()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a4be2d00c3c1c0ee17939ebceca0d0d6f} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Set\+Focus (\begin{DoxyParamCaption}\item[{bool}]{focus}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_input_presenter_a0a23261438a3b2001c499da886122cad}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+ITerminal\+Input\+Presenter}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00034}{34}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aed4ad613334db5f8fde575df91e62163}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!SetInputField@{SetInputField}}
+\index{SetInputField@{SetInputField}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{SetInputField()}{SetInputField()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aed4ad613334db5f8fde575df91e62163} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Set\+Input\+Field (\begin{DoxyParamCaption}\item[{string}]{input\+Text}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_input_presenter_a3ad101e3401660b3c46a539f1fcd7c94}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+ITerminal\+Input\+Presenter}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00029}{29}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d1/d92/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aed4ad613334db5f8fde575df91e62163_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aece65986a84b4dd13986e4c7bbd02704}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!SetMoveCursorToEnd@{SetMoveCursorToEnd}}
+\index{SetMoveCursorToEnd@{SetMoveCursorToEnd}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{SetMoveCursorToEnd()}{SetMoveCursorToEnd()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aece65986a84b4dd13986e4c7bbd02704} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Set\+Move\+Cursor\+To\+End (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_input_presenter_a5f34c0cd765ba0f789cb0e6c150e780b}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+ITerminal\+Input\+Presenter}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00039}{39}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aa7757ab8f1a4781d328047b1d867b748}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!\_isMoveCursorToEnd@{\_isMoveCursorToEnd}}
+\index{\_isMoveCursorToEnd@{\_isMoveCursorToEnd}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{\_isMoveCursorToEnd}{\_isMoveCursorToEnd}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_aa7757ab8f1a4781d328047b1d867b748} 
+bool Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+\_\+is\+Move\+Cursor\+To\+End\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00027}{27}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_acbaa3f568e2ce8a2ca63253c99a74dac}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!\_renderer@{\_renderer}}
+\index{\_renderer@{\_renderer}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{\_renderer}{\_renderer}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_acbaa3f568e2ce8a2ca63253c99a74dac} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_input_renderer}{ITerminal\+Input\+Renderer}} Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+\_\+renderer\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_af53a2ab0a60cb8c368d0886b327e8599}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!FocusControl@{FocusControl}}
+\index{FocusControl@{FocusControl}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{FocusControl}{FocusControl}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_af53a2ab0a60cb8c368d0886b327e8599} 
+\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Focus\+Control}} Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Focus\+Control\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00046}{46}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_ac491f523255992bc3ddcf2644eb62fb6}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!InputText@{InputText}}
+\index{InputText@{InputText}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{InputText}{InputText}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_ac491f523255992bc3ddcf2644eb62fb6} 
+string Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Input\+Text\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_input_presenter_a380e75cda2091b9211d6782c5685bbf6}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+ITerminal\+Input\+Presenter}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a91d1324a6979270ced6137652d97de3d}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!IsEditable@{IsEditable}}
+\index{IsEditable@{IsEditable}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{IsEditable}{IsEditable}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a91d1324a6979270ced6137652d97de3d} 
+bool Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Is\+Editable = true\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a47527ee8c91c3cc541e259d4186d590e}\index{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}!IsImeComposing@{IsImeComposing}}
+\index{IsImeComposing@{IsImeComposing}!YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter@{YukimaruGames.Terminal.UI.Presentation.TerminalInputPresenter}}
+\doxysubsubsection{\texorpdfstring{IsImeComposing}{IsImeComposing}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_input_presenter_a47527ee8c91c3cc541e259d4186d590e} 
+bool Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+Terminal\+Input\+Presenter.\+Is\+Ime\+Composing\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+IME入力の変換状態か. 
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_input_presenter_aef06a0589cfdd04b0328db52bcd2361a}{Yukimaru\+Games.\+Terminal.\+UI.\+Presentation.\+ITerminal\+Input\+Presenter}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_input_presenter_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_terminal_input_presenter_8cs_source}{Terminal\+Input\+Presenter.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+UI/\+Presentation/\+Presenter/\mbox{\hyperlink{_terminal_input_presenter_8cs}{Terminal\+Input\+Presenter.\+cs}}\end{DoxyCompactItemize}

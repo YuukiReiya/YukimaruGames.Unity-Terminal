@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$d4/d32/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry.html" title="登録されたコマンドの保存クラス." alt="" coords="5,5,229,48"/>
+<area shape="rect" id="Node000001" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html" title="登録されたコマンドの保存クラス." alt="" coords="277,5,500,48"/>
+<area shape="poly" id="edge49_Node000000_Node000001" title=" " alt="" coords="244,24,276,24,276,29,244,29"/>
+</map>

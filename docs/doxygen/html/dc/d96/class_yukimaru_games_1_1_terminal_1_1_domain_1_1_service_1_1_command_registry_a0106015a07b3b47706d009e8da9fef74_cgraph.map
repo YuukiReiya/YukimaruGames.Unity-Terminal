@@ -1,0 +1,8 @@
+<map id="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Add" name="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Add">
+<area shape="rect" id="Node000001" title="コマンドの追加." alt="" coords="5,29,229,72"/>
+<area shape="rect" id="Node000002" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a4b1d761c366cee37fd6af7baeb128a02" title="コマンドの追加." alt="" coords="277,29,500,72"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,48,261,48,261,53,229,53"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="337,29,335,19,344,10,362,5,388,3,418,5,435,12,433,17,417,10,388,8,363,10,347,15,340,21,342,28"/>
+<area shape="rect" id="Node000003" href="$d3/d73/namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model.html#a455c33f782c36a8df125271d2a033fcc" title="コマンドのデリゲート." alt="" coords="548,29,771,72"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="500,48,533,48,533,53,500,53"/>
+</map>

@@ -1,0 +1,241 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Factory Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory}{}\label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory}\index{YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}}
+
+
+実行コマンドの\+Factory.  
+
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_abdde1c33830bdbf18709741fad6c121b}{Create}} (Method\+Info method\+Info)
+\begin{DoxyCompactList}\small\item\em コマンドハンドラーの生成. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_ac73dea156ddcda6f8c32b1b8b51f2d55}{Create$<$ TDelegate $>$}} (TDelegate @delegate)
+\begin{DoxyCompactList}\small\item\em コマンドハンドラーの作成 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a86f00126a46ddf11f75d216df192effc}{Create}} (object instance, Method\+Info method\+Info, string command, int min\+Arg\+Count, int max\+Arg\+Count, string help)
+\begin{DoxyCompactList}\small\item\em コマンドハンドラーの生成. \end{DoxyCompactList}\item 
+Expression \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a905e4f30244fe98fcbcef68822bcc466}{Build\+Method\+Call\+Expression}} (object instance, Method\+Info method\+Info, Parameter\+Expression parameter\+Expression, Parameter\+Info\mbox{[}$\,$\mbox{]} method\+Parameters)
+\begin{DoxyCompactList}\small\item\em メソッドの呼び出し\+Expressionを構築する. \end{DoxyCompactList}\item 
+Expression \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_afc1f6d48c4e2b87117d6b7d34782af11}{Build\+Validate\+Expression}} (Parameter\+Expression parameter\+Expression, int min\+Arg\+Count, int max\+Arg\+Count)
+\begin{DoxyCompactList}\small\item\em Validate\+Expressionの構築. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+実行コマンドの\+Factory. 
+
+Definition at line \mbox{\hyperlink{_command_factory_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_command_factory_8cs_source}{Command\+Factory.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a905e4f30244fe98fcbcef68822bcc466}\index{YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}!BuildMethodCallExpression@{BuildMethodCallExpression}}
+\index{BuildMethodCallExpression@{BuildMethodCallExpression}!YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}}
+\doxysubsubsection{\texorpdfstring{BuildMethodCallExpression()}{BuildMethodCallExpression()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a905e4f30244fe98fcbcef68822bcc466} 
+Expression Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Factory.\+Build\+Method\+Call\+Expression (\begin{DoxyParamCaption}\item[{object}]{instance}{, }\item[{Method\+Info}]{method\+Info}{, }\item[{Parameter\+Expression}]{parameter\+Expression}{, }\item[{Parameter\+Info\mbox{[}$\,$\mbox{]}}]{method\+Parameters}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+メソッドの呼び出し\+Expressionを構築する. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em instance} & メソッドの呼び出しインスタンス\\
+\hline
+{\em method\+Info} & 呼び出しメソッド情報\\
+\hline
+{\em parameter\+Expression} & 呼び出し引数の\+Expression\\
+\hline
+{\em method\+Parameters} & メソッドに定義されている引数\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+構築したメソッドの\+Expression
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_command_factory_8cs_source_l00117}{117}} of file \mbox{\hyperlink{_command_factory_8cs_source}{Command\+Factory.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a905e4f30244fe98fcbcef68822bcc466_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_afc1f6d48c4e2b87117d6b7d34782af11}\index{YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}!BuildValidateExpression@{BuildValidateExpression}}
+\index{BuildValidateExpression@{BuildValidateExpression}!YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}}
+\doxysubsubsection{\texorpdfstring{BuildValidateExpression()}{BuildValidateExpression()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_afc1f6d48c4e2b87117d6b7d34782af11} 
+Expression Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Factory.\+Build\+Validate\+Expression (\begin{DoxyParamCaption}\item[{Parameter\+Expression}]{parameter\+Expression}{, }\item[{int}]{min\+Arg\+Count}{, }\item[{int}]{max\+Arg\+Count}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Validate\+Expressionの構築. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parameter\+Expression} & 呼び出し引数の\+Expression\\
+\hline
+{\em min\+Arg\+Count} & メソッドの引数の最小数\\
+\hline
+{\em max\+Arg\+Count} & メソッドの引数の最大数\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+メソッドの呼び出し引数が閾値に収まっているか判定する条件式の\+Expression
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_command_factory_8cs_source_l00160}{160}} of file \mbox{\hyperlink{_command_factory_8cs_source}{Command\+Factory.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_afc1f6d48c4e2b87117d6b7d34782af11_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_abdde1c33830bdbf18709741fad6c121b}\index{YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}!Create@{Create}}
+\index{Create@{Create}!YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}}
+\doxysubsubsection{\texorpdfstring{Create()}{Create()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_abdde1c33830bdbf18709741fad6c121b} 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Factory.\+Create (\begin{DoxyParamCaption}\item[{Method\+Info}]{method\+Info}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コマンドハンドラーの生成. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em method\+Info} & 呼び出しメソッド情報\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+コマンドの実行型
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_command_factory_8cs_source_l00064}{64}} of file \mbox{\hyperlink{_command_factory_8cs_source}{Command\+Factory.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_abdde1c33830bdbf18709741fad6c121b_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a86f00126a46ddf11f75d216df192effc}\index{YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}!Create@{Create}}
+\index{Create@{Create}!YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}}
+\doxysubsubsection{\texorpdfstring{Create()}{Create()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a86f00126a46ddf11f75d216df192effc} 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Factory.\+Create (\begin{DoxyParamCaption}\item[{object}]{instance}{, }\item[{Method\+Info}]{method\+Info}{, }\item[{string}]{command}{, }\item[{int}]{min\+Arg\+Count}{, }\item[{int}]{max\+Arg\+Count}{, }\item[{string}]{help}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+コマンドハンドラーの生成. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em instance} & インスタンス\\
+\hline
+{\em method\+Info} & 呼び出しメソッド情報\\
+\hline
+{\em command} & 登録コマンド名\\
+\hline
+{\em min\+Arg\+Count} & メソッドの最小引数\\
+\hline
+{\em max\+Arg\+Count} & メソッドの最大引数\\
+\hline
+{\em help} & ヘルプ\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+コマンドの実行型
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_command_factory_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_command_factory_8cs_source}{Command\+Factory.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a86f00126a46ddf11f75d216df192effc_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a86f00126a46ddf11f75d216df192effc_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_ac73dea156ddcda6f8c32b1b8b51f2d55}\index{YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}!Create$<$ TDelegate $>$@{Create$<$ TDelegate $>$}}
+\index{Create$<$ TDelegate $>$@{Create$<$ TDelegate $>$}!YukimaruGames.Terminal.Domain.Service.CommandFactory@{YukimaruGames.Terminal.Domain.Service.CommandFactory}}
+\doxysubsubsection{\texorpdfstring{Create$<$ TDelegate $>$()}{Create< TDelegate >()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_ac73dea156ddcda6f8c32b1b8b51f2d55} 
+\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a86f00126a46ddf11f75d216df192effc}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Factory.\+Create}}$<$ TDelegate $>$ (\begin{DoxyParamCaption}\item[{TDelegate @}]{delegate}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コマンドハンドラーの作成 
+
+
+\begin{DoxyParams}{Parameters}
+{\em delegate} & デリゲート\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em TDelegate} & デリゲート型\\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyReturn}{Returns}
+コマンドの実行型
+\end{DoxyReturn}
+$<$sample$>$
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ SomeMethod()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ something}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ Register()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ Action\ @delegate\ =\ SomeMethod;}
+\DoxyCodeLine{\ \ \ \ var\ handler\ =\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_a86f00126a46ddf11f75d216df192effc}{Create}}(@delegate);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+$<$/sample$>$ \begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em TDelegate} : {\em Delegate}]\end{description}
+\end{Desc}
+
+
+Definition at line \mbox{\hyperlink{_command_factory_8cs_source_l00095}{95}} of file \mbox{\hyperlink{_command_factory_8cs_source}{Command\+Factory.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory_ac73dea156ddcda6f8c32b1b8b51f2d55_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+Core/\+Service/\mbox{\hyperlink{_command_factory_8cs}{Command\+Factory.\+cs}}\end{DoxyCompactItemize}

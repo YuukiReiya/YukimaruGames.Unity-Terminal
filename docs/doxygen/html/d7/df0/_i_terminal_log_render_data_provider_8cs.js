@@ -1,0 +1,4 @@
+var _i_terminal_log_render_data_provider_8cs =
+[
+    [ "YukimaruGames.Terminal.UI.Presentation.ITerminalLogRenderDataProvider", "d3/db2/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_log_render_data_provider.html", "d3/db2/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_terminal_log_render_data_provider" ]
+];

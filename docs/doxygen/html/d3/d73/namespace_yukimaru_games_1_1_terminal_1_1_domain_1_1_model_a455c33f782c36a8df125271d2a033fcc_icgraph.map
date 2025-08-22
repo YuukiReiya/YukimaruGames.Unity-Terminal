@@ -1,0 +1,34 @@
+<map id="YukimaruGames.Terminal.Domain.Model.CommandDelegate" name="YukimaruGames.Terminal.Domain.Model.CommandDelegate">
+<area shape="rect" id="Node000001" title="コマンドのデリゲート." alt="" coords="886,209,1110,252"/>
+<area shape="rect" id="Node000002" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a4b1d761c366cee37fd6af7baeb128a02" title="コマンドの追加." alt="" coords="590,72,813,115"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="935,205,748,118,751,113,937,200"/>
+<area shape="rect" id="Node000006" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#a68f21d7f9efed823c63a4c0811a97f7e" title=" " alt="" coords="564,176,838,219"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="870,219,839,215,839,210,871,214"/>
+<area shape="rect" id="Node000007" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#a80356f8dd512b4bdd2f042505921fe4e" title="コンストラクタ." alt="" coords="564,243,838,285"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="871,248,839,251,839,246,870,242"/>
+<area shape="rect" id="Node000012" href="$d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory.html#a86f00126a46ddf11f75d216df192effc" title="コマンドハンドラーの生成." alt="" coords="590,381,813,424"/>
+<area shape="poly" id="edge16_Node000001_Node000012" title=" " alt="" coords="948,262,741,383,739,378,945,258"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="750,59,732,53,701,51,673,53,655,57,648,63,651,71,646,72,643,62,653,53,672,47,701,45,733,48,752,54"/>
+<area shape="rect" id="Node000003" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a0106015a07b3b47706d009e8da9fef74" title="コマンドの追加." alt="" coords="289,5,512,48"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="587,71,500,51,501,46,588,65"/>
+<area shape="rect" id="Node000004" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#aaa2bb386e1adaaa009fc8dcb1d28c720" title="Assemblyから利用できるメソッドを登録." alt="" coords="286,72,516,115"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="574,96,517,96,517,91,574,91"/>
+<area shape="rect" id="Node000005" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a0a446218966199d1413c612e4a277f1c" title="ランタイムでロード済みと未解決なAssemblyの中から利用できるメソッドを登録." alt="" coords="6,72,237,115"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="270,96,237,96,237,91,270,91"/>
+<area shape="rect" id="Node000008" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#a17b4b5bfff89caa1213c83578fd760ac" title=" " alt="" coords="289,213,512,256"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="548,252,513,248,513,243,549,246"/>
+<area shape="rect" id="Node000009" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#ac2befd182c35124cc7aa57f7248f37cf" title=" " alt="" coords="10,153,233,196"/>
+<area shape="poly" id="edge13_Node000007_Node000009" title=" " alt="" coords="572,238,562,233,547,219,538,204,530,191,515,180,481,167,445,157,370,148,297,149,231,155,231,150,297,143,371,143,446,152,482,162,517,175,534,187,543,201,551,216,566,228,575,234"/>
+<area shape="rect" id="Node000010" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#a92dd557b30e17c6e38c4b5e5ddab58b7" title=" " alt="" coords="7,235,236,277"/>
+<area shape="poly" id="edge14_Node000007_Node000010" title=" " alt="" coords="549,271,420,273,286,271,236,268,236,263,286,265,420,268,549,266"/>
+<area shape="rect" id="Node000011" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#a1018bc3c6ed53d1269f854f6667fbebe" title=" " alt="" coords="5,312,238,355"/>
+<area shape="poly" id="edge15_Node000007_Node000011" title=" " alt="" coords="549,285,239,322,238,317,548,280"/>
+<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="447,200,430,194,401,192,374,194,358,199,351,205,354,212,348,213,346,203,355,194,373,189,401,187,431,189,449,195"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="283,212,224,199,225,194,284,207"/>
+<area shape="poly" id="edge11_Node000008_Node000010" title=" " alt="" coords="274,247,236,250,236,245,273,242"/>
+<area shape="poly" id="edge12_Node000008_Node000011" title=" " alt="" coords="325,264,185,314,183,309,323,259"/>
+<area shape="rect" id="Node000013" href="$d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory.html#abdde1c33830bdbf18709741fad6c121b" title="コマンドハンドラーの生成." alt="" coords="289,381,512,424"/>
+<area shape="poly" id="edge17_Node000012_Node000013" title=" " alt="" coords="574,405,513,405,513,400,574,400"/>
+<area shape="rect" id="Node000014" href="$d3/daa/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_factory.html#ac73dea156ddcda6f8c32b1b8b51f2d55" title="コマンドハンドラーの作成" alt="" coords="289,448,512,507"/>
+<area shape="poly" id="edge18_Node000012_Node000014" title=" " alt="" coords="598,431,514,452,512,447,597,426"/>
+</map>

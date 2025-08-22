@@ -1,0 +1,10 @@
+<map id="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Add" name="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Add">
+<area shape="rect" id="Node000001" title="コマンドの追加." alt="" coords="562,39,785,81"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="719,26,702,20,674,17,648,19,631,24,625,30,627,37,622,39,620,29,629,20,647,14,674,12,703,14,721,21"/>
+<area shape="rect" id="Node000002" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a0106015a07b3b47706d009e8da9fef74" title="コマンドの追加." alt="" coords="287,5,510,48"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="546,47,510,43,511,38,547,42"/>
+<area shape="rect" id="Node000003" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#aaa2bb386e1adaaa009fc8dcb1d28c720" title="Assemblyから利用できるメソッドを登録." alt="" coords="284,72,514,115"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="547,78,515,82,514,77,546,73"/>
+<area shape="rect" id="Node000004" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a0a446218966199d1413c612e4a277f1c" title="ランタイムでロード済みと未解決なAssemblyの中から利用できるメソッドを登録." alt="" coords="5,72,236,115"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="268,96,236,96,236,91,268,91"/>
+</map>

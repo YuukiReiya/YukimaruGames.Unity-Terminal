@@ -1,0 +1,4 @@
+var namespace_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_extensions =
+[
+    [ "UnityObjectExtensions", "dd/db9/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_extensions_1_1_unity_object_extensions.html", "dd/db9/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_extensions_1_1_unity_object_extensions" ]
+];

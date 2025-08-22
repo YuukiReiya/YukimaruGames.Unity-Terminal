@@ -1,0 +1,15 @@
+<map id="YukimaruGames.Terminal.Application.Mapper.LogMapper.Mapping" name="YukimaruGames.Terminal.Application.Mapper.LogMapper.Mapping">
+<area shape="rect" id="Node000001" title=" " alt="" coords="586,72,828,115"/>
+<area shape="rect" id="Node000002" href="$d8/d5d/class_yukimaru_games_1_1_terminal_1_1_application_1_1_mapper_1_1_log_mapper.html#a923020f42b85aa88ff4e011f2e4534c7" title=" " alt="" coords="296,5,538,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="596,71,512,51,513,46,597,65"/>
+<area shape="rect" id="Node000003" href="$dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service.html#ae5cd05ad32bc7e05b56b97ad2b0e446f" title="ロガーの要素が削除された後の呼び出し." alt="" coords="296,139,538,181"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="597,121,513,141,512,135,596,116"/>
+<area shape="rect" id="Node000006" href="$dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service.html#a063cbf0fa7998262fa7a80c4f08b961d" title="ロガーの要素が追加・削除された後の呼び出し." alt="" coords="296,72,538,115"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="570,96,538,96,538,91,570,91"/>
+<area shape="rect" id="Node000004" href="$dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service.html#abc6093a6f6f009708824b36cf30f40e4" title="ログクリア." alt="" coords="5,72,248,115"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="306,137,222,118,223,113,307,132"/>
+<area shape="rect" id="Node000005" href="$dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service.html#acbe48e4aa766beb2fc043775351d63fb" title=" " alt="" coords="5,139,248,181"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="280,163,248,163,248,157,280,157"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="280,96,248,96,248,91,280,91"/>
+<area shape="poly" id="edge7_Node000006_Node000005" title=" " alt="" coords="307,121,223,141,222,135,306,116"/>
+</map>

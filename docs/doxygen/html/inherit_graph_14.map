@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$d2/de1/interface_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_i_keyboard_input_handler.html" title=" " alt="" coords="5,51,233,93"/>
+<area shape="rect" id="Node000001" href="$d3/d14/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_legacy_input_1_1_legacy_input_keyboard_handler.html" title=" " alt="" coords="281,5,536,64"/>
+<area shape="poly" id="edge50_Node000000_Node000001" title=" " alt="" coords="248,53,280,49,280,54,248,58"/>
+<area shape="rect" id="Node000002" href="$d3/d75/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_system_keyboard_handler.html" title=" " alt="" coords="295,88,522,131"/>
+<area shape="poly" id="edge51_Node000000_Node000002" title=" " alt="" coords="249,86,295,92,294,97,248,91"/>
+</map>

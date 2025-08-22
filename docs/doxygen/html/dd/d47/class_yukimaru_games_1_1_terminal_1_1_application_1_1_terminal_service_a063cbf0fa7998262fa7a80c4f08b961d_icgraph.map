@@ -1,0 +1,7 @@
+<map id="YukimaruGames.Terminal.Application.TerminalService.OnLogItemUpdated" name="YukimaruGames.Terminal.Application.TerminalService.OnLogItemUpdated">
+<area shape="rect" id="Node000001" title="ロガーの要素が追加・削除された後の呼び出し." alt="" coords="296,39,538,81"/>
+<area shape="rect" id="Node000002" href="$dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service.html#abc6093a6f6f009708824b36cf30f40e4" title="ログクリア." alt="" coords="5,5,248,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="280,47,248,43,248,38,280,42"/>
+<area shape="rect" id="Node000003" href="$dd/d47/class_yukimaru_games_1_1_terminal_1_1_application_1_1_terminal_service.html#acbe48e4aa766beb2fc043775351d63fb" title=" " alt="" coords="5,72,248,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="280,78,248,82,248,77,280,73"/>
+</map>

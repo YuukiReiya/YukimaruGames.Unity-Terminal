@@ -1,0 +1,109 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Parser Interface Reference}
+\hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{}\label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}\index{YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}}
+
+
+コマンド引数のパーサーインターフェイス.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Parser\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{dd/d19/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{Parse\+Status\+Code}} \+: byte \{ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aa60852f204ed8028c1c58808b746d115}{Ok}} = 1
+, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aece592fd242f4ba674cc9da539a625a7}{Syntax\+Error}} = 2
+, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a41ecc5ed813e532ce57a4312fc75d332}{Malformed\+Input}} = 4
+, \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a8462b58246e70e5c83e5b939a9332cb5}{Internal\+Error}} = 255
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{Parse\+Status\+Code}} \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a8ea256371c0da0aeb58a691f5d9e9f0c}{Parse}} (string str, out(string Command, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_argument}{Command\+Argument}}\mbox{[}$\,$\mbox{]}Arguments) tuple)
+\begin{DoxyCompactList}\small\item\em 文字列からコマンド引数型へパースを試行する. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+コマンド引数のパーサーインターフェイス. 
+
+Definition at line \mbox{\hyperlink{_i_command_parser_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_i_command_parser_8cs_source}{ICommand\+Parser.\+cs}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}\index{YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}!ParseStatusCode@{ParseStatusCode}}
+\index{ParseStatusCode@{ParseStatusCode}!YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}}
+\doxysubsubsection{\texorpdfstring{ParseStatusCode}{ParseStatusCode}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5} 
+enum \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Parser.\+Parse\+Status\+Code}} \+: byte}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Ok@{Ok}!YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}}\index{YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}!Ok@{Ok}}}\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aa60852f204ed8028c1c58808b746d115}\label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aa60852f204ed8028c1c58808b746d115} 
+Ok&成功 \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SyntaxError@{SyntaxError}!YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}}\index{YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}!SyntaxError@{SyntaxError}}}\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aece592fd242f4ba674cc9da539a625a7}\label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aece592fd242f4ba674cc9da539a625a7} 
+Syntax\+Error&構文エラー. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MalformedInput@{MalformedInput}!YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}}\index{YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}!MalformedInput@{MalformedInput}}}\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a41ecc5ed813e532ce57a4312fc75d332}\label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a41ecc5ed813e532ce57a4312fc75d332} 
+Malformed\+Input&不正な形式の入力エラー. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{InternalError@{InternalError}!YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}}\index{YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}!InternalError@{InternalError}}}\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a8462b58246e70e5c83e5b939a9332cb5}\label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a8462b58246e70e5c83e5b939a9332cb5} 
+Internal\+Error&内部エラー. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_i_command_parser_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_i_command_parser_8cs_source}{ICommand\+Parser.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a8ea256371c0da0aeb58a691f5d9e9f0c}\index{YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}!Parse@{Parse}}
+\index{Parse@{Parse}!YukimaruGames.Terminal.Domain.Interface.ICommandParser@{YukimaruGames.Terminal.Domain.Interface.ICommandParser}}
+\doxysubsubsection{\texorpdfstring{Parse()}{Parse()}}
+{\footnotesize\ttfamily \label{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a8ea256371c0da0aeb58a691f5d9e9f0c} 
+\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{Parse\+Status\+Code}} Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Parser.\+Parse (\begin{DoxyParamCaption}\item[{string}]{str}{, }\item[{out(string Command, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_argument}{Command\+Argument}}\mbox{[}$\,$\mbox{]}Arguments)}]{tuple}{}\end{DoxyParamCaption})}
+
+
+
+文字列からコマンド引数型へパースを試行する. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & 解析文字列\\
+\hline
+{\em tuple} & Value\+Tuple \\
+\hline
+\end{DoxyParams}
+\texorpdfstring{$\ast$}{*} Command\+:コマンド名
+
+\texorpdfstring{$\ast$}{*} Arguments\+:引数
+
+\begin{DoxyReturn}{Returns}
+パース結果のステータスコード
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_parser_a06e98f1736098284cc4237054873ecbf}{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Parser}}.
+
+
+
+The documentation for this interface was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+API/\+Interface/\mbox{\hyperlink{_i_command_parser_8cs}{ICommand\+Parser.\+cs}}\end{DoxyCompactItemize}

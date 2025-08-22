@@ -1,0 +1,14 @@
+<map id="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Register" name="YukimaruGames.Terminal.Domain.Service.CommandRegistry.Register">
+<area shape="rect" id="Node000001" title="ランタイムでロード済みと未解決なAssemblyの中から利用できるメソッドを登録." alt="" coords="5,104,236,147"/>
+<area shape="rect" id="Node000002" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#aaa2bb386e1adaaa009fc8dcb1d28c720" title="Assemblyから利用できるメソッドを登録." alt="" coords="284,104,514,147"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,123,268,123,268,128,236,128"/>
+<area shape="rect" id="Node000003" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a4b1d761c366cee37fd6af7baeb128a02" title="コマンドの追加." alt="" coords="576,29,800,72"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="484,101,587,74,588,79,485,106"/>
+<area shape="rect" id="Node000005" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#abdfd9bd7ca9e60a38ca3c07abeb07b26" title="Typeから安全にメソッドを取り出す." alt="" coords="562,96,814,155"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="514,123,547,123,547,128,514,128"/>
+<area shape="rect" id="Node000006" href="$dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry.html#a1aa2d96d5a90c7b0a274ffa9b8a25377" title="Assemblyから有効な型を取得." alt="" coords="570,179,807,237"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="477,145,569,171,568,176,475,150"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="635,29,632,19,641,10,660,5,688,3,719,5,737,11,735,16,718,10,688,8,661,10,644,15,638,21,640,28"/>
+<area shape="rect" id="Node000004" href="$d3/d73/namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model.html#a455c33f782c36a8df125271d2a033fcc" title="コマンドのデリゲート." alt="" coords="862,29,1086,72"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="800,48,847,48,847,53,800,53"/>
+</map>

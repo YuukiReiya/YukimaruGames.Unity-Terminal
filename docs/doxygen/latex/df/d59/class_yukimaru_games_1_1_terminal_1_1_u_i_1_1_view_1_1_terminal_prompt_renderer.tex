@@ -1,0 +1,194 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer}{}\label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=316pt]{d5/d36/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dd/da6/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_abbf11ea87bf83214ea29b137634937e1}{Terminal\+Prompt\+Renderer}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{IGUIStyle\+Provider}} provider)
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ac303915e24e36ea07ff540c651defdb8}{Dispose}} ()
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_a853f19ece6dc9d22397de902d8bd8661}{Render}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ac6e26d877b4bdf8dba6b83b9b6014440}{Prompt}}\hspace{0.3cm}{\ttfamily  \mbox{[}set, private get\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+Vector2 \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab99fe974abea31a68783b44254494b3d}{Calc\+Size}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{IGUIStyle\+Provider}} provider, string prompt)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{IGUIStyle\+Provider}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_a7235c25ddc722e346bc610471265a4c8}{\+\_\+provider}}
+\item 
+Vector2 \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ae35eb24db581ca913628a7a0d6c44f48}{\+\_\+prompt\+Size}}
+\item 
+string \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab80ab6d2dbf1f31bf1c2a48f77794db3}{\+\_\+prompt}} = "{}\$"{}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_abbf11ea87bf83214ea29b137634937e1}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!TerminalPromptRenderer@{TerminalPromptRenderer}}
+\index{TerminalPromptRenderer@{TerminalPromptRenderer}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{TerminalPromptRenderer()}{TerminalPromptRenderer()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_abbf11ea87bf83214ea29b137634937e1} 
+Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+Terminal\+Prompt\+Renderer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{IGUIStyle\+Provider}}}]{provider}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{df/d59/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_abbf11ea87bf83214ea29b137634937e1_cgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab99fe974abea31a68783b44254494b3d}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!CalcSize@{CalcSize}}
+\index{CalcSize@{CalcSize}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{CalcSize()}{CalcSize()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab99fe974abea31a68783b44254494b3d} 
+Vector2 Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+Calc\+Size (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{IGUIStyle\+Provider}}}]{provider}{, }\item[{string}]{prompt}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00045}{45}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=271pt]{df/d59/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab99fe974abea31a68783b44254494b3d_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{df/d59/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab99fe974abea31a68783b44254494b3d_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ac303915e24e36ea07ff540c651defdb8}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!Dispose@{Dispose}}
+\index{Dispose@{Dispose}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{Dispose()}{Dispose()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ac303915e24e36ea07ff540c651defdb8} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+Dispose (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00031}{31}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_a853f19ece6dc9d22397de902d8bd8661}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!Render@{Render}}
+\index{Render@{Render}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{Render()}{Render()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_a853f19ece6dc9d22397de902d8bd8661} 
+void Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+Render (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_prompt_renderer_af248f84c961df249afb78bb0a10dc85d}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Prompt\+Renderer}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00039}{39}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab80ab6d2dbf1f31bf1c2a48f77794db3}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!\_prompt@{\_prompt}}
+\index{\_prompt@{\_prompt}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{\_prompt}{\_prompt}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ab80ab6d2dbf1f31bf1c2a48f77794db3} 
+string Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+\_\+prompt = "{}\$"{}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ae35eb24db581ca913628a7a0d6c44f48}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!\_promptSize@{\_promptSize}}
+\index{\_promptSize@{\_promptSize}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{\_promptSize}{\_promptSize}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ae35eb24db581ca913628a7a0d6c44f48} 
+Vector2 Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+\_\+prompt\+Size\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_a7235c25ddc722e346bc610471265a4c8}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!\_provider@{\_provider}}
+\index{\_provider@{\_provider}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{\_provider}{\_provider}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_a7235c25ddc722e346bc610471265a4c8} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_i_g_u_i_style_provider}{IGUIStyle\+Provider}} Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+\_\+provider\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ac6e26d877b4bdf8dba6b83b9b6014440}\index{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}!Prompt@{Prompt}}
+\index{Prompt@{Prompt}!YukimaruGames.Terminal.UI.View.TerminalPromptRenderer@{YukimaruGames.Terminal.UI.View.TerminalPromptRenderer}}
+\doxysubsubsection{\texorpdfstring{Prompt}{Prompt}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_terminal_prompt_renderer_ac6e26d877b4bdf8dba6b83b9b6014440} 
+string Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Terminal\+Prompt\+Renderer.\+Prompt\hspace{0.3cm}{\ttfamily [set]}, {\ttfamily [private get]}}
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_i_terminal_prompt_renderer_a6ec3d314cabc2054fa79b32df1f6cdc0}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+ITerminal\+Prompt\+Renderer}}.
+
+
+
+Definition at line \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_terminal_prompt_renderer_8cs_source}{Terminal\+Prompt\+Renderer.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+UI/\+View/\+Renderer/\mbox{\hyperlink{_terminal_prompt_renderer_8cs}{Terminal\+Prompt\+Renderer.\+cs}}\end{DoxyCompactItemize}

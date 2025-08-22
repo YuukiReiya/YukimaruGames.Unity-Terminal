@@ -1,0 +1,28 @@
+\doxysection{ICommand\+Parser.\+cs}
+\hypertarget{_i_command_parser_8cs_source}{}\label{_i_command_parser_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/API/Interface/ICommandParser.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/API/Interface/ICommandParser.cs}}
+\mbox{\hyperlink{_i_command_parser_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model}{YukimaruGames.Terminal.Domain.Model}};}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00004}00004\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface}{YukimaruGames.Terminal.Domain.Interface}}}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00005}00005\ \{}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00009}\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{00009}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{interface\ }\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser}{ICommandParser}}}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00010}00010\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00011}00011\ \ \ \ \ \ \ \ \ [Flags]}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00012}\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{00012}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{ParseStatusCode}}\ :\ \textcolor{keywordtype}{byte}}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00013}00013\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00017}\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aa60852f204ed8028c1c58808b746d115}{00017}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aa60852f204ed8028c1c58808b746d115}{Ok}}\ =\ 1,}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00022}\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aece592fd242f4ba674cc9da539a625a7}{00022}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5aece592fd242f4ba674cc9da539a625a7}{SyntaxError}}\ =\ 2,}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00027}\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a41ecc5ed813e532ce57a4312fc75d332}{00027}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a41ecc5ed813e532ce57a4312fc75d332}{MalformedInput}}\ =\ 4,}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00032}\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a8462b58246e70e5c83e5b939a9332cb5}{00032}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5a8462b58246e70e5c83e5b939a9332cb5}{InternalError}}\ =\ 255,}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00044}\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a8ea256371c0da0aeb58a691f5d9e9f0c}{00044}}\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a2d1368154e0a006977b730215d53a5f5}{ParseStatusCode}}\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_parser_a8ea256371c0da0aeb58a691f5d9e9f0c}{Parse}}(\textcolor{keywordtype}{string}\ str,\ out\ (\textcolor{keywordtype}{string}\ Command,\ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_argument}{CommandArgument}}[]Arguments)\ tuple);}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00045}00045\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_i_command_parser_8cs_source_l00046}00046\ \}}
+
+\end{DoxyCode}

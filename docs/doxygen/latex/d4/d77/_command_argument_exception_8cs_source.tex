@@ -1,0 +1,58 @@
+\doxysection{Command\+Argument\+Exception.\+cs}
+\hypertarget{_command_argument_exception_8cs_source}{}\label{_command_argument_exception_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/API/Exception/CommandArgumentException.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/API/Exception/CommandArgumentException.cs}}
+\mbox{\hyperlink{_command_argument_exception_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }System.Runtime.Serialization;}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00004}\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception}{00004}}\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception}{YukimaruGames.Terminal.Domain.Exception}}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00005}00005\ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00009}00009\ \ \ \ \ [Serializable]}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00010}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception}{00010}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{sealed}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a4d04bc947b9a2e37e33f1e09d735ffa7}{CommandArgumentException}}\ :\ ArgumentException}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00011}00011\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00015}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a3f220be6d986b995f08e8ea9e0bcba39}{00015}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a3f220be6d986b995f08e8ea9e0bcba39}{Actual}}\ \{\ \textcolor{keyword}{get};\ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00016}00016\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00020}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a5d5e5699a7ef7de932d9a36406b80e6a}{00020}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a5d5e5699a7ef7de932d9a36406b80e6a}{ExpectedMin}}\ \{\ \textcolor{keyword}{get};\ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00021}00021\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00025}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a4f418972a3ebaec8b8fc46921ab2763d}{00025}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a4f418972a3ebaec8b8fc46921ab2763d}{ExpectedMax}}\ \{\ \textcolor{keyword}{get};\ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00027}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a4d04bc947b9a2e37e33f1e09d735ffa7}{00027}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a4d04bc947b9a2e37e33f1e09d735ffa7}{CommandArgumentException}}(\textcolor{keywordtype}{int}\ actual,\ \textcolor{keywordtype}{int}\ expectedMin,\ \textcolor{keywordtype}{int}\ expectedMax,\ System.Exception\ innerException)}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ :\ base(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a073f5fdffa531fbe69b2e6da70e9f5ec}{BuildMessage}}(actual,\ expectedMin,\ expectedMax),\ innerException)}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a3f220be6d986b995f08e8ea9e0bcba39}{Actual}}\ =\ actual;}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a5d5e5699a7ef7de932d9a36406b80e6a}{ExpectedMin}}\ =\ expectedMin;}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a4f418972a3ebaec8b8fc46921ab2763d}{ExpectedMax}}\ =\ expectedMax;}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00035}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a26459684242c2cbccef9b846dce3ba58}{00035}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a26459684242c2cbccef9b846dce3ba58}{CommandArgumentException}}(SerializationInfo\ info,\ StreamingContext\ context)}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ :\ base(info,\ context)}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00047}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a073f5fdffa531fbe69b2e6da70e9f5ec}{00047}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{string}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_argument_exception_a073f5fdffa531fbe69b2e6da70e9f5ec}{BuildMessage}}(\textcolor{keywordtype}{int}\ actual,\ \textcolor{keywordtype}{int}\ min,\ \textcolor{keywordtype}{int}\ max)}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ expected;}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00051}00051\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 引数が足りない\ or\ 不正な引数の登録.}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00052}00052\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (actual\ <\ min)}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00053}00053\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00054}00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ expected\ =\ \$\textcolor{stringliteral}{"{}\{min\}"{}};}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00056}00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 引数が多い\ or\ 不正な引数登録.}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (-\/1\ <\ max\ \&\&\ max\ <\ actual)}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00058}00058\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00059}00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ expected\ =\ \$\textcolor{stringliteral}{"{}\{min\}\ or\ more"{}};}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00060}00060\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00063}00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ expected\ =\ \$\textcolor{stringliteral}{"{}between\ \{min\}\ and\ \{max\}"{}};}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00066}00066\ \ \ \ \ \ \ \ \ \ \ \ \ var\ pluralFix\ =\ (min\ ==\ 1\ \&\&\ max\ ==\ 1)\ ?\ \textcolor{stringliteral}{"{}"{}}\ :\ \textcolor{stringliteral}{"{}s"{}};}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00067}00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00068}00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Invalid\ argument\ count.\ Expected\ \{expected\}\ argument\{pluralFix\},\ but\ received\ \{actual\}."{}};}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00069}00069\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00070}00070\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_argument_exception_8cs_source_l00071}00071\ \}}
+
+\end{DoxyCode}

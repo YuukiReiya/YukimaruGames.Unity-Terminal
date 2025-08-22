@@ -1,0 +1,14 @@
+<map id="YukimaruGames.Terminal.Domain.Model.CommandMeta.CommandMeta" name="YukimaruGames.Terminal.Domain.Model.CommandMeta.CommandMeta">
+<area shape="rect" id="Node000001" title=" " alt="" coords="548,88,790,131"/>
+<area shape="rect" id="Node000002" href="$de/dee/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta.html#aeb1e11f60cfdee3b9e44727773823dd1" title=" " alt="" coords="277,59,500,101"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="532,98,500,94,501,89,533,92"/>
+<area shape="rect" id="Node000003" href="$de/dee/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta.html#ab9da64d89070d130f9943f3eb444dcbd" title=" " alt="" coords="5,5,229,48"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="606,84,555,65,499,49,430,38,360,31,229,26,229,21,360,26,431,33,501,44,556,60,608,79"/>
+<area shape="rect" id="Node000004" href="$de/dee/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta.html#acd7727fe4e1db13d22d8be9fa187492c" title=" " alt="" coords="5,76,229,119"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="532,117,408,119,277,116,229,113,229,107,277,111,408,114,532,112"/>
+<area shape="rect" id="Node000005" href="$de/dee/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta.html#a1380e9b9a5061842ba5f1a0ed43ca9f7" title=" " alt="" coords="5,151,229,193"/>
+<area shape="poly" id="edge7_Node000001_Node000005" title=" " alt="" coords="533,127,229,162,229,157,533,122"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="261,58,228,51,229,46,262,53"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="261,91,229,93,229,88,261,85"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="309,109,183,153,181,148,308,104"/>
+</map>

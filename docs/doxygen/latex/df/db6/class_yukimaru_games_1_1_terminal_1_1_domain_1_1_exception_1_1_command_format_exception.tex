@@ -1,0 +1,204 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception}{}\label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+
+
+コマンド引数の型変換失敗時に送出するカスタム例外.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=262pt]{d2/d90/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=262pt]{d0/d0e/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_ace5e26e75f28d53df1467b523413a659}{Command\+Format\+Exception}} (int argument\+Index, string failed\+Value, Type target\+Type, System.\+Exception inner\+Exception)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a670df21dd196e89eafa9076d5cb7ee7c}{Argument\+Index}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 引数インデックス. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a6c2c2984a7e9f1408bb346e5869ff3a2}{Failed\+Value}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 失敗した値. \end{DoxyCompactList}\item 
+Type \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a88e984c8946472bc55a3efa0e78c6020}{Target\+Type}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em フォーマット(変換)に失敗した目的の型. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a0830beadde7875ff97b2723437726b7f}{Command\+Format\+Exception}} (Serialization\+Info info, Streaming\+Context context)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static string \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_acffe24f58fd5b80ca9e0fcbe814f1091}{Build\+Message}} (int index, string value, Type type)
+\begin{DoxyCompactList}\small\item\em 例外送出メッセージ. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+value \+:\textquotesingle{}\{value\}\textquotesingle{})couldnotbeconvertedtotype\textquotesingle{}\{type.\+Name\}\textquotesingle{}."{}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+コマンド引数の型変換失敗時に送出するカスタム例外. 
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_ace5e26e75f28d53df1467b523413a659}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}!CommandFormatException@{CommandFormatException}}
+\index{CommandFormatException@{CommandFormatException}!YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+\doxysubsubsection{\texorpdfstring{CommandFormatException()}{CommandFormatException()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_ace5e26e75f28d53df1467b523413a659} 
+Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception.\+Command\+Format\+Exception (\begin{DoxyParamCaption}\item[{int}]{argument\+Index}{, }\item[{string}]{failed\+Value}{, }\item[{Type}]{target\+Type}{, }\item[{System.\+Exception}]{inner\+Exception}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00031}{31}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{df/db6/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_ace5e26e75f28d53df1467b523413a659_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a0830beadde7875ff97b2723437726b7f}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}!CommandFormatException@{CommandFormatException}}
+\index{CommandFormatException@{CommandFormatException}!YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+\doxysubsubsection{\texorpdfstring{CommandFormatException()}{CommandFormatException()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a0830beadde7875ff97b2723437726b7f} 
+Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception.\+Command\+Format\+Exception (\begin{DoxyParamCaption}\item[{Serialization\+Info}]{info}{, }\item[{Streaming\+Context}]{context}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00039}{39}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_acffe24f58fd5b80ca9e0fcbe814f1091}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}!BuildMessage@{BuildMessage}}
+\index{BuildMessage@{BuildMessage}!YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+\doxysubsubsection{\texorpdfstring{BuildMessage()}{BuildMessage()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_acffe24f58fd5b80ca9e0fcbe814f1091} 
+string Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception.\+Build\+Message (\begin{DoxyParamCaption}\item[{int}]{index}{, }\item[{string}]{value}{, }\item[{Type}]{type}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+例外送出メッセージ. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & 引数インデックス\\
+\hline
+{\em value} & 失敗した変数\\
+\hline
+{\em type} & 失敗した変換先の型\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00051}{51}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{df/db6/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_acffe24f58fd5b80ca9e0fcbe814f1091_icgraph}
+\end{center}
+\end{figure}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_ab39d64c0e74698f6c0fd653170249d61}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}!\_\_pad0\_\_@{\_\_pad0\_\_}}
+\index{\_\_pad0\_\_@{\_\_pad0\_\_}!YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+\doxysubsubsection{\texorpdfstring{\_\_pad0\_\_}{\_\_pad0\_\_}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_ab39d64c0e74698f6c0fd653170249d61} 
+value Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception.\+\_\+\+\_\+pad0\+\_\+\+\_\+\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00052}{52}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+
+
+\label{doc-property-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_doc-property-members}
+\doxysubsection{Property Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a670df21dd196e89eafa9076d5cb7ee7c}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}!ArgumentIndex@{ArgumentIndex}}
+\index{ArgumentIndex@{ArgumentIndex}!YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+\doxysubsubsection{\texorpdfstring{ArgumentIndex}{ArgumentIndex}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a670df21dd196e89eafa9076d5cb7ee7c} 
+int Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception.\+Argument\+Index\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+引数インデックス. 
+
+Command\+Delegate
+
+配列で受け取る引数の対象インデックス. 
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a6c2c2984a7e9f1408bb346e5869ff3a2}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}!FailedValue@{FailedValue}}
+\index{FailedValue@{FailedValue}!YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+\doxysubsubsection{\texorpdfstring{FailedValue}{FailedValue}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a6c2c2984a7e9f1408bb346e5869ff3a2} 
+string Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception.\+Failed\+Value\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+失敗した値. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a88e984c8946472bc55a3efa0e78c6020}\index{YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}!TargetType@{TargetType}}
+\index{TargetType@{TargetType}!YukimaruGames.Terminal.Domain.Exception.CommandFormatException@{YukimaruGames.Terminal.Domain.Exception.CommandFormatException}}
+\doxysubsubsection{\texorpdfstring{TargetType}{TargetType}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_exception_1_1_command_format_exception_a88e984c8946472bc55a3efa0e78c6020} 
+Type Yukimaru\+Games.\+Terminal.\+Domain.\+Exception.\+Command\+Format\+Exception.\+Target\+Type\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+フォーマット(変換)に失敗した目的の型. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_format_exception_8cs_source_l00029}{29}} of file \mbox{\hyperlink{_command_format_exception_8cs_source}{Command\+Format\+Exception.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+API/\+Exception/\mbox{\hyperlink{_command_format_exception_8cs}{Command\+Format\+Exception.\+cs}}\end{DoxyCompactItemize}

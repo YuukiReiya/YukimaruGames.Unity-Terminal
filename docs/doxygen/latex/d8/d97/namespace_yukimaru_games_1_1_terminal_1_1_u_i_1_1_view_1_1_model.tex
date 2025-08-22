@@ -1,0 +1,185 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Model Namespace Reference}
+\hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model}{}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Focus\+Control}} \{ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683ea6adf97f83acf6453d4a6a4b1070f3754}{None}} = 0
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683eae24ee2487879116dcab772c0ac4fe341}{Focus}} = 1
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683ea6f95b963543a48b5ede6ca40b7720a27}{Un\+Focus}} = 2
+ \}
+\item 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6}{Terminal\+Action}} \{ \newline
+\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a6adf97f83acf6453d4a6a4b1070f3754}{None}} = 0
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ac3bf447eabe632720a3aa1a7ce401274}{Open}} = 1
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ad3d2e617335f08df83599665eef8a418}{Close}} = 2
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a40cd014b7b6251e3a22e6a45a73a64e1}{Execute}} = 3
+, \newline
+\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a554ba2ddc02ad7625019ed75f7c39e89}{Previous\+History}} = 4
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a40ab7bd69e1867c893cd441216d90d48}{Next\+History}} = 5
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a84f83bc640fb8de5e4c4551106b65f22}{Autocomplete}} = 6
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ae24ee2487879116dcab772c0ac4fe341}{Focus}} = 7
+ \}
+\item 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3b}{Terminal\+Anchor}} \+: byte \{ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba945d5e233cf7d6240f6b783b36a374ff}{Left}} = 1
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba92b09c7c48c520c3c55e497875da437c}{Right}} = 2
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3baa4ffdcf0dc1f31b9acaf295d75b51d00}{Top}} = 3
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba2ad9d63b69c4a10a5cc9cad923133bc4}{Bottom}} = 4
+ \}
+\item 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039}{Terminal\+State}} \+: byte \{ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039ac3bf447eabe632720a3aa1a7ce401274}{Open}} = 1
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039ad3d2e617335f08df83599665eef8a418}{Close}} = 2
+ \}
+\begin{DoxyCompactList}\small\item\em ターミナルの状態. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101df}{Terminal\+Window\+Style}} \+: byte \{ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101dfab1fe2c2a59e883740e7ea87667e44a24}{Compact}} = 1
+, \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101dfabbd47109890259c0127154db1af26c75}{Full}} = 2
+ \}
+\begin{DoxyCompactList}\small\item\em 画面サイズ. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-enum-members}
+\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_doc-enum-members}
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!FocusControl@{FocusControl}}
+\index{FocusControl@{FocusControl}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}
+\doxysubsubsection{\texorpdfstring{FocusControl}{FocusControl}}
+{\footnotesize\ttfamily \label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e} 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683e}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Model.\+Focus\+Control}}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{None@{None}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!None@{None}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683ea6adf97f83acf6453d4a6a4b1070f3754}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683ea6adf97f83acf6453d4a6a4b1070f3754} 
+None&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Focus@{Focus}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Focus@{Focus}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683eae24ee2487879116dcab772c0ac4fe341}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683eae24ee2487879116dcab772c0ac4fe341} 
+Focus&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UnFocus@{UnFocus}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!UnFocus@{UnFocus}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683ea6f95b963543a48b5ede6ca40b7720a27}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a7cf02d08b8a091d31132937c33be683ea6f95b963543a48b5ede6ca40b7720a27} 
+Un\+Focus&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_focus_control_8cs_source_l00003}{3}} of file \mbox{\hyperlink{_focus_control_8cs_source}{Focus\+Control.\+cs}}.
+
+\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!TerminalAction@{TerminalAction}}
+\index{TerminalAction@{TerminalAction}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}
+\doxysubsubsection{\texorpdfstring{TerminalAction}{TerminalAction}}
+{\footnotesize\ttfamily \label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6} 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Model.\+Terminal\+Action}}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{None@{None}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!None@{None}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a6adf97f83acf6453d4a6a4b1070f3754}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a6adf97f83acf6453d4a6a4b1070f3754} 
+None&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Open@{Open}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Open@{Open}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ac3bf447eabe632720a3aa1a7ce401274}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ac3bf447eabe632720a3aa1a7ce401274} 
+Open&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Close@{Close}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Close@{Close}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ad3d2e617335f08df83599665eef8a418}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ad3d2e617335f08df83599665eef8a418} 
+Close&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Execute@{Execute}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Execute@{Execute}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a40cd014b7b6251e3a22e6a45a73a64e1}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a40cd014b7b6251e3a22e6a45a73a64e1} 
+Execute&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PreviousHistory@{PreviousHistory}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!PreviousHistory@{PreviousHistory}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a554ba2ddc02ad7625019ed75f7c39e89}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a554ba2ddc02ad7625019ed75f7c39e89} 
+Previous\+History&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NextHistory@{NextHistory}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!NextHistory@{NextHistory}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a40ab7bd69e1867c893cd441216d90d48}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a40ab7bd69e1867c893cd441216d90d48} 
+Next\+History&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Autocomplete@{Autocomplete}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Autocomplete@{Autocomplete}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a84f83bc640fb8de5e4c4551106b65f22}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6a84f83bc640fb8de5e4c4551106b65f22} 
+Autocomplete&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Focus@{Focus}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Focus@{Focus}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ae24ee2487879116dcab772c0ac4fe341}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae47d20bccbe14444d63991e23acaacb6ae24ee2487879116dcab772c0ac4fe341} 
+Focus&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_terminal_action_8cs_source_l00003}{3}} of file \mbox{\hyperlink{_terminal_action_8cs_source}{Terminal\+Action.\+cs}}.
+
+\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3b}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!TerminalAnchor@{TerminalAnchor}}
+\index{TerminalAnchor@{TerminalAnchor}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}
+\doxysubsubsection{\texorpdfstring{TerminalAnchor}{TerminalAnchor}}
+{\footnotesize\ttfamily \label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3b} 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3b}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Model.\+Terminal\+Anchor}} \+: byte}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Left@{Left}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Left@{Left}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba945d5e233cf7d6240f6b783b36a374ff}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba945d5e233cf7d6240f6b783b36a374ff} 
+Left&左寄せ. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Right@{Right}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Right@{Right}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba92b09c7c48c520c3c55e497875da437c}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba92b09c7c48c520c3c55e497875da437c} 
+Right&右寄せ. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Top@{Top}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Top@{Top}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3baa4ffdcf0dc1f31b9acaf295d75b51d00}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3baa4ffdcf0dc1f31b9acaf295d75b51d00} 
+Top&上寄せ. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Bottom@{Bottom}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Bottom@{Bottom}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba2ad9d63b69c4a10a5cc9cad923133bc4}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_abe2d515587bb2b49cb71ecfdaeb50f3ba2ad9d63b69c4a10a5cc9cad923133bc4} 
+Bottom&下寄せ. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_terminal_anchor_8cs_source_l00003}{3}} of file \mbox{\hyperlink{_terminal_anchor_8cs_source}{Terminal\+Anchor.\+cs}}.
+
+\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!TerminalState@{TerminalState}}
+\index{TerminalState@{TerminalState}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}
+\doxysubsubsection{\texorpdfstring{TerminalState}{TerminalState}}
+{\footnotesize\ttfamily \label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039} 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Model.\+Terminal\+State}} \+: byte}
+
+
+
+ターミナルの状態. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Open@{Open}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Open@{Open}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039ac3bf447eabe632720a3aa1a7ce401274}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039ac3bf447eabe632720a3aa1a7ce401274} 
+Open&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Close@{Close}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Close@{Close}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039ad3d2e617335f08df83599665eef8a418}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_ae6f942fe10d71fdc2401c052797f4039ad3d2e617335f08df83599665eef8a418} 
+Close&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_terminal_state_8cs_source_l00006}{6}} of file \mbox{\hyperlink{_terminal_state_8cs_source}{Terminal\+State.\+cs}}.
+
+\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101df}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!TerminalWindowStyle@{TerminalWindowStyle}}
+\index{TerminalWindowStyle@{TerminalWindowStyle}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}
+\doxysubsubsection{\texorpdfstring{TerminalWindowStyle}{TerminalWindowStyle}}
+{\footnotesize\ttfamily \label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101df} 
+enum \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101df}{Yukimaru\+Games.\+Terminal.\+UI.\+View.\+Model.\+Terminal\+Window\+Style}} \+: byte}
+
+
+
+画面サイズ. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Compact@{Compact}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Compact@{Compact}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101dfab1fe2c2a59e883740e7ea87667e44a24}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101dfab1fe2c2a59e883740e7ea87667e44a24} 
+Compact&コンパクト(画面に対して一定比率). \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Full@{Full}!YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}}\index{YukimaruGames.Terminal.UI.View.Model@{YukimaruGames.Terminal.UI.View.Model}!Full@{Full}}}\Hypertarget{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101dfabbd47109890259c0127154db1af26c75}\label{namespace_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_model_a3bdc2094c13d5b6ee9d8a1f4d8c101dfabbd47109890259c0127154db1af26c75} 
+Full&フルサイズ(画面全体). \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_terminal_window_style_8cs_source_l00006}{6}} of file \mbox{\hyperlink{_terminal_window_style_8cs_source}{Terminal\+Window\+Style.\+cs}}.
+

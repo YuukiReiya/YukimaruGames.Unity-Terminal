@@ -1,0 +1,416 @@
+\doxysection{Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry Class Reference}
+\hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry}{}\label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+
+
+登録されたコマンドの保存クラス.  
+
+
+
+
+Inheritance diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=248pt]{dd/d53/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d11/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ab9d5727a2f69369f58aad82440e756b0}{Command\+Registry}} (\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} logger)
+\begin{DoxyCompactList}\small\item\em コンストラクタ. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a3fc3ce8d430cdcc1a74e8db1d8ed41dc}{Remove}} (string command)
+\begin{DoxyCompactList}\small\item\em コマンドの削除. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ac97622a25e88e2c142db92563541c6b3}{Try\+Get}} (string command, out \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} handler)
+\begin{DoxyCompactList}\small\item\em コマンドの取得.
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & コマンドの登録エイリアス\\
+\hline
+{\em handler} & ハンドル\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true \+: 成功 false\+: 失敗 
+\end{DoxyReturn}
+ \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0a446218966199d1413c612e4a277f1c}{Register}} (string\mbox{[}$\,$\mbox{]} unresolved\+Assembly\+Names, \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}} binding\+Flags=\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}})
+\begin{DoxyCompactList}\small\item\em ランタイムでロード済みと未解決な\+Assemblyの中から利用できるメソッドを登録. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Registry}}}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry_a76f043599d3f9f0aba44930fbceed640}{Add}} (string command, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} handle)
+\begin{DoxyCompactList}\small\item\em コマンドの追加. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}{Add}} (string command, Method\+Info method\+Info, \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{Register\+Attribute}} attribute)
+\begin{DoxyCompactList}\small\item\em コマンドの追加. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720}{Register}} (Assembly assembly, \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}} binding\+Flags)
+\begin{DoxyCompactList}\small\item\em Assemblyから利用できるメソッドを登録. \end{DoxyCompactList}\item 
+IEnumerable$<$ Type $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a1aa2d96d5a90c7b0a274ffa9b8a25377}{Get\+Types\+Safely}} (Assembly assembly)
+\begin{DoxyCompactList}\small\item\em Assemblyから有効な型を取得. \end{DoxyCompactList}\item 
+IEnumerable$<$ Method\+Info $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_abdfd9bd7ca9e60a38ca3c07abeb07b26}{Get\+Methods\+Safely}} (Type type, \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}} binding\+Flags)
+\begin{DoxyCompactList}\small\item\em Typeから安全にメソッドを取り出す. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0106015a07b3b47706d009e8da9fef74}{Add}} (Type declaring\+Type, Method\+Info method)
+\begin{DoxyCompactList}\small\item\em コマンドの追加. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly Dictionary$<$ string, \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} $>$ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}{\+\_\+commands}}
+\begin{DoxyCompactList}\small\item\em コマンドキャッシュ. \end{DoxyCompactList}\item 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\+\_\+logger}}
+\begin{DoxyCompactList}\small\item\em ログ発行. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const Binding\+Flags \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}}
+\begin{DoxyCompactList}\small\item\em メソッド登録のバインディングフラグ. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+登録されたコマンドの保存クラス. 
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ab9d5727a2f69369f58aad82440e756b0}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!CommandRegistry@{CommandRegistry}}
+\index{CommandRegistry@{CommandRegistry}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{CommandRegistry()}{CommandRegistry()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ab9d5727a2f69369f58aad82440e756b0} 
+Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Command\+Registry (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}}}]{logger}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コンストラクタ. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em logger} & ロガーインスタンス.\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00039}{39}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!Add@{Add}}
+\index{Add@{Add}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{Add()}{Add()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Add (\begin{DoxyParamCaption}\item[{string}]{command}{, }\item[{Method\+Info}]{method\+Info}{, }\item[{\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{Register\+Attribute}}}]{attribute}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+コマンドの追加. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & コマンド名\\
+\hline
+{\em method\+Info} & メソッド情報\\
+\hline
+{\em attribute} & 属性\\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00059}{59}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0106015a07b3b47706d009e8da9fef74}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!Add@{Add}}
+\index{Add@{Add}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{Add()}{Add()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0106015a07b3b47706d009e8da9fef74} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Add (\begin{DoxyParamCaption}\item[{Type}]{declaring\+Type}{, }\item[{Method\+Info}]{method}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+コマンドの追加. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00173}{173}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0106015a07b3b47706d009e8da9fef74_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_abdfd9bd7ca9e60a38ca3c07abeb07b26}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!GetMethodsSafely@{GetMethodsSafely}}
+\index{GetMethodsSafely@{GetMethodsSafely}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{GetMethodsSafely()}{GetMethodsSafely()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_abdfd9bd7ca9e60a38ca3c07abeb07b26} 
+IEnumerable$<$ Method\+Info $>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Get\+Methods\+Safely (\begin{DoxyParamCaption}\item[{Type}]{type}{, }\item[{\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}}}]{binding\+Flags}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Typeから安全にメソッドを取り出す. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00155}{155}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_abdfd9bd7ca9e60a38ca3c07abeb07b26_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a1aa2d96d5a90c7b0a274ffa9b8a25377}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!GetTypesSafely@{GetTypesSafely}}
+\index{GetTypesSafely@{GetTypesSafely}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{GetTypesSafely()}{GetTypesSafely()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a1aa2d96d5a90c7b0a274ffa9b8a25377} 
+IEnumerable$<$ Type $>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Get\+Types\+Safely (\begin{DoxyParamCaption}\item[{Assembly}]{assembly}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Assemblyから有効な型を取得. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00130}{130}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a1aa2d96d5a90c7b0a274ffa9b8a25377_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!Register@{Register}}
+\index{Register@{Register}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{Register()}{Register()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Register (\begin{DoxyParamCaption}\item[{Assembly}]{assembly}{, }\item[{\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}}}]{binding\+Flags}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Assemblyから利用できるメソッドを登録. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em assembly} & 対象\+Assembly\\
+\hline
+{\em binding\+Flags} & バインディングフラグ\\
+\hline
+\end{DoxyParams}
+
+
+Assemblyから参照させる場合はインスタンスを指定できない。 (作られていないインスタンスを指定できるわけないので.) 
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00106}{106}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0a446218966199d1413c612e4a277f1c}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!Register@{Register}}
+\index{Register@{Register}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{Register()}{Register()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0a446218966199d1413c612e4a277f1c} 
+void Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Register (\begin{DoxyParamCaption}\item[{string\mbox{[}$\,$\mbox{]}}]{unresolved\+Assembly\+Names}{, }\item[{\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}}}]{binding\+Flags}{ = {\ttfamily \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{Binding\+Flags}}}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+ランタイムでロード済みと未解決な\+Assemblyの中から利用できるメソッドを登録. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em unresolved\+Assembly\+Names} & 未解決(未ロード)の\+Assembly名\\
+\hline
+{\em binding\+Flags} & 登録メソッドのバインディングフラグ\\
+\hline
+\end{DoxyParams}
+
+
+注意\+: このメソッドを呼び出すことで未解決な\+Assemblyで有効な値のものは\+Assemblyがロードされます。 
+
+\texorpdfstring{$\ast$}{*} 未解決の\+Assemblyの参照関係を自動で解決する、即ちその\+Assemblyが参照している\+Assemblyもロードされる。
+
+\texorpdfstring{$\ast$}{*} 引数で渡された\+Assembly名が既にロードされている場合も考慮。
+
+\texorpdfstring{$\ast$}{*} Assembly名がnull/不正値なら登録はされない.
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00224}{224}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/d96/class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0a446218966199d1413c612e4a277f1c_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a3fc3ce8d430cdcc1a74e8db1d8ed41dc}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!Remove@{Remove}}
+\index{Remove@{Remove}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{Remove()}{Remove()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a3fc3ce8d430cdcc1a74e8db1d8ed41dc} 
+bool Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Remove (\begin{DoxyParamCaption}\item[{string}]{command}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コマンドの削除. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & コマンドのエイリアス\\
+\hline
+\end{DoxyParams}
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry_a8bd29a71d0975edbc37d331afe8e2a70}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Registry}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00075}{75}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ac97622a25e88e2c142db92563541c6b3}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!TryGet@{TryGet}}
+\index{TryGet@{TryGet}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{TryGet()}{TryGet()}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ac97622a25e88e2c142db92563541c6b3} 
+bool Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Try\+Get (\begin{DoxyParamCaption}\item[{string}]{command}{, }\item[{out \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}}}]{handler}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+コマンドの取得.
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & コマンドの登録エイリアス\\
+\hline
+{\em handler} & ハンドル\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true \+: 成功 false\+: 失敗 
+\end{DoxyReturn}
+ 
+
+
+
+Implements \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry_a2a7cf3fd572cfc5153c8ed4dbea1c71b}{Yukimaru\+Games.\+Terminal.\+Domain.\+Interface.\+ICommand\+Registry}}.
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00088}{88}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_doc-variable-members}
+\doxysubsection{Field Documentation}
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!\_commands@{\_commands}}
+\index{\_commands@{\_commands}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{\_commands}{\_commands}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb} 
+readonly Dictionary$<$string , \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{Command\+Handler}} $>$ Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+\_\+commands\hspace{0.3cm}{\ttfamily [private]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}(StringComparer.OrdinalIgnoreCase)}
+
+\end{DoxyCode}
+
+
+コマンドキャッシュ. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!\_logger@{\_logger}}
+\index{\_logger@{\_logger}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{\_logger}{\_logger}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca} 
+readonly \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommand\+Logger}} Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+\_\+logger\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+ログ発行. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+\Hypertarget{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}\index{YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}!BindingFlags@{BindingFlags}}
+\index{BindingFlags@{BindingFlags}!YukimaruGames.Terminal.Domain.Service.CommandRegistry@{YukimaruGames.Terminal.Domain.Service.CommandRegistry}}
+\doxysubsubsection{\texorpdfstring{BindingFlags}{BindingFlags}}
+{\footnotesize\ttfamily \label{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2} 
+const Binding\+Flags Yukimaru\+Games.\+Terminal.\+Domain.\+Service.\+Command\+Registry.\+Binding\+Flags\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ System.Reflection.BindingFlags.Instance\ |\ System.Reflection.BindingFlags.Public\ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ System.Reflection.BindingFlags.Static\ |\ System.Reflection.BindingFlags.CreateInstance\ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ System.Reflection.BindingFlags.InvokeMethod\ |\ System.Reflection.BindingFlags.NonPublic}
+
+\end{DoxyCode}
+
+
+メソッド登録のバインディングフラグ. 
+
+
+
+Definition at line \mbox{\hyperlink{_command_registry_8cs_source_l00030}{30}} of file \mbox{\hyperlink{_command_registry_8cs_source}{Command\+Registry.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/yuuki/\+Documents/projects/\+Yukimaru\+Games.\+Unity-\/\+Terminal/\+Assets/\+Yukimaru\+Games/\+Terminal/\+Domain/\+Core/\+Service/\mbox{\hyperlink{_command_registry_8cs}{Command\+Registry.\+cs}}\end{DoxyCompactItemize}

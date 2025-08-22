@@ -1,0 +1,11 @@
+<map id="YukimaruGames.Terminal.Domain.Model.CommandHandler.operator==" name="YukimaruGames.Terminal.Domain.Model.CommandHandler.operator==">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,238,48"/>
+<area shape="rect" id="Node000002" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#a80356f8dd512b4bdd2f042505921fe4e" title="コンストラクタ." alt="" coords="557,5,831,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,11,286,8,397,5,509,8,542,10,541,15,509,13,397,10,286,13,238,17"/>
+<area shape="rect" id="Node000004" href="$d2/db5/struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler.html#a17b4b5bfff89caa1213c83578fd760ac" title=" " alt="" coords="286,47,509,89"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="239,41,271,46,270,52,238,47"/>
+<area shape="rect" id="Node000003" href="$d3/d73/namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model.html#a455c33f782c36a8df125271d2a033fcc" title="コマンドのデリゲート." alt="" coords="879,5,1103,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="832,24,864,24,864,29,832,29"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="509,50,541,45,542,51,510,55"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="345,47,343,37,352,28,370,22,397,20,427,22,445,29,443,34,426,28,397,25,371,27,355,32,349,38,351,45"/>
+</map>

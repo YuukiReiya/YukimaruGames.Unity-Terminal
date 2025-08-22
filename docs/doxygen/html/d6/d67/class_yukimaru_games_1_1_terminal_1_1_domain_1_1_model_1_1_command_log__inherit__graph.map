@@ -1,0 +1,9 @@
+<map id="YukimaruGames.Terminal.Domain.Model.CommandLog" name="YukimaruGames.Terminal.Domain.Model.CommandLog">
+<area shape="rect" id="Node000001" title=" " alt="" coords="49,80,272,123"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,89,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,39,133,77,130,82,76,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="113,5,208,32"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="163,48,163,80,158,80,158,48"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="233,5,328,32"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="250,43,193,82,190,77,247,39"/>
+</map>

@@ -1,0 +1,216 @@
+\doxysection{Command\+Registry.\+cs}
+\hypertarget{_command_registry_8cs_source}{}\label{_command_registry_8cs_source}\index{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/Core/Service/CommandRegistry.cs@{C:/Users/yuuki/Documents/projects/YukimaruGames.Unity-\/Terminal/Assets/YukimaruGames/Terminal/Domain/Core/Service/CommandRegistry.cs}}
+\mbox{\hyperlink{_command_registry_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }System.Reflection;}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute}{YukimaruGames.Terminal.Domain.Attribute}};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00005}00005\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface}{YukimaruGames.Terminal.Domain.Interface}};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00006}00006\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model}{YukimaruGames.Terminal.Domain.Model}};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00007}00007\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel}{YukimaruGames.Terminal.SharedKernel}};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00009}00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_service}{YukimaruGames.Terminal.Domain.Service}}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00010}00010\ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00014}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry}{00014}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{sealed}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ab9d5727a2f69369f58aad82440e756b0}{CommandRegistry}}\ :\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_registry}{ICommandRegistry}}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00015}00015\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00019}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}{00019}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ Dictionary<\textcolor{keywordtype}{string}\ \textcolor{comment}{/*\ コマンドのエイリアス\ */},\ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{CommandHandler}}\ \textcolor{comment}{/*\ ハンドル\ */}>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}{\_commands}}\ =}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}(StringComparer.OrdinalIgnoreCase);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00025}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{00025}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ readonly\ \mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommandLogger}}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00030}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{00030}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{BindingFlags}}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{BindingFlags}}\ =}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \ \ \ \ System.Reflection.BindingFlags.Instance\ |\ System.Reflection.BindingFlags.Public\ |}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \ \ \ \ System.Reflection.BindingFlags.Static\ |\ System.Reflection.BindingFlags.CreateInstance\ |}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \ \ \ \ System.Reflection.BindingFlags.InvokeMethod\ |\ System.Reflection.BindingFlags.NonPublic;}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00039}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ab9d5727a2f69369f58aad82440e756b0}{00039}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ab9d5727a2f69369f58aad82440e756b0}{CommandRegistry}}(\mbox{\hyperlink{interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger}{ICommandLogger}}\ logger)\ =>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}\ =\ logger;}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}{Add}}(\textcolor{keywordtype}{string}\ command,\ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{CommandHandler}}\ handle)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}{\_commands}}.TryAdd(command,\ handle))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Error,\ \$\textcolor{stringliteral}{"{}Command\ '\{command\}'\ is\ already\ defined."{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00051}00051\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00059}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}{00059}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}{Add}}(\textcolor{keywordtype}{string}\ command,\ MethodInfo\ methodInfo,\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{RegisterAttribute}}\ attribute)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00060}00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \ \ var\ proc\ =\ (\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{CommandDelegate}})Delegate.CreateDelegate(typeof(\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_a455c33f782c36a8df125271d2a033fcc}{CommandDelegate}}),\ methodInfo);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}{Add}}(command,\ \textcolor{keyword}{new}\ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{CommandHandler}}(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00063}00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ proc,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ command,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00065}00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ attribute.\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute_a969320607c38f6ab6d1d10687490ded5}{Meta}}.\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta_a4d871d1288518e48fa9be277dc7a9c6a}{MinArgCount}},}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00066}00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ attribute.\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute_a969320607c38f6ab6d1d10687490ded5}{Meta}}.\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta_a0ee0d2685ecbec47797854037558afa6}{MaxArgCount}},}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00067}00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ attribute.\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute_a969320607c38f6ab6d1d10687490ded5}{Meta}}.\mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_meta_a8b0061d6b7a92c1f2a7d9cd809408b2d}{Help}}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00068}00068\ \ \ \ \ \ \ \ \ \ \ \ \ ));}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00069}00069\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00070}00070\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00075}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a3fc3ce8d430cdcc1a74e8db1d8ed41dc}{00075}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a3fc3ce8d430cdcc1a74e8db1d8ed41dc}{Remove}}(\textcolor{keywordtype}{string}\ command)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00076}00076\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00077}00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}{\_commands}}.ContainsKey(command))}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00079}00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}{\_commands}}.Remove(command);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00081}00081\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00083}00083\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(\mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Error,\ \$\textcolor{stringliteral}{"{}Command\ '\{command\}'\ is\ not\ registered."{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00084}00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00085}00085\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00086}00086\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00088}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ac97622a25e88e2c142db92563541c6b3}{00088}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ac97622a25e88e2c142db92563541c6b3}{TryGet}}(\textcolor{keywordtype}{string}\ command,\ out\ \mbox{\hyperlink{struct_yukimaru_games_1_1_terminal_1_1_domain_1_1_model_1_1_command_handler}{CommandHandler}}\ handler)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00089}00089\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00090}00090\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aa87826fa08c9f2782175defeb22377fb}{\_commands}}.TryGetValue(command,\ out\ handler))}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00091}00091\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00092}00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00095}00095\ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00106}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720}{00106}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720}{Register}}(Assembly\ assembly,\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{BindingFlags}}\ bindingFlags)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00107}00107\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00108}00108\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00109}00109\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ type\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a1aa2d96d5a90c7b0a274ffa9b8a25377}{GetTypesSafely}}(assembly))}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ method\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_abdfd9bd7ca9e60a38ca3c07abeb07b26}{GetMethodsSafely}}(type,\ bindingFlags))}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00113}00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00114}00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}{Add}}(type,\ method);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00116}00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00117}00117\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00118}00118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (System.Exception\ e)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00119}00119\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00121}00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Error,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00122}00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Failed\ to\ register\ commands\ from\ assembly\ '\{assembly.FullName\}'.\{Environment.NewLine\}Exception:\ \{e\}"{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00125}00125\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00126}00126\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00130}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a1aa2d96d5a90c7b0a274ffa9b8a25377}{00130}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ IEnumerable<Type>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a1aa2d96d5a90c7b0a274ffa9b8a25377}{GetTypesSafely}}(Assembly\ assembly)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00131}00131\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ assembly.GetTypes();}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (ReflectionTypeLoadException\ e)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00137}00137\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00138}00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00139}00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Warning,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Failed\ to\ load\ some\ types\ from\ assembly\ '\{assembly.FullName\}'.\{Environment.NewLine\}Exception:\ \{e\}"{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00141}00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00143}00143\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (System.Exception\ e)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00144}00144\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00145}00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Error,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00147}00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Unexpected\ error\ while\ getting\ types\ from\ assembly\ '\{assembly.FullName\}'.\{Environment.NewLine\}Exception:\ \{e\}"{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00150}00150\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00151}00151\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00155}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_abdfd9bd7ca9e60a38ca3c07abeb07b26}{00155}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ IEnumerable<MethodInfo>\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_abdfd9bd7ca9e60a38ca3c07abeb07b26}{GetMethodsSafely}}(Type\ type,\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{BindingFlags}}\ bindingFlags)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00156}00156\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00157}00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00158}00158\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00159}00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ type.GetMethods(bindingFlags);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00160}00160\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00161}00161\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (System.Exception\ e)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00162}00162\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00163}00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00164}00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Warning,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00165}00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Failed\ to\ load\ methods\ from\ type\ '\{type.FullName\}'.\{Environment.NewLine\}Exception:\ \{e\}"{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00166}00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00167}00167\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00168}00168\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00169}00169\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00173}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0106015a07b3b47706d009e8da9fef74}{00173}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0106015a07b3b47706d009e8da9fef74}{Add}}(Type\ declaringType,\ MethodInfo\ method)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00174}00174\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00175}00175\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00176}00176\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00177}00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (System.Attribute.GetCustomAttribute(method,\ typeof(\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{RegisterAttribute}}))\ is\ not\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_attribute_1_1_register_attribute}{RegisterAttribute}}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00178}00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ attribute)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00179}00179\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00180}00180\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 属性が付与されていないメソッドはスキップ.}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00183}00183\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00184}00184\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!method.IsStatic)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00185}00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00186}00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assemblyから登録するときは呼び出し元のインスタンスが特定できないはずなのでstaticのみ.}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00188}00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Warning,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00189}00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Skipping\ non-\/static\ method\ '\{method.Name\}'\ in\ type\ '\{declaringType.FullName\}'.\ Only\ static\ methods\ can\ be\ registered."{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00190}00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00191}00191\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00192}00192\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00193}00193\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ command\ =\ attribute.Meta.Command;}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00194}00194\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keywordtype}{string}.IsNullOrEmpty(command)\ ||\ \textcolor{keywordtype}{string}.IsNullOrWhiteSpace(command))}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00195}00195\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00196}00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00197}00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Warning,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00198}00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Command\ name\ is\ null\ or\ empty\ for\ method\ '\{method.Name\}'\ in\ type\ '\{declaringType.FullName\}'."{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00199}00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00200}00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00201}00201\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00202}00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a4b1d761c366cee37fd6af7baeb128a02}{Add}}(command,\ method,\ attribute);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00203}00203\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00204}00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (System.Exception\ e)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00205}00205\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00206}00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00207}00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Exception,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00208}00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Exception:\ \{e.GetType().Name\}\{Environment.NewLine\}\{e.Message\}"{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00209}00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00210}00210\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00211}00211\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00212}00212\ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00224}\mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0a446218966199d1413c612e4a277f1c}{00224}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a0a446218966199d1413c612e4a277f1c}{Register}}(\textcolor{keywordtype}{string}[]\ unresolvedAssemblyNames,\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{BindingFlags}}\ bindingFlags\ =\ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_a2facf477fe4db32612bc8f601a0b9fc2}{BindingFlags}})}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00225}00225\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00226}00226\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (unresolvedAssemblyNames\ is\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00227}00227\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00228}00228\ \ \ \ \ \ \ \ \ \ \ \ \ var\ hashSet\ =\ \textcolor{keyword}{new}\ HashSet<Assembly>();}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00229}00229\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00230}00230\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ loadedAssembly\ \textcolor{keywordflow}{in}\ AppDomain.CurrentDomain.GetAssemblies())}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00231}00231\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00232}00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hashSet.Add(loadedAssembly);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00233}00233\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00234}00234\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00235}00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ unresolvedAssemblyName\ \textcolor{keywordflow}{in}\ unresolvedAssemblyNames)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00236}00236\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00237}00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ AssemblyName\ referencedAssemblyName\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00238}00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00239}00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00240}00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ assembly\ =\ Assembly.Load(unresolvedAssemblyName);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00241}00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (assembly\ is\ not\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00242}00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00243}00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ referencedAssembliesName\ =\ assembly.GetReferencedAssemblies();}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00244}00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ assemblyName\ \textcolor{keywordflow}{in}\ referencedAssembliesName)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00245}00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00246}00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ referencedAssemblyName\ =\ assemblyName;}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00247}00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ referencedAssembly\ =\ Assembly.Load(referencedAssemblyName);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00248}00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hashSet.Add(referencedAssembly))}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00249}00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00250}00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_aaa2bb386e1adaaa009fc8dcb1d28c720}{Register}}(referencedAssembly,\ bindingFlags);}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00251}00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00252}00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00253}00253\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00254}00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00255}00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00256}00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00257}00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Warning,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00258}00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Failed\ to\ load\ assembly:\ \{unresolvedAssemblyName\}.\ Assembly.Load\ returned\ null."{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00259}00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00260}00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00261}00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (System.Exception\ e)}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00262}00262\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00263}00263\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_yukimaru_games_1_1_terminal_1_1_domain_1_1_service_1_1_command_registry_ad37300d5031c3c5854194686b11365ca}{\_logger}}?.Send(}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00264}00264\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_yukimaru_games_1_1_terminal_1_1_shared_kernel_a45f7c02b207386cf9b007c456c61d75a}{MessageType}}.Error,}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00265}00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$\textcolor{stringliteral}{"{}Referenced\ assembly\ '\{referencedAssemblyName\}'\ from\ assembly\ '\{unresolvedAssemblyName\}'\ could\ not\ be\ loaded.\{Environment.NewLine\}\{e.GetType()\}\{Environment.NewLine\}\{e.Message\}"{}});}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00266}00266\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw};}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00267}00267\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00268}00268\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00269}00269\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00270}00270\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_command_registry_8cs_source_l00271}00271\ \}}
+
+\end{DoxyCode}

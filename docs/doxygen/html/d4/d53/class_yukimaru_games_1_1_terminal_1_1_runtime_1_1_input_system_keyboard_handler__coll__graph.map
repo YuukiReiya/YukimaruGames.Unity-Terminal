@@ -1,0 +1,9 @@
+<map id="YukimaruGames.Terminal.Runtime.InputSystemKeyboardHandler" name="YukimaruGames.Terminal.Runtime.InputSystemKeyboardHandler">
+<area shape="rect" id="Node000001" title=" " alt="" coords="659,39,887,81"/>
+<area shape="rect" id="Node000002" href="$d2/de1/interface_yukimaru_games_1_1_terminal_1_1_runtime_1_1_shared_1_1_i_keyboard_input_handler.html" title=" " alt="" coords="272,5,499,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="515,35,659,48,659,53,514,40"/>
+<area shape="rect" id="Node000003" href="$da/d78/class_yukimaru_games_1_1_terminal_1_1_runtime_1_1_input_1_1_input_system_1_1_input_system_key.html" title=" " alt="" coords="271,72,500,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="516,83,635,73,659,71,659,76,636,79,516,88"/>
+<area shape="rect" id="Node000004" href="$dc/d30/interface_yukimaru_games_1_1_terminal_1_1_u_i_1_1_view_1_1_input_1_1_i_terminal_input_key_map-1-g.html" title=" " alt="" coords="5,64,222,123"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="237,91,270,91,270,96,237,96"/>
+</map>

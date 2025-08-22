@@ -1,0 +1,4 @@
+var _terminal_window_animator_data_configurator_8cs =
+[
+    [ "YukimaruGames.Terminal.UI.Presentation.TerminalWindowAnimatorDataConfigurator", "d6/dd9/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_window_animator_data_configurator.html", "d6/dd9/class_yukimaru_games_1_1_terminal_1_1_u_i_1_1_presentation_1_1_terminal_window_animator_data_configurator" ]
+];

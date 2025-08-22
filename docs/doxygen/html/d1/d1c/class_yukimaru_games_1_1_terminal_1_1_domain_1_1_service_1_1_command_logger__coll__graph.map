@@ -1,0 +1,7 @@
+<map id="YukimaruGames.Terminal.Domain.Service.CommandLogger" name="YukimaruGames.Terminal.Domain.Service.CommandLogger">
+<area shape="rect" id="Node000001" title="コマンドのログ発行クラス." alt="" coords="96,96,319,139"/>
+<area shape="rect" id="Node000002" href="$d1/dba/interface_yukimaru_games_1_1_terminal_1_1_domain_1_1_interface_1_1_i_command_logger.html" title="コマンドのログ発行インターフェイス." alt="" coords="5,5,229,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,57,189,94,185,98,147,61"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="253,13,344,40"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="276,53,231,98,227,94,273,49"/>
+</map>
