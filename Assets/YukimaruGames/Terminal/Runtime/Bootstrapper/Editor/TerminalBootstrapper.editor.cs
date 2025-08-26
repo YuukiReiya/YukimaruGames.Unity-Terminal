@@ -404,6 +404,7 @@ namespace YukimaruGames.Terminal.Editor
             var prevHistoryKeyProp = _legacyInputKeyProp.FindPropertyRelative("_prevHistoryKeyCode");
             var nextHistoryKeyProp = _legacyInputKeyProp.FindPropertyRelative("_nextHistoryKeyCode");
             var autocompleteKeyProp = _legacyInputKeyProp.FindPropertyRelative("_autocompleteKeyCode");
+            var focusKeyProp = _legacyInputKeyProp.FindPropertyRelative("_focusKeyCode");
 
             EditorGUILayout.PropertyField(openKeyProp, new GUIContent(OpenKeyName));
             EditorGUILayout.PropertyField(closeKeyProp, new GUIContent(CloseKeyName));
@@ -411,6 +412,7 @@ namespace YukimaruGames.Terminal.Editor
             EditorGUILayout.PropertyField(prevHistoryKeyProp, new GUIContent(PrevHistoryKeyName));
             EditorGUILayout.PropertyField(nextHistoryKeyProp, new GUIContent(NextHistoryKeyName));
             EditorGUILayout.PropertyField(autocompleteKeyProp, new GUIContent(AutocompleteKeyName));
+            EditorGUILayout.PropertyField(focusKeyProp, new GUIContent(FocusKeyName));
         }
     }
 }
