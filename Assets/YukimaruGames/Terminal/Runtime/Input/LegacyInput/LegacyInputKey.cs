@@ -20,6 +20,7 @@ namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
         [SerializeField] private KeyCode _prevHistoryKeyCode = KeyCode.UpArrow;
         [SerializeField] private KeyCode _nextHistoryKeyCode = KeyCode.DownArrow;
         [SerializeField] private KeyCode _autocompleteKeyCode = KeyCode.Tab;
+        [SerializeField] private KeyCode _focusKeyCode = KeyCode.LeftControl;
 
         public KeyCode GetKey(TerminalAction action) => action switch
         {
@@ -30,7 +31,7 @@ namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
             TerminalAction.PreviousHistory => _prevHistoryKeyCode,
             TerminalAction.NextHistory => _nextHistoryKeyCode,
             TerminalAction.Autocomplete => _autocompleteKeyCode,
-            TerminalAction.Focus => KeyCode.None,
+            TerminalAction.Focus => _focusKeyCode,
             _ => throw new ArgumentOutOfRangeException(nameof(action), action, null)
         };
     }
