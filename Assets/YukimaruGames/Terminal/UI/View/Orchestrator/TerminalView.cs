@@ -80,7 +80,7 @@ namespace YukimaruGames.Terminal.UI.View
             _size = size;
             
             if (_windowRenderDataProvider == null) return;
-
+            
             _windowRenderer.Render(_windowRenderDataProvider.GetRenderData(), Render);
         }
 
@@ -88,25 +88,30 @@ namespace YukimaruGames.Terminal.UI.View
         {
             for (var i = 0; i < _preRenderers.Count; ++i) _preRenderers[i]?.PreRender();
         }
-        
+
         private void Render(int id)
         {
             OnPreRender?.Invoke();
-            
-            using var scope = new GUILayout.ScrollViewScope(_scrollConfigurator.ScrollPosition, false, false, GUIStyle.none, GUIStyle.none);
-            _scrollConfigurator.ScrollPosition = scope.scrollPosition;
-            
-            using var _ = new GUILayout.VerticalScope();
-            _logRenderer.Render(_logRenderDataProvider.GetRenderData());
-            using (new GUILayout.HorizontalScope())
+
+            using (new GUILayout.VerticalScope())
             {
-                _promptRenderer?.Render();
-                _inputRenderer?.Render(_inputRenderDataProvider.GetRenderData());
+                using (var scope =
+                       new GUILayout.ScrollViewScope(_scrollConfigurator.ScrollPosition, false, false, GUIStyle.none, GUIStyle.none))
+                {
+                    _scrollConfigurator.ScrollPosition = scope.scrollPosition;
+                    _logRenderer.Render(_logRenderDataProvider.GetRenderData());
+                }
+
+                using (new GUILayout.HorizontalScope())
+                {
+                    _promptRenderer?.Render();
+                    _inputRenderer?.Render(_inputRenderDataProvider.GetRenderData());
+                }
             }
-            
+
             OnPostRender?.Invoke();
         }
-        
+
         private void ExecutePostRender()
         {
             for (var i = 0; i < _postRenderers.Count; ++i) _postRenderers[i]?.PostRender();
