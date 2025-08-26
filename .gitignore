@@ -100,3 +100,6 @@ InitTestScene*.unity*
 
 # Rider
 *.idea
+
+# Workspace
+/[Aa]ssets/[Ww]orkspace*
