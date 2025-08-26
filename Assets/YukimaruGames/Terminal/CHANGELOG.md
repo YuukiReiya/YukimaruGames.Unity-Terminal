@@ -1,77 +1,36 @@
 # Changelog
 
-すべての変更がこのファイルに記録されています。
+All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-### Added
-- 新しい機能や改善点
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.1] - 2025-08-26
 
 ### Fixed
-- バグ修正や問題の解決
+- Fixed a rendering lag issue with the input field that occurred during re-focus when a uGUI Canvas was also present in the scene. This was resolved by separating the input field from the log's `ScrollViewScope` to prevent IMGUI event conflicts.
+
+## [1.0.0] - 2025-08-21
 
 ### Changed
-- 既存機能の変更や改善
+- This is a complete redesign and refactor based on a previous internal alpha project, rebuilt from the ground up on Clean Architecture principles with new features like dependency separation and dynamic delegate generation.
 
-### Deprecated
-- 非推奨機能のリスト
 
-### Removed
-- 削除された機能
-
-### Usage
-- 使い方に関する変更や新機能
-
-### Tests
-- 新しいテストケースやテストシナリオの追加
-- 特定の機能に対するテストを追加
-
-## [beta-1.0.0] - 2025-01-26
-### Fixed
-- フォーカスを当てたときに即座に入力が反映されない問題の修正。
-
-## [1.0.2] - 2025-01-26
-### Fixed
-- コマンドのパース処理の修正。
-- ターミナルの入力に開閉状態を考慮するように修正。
-
-### Tests
-- パースされた文字列から取得した引数を利用するサンプルメソッドの作成。
-  - 例外が送出されること。
-  - 正常に引数が取得されること。
-
-## [1.0.1] - 2024-12-27
 ### Added
-- 単体テスト(Unity/NUnit)追加。
-  - Parser
-  - Invoker
-- 外部からコマンドが登録できるようにメソッド追加。
-- レイアウトが変更できる機能追加。
-- デフォルトでコマンドを追加。
-  - 登録された補完ワードの一覧を出力するコマンド
-  - ログをクリアするコマンド
-- 画面サイズの動的変更に対応するためのメソッドを追加。<br>※フォント未考慮
-### Fixed
-- Assembly-CSharpから呼び出せず使いづらい問題の修正。
-- 補完機能で例外を吐いてしまう不具合の修正。
-- 補完機能で補完されない不具合の修正。
-- コマンド入力時のエラーメッセージが2重に表示された問題の修正。
-- 一部namespaceが誤っていた問題の修正。
-- CursorToEndが機能していない不具合修正。
-- 特定ケースのParse処理で例外が出てしまう不具合の修正。
-### Changed
-- 一部機能のリネーム。
-- 登録コマンドの大小文字を区別しないように変更。
-- 補完機能の大小文字を区別しないように変更。
-- Registryの例外処理方法を変更。
-- Open/Closeメソッドを外部に公開。
-
-## [1.0.0] - 2024-12-06
-### Added
-- 初期リリース。UnityプロジェクトにCLI風のインタラクションを追加するツールを提供。
-- 最小限の設定で、ランタイム中にCLI風の要素を利用可能に。
-
-### Changed
-- ドキュメントの初期作成、使用方法の記載。
-
-### Usage
-- GameObjectにMonoTerminalViewとMonoTerminalViewAdapterコンポーネントをアタッチし、各種設定をすることで利用可能。
+- **Runtime Terminal:** Implemented an IMGUI-based runtime terminal for executing commands outside of the Unity Editor.
+- **Automatic Command Discovery:** Implemented a `CommandDiscoverer` that automatically registers `static` methods as commands by adding a `[Register]` attribute.
+- **Dynamic Delegate Generation:** Implemented a `CommandFactory` that uses Expression Trees to dynamically generate high-performance `CommandHandler` delegates from discovered methods.
+- **Strongly-Typed Argument Support:**
+    - Implemented automatic type conversion and validation, allowing primitive types like `int`, `float`, and `bool` to be used directly as command arguments.
+    - Introduced custom exceptions (`CommandFormatException`, `CommandArgumentException`) to provide detailed error reports on conversion or argument count failures.
+- **Manual Command Registration:** Added the ability to manually register instance methods as commands via the `Factory`, in addition to static methods.
+- **Input Helpers:**
+    - Command history recall (Up/Down arrow keys).
+    - Command name auto-completion (Tab key).
+- **Dual Input System Support:**
+    - Supports both Unity's legacy Input Manager and the new Input System package.
+    - Uses Assembly Definition `Define Constraints` to automatically switch implementations based on the project's input settings.
+- **Clean Architecture:**
+    - Adopted a clean architecture with 9 distinct assemblies (Domain, Application, UI, etc.) to ensure a clean, one-way dependency flow.
+- **Customization:**
+    - The `TerminalBootstrapper` component allows for customization of fonts, colors, layout, and key bindings directly from the Inspector.
