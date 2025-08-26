@@ -30,6 +30,7 @@ namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
             TerminalAction.PreviousHistory => _prevHistoryKeyCode,
             TerminalAction.NextHistory => _nextHistoryKeyCode,
             TerminalAction.Autocomplete => _autocompleteKeyCode,
+            TerminalAction.Focus => KeyCode.None,
             _ => throw new ArgumentOutOfRangeException(nameof(action), action, null)
         };
     }
