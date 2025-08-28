@@ -23,7 +23,12 @@ A powerful, extensible, and runtime command terminal for Unity.
 # 🌟Features
 
 -   **🖥️ ランタイム実行:** ゲーム実行中にリアルタイムでコマンドを呼び出し。
--   **✍️ 簡単なコマンド登録:** C#メソッドに`[Register]`属性を付けるだけで、`static`メソッドを自動的にコマンドとして認識。
+-   **✍️ 柔軟なコマンド登録:**
+    -   <b>自動登録</b>: C#のstaticメソッドに[Register]属性を付けるだけで、コマンドとして自動認識。
+    -   <b>手動登録</b>: staticでないインスタンスメソッドも、公開APIを通じて柔軟に登録可能。
+-   **⌨️ 入力補助機能:**
+    -   <b>コマンド履歴</b>: 実行したコマンドを上下矢印キーで簡単に再呼び出し。
+    -   <b>自動補完</b>: `Tab`キーによるコマンド名の自動補完。<br>※キーはカスタマイズ可能。
 -   **💪 厳密な型引数:** `int`, `float`, `bool`, `Vector3`など、文字列の引数をメソッドの型に合わせて自動で変換・検証。
 -   **🚀 高速な実行:** `Expression Tree`を利用して、リフレクションを使わない高速なデリゲートを動的に生成。
 -   **🎮 デュアル入力対応:** Unityの旧Input Managerと新しいInput Systemの両方をサポート。
@@ -47,20 +52,24 @@ UnityPackageManagerを介して以下のGitURLから導入が可能です。
 2.  `+` ボタンを押し、`Add package from git URL...` を選択します。
 3.  以下のURLを入力し、`Add`を押します。
 
-<b>https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal.git?path=Assets/YukimaruGames/Terminal</b>
+```markdown
+https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal.git?path=Assets/YukimaruGames/Terminal
+```
 
-## 🚀Getting Started
+## 🧩Getting Started
 
-### 1. シーンにターミナルを追加
+### 1. Add Terminal to Your Scene.
 -   空のGameObjectを作成します。
 -   `TerminalBootstrapper` コンポーネントをアタッチします。
 -   Inspector上で、ターミナルの見た目やキーバインドを好みに設定します。
 
-### 2. コマンドを登録
+### 2. Registering Commands.
 -   プロジェクト内の任意のC#スクリプトに、`public static`なメソッドを作成します。
 -   そのメソッドに `[Register]` 属性を付けるだけで、コマンドとして自動的に登録されます。
 
 #### ▼ コマンド定義の例
+
+##### a. `static`メソッドの自動登録
 ```csharp
 using UnityEngine;
 using YukimaruGames.Terminal.Domain.Attribute; // Register属性のために必要
@@ -82,13 +91,37 @@ public static class MyCommands
 }
 ```
 
-# 🧩Usage
+##### b. `instance`メソッドの手動登録
 
-## 1. Add Terminal to Your Scene.
+```cs
+using UnityEngine;
+using YukimaruGames.Terminal.Domain.Model;
+// ...
 
-## 2. Registering Commands.
+public class MyPlayer : MonoBehaviour
+{
+    // Bootstrapperの参照をInspectorなどから設定
+    public TerminalBootstrapper Terminal;
 
+    // これはインスタンスメソッド
+    public void Heal(int amount)
+    {
+        Debug.Log($"{this.name} healed by {amount}");
+    }
 
+    void Start()
+    {
+        // 1. 登録したいメソッドからデリゲートを作成
+        System.Action<int> healDelegate = this.Heal;
+
+        // 2. コマンドのメタデータを定義
+        var meta = new CommandMeta("heal_me", "このプレイヤーを回復させます。", 1, 1);
+        
+        // 3. Bootstrapperの公開APIを使って登録
+        Terminal.RegisterCommand(healDelegate, meta);
+    }
+}
+```
 
 ## 🤝Contribution
 
