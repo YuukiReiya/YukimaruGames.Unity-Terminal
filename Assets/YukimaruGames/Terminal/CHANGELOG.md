@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+---
+
+# Known Issues
+- **Input Field Focus Issue:**
+When `KeyboardType` is set to `InputSystem`, pressing the Tab key temporarily shifts the focus from the input field to the log text.
+This issue is tracked in Issue [#16](https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal/issues/16).
+We'll proceed with using a `Label` for the log display as our primary approach for now, but may pivot to a better solution in the future.
+
+---
+
 ## [1.0.0] - yyyy-MM-DD
 
 ### Changed
