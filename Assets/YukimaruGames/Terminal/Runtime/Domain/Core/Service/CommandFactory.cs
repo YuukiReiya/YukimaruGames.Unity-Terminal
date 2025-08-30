@@ -22,7 +22,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// <param name="maxArgCount">メソッドの最大引数</param>
         /// <param name="help">ヘルプ</param>
         /// <returns>コマンドの実行型</returns>
-        private CommandHandler Create(object instance,MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help)
+        private CommandHandler Create(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help)
         {
             var parameter4Ex = Expression.Parameter(typeof(CommandArgument[]), "args");
             var methodParameters = methodInfo.GetParameters();
@@ -46,7 +46,7 @@ namespace YukimaruGames.Terminal.Domain.Service
                         Expression.Constant(maxArgCount),
                         Expression.Constant(null, typeof(System.Exception))
                     ), typeof(void));
-                
+
                 bodyEx = Expression.Condition(validateCallExpression, methodCallExpression, throwException);
             }
 
@@ -72,6 +72,30 @@ namespace YukimaruGames.Terminal.Domain.Service
                 attribute?.Meta.MinArgCount ?? length,
                 attribute?.Meta.MaxArgCount ?? length,
                 attribute?.Meta.Help ?? string.Empty);
+        }
+
+        /// <summary>
+        /// コマンドハンドラーの生成.
+        /// </summary>
+        /// <param name="instance">呼び出しインスタンス</param>
+        /// <param name="command">コマンド名</param>
+        /// <param name="methodInfo">呼び出しメソッド情報</param>
+        /// <typeparam name="T">インスタンス型(class)</typeparam>
+        /// <returns>コマンドの実行型</returns>
+        /// <remarks>
+        /// <p>TODO:</p>
+        /// <p>オーバーロードされたメソッドの呼び出しをサポート出来ていない</p>
+        /// </remarks>
+        public CommandHandler Create<T>(T instance, string command, MethodInfo methodInfo) where T : class
+        {
+            var length = methodInfo.GetParameters().Length;
+            return Create(
+                instance,
+                methodInfo,
+                command,
+                length,
+                length,
+                string.Empty);
         }
 
         /// <summary>
@@ -105,7 +129,7 @@ namespace YukimaruGames.Terminal.Domain.Service
                 length,
                 string.Empty);
         }
-
+        
         /// <summary>
         /// メソッドの呼び出しExpressionを構築する.
         /// </summary>
