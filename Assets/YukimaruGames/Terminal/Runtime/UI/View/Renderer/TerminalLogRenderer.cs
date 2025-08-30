@@ -51,7 +51,8 @@ namespace YukimaruGames.Terminal.UI.View
                 OnPreRender?.Invoke(logEntry);
 
                 _styleProvider.SetColor(GetColor(logEntry.MessageType));
-                GUILayout.TextField(logEntry.Message, _styleProvider.GetStyle());
+                // TODO:コピペ可能な選択フィールドの実装が理想.
+                GUILayout.Label(logEntry.Message, _styleProvider.GetStyle());
                 
                 OnPostRender?.Invoke(logEntry);
             }
