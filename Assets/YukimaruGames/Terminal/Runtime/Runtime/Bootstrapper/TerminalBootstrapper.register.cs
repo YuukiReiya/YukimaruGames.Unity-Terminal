@@ -11,6 +11,19 @@ namespace YukimaruGames.Terminal.Runtime
             System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.NonPublic;
 
         /// <summary>
+        /// コマンドの登録解除.
+        /// </summary>
+        /// <param name="command">コマンド名</param>
+        /// <param name="deletesAutocomplete">自動補完文字列として登録していた場合に登録文字列群から削除するか</param>
+        public void UnregisterCommand(string command,bool deletesAutocomplete = true)
+        {
+            if (_registry.Remove(command) && deletesAutocomplete)
+            {
+                _autocomplete.Unregister(command);
+            }
+        }
+        
+        /// <summary>
         /// メソッド名からメソッドが存在していればコマンドを登録.
         /// </summary>
         /// <param name="instance">登録するコマンドの呼び出しインスタンス</param>
