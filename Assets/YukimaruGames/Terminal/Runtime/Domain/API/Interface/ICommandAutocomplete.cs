@@ -13,7 +13,7 @@ namespace YukimaruGames.Terminal.Domain.Interface
         IEnumerable<string> KnownWords { get; }
         
         /// <summary>
-        /// 補完先の登録.
+        /// 補完先文字列としてのワード登録.
         /// </summary>
         /// <param name="word">補完出来る文字列として登録する文字列</param>
         /// <returns>登録の成否
@@ -21,6 +21,16 @@ namespace YukimaruGames.Terminal.Domain.Interface
         /// <p>false : 失敗</p>
         /// </returns>
         bool Register(string word);
+
+        /// <summary>
+        /// 補完先文字列としてのワード登録を解除.
+        /// </summary>
+        /// <param name="word">解除文字列</param>
+        /// <returns>登録解除の成否
+        /// <p>true : 成功</p>
+        /// <p>false : 失敗</p>
+        /// </returns>
+        bool Unregister(string word);
         
         /// <summary>
         /// 補完.

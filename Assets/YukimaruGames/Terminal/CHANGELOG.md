@@ -5,16 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.1] - 2025-08-26
-
-### Fixed
-- Fixed a rendering lag issue with the input field that occurred during re-focus when a uGUI Canvas was also present in the scene. This was resolved by separating the input field from the log's `ScrollViewScope` to prevent IMGUI event conflicts.
-
-## [1.0.0] - 2025-08-21
+## [1.0.0] - yyyy-MM-DD
 
 ### Changed
 - This is a complete redesign and refactor based on a previous internal alpha project, rebuilt from the ground up on Clean Architecture principles with new features like dependency separation and dynamic delegate generation.
-
 
 ### Added
 - **Runtime Terminal:** Implemented an IMGUI-based runtime terminal for executing commands outside of the Unity Editor.
@@ -34,3 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Adopted a clean architecture with 9 distinct assemblies (Domain, Application, UI, etc.) to ensure a clean, one-way dependency flow.
 - **Customization:**
     - The `TerminalBootstrapper` component allows for customization of fonts, colors, layout, and key bindings directly from the Inspector.
+- **Dynamic Command Registration/Unregistration:** Implemented the ability to add and remove commands at runtime. This allows for greater flexibility and modularity, enabling commands to be managed by different game components, scenes, or systems.
+
+### Fixed
+- Fixed a rendering lag issue with the input field that occurred during re-focus when a uGUI Canvas was also present in the scene. This was resolved by separating the input field from the log's `ScrollViewScope` to prevent IMGUI event conflicts.

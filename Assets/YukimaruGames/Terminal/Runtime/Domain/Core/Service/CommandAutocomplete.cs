@@ -20,6 +20,9 @@ namespace YukimaruGames.Terminal.Domain.Service
         public bool Register(string word) => _knownWords.Add(word);
 
         /// <inheritdoc/>
+        public bool Unregister(string word) => _knownWords.Remove(word);
+
+        /// <inheritdoc/>
         public string[] Complete(string text)
         {
             if (string.IsNullOrEmpty(text)) return default;

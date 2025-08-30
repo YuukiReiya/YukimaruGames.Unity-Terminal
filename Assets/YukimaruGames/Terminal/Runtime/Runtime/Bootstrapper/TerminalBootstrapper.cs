@@ -30,7 +30,7 @@ using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.Color
 
 namespace YukimaruGames.Terminal.Runtime
 {
-    public sealed class TerminalBootstrapper : MonoBehaviour,IDisposable
+    public sealed partial class TerminalBootstrapper : MonoBehaviour,IDisposable
     {
         // view
         [SerializeField] private Font _font;
@@ -93,6 +93,8 @@ namespace YukimaruGames.Terminal.Runtime
         
         // domain.
         private ICommandLogger _logger;
+        private ICommandRegistry _registry;
+        private ICommandAutocomplete _autocomplete;
 
         // configurator.
         private TerminalWindowAnimatorDataConfigurator _animatorDataConfigurator;
@@ -141,25 +143,25 @@ namespace YukimaruGames.Terminal.Runtime
             _logger = new CommandLogger(_bufferSize);
 
             var scrollConfigurator = new ScrollConfigurator();
-            var registry = new CommandRegistry(_logger);
+            _registry = new CommandRegistry(_logger);
             var discover = new CommandDiscoverer(_logger);
-            var autocomplete = new CommandAutocomplete(); 
+            _autocomplete = new CommandAutocomplete(); 
             _service = new TerminalService(
                 _logger,
-                registry,
+                _registry,
                 new CommandInvoker(),
                 new CommandParser(),
                 new CommandHistory(),
-                autocomplete);
+                _autocomplete);
 
             var specs = discover.Discover();
             var factory = new CommandFactory();
             foreach (var spec in specs)
             {
                 var commandHandler = factory.Create(spec.Method);
-                if (registry.Add(spec.Meta.Command, commandHandler))
+                if (_registry.Add(spec.Meta.Command, commandHandler))
                 {
-                    autocomplete.Register(spec.Meta.Command);
+                    _autocomplete.Register(spec.Meta.Command);
                 }
             }
 
