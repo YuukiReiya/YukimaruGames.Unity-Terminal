@@ -114,6 +114,7 @@ namespace YukimaruGames.Terminal.Runtime
         private TerminalGUIStyleContext _inputStyleContext;
         private TerminalGUIStyleContext _promptStyleContext;
         private TerminalGUIStyleContext _buttonStyleContext;
+        private TerminalGUIStyleContext _openButtonsStyleContext;
         
         // cursor-flash-speed provider.
         private CursorFlashSpeedProvider _cursorFlashSpeedProvider;
@@ -191,19 +192,20 @@ namespace YukimaruGames.Terminal.Runtime
             _inputStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _promptStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _buttonStyleContext = new TerminalGUIStyleContext(_fontProvider);
-
+            _openButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
+            
             _cursorFlashSpeedProvider = new CursorFlashSpeedProvider(_cursorFlashSpeed);
             
             _windowRenderer = new TerminalWindowRenderer(_pixelTexture2DRepository);
             _logRenderer = new TerminalLogRenderer(_logStyleContext, _colorPaletteProvider);
             _inputRenderer = new TerminalInputRenderer(scrollConfigurator, _inputStyleContext, _colorPaletteProvider, _cursorFlashSpeedProvider);
             _promptRenderer = new TerminalPromptRenderer(_promptStyleContext);
-            _buttonRenderer = new TerminalButtonRenderer(_buttonStyleContext);
+            _buttonRenderer = new TerminalButtonRenderer(_pixelTexture2DRepository, _buttonStyleContext, _openButtonsStyleContext);
 
             _windowPresenter = new TerminalWindowPresenter(_animatorDataConfigurator, new TerminalWindowAnimator());
             _logPresenter = new TerminalLogPresenter(_service);
             _inputPresenter = new TerminalInputPresenter(_inputRenderer, _bootupCommand);
-            _buttonPresenter = new TerminalButtonPresenter(_buttonRenderer);
+            _buttonPresenter = new TerminalButtonPresenter(_buttonRenderer, _animatorDataConfigurator, _windowPresenter);
             _buttonPresenter.OnVisibleButtonChanged += OnVisibleButtonChanged;
             
             _view = new TerminalView(

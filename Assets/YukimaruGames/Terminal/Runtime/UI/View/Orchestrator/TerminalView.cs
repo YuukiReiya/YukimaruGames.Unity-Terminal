@@ -91,6 +91,7 @@ namespace YukimaruGames.Terminal.UI.View
             if (_windowRenderDataProvider == null) return;
             
             _windowRenderer.Render(_windowRenderDataProvider.GetRenderData(), Render);
+            _buttonRenderer.OpenButtonsRender(_buttonRenderDataProvider.GetRenderData());
         }
 
         private void ExecutePreRender()
@@ -115,7 +116,7 @@ namespace YukimaruGames.Terminal.UI.View
                 {
                     _promptRenderer?.Render();
                     _inputRenderer?.Render(_inputRenderDataProvider.GetRenderData());
-                    _buttonRenderer?.Render(_buttonRenderDataProvider.GetRenderData());
+                    _buttonRenderer?.ExecuteButtonRender(_buttonRenderDataProvider.GetRenderData());
                 }
             }
 

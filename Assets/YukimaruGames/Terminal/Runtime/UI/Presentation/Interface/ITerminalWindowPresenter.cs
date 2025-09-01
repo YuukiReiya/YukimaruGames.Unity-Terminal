@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Presentation
@@ -11,6 +12,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         TerminalWindowStyle Style { set; }
         float Duration { set; }
         float Scale { set; }
+        Rect Rect { get; }
         
         event Action<TerminalState> OnCompleted;
         event Action<TerminalState> OnAborted;
