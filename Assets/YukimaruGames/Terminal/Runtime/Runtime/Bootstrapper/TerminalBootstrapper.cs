@@ -70,6 +70,8 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeField] private int _bufferSize = 256;
         [SerializeField] private string _prompt = "$";
         [SerializeField] private string _bootupCommand;
+        [SerializeField] private bool _buttonVisible;
+        [SerializeField] private bool _buttonReverse;
         
         private readonly List<IUpdatable> _updatables = new();
 
@@ -112,21 +114,30 @@ namespace YukimaruGames.Terminal.Runtime
         private TerminalGUIStyleContext _logStyleContext;
         private TerminalGUIStyleContext _inputStyleContext;
         private TerminalGUIStyleContext _promptStyleContext;
+        private TerminalGUIStyleContext _executeButtonsStyleContext;
+        private TerminalGUIStyleContext _openButtonsStyleContext;
         
         // cursor-flash-speed provider.
         private CursorFlashSpeedProvider _cursorFlashSpeedProvider;
+        
+        // button-visible
+        private TerminalButtonVisibleConfigurator _buttonVisibleConfigurator; 
         
         // renderer.
         private TerminalWindowRenderer _windowRenderer;
         private TerminalLogRenderer _logRenderer;
         private TerminalInputRenderer _inputRenderer;
         private TerminalPromptRenderer _promptRenderer;
+        private TerminalExecuteButtonRenderer _executeButtonRenderer;
+        private ITerminalOpenButtonRenderer _openButtonRenderer;
         
         // presenter.
         private TerminalWindowPresenter _windowPresenter;
         private TerminalLogPresenter _logPresenter;
         private TerminalInputPresenter _inputPresenter;
-
+        private TerminalExecuteButtonPresenter _executeButtonPresenter;
+        private TerminalOpenButtonPresenter _openButtonPresenter;
+        
         // application-service.
         private ITerminalService _service;
         
@@ -186,26 +197,37 @@ namespace YukimaruGames.Terminal.Runtime
             _logStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _inputStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _promptStyleContext = new TerminalGUIStyleContext(_fontProvider);
-
-            _cursorFlashSpeedProvider = new CursorFlashSpeedProvider(_cursorFlashSpeed);
+            _executeButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
+            _openButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
             
+            _cursorFlashSpeedProvider = new CursorFlashSpeedProvider(_cursorFlashSpeed);
+            _buttonVisibleConfigurator = new TerminalButtonVisibleConfigurator();
+                
             _windowRenderer = new TerminalWindowRenderer(_pixelTexture2DRepository);
             _logRenderer = new TerminalLogRenderer(_logStyleContext, _colorPaletteProvider);
             _inputRenderer = new TerminalInputRenderer(scrollConfigurator, _inputStyleContext, _colorPaletteProvider, _cursorFlashSpeedProvider);
             _promptRenderer = new TerminalPromptRenderer(_promptStyleContext);
+            _executeButtonRenderer = new TerminalExecuteButtonRenderer(_executeButtonsStyleContext);
+            _openButtonRenderer = new TerminalOpenButtonRenderer(_pixelTexture2DRepository, _openButtonsStyleContext);
 
             _windowPresenter = new TerminalWindowPresenter(_animatorDataConfigurator, new TerminalWindowAnimator());
             _logPresenter = new TerminalLogPresenter(_service);
             _inputPresenter = new TerminalInputPresenter(_inputRenderer, _bootupCommand);
-
+            _executeButtonPresenter = new TerminalExecuteButtonPresenter(_executeButtonRenderer, _buttonVisibleConfigurator);
+            _openButtonPresenter = new TerminalOpenButtonPresenter(_openButtonRenderer, _windowPresenter, _buttonVisibleConfigurator);
+            
             _view = new TerminalView(
                 _windowRenderer,
                 _logRenderer,
                 _inputRenderer,
                 _promptRenderer,
+                _executeButtonRenderer,
+                _openButtonRenderer,
                 _windowPresenter,
                 _logPresenter,
                 _inputPresenter,
+                _executeButtonPresenter,
+                _openButtonPresenter,
                 scrollConfigurator);
 
             _eventListener = new TerminalEventListener(CreateInputHandler());
@@ -215,6 +237,8 @@ namespace YukimaruGames.Terminal.Runtime
                 scrollConfigurator,
                 _windowPresenter,
                 _inputPresenter,
+                _executeButtonPresenter,
+                _openButtonPresenter,
                 _eventListener);
             _updatables.Add(_eventListener);
             Configure();
@@ -293,6 +317,12 @@ namespace YukimaruGames.Terminal.Runtime
             _inputStyleContext?.SetColor(_inputColor);
             _eventListener?.SetInputHandler(CreateInputHandler());
             _cursorFlashSpeedProvider?.SetFlashSpeed(_cursorFlashSpeed);
+            
+            if (_buttonVisibleConfigurator != null)
+            {
+                _buttonVisibleConfigurator.IsVisible = _buttonVisible;
+                _buttonVisibleConfigurator.IsReverse = _buttonReverse;
+            }
         }
 
         private IKeyboardInputHandler CreateInputHandler()
@@ -322,6 +352,8 @@ namespace YukimaruGames.Terminal.Runtime
             _windowPresenter?.Dispose();
             _logPresenter?.Dispose();
             _inputPresenter?.Dispose();
+            _executeButtonPresenter?.Dispose();
+            _openButtonPresenter?.Dispose();
         }
     }
 }

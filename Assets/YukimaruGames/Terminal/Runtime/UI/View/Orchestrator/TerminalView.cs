@@ -13,11 +13,15 @@ namespace YukimaruGames.Terminal.UI.View
         private readonly ITerminalLogRenderer _logRenderer;
         private readonly ITerminalInputRenderer _inputRenderer;
         private readonly ITerminalPromptRenderer _promptRenderer;
+        private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
+        private readonly ITerminalOpenButtonRenderer _openButtonRenderer;
         
         // provider.
         private readonly ITerminalWindowRenderDataProvider _windowRenderDataProvider;
         private readonly ITerminalLogRenderDataProvider _logRenderDataProvider;
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
+        private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
+        private readonly ITerminalOpenButtonRenderDataProvider _openButtonRenderDataProvider;
         private readonly IScrollConfigurator _scrollConfigurator;
         
         // callbacks.
@@ -35,9 +39,13 @@ namespace YukimaruGames.Terminal.UI.View
             ITerminalLogRenderer logRenderer,
             ITerminalInputRenderer inputRenderer,
             ITerminalPromptRenderer promptRenderer,
+            ITerminalExecuteButtonRenderer executeButtonRenderer,
+            ITerminalOpenButtonRenderer openButtonRenderer,
             ITerminalWindowRenderDataProvider windowRenderDataProvider,
             ITerminalLogRenderDataProvider logRenderDataProvider,
             ITerminalInputRenderDataProvider inputRenderDataProvider,
+            ITerminalExecuteButtonRenderDataProvider executeButtonRenderDataProvider,
+            ITerminalOpenButtonRenderDataProvider openButtonRenderDataProvider,
             IScrollConfigurator scrollConfigurator
         )
         {
@@ -45,9 +53,14 @@ namespace YukimaruGames.Terminal.UI.View
             _logRenderer = logRenderer;
             _inputRenderer = inputRenderer;
             _promptRenderer = promptRenderer;
+            _executeButtonRenderer = executeButtonRenderer;
+            _openButtonRenderer = openButtonRenderer;
+            
             _windowRenderDataProvider = windowRenderDataProvider;
             _logRenderDataProvider = logRenderDataProvider;
             _inputRenderDataProvider = inputRenderDataProvider;
+            _executeButtonRenderDataProvider = executeButtonRenderDataProvider;
+            _openButtonRenderDataProvider = openButtonRenderDataProvider;
             _scrollConfigurator = scrollConfigurator;
 
             _preRenderers = new object[]
@@ -55,7 +68,9 @@ namespace YukimaruGames.Terminal.UI.View
                 _windowRenderer,
                 _logRenderer,
                 _inputRenderer,
-                _promptRenderer
+                _promptRenderer,
+                _executeButtonRenderer,
+                _openButtonRenderer,
             }.OfType<ITerminalPreRenderer>().ToList();
             OnPreRender += ExecutePreRender;
 
@@ -64,7 +79,9 @@ namespace YukimaruGames.Terminal.UI.View
                 _windowRenderer,
                 _logRenderer,
                 _inputRenderer,
-                _promptRenderer
+                _promptRenderer,
+                _executeButtonRenderer,
+                _openButtonRenderer,
             }.OfType<ITerminalPostRenderer>().ToList();
             OnPostRender += ExecutePostRender;
         }
@@ -82,6 +99,9 @@ namespace YukimaruGames.Terminal.UI.View
             if (_windowRenderDataProvider == null) return;
             
             _windowRenderer.Render(_windowRenderDataProvider.GetRenderData(), Render);
+
+            // WindowのRect外に描画する.
+            _openButtonRenderer.Render(_openButtonRenderDataProvider.GetRenderData());
         }
 
         private void ExecutePreRender()
@@ -106,6 +126,7 @@ namespace YukimaruGames.Terminal.UI.View
                 {
                     _promptRenderer?.Render();
                     _inputRenderer?.Render(_inputRenderDataProvider.GetRenderData());
+                    _executeButtonRenderer?.Render(_executeButtonRenderDataProvider.GetRenderData());
                 }
             }
 
