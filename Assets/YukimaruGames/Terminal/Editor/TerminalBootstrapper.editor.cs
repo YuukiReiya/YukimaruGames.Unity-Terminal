@@ -56,6 +56,7 @@ namespace YukimaruGames.Terminal.Editor
         private SerializedProperty _inputSystemKeyProp;
         private SerializedProperty _legacyInputKeyProp;
         private SerializedProperty _buttonVisibleProp;
+        private SerializedProperty _buttonReverseProp;
         
         private Tab _tab = Tab.View;
         private Lazy<GUIStyle> _toolbarStyleLazy;
@@ -66,7 +67,8 @@ namespace YukimaruGames.Terminal.Editor
             fontStyle = FontStyle.Bold,
         });
 
-        private Lazy<GUIContent> _buttonVisibleContentLazy = new(() => new GUIContent("Visible"));
+        private readonly Lazy<GUIContent> _buttonVisibleContentLazy = new(() => new GUIContent("Visible"));
+        private readonly Lazy<GUIContent> _buttonReverseContentLazy = new(() => new GUIContent("Reverse"));
         
         private const float MinWidth = 30f;
         private const float MinHeight = 30f;
@@ -128,6 +130,7 @@ namespace YukimaruGames.Terminal.Editor
                 _bootupCommandProp = _serializedObject.FindProperty("_bootupCommand");
                 _bootupWindowStateProp = _serializedObject.FindProperty("_bootupWindowState");
                 _buttonVisibleProp = _serializedObject.FindProperty("_buttonVisible");
+                _buttonReverseProp = _serializedObject.FindProperty("_buttonReverse");
             }
 
             _toolbarStyleLazy = new Lazy<GUIStyle>(() => new GUIStyle(GUI.skin.button)
@@ -367,6 +370,7 @@ namespace YukimaruGames.Terminal.Editor
             
             EditorGUILayout.LabelField("Button",EditorStyles.boldLabel);
             _buttonVisibleProp.boolValue = EditorGUILayout.ToggleLeft(_buttonVisibleContentLazy.Value, _buttonVisibleProp.boolValue);
+            _buttonReverseProp.boolValue = EditorGUILayout.ToggleLeft(_buttonReverseContentLazy.Value, _buttonReverseProp.boolValue);
         }
         
         private void DrawNone()
