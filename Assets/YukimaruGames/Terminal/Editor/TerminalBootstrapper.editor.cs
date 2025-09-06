@@ -43,6 +43,9 @@ namespace YukimaruGames.Terminal.Editor
         private SerializedProperty _caretColorProp;
         private SerializedProperty _selectionColorProp;
         private SerializedProperty _promptColorProp;
+        private SerializedProperty _executeButtonColorProp;
+        private SerializedProperty _openButtonColorProp;
+        private SerializedProperty _copyButtonColorProp;
         private SerializedProperty _cursorFlashSpeedProp;
         private SerializedProperty _inputKeyboardTypeProp;
         private SerializedProperty _durationProp;
@@ -91,7 +94,7 @@ namespace YukimaruGames.Terminal.Editor
                 _fontSizeProp = _serializedObject.FindProperty("_fontSize");
                 _backgroundColorProp = _serializedObject.FindProperty("_backgroundColor");
                 _messageColorProp = _serializedObject.FindProperty("_messageColor");
-                _entryColorProp  = _serializedObject.FindProperty("_entryColor");
+                _entryColorProp = _serializedObject.FindProperty("_entryColor");
                 _warningColorProp = _serializedObject.FindProperty("_warningColor");
                 _errorColorProp = _serializedObject.FindProperty("_errorColor");
                 _assertColorProp = _serializedObject.FindProperty("_assertColor");
@@ -100,8 +103,11 @@ namespace YukimaruGames.Terminal.Editor
                 _inputColorProp = _serializedObject.FindProperty("_inputColor");
                 _caretColorProp = _serializedObject.FindProperty("_caretColor");
                 _selectionColorProp = _serializedObject.FindProperty("_selectionColor");
-                _cursorFlashSpeedProp =  _serializedObject.FindProperty("_cursorFlashSpeed");
+                _cursorFlashSpeedProp = _serializedObject.FindProperty("_cursorFlashSpeed");
                 _promptColorProp = _serializedObject.FindProperty("_promptColor");
+                _executeButtonColorProp = _serializedObject.FindProperty("_executeButtonColor");
+                _openButtonColorProp = _serializedObject.FindProperty("_openButtonColor");
+                _copyButtonColorProp = _serializedObject.FindProperty("_copyButtonColor");
             }
 
             // input-prop
@@ -249,6 +255,10 @@ namespace YukimaruGames.Terminal.Editor
             EditorGUILayout.PropertyField(_systemColorProp);
 
             EditorGUILayout.Space(6f);
+            EditorGUILayout.LabelField("Button", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(_executeButtonColorProp);
+            EditorGUILayout.PropertyField(_openButtonColorProp);
+            EditorGUILayout.PropertyField(_copyButtonColorProp);
         }
 
         private void RenderAnimationCategory()

@@ -47,6 +47,8 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeField] private Color _caretColor = new(0f, 1f, 0.8f);
         [SerializeField] private Color _selectionColor = new(1f, 0.5f, 0f);
         [SerializeField] private Color _promptColor = new(0f, 0.8f, 0.15f);
+        [SerializeField] private Color _executeButtonColor = new(0f, 0.7f, 0.8f);
+        [SerializeField] private Color _openButtonColor = new(0f, 0.7f, 0.8f);
         [SerializeField] private Color _copyButtonColor = new(0f, 0.7f, 0.8f);
         [SerializeField] private float _cursorFlashSpeed = 1.886792f;
         
@@ -321,6 +323,8 @@ namespace YukimaruGames.Terminal.Runtime
             }
 
             _inputStyleContext?.SetColor(_inputColor);
+            _executeButtonsStyleContext?.SetColor(_executeButtonColor);
+            _openButtonsStyleContext?.SetColor(_openButtonColor);
             _logCopyButtonStyleContext?.SetColor(_copyButtonColor);
             _eventListener?.SetInputHandler(CreateInputHandler());
             _cursorFlashSpeedProvider?.SetFlashSpeed(_cursorFlashSpeed);
