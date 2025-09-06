@@ -9,6 +9,11 @@ namespace YukimaruGames.Terminal.UI.View
         /// 画面サイズの変更イベント.
         /// </summary>
         event Action<Vector2Int> OnScreenSizeChanged;
+
+        /// <summary>
+        /// ログのコピーがトリガーされた.
+        /// </summary>
+        event Action<string> OnLogCopiedTriggered;
         
         /// <summary>
         /// 描画前処理.

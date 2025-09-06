@@ -6,7 +6,7 @@ using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.UI.View
 {
-    public sealed class TerminalView : ITerminalView,IDisposable
+    public sealed class TerminalView : ITerminalView, IDisposable
     {
         // renderer.
         private readonly ITerminalWindowRenderer _windowRenderer;
@@ -15,7 +15,8 @@ namespace YukimaruGames.Terminal.UI.View
         private readonly ITerminalPromptRenderer _promptRenderer;
         private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
         private readonly ITerminalOpenButtonRenderer _openButtonRenderer;
-        
+        private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
+
         // provider.
         private readonly ITerminalWindowRenderDataProvider _windowRenderDataProvider;
         private readonly ITerminalLogRenderDataProvider _logRenderDataProvider;
@@ -23,14 +24,15 @@ namespace YukimaruGames.Terminal.UI.View
         private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
         private readonly ITerminalOpenButtonRenderDataProvider _openButtonRenderDataProvider;
         private readonly IScrollConfigurator _scrollConfigurator;
-        
+
         // callbacks.
         private readonly List<ITerminalPreRenderer> _preRenderers;
         private readonly List<ITerminalPostRenderer> _postRenderers;
-        
+
         private Vector2Int _size;
-        
+
         public event Action<Vector2Int> OnScreenSizeChanged;
+        public event Action<string> OnLogCopiedTriggered;
         public event Action OnPreRender;
         public event Action OnPostRender;
 
@@ -41,6 +43,7 @@ namespace YukimaruGames.Terminal.UI.View
             ITerminalPromptRenderer promptRenderer,
             ITerminalExecuteButtonRenderer executeButtonRenderer,
             ITerminalOpenButtonRenderer openButtonRenderer,
+            ITerminalLogCopyButtonRenderer logCopyButtonRenderer,
             ITerminalWindowRenderDataProvider windowRenderDataProvider,
             ITerminalLogRenderDataProvider logRenderDataProvider,
             ITerminalInputRenderDataProvider inputRenderDataProvider,
@@ -55,7 +58,8 @@ namespace YukimaruGames.Terminal.UI.View
             _promptRenderer = promptRenderer;
             _executeButtonRenderer = executeButtonRenderer;
             _openButtonRenderer = openButtonRenderer;
-            
+            _logCopyButtonRenderer = logCopyButtonRenderer;
+
             _windowRenderDataProvider = windowRenderDataProvider;
             _logRenderDataProvider = logRenderDataProvider;
             _inputRenderDataProvider = inputRenderDataProvider;
@@ -63,6 +67,8 @@ namespace YukimaruGames.Terminal.UI.View
             _openButtonRenderDataProvider = openButtonRenderDataProvider;
             _scrollConfigurator = scrollConfigurator;
 
+            _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
+            
             _preRenderers = new object[]
             {
                 _windowRenderer,
@@ -85,7 +91,7 @@ namespace YukimaruGames.Terminal.UI.View
             }.OfType<ITerminalPostRenderer>().ToList();
             OnPostRender += ExecutePostRender;
         }
-        
+
         /// <inheritdoc/> 
         void ITerminalView.Render()
         {
@@ -95,9 +101,9 @@ namespace YukimaruGames.Terminal.UI.View
                 OnScreenSizeChanged?.Invoke(size);
             }
             _size = size;
-            
+
             if (_windowRenderDataProvider == null) return;
-            
+
             _windowRenderer.Render(_windowRenderDataProvider.GetRenderData(), Render);
 
             // WindowのRect外に描画する.
@@ -138,10 +144,20 @@ namespace YukimaruGames.Terminal.UI.View
             for (var i = 0; i < _postRenderers.Count; ++i) _postRenderers[i]?.PostRender();
         }
 
+        private void HandleLogCopied(string copiedText)
+        {
+            GUIUtility.systemCopyBuffer = copiedText;
+        }
+
         public void Dispose()
         {
+            _logCopyButtonRenderer.OnClickButton -= HandleLogCopied;
+            
             OnPreRender -= ExecutePreRender;
             OnPostRender -= ExecutePostRender;
+            
+            OnScreenSizeChanged = null;
+            OnLogCopiedTriggered = null;
         }
     }
 }

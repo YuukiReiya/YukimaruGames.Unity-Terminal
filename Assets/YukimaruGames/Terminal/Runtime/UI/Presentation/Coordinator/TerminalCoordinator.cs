@@ -14,6 +14,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly ITerminalInputPresenter _inputPresenter;
         private readonly ITerminalExecuteButtonPresenter _executeButtonPresenter;
         private readonly ITerminalOpenButtonPresenter _openButtonPresenter;
+        private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         private readonly ITerminalEventListener _eventListener;
 
         private readonly ITerminalService _service;
@@ -65,6 +66,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _eventListener.OnFocusTriggered += OnFocusTriggered;
 
             _view.OnScreenSizeChanged += OnScreenSizeChanged;
+            _view.OnLogCopiedTriggered += OnLogCopiedTriggered;
         }
 
         private void UnregisterEvents()
@@ -82,8 +84,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _eventListener.OnFocusTriggered -= OnFocusTriggered;
             
             _view.OnScreenSizeChanged -= OnScreenSizeChanged;
+            _view.OnLogCopiedTriggered -= OnLogCopiedTriggered;
         }
-
+        
         private void OnOpenTriggered()
         {
             if (_inputPresenter.IsImeComposing) return;
@@ -169,6 +172,11 @@ namespace YukimaruGames.Terminal.UI.Presentation
         {
             _windowPresenter.Refresh();
             _scrollConfigurator.ScrollToEnd();
+        }
+
+        private void OnLogCopiedTriggered(string copiedText)
+        {
+            GUIUtility.systemCopyBuffer = copiedText;
         }
         
         public void Dispose()

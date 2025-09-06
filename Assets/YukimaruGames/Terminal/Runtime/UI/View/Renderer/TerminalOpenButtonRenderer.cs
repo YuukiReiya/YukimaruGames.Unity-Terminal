@@ -3,7 +3,6 @@ using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View.Model;
-using Action = Unity.Plastic.Newtonsoft.Json.Serialization.Action;
 
 namespace YukimaruGames.Terminal.UI.View
 {
@@ -80,6 +79,7 @@ namespace YukimaruGames.Terminal.UI.View
                     width = Mathf.Ceil(_compactButtonTextSize.x + _fullButtonTextSize.x);
                     height = Mathf.Max(_compactButtonTextSize.y, _fullButtonTextSize.y);
                     if (renderData.IsReverse) rect.x = rect.width - width;
+                    rect.y = rect.height;
                     rect.width = width;
                     rect.height = height;
                     break;
