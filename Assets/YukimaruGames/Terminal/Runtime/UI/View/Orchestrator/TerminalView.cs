@@ -16,13 +16,15 @@ namespace YukimaruGames.Terminal.UI.View
         private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
         private readonly ITerminalOpenButtonRenderer _openButtonRenderer;
         private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
-
+        private readonly ITerminalCloseButtonRenderer _closeButtonRenderer;
+        
         // provider.
         private readonly ITerminalWindowRenderDataProvider _windowRenderDataProvider;
         private readonly ITerminalLogRenderDataProvider _logRenderDataProvider;
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
         private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
         private readonly ITerminalOpenButtonRenderDataProvider _openButtonRenderDataProvider;
+        private readonly ITerminalCloseButtonRenderDataProvider _closeButtonRenderDataProvider;
         private readonly IScrollConfigurator _scrollConfigurator;
 
         // callbacks.
@@ -43,12 +45,14 @@ namespace YukimaruGames.Terminal.UI.View
             ITerminalPromptRenderer promptRenderer,
             ITerminalExecuteButtonRenderer executeButtonRenderer,
             ITerminalOpenButtonRenderer openButtonRenderer,
+            ITerminalCloseButtonRenderer closeButtonRenderer,
             ITerminalLogCopyButtonRenderer logCopyButtonRenderer,
             ITerminalWindowRenderDataProvider windowRenderDataProvider,
             ITerminalLogRenderDataProvider logRenderDataProvider,
             ITerminalInputRenderDataProvider inputRenderDataProvider,
             ITerminalExecuteButtonRenderDataProvider executeButtonRenderDataProvider,
             ITerminalOpenButtonRenderDataProvider openButtonRenderDataProvider,
+            ITerminalCloseButtonRenderDataProvider closeButtonRenderDataProvider,
             IScrollConfigurator scrollConfigurator
         )
         {
@@ -59,12 +63,14 @@ namespace YukimaruGames.Terminal.UI.View
             _executeButtonRenderer = executeButtonRenderer;
             _openButtonRenderer = openButtonRenderer;
             _logCopyButtonRenderer = logCopyButtonRenderer;
-
+            _closeButtonRenderer = closeButtonRenderer;
+            
             _windowRenderDataProvider = windowRenderDataProvider;
             _logRenderDataProvider = logRenderDataProvider;
             _inputRenderDataProvider = inputRenderDataProvider;
             _executeButtonRenderDataProvider = executeButtonRenderDataProvider;
             _openButtonRenderDataProvider = openButtonRenderDataProvider;
+            _closeButtonRenderDataProvider = closeButtonRenderDataProvider;
             _scrollConfigurator = scrollConfigurator;
 
             _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
@@ -77,6 +83,7 @@ namespace YukimaruGames.Terminal.UI.View
                 _promptRenderer,
                 _executeButtonRenderer,
                 _openButtonRenderer,
+                _closeButtonRenderer,
             }.OfType<ITerminalPreRenderer>().ToList();
             OnPreRender += ExecutePreRender;
 
@@ -88,6 +95,7 @@ namespace YukimaruGames.Terminal.UI.View
                 _promptRenderer,
                 _executeButtonRenderer,
                 _openButtonRenderer,
+                _closeButtonRenderer,
             }.OfType<ITerminalPostRenderer>().ToList();
             OnPostRender += ExecutePostRender;
         }
@@ -108,6 +116,7 @@ namespace YukimaruGames.Terminal.UI.View
 
             // WindowのRect外に描画する.
             _openButtonRenderer.Render(_openButtonRenderDataProvider.GetRenderData());
+            _closeButtonRenderer.Render(_closeButtonRenderDataProvider.GetRenderData());
         }
 
         private void ExecutePreRender()

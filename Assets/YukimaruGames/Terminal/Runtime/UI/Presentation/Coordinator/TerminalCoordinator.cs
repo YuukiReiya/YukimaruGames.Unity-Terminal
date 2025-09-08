@@ -14,6 +14,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly ITerminalInputPresenter _inputPresenter;
         private readonly ITerminalExecuteButtonPresenter _executeButtonPresenter;
         private readonly ITerminalOpenButtonPresenter _openButtonPresenter;
+        private readonly ITerminalCloseButtonPresenter _closeButtonPresenter;
         private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         private readonly ITerminalEventListener _eventListener;
 
@@ -34,6 +35,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             ITerminalInputPresenter inputPresenter,
             ITerminalExecuteButtonPresenter executeButtonPresenter,
             ITerminalOpenButtonPresenter openButtonPresenter,
+            ITerminalCloseButtonPresenter closeButtonPresenter,
             ITerminalEventListener eventListener
         )
         {
@@ -44,6 +46,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _inputPresenter = inputPresenter;
             _executeButtonPresenter = executeButtonPresenter;
             _openButtonPresenter = openButtonPresenter;
+            _closeButtonPresenter = closeButtonPresenter;
             _eventListener = eventListener;
 
             RegisterEvents();
@@ -56,6 +59,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _executeButtonPresenter.OnExecuteTriggered += OnExecuteTriggered;
             _openButtonPresenter.OnCompactOpenTriggered += OnOpenTriggered;
             _openButtonPresenter.OnFullOpenTriggered += OnOpenTriggered;
+            _closeButtonPresenter.OnCloseTriggered += OnCloseTriggered;
             
             _eventListener.OnOpenTriggered += OnOpenTriggered;
             _eventListener.OnCloseTriggered += OnCloseTriggered;
@@ -74,6 +78,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _executeButtonPresenter.OnExecuteTriggered -= OnExecuteTriggered;
             _openButtonPresenter.OnCompactOpenTriggered -= OnOpenTriggered;
             _openButtonPresenter.OnFullOpenTriggered -= OnOpenTriggered;
+            _closeButtonPresenter.OnCloseTriggered -= OnCloseTriggered;
             
             _eventListener.OnOpenTriggered -= OnOpenTriggered;
             _eventListener.OnCloseTriggered -= OnCloseTriggered;

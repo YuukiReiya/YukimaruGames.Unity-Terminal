@@ -45,6 +45,7 @@ namespace YukimaruGames.Terminal.Editor
         private SerializedProperty _promptColorProp;
         private SerializedProperty _executeButtonColorProp;
         private SerializedProperty _openButtonColorProp;
+        private SerializedProperty _closeButtonColorProp;
         private SerializedProperty _copyButtonColorProp;
         private SerializedProperty _cursorFlashSpeedProp;
         private SerializedProperty _inputKeyboardTypeProp;
@@ -107,6 +108,7 @@ namespace YukimaruGames.Terminal.Editor
                 _promptColorProp = _serializedObject.FindProperty("_promptColor");
                 _executeButtonColorProp = _serializedObject.FindProperty("_executeButtonColor");
                 _openButtonColorProp = _serializedObject.FindProperty("_openButtonColor");
+                _closeButtonColorProp = _serializedObject.FindProperty("_closeButtonColor");
                 _copyButtonColorProp = _serializedObject.FindProperty("_copyButtonColor");
             }
 
@@ -258,6 +260,7 @@ namespace YukimaruGames.Terminal.Editor
             EditorGUILayout.LabelField("Button", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(_executeButtonColorProp);
             EditorGUILayout.PropertyField(_openButtonColorProp);
+            EditorGUILayout.PropertyField(_closeButtonColorProp);
             EditorGUILayout.PropertyField(_copyButtonColorProp);
         }
 
