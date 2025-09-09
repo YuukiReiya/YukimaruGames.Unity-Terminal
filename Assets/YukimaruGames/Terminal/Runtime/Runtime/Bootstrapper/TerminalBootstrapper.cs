@@ -48,8 +48,7 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeField] private Color _selectionColor = new(1f, 0.5f, 0f);
         [SerializeField] private Color _promptColor = new(0f, 0.8f, 0.15f);
         [SerializeField] private Color _executeButtonColor = new(0f, 0.7f, 0.8f);
-        [SerializeField] private Color _openButtonColor = new(0f, 0.7f, 0.8f);
-        [SerializeField] private Color _closeButtonColor = new(0f, 0.7f, 0.8f);
+        [SerializeField] private Color _buttonColor = new(0f, 0.7f, 0.8f);
         [SerializeField] private Color _copyButtonColor = new(0f, 0.7f, 0.8f);
         [SerializeField] private float _cursorFlashSpeed = 1.886792f;
         
@@ -121,7 +120,6 @@ namespace YukimaruGames.Terminal.Runtime
         private TerminalGUIStyleContext _executeButtonsStyleContext;
         private TerminalGUIStyleContext _openButtonsStyleContext;
         private TerminalGUIStyleContext _logCopyButtonStyleContext;
-        private TerminalGUIStyleContext _closeButtonStyleContext;
         
         // cursor-flash-speed provider.
         private CursorFlashSpeedProvider _cursorFlashSpeedProvider;
@@ -135,17 +133,15 @@ namespace YukimaruGames.Terminal.Runtime
         private TerminalInputRenderer _inputRenderer;
         private TerminalPromptRenderer _promptRenderer;
         private TerminalExecuteButtonRenderer _executeButtonRenderer;
-        private ITerminalOpenButtonRenderer _openButtonRenderer;
+        private ITerminalButtonRenderer _buttonRenderer;
         private TerminalLogCopyButtonRenderer _logCopyButtonRenderer;
-        private ITerminalCloseButtonRenderer _closeButtonRenderer;
         
         // presenter.
         private TerminalWindowPresenter _windowPresenter;
         private TerminalLogPresenter _logPresenter;
         private TerminalInputPresenter _inputPresenter;
         private TerminalExecuteButtonPresenter _executeButtonPresenter;
-        private TerminalOpenButtonPresenter _openButtonPresenter;
-        private TerminalCloseButtonPresenter _closeButtonPresenter;
+        private TerminalButtonPresenter _buttonPresenter;
         
         // application-service.
         private ITerminalService _service;
@@ -208,7 +204,6 @@ namespace YukimaruGames.Terminal.Runtime
             _promptStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _executeButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _openButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
-            _closeButtonStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _logCopyButtonStyleContext = new TerminalGUIStyleContext(_fontProvider);
             
             _cursorFlashSpeedProvider = new CursorFlashSpeedProvider(_cursorFlashSpeed);
@@ -220,15 +215,13 @@ namespace YukimaruGames.Terminal.Runtime
             _inputRenderer = new TerminalInputRenderer(scrollConfigurator, _inputStyleContext, _colorPaletteProvider, _cursorFlashSpeedProvider);
             _promptRenderer = new TerminalPromptRenderer(_promptStyleContext);
             _executeButtonRenderer = new TerminalExecuteButtonRenderer(_executeButtonsStyleContext);
-            _openButtonRenderer = new TerminalOpenButtonRenderer(_pixelTexture2DRepository, _openButtonsStyleContext);
-            _closeButtonRenderer = new TerminalCloseButtonRenderer(_pixelTexture2DRepository, _closeButtonStyleContext);
+            _buttonRenderer = new TerminalButtonRenderer(_pixelTexture2DRepository, _openButtonsStyleContext);
             
             _windowPresenter = new TerminalWindowPresenter(_animatorDataConfigurator, new TerminalWindowAnimator());
             _logPresenter = new TerminalLogPresenter(_service);
             _inputPresenter = new TerminalInputPresenter(_inputRenderer, _bootupCommand);
             _executeButtonPresenter = new TerminalExecuteButtonPresenter(_executeButtonRenderer, _buttonVisibleConfigurator);
-            _openButtonPresenter = new TerminalOpenButtonPresenter(_openButtonRenderer, _windowPresenter, _buttonVisibleConfigurator);
-            _closeButtonPresenter = new TerminalCloseButtonPresenter(_closeButtonRenderer, _windowPresenter, _buttonVisibleConfigurator);
+            _buttonPresenter = new TerminalButtonPresenter(_buttonRenderer, _windowPresenter, _buttonVisibleConfigurator);
             
             _view = new TerminalView(
                 _windowRenderer,
@@ -236,15 +229,13 @@ namespace YukimaruGames.Terminal.Runtime
                 _inputRenderer,
                 _promptRenderer,
                 _executeButtonRenderer,
-                _openButtonRenderer,
-                _closeButtonRenderer,
+                _buttonRenderer,
                 _logCopyButtonRenderer,
                 _windowPresenter,
                 _logPresenter,
                 _inputPresenter,
                 _executeButtonPresenter,
-                _openButtonPresenter,
-                _closeButtonPresenter,
+                _buttonPresenter,
                 scrollConfigurator);
 
             _eventListener = new TerminalEventListener(CreateInputHandler());
@@ -255,8 +246,7 @@ namespace YukimaruGames.Terminal.Runtime
                 _windowPresenter,
                 _inputPresenter,
                 _executeButtonPresenter,
-                _openButtonPresenter,
-                _closeButtonPresenter,
+                _buttonPresenter,
                 _eventListener);
             _updatables.Add(_eventListener);
             Configure();
@@ -334,8 +324,7 @@ namespace YukimaruGames.Terminal.Runtime
 
             _inputStyleContext?.SetColor(_inputColor);
             _executeButtonsStyleContext?.SetColor(_executeButtonColor);
-            _openButtonsStyleContext?.SetColor(_openButtonColor);
-            _closeButtonStyleContext?.SetColor(_closeButtonColor);
+            _openButtonsStyleContext?.SetColor(_buttonColor);
             _logCopyButtonStyleContext?.SetColor(_copyButtonColor);
             _eventListener?.SetInputHandler(CreateInputHandler());
             _cursorFlashSpeedProvider?.SetFlashSpeed(_cursorFlashSpeed);
@@ -376,7 +365,7 @@ namespace YukimaruGames.Terminal.Runtime
             _logPresenter?.Dispose();
             _inputPresenter?.Dispose();
             _executeButtonPresenter?.Dispose();
-            _openButtonPresenter?.Dispose();
+            _buttonPresenter?.Dispose();
         }
     }
 }

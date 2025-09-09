@@ -6,13 +6,13 @@ using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.View
 {
-    public sealed class TerminalOpenButtonRenderer : ITerminalOpenButtonRenderer,IDisposable
+    public sealed class TerminalButtonRenderer : ITerminalButtonRenderer, IDisposable
     {
         private readonly IGUIStyleProvider _styleProvider;
 
-        private Vector2 _compactButtonTextSize;
-        private Vector2 _fullButtonTextSize;
-        
+        private Vector2 _openButtonTextSize;
+        private Vector2 _closeButtonTextSize;
+
         /// <summary>
         /// 再計算するか
         /// </summary>
@@ -21,26 +21,27 @@ namespace YukimaruGames.Terminal.UI.View
         /// <p>※コンストラクタで初期化すると正しいScreen.Sizeが入っておらず意図したサイズに計算されないため</p>
         /// </remarks>
         private bool _shouldRecalculation = true;
-        
+
         /// <remarks>
         /// Windowと同じKeyを指定することでカラーを同期する.
         /// </remarks>
         private const string Key = "WindowGUIStyle";
-        private const string CompactButtonText = "[-]";
-        private const string FullButtonText = "[□]";
-        
-        public event Action OnClickCompactOpenButton;
-        public event Action OnClickFullOpenButton;
 
-        public TerminalOpenButtonRenderer(IPixelTexture2DRepository repository, IGUIStyleProvider styleProvider)
+        private const string CompactButtonText = "[-]";
+        private const string CloseButtonText = "[x]";
+
+        public event Action OnClickOpenButton;
+        public event Action OnClickCloseButton;
+
+        public TerminalButtonRenderer(IPixelTexture2DRepository repository, IGUIStyleProvider styleProvider)
         {
             _styleProvider = styleProvider;
 
             _styleProvider.OnStyleChanged += OnStyleChanged;
             _styleProvider.GetStyle().normal.background = repository.GetTexture2D(Key);
         }
-        
-        public void Render(TerminalOpenButtonRenderData renderData)
+
+        public void Render(TerminalButtonRenderData renderData)
         {
             if (!renderData.IsVisible) return;
 
@@ -52,42 +53,42 @@ namespace YukimaruGames.Terminal.UI.View
 
             var anchor = renderData.Anchor;
             var rect = renderData.WindowRect;
-            
+
             switch (anchor)
             {
                 // 左上(左下)
                 case TerminalAnchor.Left:
                     rect.x = rect.width;
-                    rect.width = Mathf.Ceil(Mathf.Max(_compactButtonTextSize.x, _fullButtonTextSize.x));
-                    var height = _compactButtonTextSize.y + _fullButtonTextSize.y;
+                    rect.width = Mathf.Ceil(Mathf.Max(_openButtonTextSize.x, _closeButtonTextSize.x));
+                    var height = _openButtonTextSize.y + _closeButtonTextSize.y;
                     if (renderData.IsReverse) rect.y = rect.height - height;
                     rect.height = height;
                     break;
-                
+
                 // 右下(右上)
                 case TerminalAnchor.Right:
-                    var width = Mathf.Ceil(Mathf.Max(_compactButtonTextSize.x, _fullButtonTextSize.x));
+                    var width = Mathf.Ceil(Mathf.Max(_openButtonTextSize.x, _closeButtonTextSize.x));
                     rect.x -= width;
                     rect.width = width;
-                    height= _compactButtonTextSize.y + _fullButtonTextSize.y;
+                    height = _openButtonTextSize.y + _closeButtonTextSize.y;
                     if (!renderData.IsReverse) rect.y = rect.height - height;
                     rect.height = height;
                     break;
-                
+
                 // 左上(右上)
                 case TerminalAnchor.Top:
-                    width = Mathf.Ceil(_compactButtonTextSize.x + _fullButtonTextSize.x);
-                    height = Mathf.Max(_compactButtonTextSize.y, _fullButtonTextSize.y);
+                    width = Mathf.Ceil(_openButtonTextSize.x + _closeButtonTextSize.x);
+                    height = Mathf.Max(_openButtonTextSize.y, _closeButtonTextSize.y);
                     if (renderData.IsReverse) rect.x = rect.width - width;
                     rect.y = rect.height;
                     rect.width = width;
                     rect.height = height;
                     break;
-                
+
                 // 右下(左下)
                 case TerminalAnchor.Bottom:
-                    width = Mathf.Ceil(_compactButtonTextSize.x + _fullButtonTextSize.x);
-                    height = Mathf.Max(_compactButtonTextSize.y, _fullButtonTextSize.y);
+                    width = Mathf.Ceil(_openButtonTextSize.x + _closeButtonTextSize.x);
+                    height = Mathf.Max(_openButtonTextSize.y, _closeButtonTextSize.y);
                     if (!renderData.IsReverse) rect.x = rect.width - width;
                     rect.y -= height;
                     rect.width = width;
@@ -97,9 +98,7 @@ namespace YukimaruGames.Terminal.UI.View
 
             using (new GUILayout.AreaScope(rect))
             {
-                using (GUI.Scope _ = anchor is TerminalAnchor.Left or TerminalAnchor.Right ?
-                           new GUILayout.VerticalScope() :
-                           new GUILayout.HorizontalScope())
+                using (GUI.Scope _ = anchor is TerminalAnchor.Left or TerminalAnchor.Right ? new GUILayout.VerticalScope() : new GUILayout.HorizontalScope())
                 {
                     DrawButtons();
                 }
@@ -108,19 +107,19 @@ namespace YukimaruGames.Terminal.UI.View
 
         private void Recalculate()
         {
-            _compactButtonTextSize = CalcCompactButtonTextSize();
-            _fullButtonTextSize = CalcFullButtonTextSize();
+            _openButtonTextSize = CalcCompactButtonTextSize();
+            _closeButtonTextSize = CalcFullButtonTextSize();
         }
 
         private void DrawButtons()
         {
             if (GUILayout.Button(CompactButtonText, _styleProvider.GetStyle()))
             {
-                OnClickCompactOpenButton?.Invoke();
+                OnClickOpenButton?.Invoke();
             }
-            else if (GUILayout.Button(FullButtonText, _styleProvider.GetStyle()))
+            else if (GUILayout.Button(CloseButtonText, _styleProvider.GetStyle()))
             {
-                OnClickFullOpenButton?.Invoke();
+                OnClickCloseButton?.Invoke();
             }
         }
 
@@ -128,19 +127,19 @@ namespace YukimaruGames.Terminal.UI.View
             _styleProvider.GetStyle().CalcSize(new GUIContent(CompactButtonText));
 
         private Vector2 CalcFullButtonTextSize() =>
-            _styleProvider.GetStyle().CalcSize(new GUIContent(FullButtonText));
-        
+            _styleProvider.GetStyle().CalcSize(new GUIContent(CloseButtonText));
+
         private void OnStyleChanged()
         {
             _shouldRecalculation = true;
         }
-        
+
         public void Dispose()
         {
             _styleProvider.OnStyleChanged -= OnStyleChanged;
-            
-            OnClickCompactOpenButton = null;
-            OnClickFullOpenButton = null;
+
+            OnClickOpenButton = null;
+            OnClickCloseButton = null;
         }
     }
 }

@@ -2,8 +2,9 @@ using System;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public interface ITerminalCloseButtonPresenter
+    public interface ITerminalButtonPresenter
     {
+        event Action OnOpenTriggered;
         event Action OnCloseTriggered;
     }
 }
