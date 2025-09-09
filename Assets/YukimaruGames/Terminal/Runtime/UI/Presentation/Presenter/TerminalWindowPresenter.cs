@@ -12,7 +12,6 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly ITerminalWindowAnimatorDataConfigurator _configurator;
         private readonly ITerminalWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
-        private Rect _rect;
 
         private Action<TerminalState> _onCompleted;
         private Action<TerminalState> _onAborted;
@@ -48,6 +47,8 @@ namespace YukimaruGames.Terminal.UI.Presentation
             get => _configurator.Scale;
             set => _configurator.Scale = value;
         }
+
+        public Rect Rect { get; private set; }
 
         public event Action<TerminalState> OnCompleted
         {
@@ -139,7 +140,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         private void Evaluate(float duration, float elapsed)
         {
-            _rect = _windowAnimator.Evaluate(GetAnimatorData(duration, elapsed));
+            Rect = _windowAnimator.Evaluate(GetAnimatorData(duration, elapsed));
         }
 
         private TerminalWindowAnimatorData GetAnimatorData(float duration, float elapsed)
@@ -149,7 +150,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         public TerminalWindowRenderData GetRenderData()
         {
-            return new TerminalWindowRenderData(GetHashCode(), _rect);
+            return new TerminalWindowRenderData(GetHashCode(), Rect);
         }
 
         public void Dispose()

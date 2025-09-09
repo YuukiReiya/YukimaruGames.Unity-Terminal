@@ -12,6 +12,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly ITerminalWindowPresenter _windowPresenter;
         private readonly ITerminalInputPresenter _inputPresenter;
+        private readonly ITerminalExecuteButtonPresenter _executeButtonPresenter;
+        private readonly ITerminalButtonPresenter _buttonPresenter;
+        private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         private readonly ITerminalEventListener _eventListener;
 
         private readonly ITerminalService _service;
@@ -29,6 +32,8 @@ namespace YukimaruGames.Terminal.UI.Presentation
             IScrollConfigurator scrollConfigurator,
             ITerminalWindowPresenter windowPresenter,
             ITerminalInputPresenter inputPresenter,
+            ITerminalExecuteButtonPresenter executeButtonPresenter,
+            ITerminalButtonPresenter buttonPresenter,
             ITerminalEventListener eventListener
         )
         {
@@ -37,6 +42,8 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _scrollConfigurator = scrollConfigurator;
             _windowPresenter = windowPresenter;
             _inputPresenter = inputPresenter;
+            _executeButtonPresenter = executeButtonPresenter;
+            _buttonPresenter = buttonPresenter;
             _eventListener = eventListener;
 
             RegisterEvents();
@@ -46,6 +53,10 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         private void RegisterEvents()
         {
+            _executeButtonPresenter.OnExecuteTriggered += OnExecuteTriggered;
+            _buttonPresenter.OnOpenTriggered += OnOpenTriggered;
+            _buttonPresenter.OnCloseTriggered += OnCloseTriggered;
+            
             _eventListener.OnOpenTriggered += OnOpenTriggered;
             _eventListener.OnCloseTriggered += OnCloseTriggered;
             _eventListener.OnExecuteTriggered += OnExecuteTriggered;
@@ -55,10 +66,15 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _eventListener.OnFocusTriggered += OnFocusTriggered;
 
             _view.OnScreenSizeChanged += OnScreenSizeChanged;
+            _view.OnLogCopiedTriggered += OnLogCopiedTriggered;
         }
 
         private void UnregisterEvents()
         {
+            _executeButtonPresenter.OnExecuteTriggered -= OnExecuteTriggered;
+            _buttonPresenter.OnOpenTriggered -= OnOpenTriggered;
+            _buttonPresenter.OnCloseTriggered -= OnCloseTriggered;
+            
             _eventListener.OnOpenTriggered -= OnOpenTriggered;
             _eventListener.OnCloseTriggered -= OnCloseTriggered;
             _eventListener.OnExecuteTriggered -= OnExecuteTriggered;
@@ -68,8 +84,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _eventListener.OnFocusTriggered -= OnFocusTriggered;
             
             _view.OnScreenSizeChanged -= OnScreenSizeChanged;
+            _view.OnLogCopiedTriggered -= OnLogCopiedTriggered;
         }
-
+        
         private void OnOpenTriggered()
         {
             if (_inputPresenter.IsImeComposing) return;
@@ -155,6 +172,11 @@ namespace YukimaruGames.Terminal.UI.Presentation
         {
             _windowPresenter.Refresh();
             _scrollConfigurator.ScrollToEnd();
+        }
+
+        private void OnLogCopiedTriggered(string copiedText)
+        {
+            GUIUtility.systemCopyBuffer = copiedText;
         }
         
         public void Dispose()

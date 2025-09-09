@@ -6,27 +6,33 @@ using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.UI.View
 {
-    public sealed class TerminalView : ITerminalView,IDisposable
+    public sealed class TerminalView : ITerminalView, IDisposable
     {
         // renderer.
         private readonly ITerminalWindowRenderer _windowRenderer;
         private readonly ITerminalLogRenderer _logRenderer;
         private readonly ITerminalInputRenderer _inputRenderer;
         private readonly ITerminalPromptRenderer _promptRenderer;
+        private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
+        private readonly ITerminalButtonRenderer _buttonRenderer;
+        private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         
         // provider.
         private readonly ITerminalWindowRenderDataProvider _windowRenderDataProvider;
         private readonly ITerminalLogRenderDataProvider _logRenderDataProvider;
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
+        private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
+        private readonly ITerminalButtonRenderDataProvider _buttonRenderDataProvider;
         private readonly IScrollConfigurator _scrollConfigurator;
-        
+
         // callbacks.
         private readonly List<ITerminalPreRenderer> _preRenderers;
         private readonly List<ITerminalPostRenderer> _postRenderers;
-        
+
         private Vector2Int _size;
-        
+
         public event Action<Vector2Int> OnScreenSizeChanged;
+        public event Action<string> OnLogCopiedTriggered;
         public event Action OnPreRender;
         public event Action OnPostRender;
 
@@ -35,9 +41,14 @@ namespace YukimaruGames.Terminal.UI.View
             ITerminalLogRenderer logRenderer,
             ITerminalInputRenderer inputRenderer,
             ITerminalPromptRenderer promptRenderer,
+            ITerminalExecuteButtonRenderer executeButtonRenderer,
+            ITerminalButtonRenderer buttonRenderer,
+            ITerminalLogCopyButtonRenderer logCopyButtonRenderer,
             ITerminalWindowRenderDataProvider windowRenderDataProvider,
             ITerminalLogRenderDataProvider logRenderDataProvider,
             ITerminalInputRenderDataProvider inputRenderDataProvider,
+            ITerminalExecuteButtonRenderDataProvider executeButtonRenderDataProvider,
+            ITerminalButtonRenderDataProvider buttonRenderDataProvider,
             IScrollConfigurator scrollConfigurator
         )
         {
@@ -45,17 +56,27 @@ namespace YukimaruGames.Terminal.UI.View
             _logRenderer = logRenderer;
             _inputRenderer = inputRenderer;
             _promptRenderer = promptRenderer;
+            _executeButtonRenderer = executeButtonRenderer;
+            _buttonRenderer = buttonRenderer;
+            _logCopyButtonRenderer = logCopyButtonRenderer;
+            
             _windowRenderDataProvider = windowRenderDataProvider;
             _logRenderDataProvider = logRenderDataProvider;
             _inputRenderDataProvider = inputRenderDataProvider;
+            _executeButtonRenderDataProvider = executeButtonRenderDataProvider;
+            _buttonRenderDataProvider = buttonRenderDataProvider;
             _scrollConfigurator = scrollConfigurator;
 
+            _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
+            
             _preRenderers = new object[]
             {
                 _windowRenderer,
                 _logRenderer,
                 _inputRenderer,
-                _promptRenderer
+                _promptRenderer,
+                _executeButtonRenderer,
+                _buttonRenderer,
             }.OfType<ITerminalPreRenderer>().ToList();
             OnPreRender += ExecutePreRender;
 
@@ -64,11 +85,13 @@ namespace YukimaruGames.Terminal.UI.View
                 _windowRenderer,
                 _logRenderer,
                 _inputRenderer,
-                _promptRenderer
+                _promptRenderer,
+                _executeButtonRenderer,
+                _buttonRenderer,
             }.OfType<ITerminalPostRenderer>().ToList();
             OnPostRender += ExecutePostRender;
         }
-        
+
         /// <inheritdoc/> 
         void ITerminalView.Render()
         {
@@ -78,10 +101,13 @@ namespace YukimaruGames.Terminal.UI.View
                 OnScreenSizeChanged?.Invoke(size);
             }
             _size = size;
-            
+
             if (_windowRenderDataProvider == null) return;
-            
+
             _windowRenderer.Render(_windowRenderDataProvider.GetRenderData(), Render);
+
+            // WindowのRect外に描画する.
+            _buttonRenderer.Render(_buttonRenderDataProvider.GetRenderData());
         }
 
         private void ExecutePreRender()
@@ -106,6 +132,7 @@ namespace YukimaruGames.Terminal.UI.View
                 {
                     _promptRenderer?.Render();
                     _inputRenderer?.Render(_inputRenderDataProvider.GetRenderData());
+                    _executeButtonRenderer?.Render(_executeButtonRenderDataProvider.GetRenderData());
                 }
             }
 
@@ -117,10 +144,20 @@ namespace YukimaruGames.Terminal.UI.View
             for (var i = 0; i < _postRenderers.Count; ++i) _postRenderers[i]?.PostRender();
         }
 
+        private void HandleLogCopied(string copiedText)
+        {
+            OnLogCopiedTriggered?.Invoke(copiedText);
+        }
+
         public void Dispose()
         {
+            _logCopyButtonRenderer.OnClickButton -= HandleLogCopied;
+            
             OnPreRender -= ExecutePreRender;
             OnPostRender -= ExecutePostRender;
+            
+            OnScreenSizeChanged = null;
+            OnLogCopiedTriggered = null;
         }
     }
 }

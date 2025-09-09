@@ -10,14 +10,16 @@ namespace YukimaruGames.Terminal.UI.View
 {
     public sealed class TerminalLogRenderer : ITerminalLogRenderer, IDisposable
     {
+        private readonly ITerminalLogCopyButtonRenderer _copyButtonRenderer;
         private readonly IGUIStyleProvider _styleProvider;
         private readonly IColorPaletteProvider _colorPaletteProvider;
 
         public event Action<LogRenderData> OnPreRender;
         public event Action<LogRenderData> OnPostRender;
 
-        public TerminalLogRenderer(IGUIStyleProvider styleProvider, IColorPaletteProvider colorPaletteProvider)
+        public TerminalLogRenderer(ITerminalLogCopyButtonRenderer logCopyButtonRenderer,IGUIStyleProvider styleProvider, IColorPaletteProvider colorPaletteProvider)
         {
+            _copyButtonRenderer = logCopyButtonRenderer;
             _styleProvider = styleProvider;
             _colorPaletteProvider = colorPaletteProvider;
         }
@@ -46,18 +48,33 @@ namespace YukimaruGames.Terminal.UI.View
             var cursorColor = GUI.skin.settings.cursorColor;
             GUI.skin.settings.cursorColor = Color.clear;
 
-            foreach (var logEntry in data.LogRenderDataCollection)
+            foreach (var renderData in data.LogRenderDataCollection)
             {
-                OnPreRender?.Invoke(logEntry);
+                OnPreRender?.Invoke(renderData);
 
-                _styleProvider.SetColor(GetColor(logEntry.MessageType));
+                _styleProvider.SetColor(GetColor(renderData.MessageType));
                 // TODO:コピペ可能な選択フィールドの実装が理想.
-                GUILayout.Label(logEntry.Message, _styleProvider.GetStyle());
+                GUILayout.Label(renderData.Message, _styleProvider.GetStyle());
+                if (ShouldDrawCopyButton(renderData)) _copyButtonRenderer.Render(renderData.Message);
                 
-                OnPostRender?.Invoke(logEntry);
+                OnPostRender?.Invoke(renderData);
             }
 
             GUI.skin.settings.cursorColor = cursorColor;
+        }
+
+        private bool ShouldDrawCopyButton(LogRenderData renderData)
+        {
+            if (string.IsNullOrWhiteSpace(renderData.Message))
+            {
+                return false;
+            }
+            
+            return renderData.MessageType switch
+            {
+                MessageType.System => false,
+                _ => true,
+            };   
         }
     }
 }

@@ -43,6 +43,9 @@ namespace YukimaruGames.Terminal.Editor
         private SerializedProperty _caretColorProp;
         private SerializedProperty _selectionColorProp;
         private SerializedProperty _promptColorProp;
+        private SerializedProperty _executeButtonColorProp;
+        private SerializedProperty _buttonColorProp;
+        private SerializedProperty _copyButtonColorProp;
         private SerializedProperty _cursorFlashSpeedProp;
         private SerializedProperty _inputKeyboardTypeProp;
         private SerializedProperty _durationProp;
@@ -55,7 +58,8 @@ namespace YukimaruGames.Terminal.Editor
         private SerializedProperty _bootupWindowStateProp;
         private SerializedProperty _inputSystemKeyProp;
         private SerializedProperty _legacyInputKeyProp;
-        
+        private SerializedProperty _buttonVisibleProp;
+        private SerializedProperty _buttonReverseProp;
         
         private Tab _tab = Tab.View;
         private Lazy<GUIStyle> _toolbarStyleLazy;
@@ -65,6 +69,9 @@ namespace YukimaruGames.Terminal.Editor
             alignment = TextAnchor.MiddleCenter,
             fontStyle = FontStyle.Bold,
         });
+
+        private readonly Lazy<GUIContent> _buttonVisibleContentLazy = new(() => new GUIContent("Visible"));
+        private readonly Lazy<GUIContent> _buttonReverseContentLazy = new(() => new GUIContent("Reverse"));
         
         private const float MinWidth = 30f;
         private const float MinHeight = 30f;
@@ -87,7 +94,7 @@ namespace YukimaruGames.Terminal.Editor
                 _fontSizeProp = _serializedObject.FindProperty("_fontSize");
                 _backgroundColorProp = _serializedObject.FindProperty("_backgroundColor");
                 _messageColorProp = _serializedObject.FindProperty("_messageColor");
-                _entryColorProp  = _serializedObject.FindProperty("_entryColor");
+                _entryColorProp = _serializedObject.FindProperty("_entryColor");
                 _warningColorProp = _serializedObject.FindProperty("_warningColor");
                 _errorColorProp = _serializedObject.FindProperty("_errorColor");
                 _assertColorProp = _serializedObject.FindProperty("_assertColor");
@@ -96,8 +103,11 @@ namespace YukimaruGames.Terminal.Editor
                 _inputColorProp = _serializedObject.FindProperty("_inputColor");
                 _caretColorProp = _serializedObject.FindProperty("_caretColor");
                 _selectionColorProp = _serializedObject.FindProperty("_selectionColor");
-                _cursorFlashSpeedProp =  _serializedObject.FindProperty("_cursorFlashSpeed");
+                _cursorFlashSpeedProp = _serializedObject.FindProperty("_cursorFlashSpeed");
                 _promptColorProp = _serializedObject.FindProperty("_promptColor");
+                _executeButtonColorProp = _serializedObject.FindProperty("_executeButtonColor");
+                _buttonColorProp = _serializedObject.FindProperty("_buttonColor");
+                _copyButtonColorProp = _serializedObject.FindProperty("_copyButtonColor");
             }
 
             // input-prop
@@ -125,6 +135,8 @@ namespace YukimaruGames.Terminal.Editor
                 _promptProp = _serializedObject.FindProperty("_prompt");
                 _bootupCommandProp = _serializedObject.FindProperty("_bootupCommand");
                 _bootupWindowStateProp = _serializedObject.FindProperty("_bootupWindowState");
+                _buttonVisibleProp = _serializedObject.FindProperty("_buttonVisible");
+                _buttonReverseProp = _serializedObject.FindProperty("_buttonReverse");
             }
 
             _toolbarStyleLazy = new Lazy<GUIStyle>(() => new GUIStyle(GUI.skin.button)
@@ -243,6 +255,10 @@ namespace YukimaruGames.Terminal.Editor
             EditorGUILayout.PropertyField(_systemColorProp);
 
             EditorGUILayout.Space(6f);
+            EditorGUILayout.LabelField("Button", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(_executeButtonColorProp);
+            EditorGUILayout.PropertyField(_buttonColorProp);
+            EditorGUILayout.PropertyField(_copyButtonColorProp);
         }
 
         private void RenderAnimationCategory()
@@ -361,6 +377,10 @@ namespace YukimaruGames.Terminal.Editor
             }
             
             EditorGUILayout.Space(6f);
+            
+            EditorGUILayout.LabelField("Button",EditorStyles.boldLabel);
+            _buttonVisibleProp.boolValue = EditorGUILayout.ToggleLeft(_buttonVisibleContentLazy.Value, _buttonVisibleProp.boolValue);
+            _buttonReverseProp.boolValue = EditorGUILayout.ToggleLeft(_buttonReverseContentLazy.Value, _buttonReverseProp.boolValue);
         }
         
         private void DrawNone()
