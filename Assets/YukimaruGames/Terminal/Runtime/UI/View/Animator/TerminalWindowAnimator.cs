@@ -23,8 +23,6 @@ namespace YukimaruGames.Terminal.UI.View
 
         private Rect Calculate(in TerminalWindowAnimatorData data, float step)
         {
-            var screen = (Screen.width, Screen.height);
-            
             step = data.State switch
             {
                 TerminalState.Open => step,
@@ -40,29 +38,37 @@ namespace YukimaruGames.Terminal.UI.View
             
             var rect = new Rect();
 
+            var screen = data.Size;
+            
+#pragma warning disable CS8509
             switch (data.Anchor)
             {
                 case TerminalAnchor.Left:
                 case TerminalAnchor.Right:
                     rect.height = screen.height;
-                    rect.width = screen.width * Mathf.Clamp01(scale) * Mathf.Clamp01(step);
-                    if (data.Anchor is TerminalAnchor.Right)
+                    rect.width = screen.width * Mathf.Clamp01(scale);
+
+                    rect.x = data.Anchor switch
                     {
-                        rect.x = screen.width - rect.width;
-                    }
+                        TerminalAnchor.Left => -rect.width + rect.width * Mathf.Clamp01(step),
+                        TerminalAnchor.Right => screen.width - rect.width * Mathf.Clamp01(step),
+                    };
                     break;
                 case TerminalAnchor.Top:
                 case TerminalAnchor.Bottom:
-                    rect.height = screen.height * scale * Mathf.Clamp01(step);
+                    rect.height = screen.height * Mathf.Clamp01(scale);
                     rect.width = screen.width;
-                    if (data.Anchor is TerminalAnchor.Bottom)
+
+                    rect.y = data.Anchor switch
                     {
-                        rect.y = screen.height - rect.height;
-                    }
+                        TerminalAnchor.Top => -rect.height + rect.height * Mathf.Clamp01(step),
+                        TerminalAnchor.Bottom => screen.height - rect.height * Mathf.Clamp01(step),
+                    };
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+#pragma warning restore CS8509
 
             return rect;
         }

@@ -4,6 +4,7 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
 {
     public readonly struct TerminalWindowAnimatorData
     {
+        public (int width, int height) Size { get; }
         public TerminalState State { get; }
         public TerminalAnchor Anchor { get; }
         public TerminalWindowStyle Style { get; }
@@ -12,6 +13,7 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
         public float Elapsed { get; }
 
         public TerminalWindowAnimatorData(
+            (int width,int height)size,
             TerminalState state,
             TerminalAnchor anchor,
             TerminalWindowStyle style,
@@ -19,6 +21,7 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
             float scale,
             float elapsed)
         {
+            Size = size;
             State = state;
             Anchor = anchor;
             Style = style;
