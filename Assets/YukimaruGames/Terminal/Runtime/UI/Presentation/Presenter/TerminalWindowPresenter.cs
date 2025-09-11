@@ -145,7 +145,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         private TerminalWindowAnimatorData GetAnimatorData(float duration, float elapsed)
         {
-            return new TerminalWindowAnimatorData(State, Anchor, Style, duration, Scale, elapsed);
+            return new TerminalWindowAnimatorData(
+                (Screen.width, Screen.height),
+                State, Anchor, Style, duration, Scale, elapsed);
         }
 
         public TerminalWindowRenderData GetRenderData()
