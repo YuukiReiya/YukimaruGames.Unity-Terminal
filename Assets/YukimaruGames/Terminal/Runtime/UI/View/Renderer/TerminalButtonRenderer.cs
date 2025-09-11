@@ -58,7 +58,7 @@ namespace YukimaruGames.Terminal.UI.View
             {
                 // 左上(左下)
                 case TerminalAnchor.Left:
-                    rect.x = rect.width;
+                    rect.x += rect.width;
                     rect.width = Mathf.Ceil(Mathf.Max(_openButtonTextSize.x, _closeButtonTextSize.x));
                     var height = Mathf.Floor(_openButtonTextSize.y + _closeButtonTextSize.y);
                     if (renderData.IsReverse) rect.y = rect.height - height;
@@ -80,7 +80,7 @@ namespace YukimaruGames.Terminal.UI.View
                     width = Mathf.Ceil(_openButtonTextSize.x + _closeButtonTextSize.x);
                     height = Mathf.Max(_openButtonTextSize.y, _closeButtonTextSize.y);
                     if (renderData.IsReverse) rect.x = rect.width - width;
-                    rect.y = rect.height;
+                    rect.y += rect.height;
                     rect.width = width;
                     rect.height = height;
                     break;
