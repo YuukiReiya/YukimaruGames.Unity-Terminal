@@ -8,5 +8,12 @@
         "name": "YuukiReiya",
         "url": "https://github.com/YuukiReiya"
     },
-    "documentationUrl": "https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal/tree/master"
+    "documentationUrl": "https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal/tree/master",
+    "samples": [
+        {
+            "displayName": "Command",
+            "description": "さんぷる",
+            "path": "Samples~"
+        }
+    ]
 }
