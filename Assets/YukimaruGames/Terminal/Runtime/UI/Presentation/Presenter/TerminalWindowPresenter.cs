@@ -155,7 +155,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             return new TerminalWindowRenderData(GetHashCode(), Rect);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             _onCompleted = null;
             _onAborted = null;

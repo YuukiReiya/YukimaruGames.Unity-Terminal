@@ -31,7 +31,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private void HandleClickOpenButton() => OnOpenTriggered?.Invoke();
         private void HandleClickCloseButton() => OnCloseTriggered?.Invoke();
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             _renderer.OnClickOpenButton -= HandleClickOpenButton;
             _renderer.OnClickCloseButton -= HandleClickCloseButton;

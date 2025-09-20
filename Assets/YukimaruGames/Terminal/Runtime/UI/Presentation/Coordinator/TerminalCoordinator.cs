@@ -179,7 +179,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             GUIUtility.systemCopyBuffer = copiedText;
         }
         
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             UnregisterEvents();
         }

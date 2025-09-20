@@ -84,7 +84,7 @@ namespace YukimaruGames.Terminal.Infrastructure
             }
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             Clear();
             _onFontChanged = null;
