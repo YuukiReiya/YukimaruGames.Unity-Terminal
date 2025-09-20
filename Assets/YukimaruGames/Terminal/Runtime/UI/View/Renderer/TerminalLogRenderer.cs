@@ -17,7 +17,7 @@ namespace YukimaruGames.Terminal.UI.View
         public event Action<LogRenderData> OnPreRender;
         public event Action<LogRenderData> OnPostRender;
 
-        public TerminalLogRenderer(ITerminalLogCopyButtonRenderer logCopyButtonRenderer,IGUIStyleProvider styleProvider, IColorPaletteProvider colorPaletteProvider)
+        public TerminalLogRenderer(ITerminalLogCopyButtonRenderer logCopyButtonRenderer, IGUIStyleProvider styleProvider, IColorPaletteProvider colorPaletteProvider)
         {
             _copyButtonRenderer = logCopyButtonRenderer;
             _styleProvider = styleProvider;
@@ -56,7 +56,7 @@ namespace YukimaruGames.Terminal.UI.View
                 // TODO:コピペ可能な選択フィールドの実装が理想.
                 GUILayout.Label(renderData.Message, _styleProvider.GetStyle());
                 if (ShouldDrawCopyButton(renderData)) _copyButtonRenderer.Render(renderData.Message);
-                
+
                 OnPostRender?.Invoke(renderData);
             }
 
@@ -69,12 +69,12 @@ namespace YukimaruGames.Terminal.UI.View
             {
                 return false;
             }
-            
+
             return renderData.MessageType switch
             {
                 MessageType.System => false,
                 _ => true,
-            };   
+            };
         }
     }
 }

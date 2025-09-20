@@ -150,12 +150,12 @@ namespace YukimaruGames.Terminal.UI.Presentation
                 State, Anchor, Style, duration, Scale, elapsed);
         }
 
-        public TerminalWindowRenderData GetRenderData()
+        TerminalWindowRenderData ITerminalWindowRenderDataProvider.GetRenderData()
         {
             return new TerminalWindowRenderData(GetHashCode(), Rect);
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _onCompleted = null;
             _onAborted = null;

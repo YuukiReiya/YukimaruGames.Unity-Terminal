@@ -26,7 +26,7 @@ namespace YukimaruGames.Terminal.Infrastructure
             }
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             foreach (var kvp in _dic)
             {
