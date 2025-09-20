@@ -60,7 +60,7 @@ namespace YukimaruGames.Terminal.Infrastructure
 
         private void HandleFontSizeChanged(int size) => _styleLazy.Value.fontSize = size;
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             OnStyleChanged = null;
             if (_provider != null)

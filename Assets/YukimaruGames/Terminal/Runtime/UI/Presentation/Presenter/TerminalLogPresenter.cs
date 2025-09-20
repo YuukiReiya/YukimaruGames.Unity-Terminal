@@ -42,7 +42,7 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
         /// </remarks>
         TerminalLogRenderData ITerminalLogRenderDataProvider.GetRenderData() => _cachedLogRenderData;
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _service.OnLogUpdated -= HandleLogUpdated;
             _service.OnLogAdded -= HandleLogAdded;
