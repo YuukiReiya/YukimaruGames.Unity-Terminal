@@ -15,7 +15,7 @@ namespace YukimaruGames.Terminal.UI.View
         public TerminalWindowRenderer(IPixelTexture2DRepository pixelTextureRepository)
         {
             _textureRepository = pixelTextureRepository;
-            _textureRepository.Add(Key, Color.black);
+            _textureRepository.SetColor(Key, Color.black);
 
             _styleLazy = new Lazy<GUIStyle>(new GUIStyle()
             {
@@ -24,11 +24,6 @@ namespace YukimaruGames.Terminal.UI.View
                     background = pixelTextureRepository.GetTexture2D(Key),
                 },
             });
-        }
-
-        public void SetBackgroundColor(Color color)
-        {
-            _textureRepository.SetColor(Key, color);
         }
 
         public void Render(TerminalWindowRenderData viewModel, GUI.WindowFunction func)

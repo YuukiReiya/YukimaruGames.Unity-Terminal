@@ -9,19 +9,21 @@ namespace YukimaruGames.Terminal.Infrastructure
     {
         private readonly Dictionary<string, PixelTexture2DHandle> _dic = new();
 
-        public void Add(string key, Color color)
-        {
-            _dic.TryAdd(key, new PixelTexture2DHandle(color));
-        }
-
-        public Texture2D GetTexture2D(string key)
+        Texture2D IPixelTexture2DRepository.GetTexture2D(string key)
         {
             return _dic.GetValueOrDefault(key)?.GetTexture2D();
         }
 
-        public void SetColor(string key, in Color color)
+        void IPixelTexture2DRepository.SetColor(string key, in Color color)
         {
-            _dic.GetValueOrDefault(key)?.SetColor(color);
+            if (_dic.TryGetValue(key,out var handle))
+            {
+                handle.SetColor(color);
+            }
+            else
+            {
+                _dic.Add(key, new PixelTexture2DHandle(color));
+            }
         }
 
         public void Dispose()

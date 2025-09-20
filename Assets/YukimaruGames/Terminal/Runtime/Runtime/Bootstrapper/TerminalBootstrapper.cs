@@ -122,7 +122,7 @@ namespace YukimaruGames.Terminal.Runtime
         private TerminalGUIStyleContext _logCopyButtonStyleContext;
         
         // cursor-flash-speed provider.
-        private CursorFlashSpeedProvider _cursorFlashSpeedProvider;
+        private CursorFlashContext _cursorFlashContext;
         
         // button-visible
         private TerminalButtonVisibleConfigurator _buttonVisibleConfigurator; 
@@ -206,13 +206,13 @@ namespace YukimaruGames.Terminal.Runtime
             _openButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _logCopyButtonStyleContext = new TerminalGUIStyleContext(_fontProvider);
             
-            _cursorFlashSpeedProvider = new CursorFlashSpeedProvider(_cursorFlashSpeed);
+            _cursorFlashContext = new CursorFlashContext(_cursorFlashSpeed);
             _buttonVisibleConfigurator = new TerminalButtonVisibleConfigurator();
                 
             _windowRenderer = new TerminalWindowRenderer(_pixelTexture2DRepository);
             _logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(_buttonVisibleConfigurator, _logCopyButtonStyleContext);
             _logRenderer = new TerminalLogRenderer(_logCopyButtonRenderer,_logStyleContext, _colorPaletteProvider);
-            _inputRenderer = new TerminalInputRenderer(scrollConfigurator, _inputStyleContext, _colorPaletteProvider, _cursorFlashSpeedProvider);
+            _inputRenderer = new TerminalInputRenderer(scrollConfigurator, _inputStyleContext, _colorPaletteProvider, _cursorFlashContext);
             _promptRenderer = new TerminalPromptRenderer(_promptStyleContext);
             _executeButtonRenderer = new TerminalExecuteButtonRenderer(_executeButtonsStyleContext);
             _buttonRenderer = new TerminalButtonRenderer(_pixelTexture2DRepository, _openButtonsStyleContext);
@@ -300,7 +300,7 @@ namespace YukimaruGames.Terminal.Runtime
                 _fontProvider.Size = _fontSize;
             }
             
-            _windowRenderer?.SetBackgroundColor(_backgroundColor);
+            //_windowRenderer?.SetBackgroundColor(_backgroundColor);
 
             if (_colorPaletteProvider != null)
             {
@@ -319,15 +319,15 @@ namespace YukimaruGames.Terminal.Runtime
             if (_promptRenderer != null)
             {
                 _promptRenderer.Prompt = _prompt;
-                _promptStyleContext.SetColor(_promptColor);
+                //_promptStyleContext.SetColor(_promptColor);
             }
 
-            _inputStyleContext?.SetColor(_inputColor);
-            _executeButtonsStyleContext?.SetColor(_executeButtonColor);
-            _openButtonsStyleContext?.SetColor(_buttonColor);
-            _logCopyButtonStyleContext?.SetColor(_copyButtonColor);
+            // _inputStyleContext?.SetColor(_inputColor);
+            // _executeButtonsStyleContext?.SetColor(_executeButtonColor);
+            // _openButtonsStyleContext?.SetColor(_buttonColor);
+            // _logCopyButtonStyleContext?.SetColor(_copyButtonColor);
             _eventListener?.SetInputHandler(CreateInputHandler());
-            _cursorFlashSpeedProvider?.SetFlashSpeed(_cursorFlashSpeed);
+            //_cursorFlashContext?.SetFlashSpeed(_cursorFlashSpeed);
             
             if (_buttonVisibleConfigurator != null)
             {
