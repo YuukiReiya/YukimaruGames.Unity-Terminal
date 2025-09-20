@@ -68,8 +68,8 @@ namespace YukimaruGames.Terminal.UI.View
             _scrollConfigurator = scrollConfigurator;
 
             _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
-            
-            _preRenderers = new object[]
+
+            var renderers = new object[]
             {
                 _windowRenderer,
                 _logRenderer,
@@ -77,18 +77,12 @@ namespace YukimaruGames.Terminal.UI.View
                 _promptRenderer,
                 _executeButtonRenderer,
                 _buttonRenderer,
-            }.OfType<ITerminalPreRenderer>().ToList();
+            };
+
+            _preRenderers = new List<ITerminalPreRenderer>(renderers.OfType<ITerminalPreRenderer>());
             OnPreRender += ExecutePreRender;
 
-            _postRenderers = new object[]
-            {
-                _windowRenderer,
-                _logRenderer,
-                _inputRenderer,
-                _promptRenderer,
-                _executeButtonRenderer,
-                _buttonRenderer,
-            }.OfType<ITerminalPostRenderer>().ToList();
+            _postRenderers = new List<ITerminalPostRenderer>(renderers.OfType<ITerminalPostRenderer>());
             OnPostRender += ExecutePostRender;
         }
 
@@ -155,6 +149,9 @@ namespace YukimaruGames.Terminal.UI.View
             
             OnPreRender -= ExecutePreRender;
             OnPostRender -= ExecutePostRender;
+            
+            _preRenderers.Clear();
+            _postRenderers.Clear();
             
             OnScreenSizeChanged = null;
             OnLogCopiedTriggered = null;

@@ -21,7 +21,14 @@ namespace YukimaruGames.Terminal.Infrastructure
 
         public void SetColor(string key, in Color color)
         {
-            _dic.GetValueOrDefault(key)?.SetColor(color);
+            if (_dic.TryGetValue(key,out var handle))
+            {
+                handle.SetColor(color);
+            }
+            else
+            {
+                _dic.Add(key, new PixelTexture2DHandle(color));
+            }
         }
 
         public void Dispose()

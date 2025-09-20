@@ -14,6 +14,7 @@ using YukimaruGames.Terminal.Runtime.Input.LegacyInput;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
 using YukimaruGames.Terminal.Domain.Interface;
@@ -77,6 +78,7 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeField] private bool _buttonReverse;
         
         private readonly List<IUpdatable> _updatables = new();
+        private readonly List<IDisposable> _disposables = new();
 
         private InputKeyboardType KeyboardType =>
 #if ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
@@ -160,14 +162,17 @@ namespace YukimaruGames.Terminal.Runtime
 
             var scrollConfigurator = new ScrollConfigurator();
             _registry = new CommandRegistry(_logger);
+            var invoker = new CommandInvoker();
+            var parser = new CommandParser();
+            var history = new CommandHistory();
             var discover = new CommandDiscoverer(_logger);
             _autocomplete = new CommandAutocomplete(); 
             _service = new TerminalService(
                 _logger,
                 _registry,
-                new CommandInvoker(),
-                new CommandParser(),
-                new CommandHistory(),
+                invoker,
+                parser,
+                history,
                 _autocomplete);
 
             var specs = discover.Discover();
@@ -248,7 +253,62 @@ namespace YukimaruGames.Terminal.Runtime
                 _executeButtonPresenter,
                 _buttonPresenter,
                 _eventListener);
-            _updatables.Add(_eventListener);
+            
+            var instances = new object[]
+            {
+                scrollConfigurator,
+                factory,
+
+                // domain
+                _service,
+                _logger,
+                invoker,
+                parser,
+                history,
+                discover,
+                _registry,
+                _autocomplete,
+                
+                // provider.
+                _animatorDataConfigurator,
+                _colorPaletteProvider,
+                _fontProvider,
+                _pixelTexture2DRepository,
+                
+                // listener.
+                _eventListener,
+                
+                // context.
+                _logStyleContext,
+                _inputStyleContext,
+                _promptStyleContext,
+                _executeButtonsStyleContext,
+                _openButtonsStyleContext,
+                _logCopyButtonStyleContext,
+                
+                _cursorFlashSpeedProvider,
+                _buttonVisibleConfigurator,
+                
+                // renderer.
+                _windowRenderer,
+                _logCopyButtonRenderer,
+                _logRenderer,
+                _inputRenderer,
+                _promptRenderer,
+                _executeButtonRenderer,
+                _buttonRenderer,
+                _view,
+                
+                // presenter.
+                _windowPresenter,
+                _logPresenter,
+                _inputPresenter,
+                _executeButtonPresenter,
+                _buttonPresenter,
+                _coordinator,
+            };
+            _updatables.AddRange(instances.OfType<IUpdatable>());
+            _disposables.AddRange(instances.OfType<IDisposable>());
             Configure();
         }
 
@@ -353,19 +413,12 @@ namespace YukimaruGames.Terminal.Runtime
         
         public void Dispose()
         {
-            (_view as IDisposable)?.Dispose();
-            _coordinator?.Dispose();
-            _fontProvider?.Dispose();
-            _logStyleContext?.Dispose();
-            _inputStyleContext?.Dispose();
-            _logRenderer?.Dispose();
-            _logCopyButtonRenderer?.Dispose();
-            _promptRenderer?.Dispose();
-            _windowPresenter?.Dispose();
-            _logPresenter?.Dispose();
-            _inputPresenter?.Dispose();
-            _executeButtonPresenter?.Dispose();
-            _buttonPresenter?.Dispose();
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < _disposables.Count; i++)
+            {
+                _disposables[i]?.Dispose();
+            }
+            _disposables.Clear();
         }
     }
 }

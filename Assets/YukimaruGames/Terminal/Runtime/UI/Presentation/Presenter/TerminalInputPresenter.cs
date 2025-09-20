@@ -38,7 +38,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         public void SetMoveCursorToEnd() => _isMoveCursorToEnd = true;
 
-        public TerminalInputRenderData GetRenderData()
+        TerminalInputRenderData ITerminalInputRenderDataProvider.GetRenderData()
         {
             return new TerminalInputRenderData(InputText, FocusControl, _isMoveCursorToEnd);
         }

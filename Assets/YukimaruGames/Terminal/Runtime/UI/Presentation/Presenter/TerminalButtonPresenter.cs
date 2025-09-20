@@ -4,7 +4,7 @@ using YukimaruGames.Terminal.UI.View;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public sealed class TerminalButtonPresenter : ITerminalButtonPresenter, ITerminalButtonRenderDataProvider,IDisposable
+    public sealed class TerminalButtonPresenter : ITerminalButtonPresenter, ITerminalButtonRenderDataProvider, IDisposable
     {
         private readonly ITerminalButtonRenderer _renderer;
         private readonly ITerminalWindowPresenter _windowPresenter;
@@ -12,8 +12,8 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         public event Action OnOpenTriggered;
         public event Action OnCloseTriggered;
-        
-        public TerminalButtonPresenter(ITerminalButtonRenderer renderer,ITerminalWindowPresenter windowPresenter, ITerminalButtonVisibleProvider buttonVisibleProvider)
+
+        public TerminalButtonPresenter(ITerminalButtonRenderer renderer, ITerminalWindowPresenter windowPresenter, ITerminalButtonVisibleProvider buttonVisibleProvider)
         {
             _renderer = renderer;
             _windowPresenter = windowPresenter;
@@ -23,7 +23,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _renderer.OnClickCloseButton += HandleClickCloseButton;
         }
 
-        public TerminalButtonRenderData GetRenderData()
+        TerminalButtonRenderData ITerminalButtonRenderDataProvider.GetRenderData()
         {
             return new TerminalButtonRenderData(_buttonVisibleProvider.IsVisible, _buttonVisibleProvider.IsReverse, _windowPresenter.Rect, _windowPresenter.Anchor);
         }
@@ -35,7 +35,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         {
             _renderer.OnClickOpenButton -= HandleClickOpenButton;
             _renderer.OnClickCloseButton -= HandleClickCloseButton;
-            
+
             OnOpenTriggered = null;
             OnCloseTriggered = null;
         }
