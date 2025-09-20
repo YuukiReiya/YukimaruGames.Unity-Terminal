@@ -334,10 +334,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         private void OnDestroy()
         {
-            if (this is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
+            Dispose();
         }
 
         [Conditional("UNITY_EDITOR")]
@@ -414,7 +411,7 @@ namespace YukimaruGames.Terminal.Runtime
             return factory.Create(KeyboardType);
         }
         
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < _disposables.Count; i++)

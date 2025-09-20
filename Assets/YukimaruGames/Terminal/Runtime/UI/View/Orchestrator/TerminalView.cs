@@ -143,7 +143,7 @@ namespace YukimaruGames.Terminal.UI.View
             OnLogCopiedTriggered?.Invoke(copiedText);
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             _logCopyButtonRenderer.OnClickButton -= HandleLogCopied;
             

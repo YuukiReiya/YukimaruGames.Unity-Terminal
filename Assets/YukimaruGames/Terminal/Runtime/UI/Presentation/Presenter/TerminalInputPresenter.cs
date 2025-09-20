@@ -65,7 +65,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             IsImeComposing = isImeComposing;
         }
         
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             if (_renderer != null)
             {
