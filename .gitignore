@@ -103,3 +103,6 @@ InitTestScene*.unity*
 
 # Workspace
 /[Aa]ssets/[Ww]orkspace*
+
+# Mac
+*.DS_Store*
