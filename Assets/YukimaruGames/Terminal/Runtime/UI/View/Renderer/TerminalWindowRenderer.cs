@@ -26,11 +26,6 @@ namespace YukimaruGames.Terminal.UI.View
             });
         }
 
-        public void SetBackgroundColor(Color color)
-        {
-            _textureRepository.SetColor(Key, color);
-        }
-
         public void Render(TerminalWindowRenderData viewModel, GUI.WindowFunction func)
         {
             GUI.Window(viewModel.Id, viewModel.Rect, func, string.Empty, _styleLazy.Value);

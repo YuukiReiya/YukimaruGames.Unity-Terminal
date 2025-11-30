@@ -52,7 +52,7 @@ namespace YukimaruGames.Terminal.UI.View
             {
                 OnPreRender?.Invoke(renderData);
 
-                _styleProvider.SetColor(GetColor(renderData.MessageType));
+                _styleProvider.GetStyle().normal.textColor = GetColor(renderData.MessageType); 
                 // TODO:コピペ可能な選択フィールドの実装が理想.
                 GUILayout.Label(renderData.Message, _styleProvider.GetStyle());
                 if (ShouldDrawCopyButton(renderData)) _copyButtonRenderer.Render(renderData.Message);
