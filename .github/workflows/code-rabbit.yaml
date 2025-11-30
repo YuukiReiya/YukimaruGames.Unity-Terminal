@@ -21,6 +21,7 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
+    environment: Unity-Terminal.env
     steps:
       - uses: coderabbitai/ai-pr-reviewer@latest
         env:
