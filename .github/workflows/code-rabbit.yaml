@@ -29,6 +29,10 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:
           debug: false
+          profile: assertive
+          sequence_diagrams: true
+          related_prs: true
+          auto_apply_labels: true
           review_simple_changes: false
           review_comment_lgtm: false
           openai_light_model: gpt-4o
