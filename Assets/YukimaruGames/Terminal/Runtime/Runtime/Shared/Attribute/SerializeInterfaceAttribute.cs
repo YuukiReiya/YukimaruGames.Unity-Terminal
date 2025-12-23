@@ -5,11 +5,11 @@ namespace YukimaruGames.Terminal.SharedKernel
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public sealed class SerializeInterfaceAttribute : UnityEngine.PropertyAttribute
     {
-        public bool IsIncludeMono { get; }
+        public bool UseToStringAsLabel { get; }
 
-        public SerializeInterfaceAttribute(bool isIncludeMono = true)
+        public SerializeInterfaceAttribute(bool useToStringAsLabel = true)
         {
-            IsIncludeMono = isIncludeMono;
+            UseToStringAsLabel = useToStringAsLabel;
         }
     }
 }
