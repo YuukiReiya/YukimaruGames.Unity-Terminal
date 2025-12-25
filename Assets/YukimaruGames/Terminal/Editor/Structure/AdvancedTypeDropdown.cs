@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -12,9 +13,10 @@ namespace YukimaruGames.Terminal.Editor
         private const int kMaxNamespaceNestCount = 16;
 
         private static readonly float kHeaderHeight = EditorGUIUtility.singleLineHeight * 2;
+        private static readonly ConditionalWeakTable<AdvancedDropdownItem, IReadOnlyDictionary<string, AdvancedDropdownItem>> _nodeMapCache = new();
 
         private readonly IEnumerable<Type> _types;
-        public event Action<AdvancedTypeDropdownItem> OnItemSelected; 
+        public event Action<AdvancedTypeDropdownItem> OnItemSelected;
 
         internal AdvancedTypeDropdown(IEnumerable<Type> types, int maxLineCount, AdvancedDropdownState state) : base(state)
         {
@@ -38,11 +40,11 @@ namespace YukimaruGames.Terminal.Editor
             }
         }
 
-        private static void AddTo(AdvancedDropdownItem root,IEnumerable<Type> types)
+        private static void AddTo(AdvancedDropdownItem root, IEnumerable<Type> types)
         {
             var (data, shouldFlattenMenu) = PrepareMenu(types);
             var itemCount = 0;
-            AddNullItem(root,ref itemCount);
+            AddNullItem(root, ref itemCount);
 
             foreach (var item in data)
             {
@@ -52,11 +54,11 @@ namespace YukimaruGames.Terminal.Editor
                     ref itemCount,
                     shouldFlattenMenu);
                 var typeName = ObjectNames.NicifyVariableName(item.Segments[^1]);
-                var typeItem = new AdvancedTypeDropdownItem(item.Type, typeName) 
+                var typeItem = new AdvancedTypeDropdownItem(item.Type, typeName)
                 {
                     id = itemCount++
                 };
-                
+
                 parent.AddChild(typeItem);
             }
         }
@@ -117,7 +119,7 @@ namespace YukimaruGames.Terminal.Editor
                     break;
                 }
             }
-            
+
             return (sortedTypes, shouldFlattenMenu);
         }
 
@@ -136,8 +138,8 @@ namespace YukimaruGames.Terminal.Editor
             {
                 var segment = segments[k];
                 var map = GetNodeMap(parent);
-                
-                if (map.TryGetValue(segment,out var node))
+
+                if (map.TryGetValue(segment, out var node))
                 {
                     parent = node;
                 }
@@ -156,9 +158,15 @@ namespace YukimaruGames.Terminal.Editor
             return parent;
         }
 
-        private static IReadOnlyDictionary<string,AdvancedDropdownItem> GetNodeMap(AdvancedDropdownItem parent)
+        private static IReadOnlyDictionary<string, AdvancedDropdownItem> GetNodeMap(AdvancedDropdownItem parent)
         {
-            return parent.children.ToDictionary(item => item.name, item => item);
+            if (!_nodeMapCache.TryGetValue(parent,out var nodeMap))
+            {
+                nodeMap = parent.children.ToDictionary(item => item.name, item => item);
+                _nodeMapCache.AddOrUpdate(parent, nodeMap);
+            }
+
+            return nodeMap;
         }
     }
 }
