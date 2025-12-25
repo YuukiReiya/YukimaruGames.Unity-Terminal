@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -225,6 +226,10 @@ namespace YukimaruGames.Terminal.Editor
                 var individualObject = new SerializedObject(targetObject);
                 var individualProperty = individualObject.FindProperty(property.propertyPath);
                 var obj = individualProperty.SetManagedReferenceValue(type);
+                if (type != null && obj == null)
+                {
+                    Debug.LogError($"[{GetType().Name}] Type {(type?.FullName ?? "null")} does not have a parameterless public constructor.{Environment.NewLine}Please ensure the class is not abstract and has a default constructor.");
+                }
                 individualProperty.isExpanded = obj != null;
 
                 individualObject.ApplyModifiedProperties();
