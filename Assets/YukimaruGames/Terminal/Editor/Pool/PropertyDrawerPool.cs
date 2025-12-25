@@ -7,7 +7,7 @@ namespace YukimaruGames.Terminal.Editor
 {
     internal static class PropertyDrawerPool
     {
-        private static Dictionary<Type, PropertyDrawer> _pool = new();
+        private static readonly Dictionary<Type, PropertyDrawer> _pool = new();
 
         internal static bool TryGet(Type type, out PropertyDrawer drawer)
         {
@@ -43,9 +43,9 @@ namespace YukimaruGames.Terminal.Editor
                 {
                     var field = attribute.GetType().GetField("m_Type", bindingFlags);
 
-                    if (field?.GetValue(attribute) is Type filedType)
+                    if (field?.GetValue(attribute) is Type fieldType)
                     {
-                        if (filedType == type)
+                        if (fieldType == type)
                         {
                             return cache;
                         }
@@ -56,7 +56,7 @@ namespace YukimaruGames.Terminal.Editor
                             var useForChildrenFieldValue = useForChildrenField.GetValue(attribute);
                             if (useForChildrenFieldValue is bool and true)
                             {
-                                if (Array.Exists(interfaces, x => x == filedType))
+                                if (Array.Exists(interfaces, x => x == fieldType))
                                 {
                                     return cache;
                                 }
@@ -64,7 +64,7 @@ namespace YukimaruGames.Terminal.Editor
                                 var baseType = type.BaseType;
                                 while (baseType != null)
                                 {
-                                    if (baseType == filedType)
+                                    if (baseType == fieldType)
                                     {
                                         return cache;
                                     }
