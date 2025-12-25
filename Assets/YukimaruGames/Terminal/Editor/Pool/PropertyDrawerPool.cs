@@ -17,6 +17,10 @@ namespace YukimaruGames.Terminal.Editor
                 if (drawerType != null)
                 {
                     drawer = Activator.CreateInstance(drawerType) as PropertyDrawer;
+                    if (drawer == null)
+                    {
+                        UnityEngine.Debug.LogError($"Failed to instantiate PropertyDrawer of type {drawerType}");
+                    }
                 }
                 _pool[type] = drawer;
             }
