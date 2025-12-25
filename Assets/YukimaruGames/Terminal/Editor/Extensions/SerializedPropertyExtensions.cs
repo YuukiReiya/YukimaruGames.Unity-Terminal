@@ -78,9 +78,14 @@ namespace YukimaruGames.Terminal.Editor
             }
 #endif
 
-            if (result == null)
+            if (result == null && type!=null)
             {
-                result = type != null ? Activator.CreateInstance(type) : null;
+                var constructor = type.GetConstructor(Type.EmptyTypes);
+
+                if (constructor != null)
+                {
+                    result = Activator.CreateInstance(type);
+                }
             }
 
             property.managedReferenceValue = result;
