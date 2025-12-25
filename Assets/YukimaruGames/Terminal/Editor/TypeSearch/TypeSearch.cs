@@ -32,6 +32,15 @@ namespace YukimaruGames.Terminal.Editor
         }
         
 #if SUPPORTS_SERIALIZED_GENERIC_INSTANCE
+
+        [InitializeOnLoadMethod]
+        private static void Clear()
+        {
+            // NOTE:
+            // ドメインリロードされてもキャッシュが残ってしまうので明示的にクリアする.
+            _typeCacheDic?.Clear();
+        }
+        
         private static IList<Type> GetCompatibleGenericTypes(Type baseType)
         {
             if (_typeCacheDic.TryGetValue(baseType, out var types))
