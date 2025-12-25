@@ -16,12 +16,26 @@ namespace YukimaruGames.Terminal.Editor
         private static readonly ConditionalWeakTable<AdvancedDropdownItem, IReadOnlyDictionary<string, AdvancedDropdownItem>> _nodeMapCache = new();
 
         private readonly IEnumerable<Type> _types;
-        public event Action<AdvancedTypeDropdownItem> OnItemSelected;
+        
+        private SerializedProperty _serializedProperty;
+        
+        public event Action<SerializedProperty, AdvancedTypeDropdownItem> OnItemSelected;
 
         internal AdvancedTypeDropdown(IEnumerable<Type> types, int maxLineCount, AdvancedDropdownState state) : base(state)
         {
             _types = types;
             minimumSize = new Vector2(minimumSize.x, EditorGUIUtility.singleLineHeight * maxLineCount + kHeaderHeight);
+        }
+
+        internal void Prepare(SerializedProperty property)
+        {
+            _serializedProperty = property;
+            ClearEvents();
+        }
+
+        private void ClearEvents()
+        {
+            OnItemSelected = null;
         }
 
         protected override AdvancedDropdownItem BuildRoot()
@@ -36,7 +50,7 @@ namespace YukimaruGames.Terminal.Editor
             base.ItemSelected(item);
             if (item is AdvancedTypeDropdownItem advancedTypeDropdownItem)
             {
-                OnItemSelected?.Invoke(advancedTypeDropdownItem);
+                OnItemSelected?.Invoke(_serializedProperty, advancedTypeDropdownItem);
             }
         }
 
@@ -160,7 +174,7 @@ namespace YukimaruGames.Terminal.Editor
 
         private static IReadOnlyDictionary<string, AdvancedDropdownItem> GetNodeMap(AdvancedDropdownItem parent)
         {
-            if (!_nodeMapCache.TryGetValue(parent,out var nodeMap))
+            if (!_nodeMapCache.TryGetValue(parent, out var nodeMap))
             {
                 nodeMap = parent.children.ToDictionary(item => item.name, item => item);
                 _nodeMapCache.AddOrUpdate(parent, nodeMap);

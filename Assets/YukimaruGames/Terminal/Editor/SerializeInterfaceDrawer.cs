@@ -9,15 +9,13 @@ namespace YukimaruGames.Terminal.Editor
     [CustomPropertyDrawer(typeof(SerializeInterfaceAttribute))]
     public sealed class SerializeInterfaceDrawer : PropertyDrawer
     {
-        
+
         private const int kMaxTypeDropdownLineCount = 13;
 
         private static readonly GUIContent _nullDisplayName = new("None(null)");
         private static readonly GUIContent _isNotManagedReferenceLabel = new("The property type is not manage reference.");
         private readonly Dictionary<string, GUIContent> _typeNameDic = new();
         private readonly Dictionary<string, TypeDropdownCache> _typeDropdowns = new();
-
-        private SerializedProperty _targetProperty;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -44,7 +42,7 @@ namespace YukimaruGames.Terminal.Editor
             var customAttribute = attribute as SerializeInterfaceAttribute;
             if (property.hasMultipleDifferentValues && (customAttribute?.UseToStringAsLabel ?? false))
             {
-                var managedReferenceValue = property.managedReferenceValue; 
+                var managedReferenceValue = property.managedReferenceValue;
                 if (managedReferenceValue != null)
                 {
                     label.text = managedReferenceValue.ToString();
@@ -61,16 +59,20 @@ namespace YukimaruGames.Terminal.Editor
         private void DrawDropdown(in Rect rect, SerializedProperty property, GUIContent label)
         {
             var prefixRect = EditorGUI.PrefixLabel(rect, label);
-            
+
             // NOTE:高さを調整しないとサブクラスのシリアライズメンバー(プロパティ)のクリック判定を覆ってしまうため１行分の高さに補正.
             prefixRect.height = EditorGUIUtility.singleLineHeight;
-            
+
             if (EditorGUI.DropdownButton(prefixRect, GetTypeName(property), FocusType.Keyboard))
             {
-                _targetProperty = property;
-                
                 var cache = GetTypeDropdown(property);
-                cache.TypeDropdown.OnItemSelected -= OnItemSelected;
+
+                // NOTE:
+                // managedReferenceFieldTypenameを利用した「同じ型のフィールドであれば、ドロップダウンのインスタンスを使い回す」
+                // 実装になっているため同じ型の別プロパティを参照した際に古いプロパティの参照が残ってしまう懸念があるため直前で
+                // SerializedPropertyをセットする。(イベントのクリアも行い、多重登録を防止)
+                cache.TypeDropdown.Prepare(property);
+
                 cache.TypeDropdown.OnItemSelected += OnItemSelected;
                 cache.TypeDropdown.Show(prefixRect);
             }
@@ -101,7 +103,7 @@ namespace YukimaruGames.Terminal.Editor
             property.isExpanded = EditorGUI.Foldout(rect, property.isExpanded, GUIContent.none, true);
         }
 
-        private void DrawExpanded(Rect rect, SerializedProperty property,GUIContent label)
+        private void DrawExpanded(Rect rect, SerializedProperty property, GUIContent label)
         {
             if (!property.isExpanded)
             {
@@ -112,7 +114,7 @@ namespace YukimaruGames.Terminal.Editor
             var drawer = GetDrawer(property);
             var offset = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             rect.y += offset;
-            
+
             if (drawer != null)
             {
                 rect.height = drawer.GetPropertyHeight(property, label);
@@ -128,7 +130,7 @@ namespace YukimaruGames.Terminal.Editor
                 {
                     var height = EditorGUI.GetPropertyHeight(childProp, new GUIContent(childProp.displayName, childProp.tooltip), true);
                     EditorGUI.PropertyField(rect, childProp, true);
-                    
+
                     rect.y += height + EditorGUIUtility.standardVerticalSpacing;
                 }
             }
@@ -160,8 +162,8 @@ namespace YukimaruGames.Terminal.Editor
                     typeName = ObjectNames.NicifyVariableName(typeName);
                 }
             }
-            
-            if(string.IsNullOrEmpty(typeName))
+
+            if (string.IsNullOrEmpty(typeName))
             {
                 typeName = ObjectNames.NicifyVariableName(type.Name);
             }
@@ -190,7 +192,7 @@ namespace YukimaruGames.Terminal.Editor
 
             return result;
         }
-        
+
         private PropertyDrawer GetDrawer(SerializedProperty property)
         {
             var propertyType = property.GetTypeByManagedReferenceFullTypename();
@@ -212,16 +214,16 @@ namespace YukimaruGames.Terminal.Editor
             };
         }
 
-        private void OnItemSelected(AdvancedTypeDropdownItem item)
+        private void OnItemSelected(SerializedProperty property, AdvancedTypeDropdownItem item)
         {
-            var cache = GetTypeDropdown(_targetProperty);
+            var cache = GetTypeDropdown(property);
             cache.TypeDropdown.OnItemSelected -= OnItemSelected;
-            
+
             var type = item.Type;
-            foreach (var targetObject in _targetProperty.serializedObject.targetObjects)
+            foreach (var targetObject in property.serializedObject.targetObjects)
             {
                 var individualObject = new SerializedObject(targetObject);
-                var individualProperty = individualObject.FindProperty(_targetProperty.propertyPath);
+                var individualProperty = individualObject.FindProperty(property.propertyPath);
                 var obj = individualProperty.SetManagedReferenceValue(type);
                 individualProperty.isExpanded = obj != null;
 
