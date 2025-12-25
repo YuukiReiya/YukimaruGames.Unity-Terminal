@@ -17,13 +17,7 @@ namespace YukimaruGames.Terminal.Runtime.Shared
 
         public string[] GetSplitPathSegments()
         {
-            var separators = new[]
-            {
-                Path.PathSeparator,
-                Path.AltDirectorySeparatorChar,
-                Path.DirectorySeparatorChar,
-            };
-
+            var separators = new[] { '/', };
             return string.IsNullOrWhiteSpace(MenuName) ? Array.Empty<string>() : MenuName.Split(separators, StringSplitOptions.RemoveEmptyEntries);
         }
 
