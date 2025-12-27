@@ -105,6 +105,10 @@ namespace YukimaruGames.Terminal.Editor
                 {
                     result = Activator.CreateInstance(type);
                 }
+                else
+                {
+                    Debug.LogError($"[{nameof(SerializedPropertyExtensions)}] Failed to create instance: {type.FullName}.The type must have a parameterless constructor (public or non-public).{Environment.NewLine}The property \"{property.displayName}\" has been set to null.");
+                }
             }
 
             property.managedReferenceValue = result;
