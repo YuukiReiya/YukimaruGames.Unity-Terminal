@@ -1,11 +1,18 @@
 #if UNITY_2023_2_OR_NEWER
-#define SUPPORTS_SERIALIZED_GENERIC_INSTANCE
+#define SUPPORTS_GENERIC_SERIALIZATION
 #endif
+#if SUPPORTS_GENERIC_SERIALIZATION
+// NOTE:Experimental
+// 全アセンブリのスキャンは負荷が高いため、TypeCacheを利用した高速検索を有効化。
+// ただし、元コードでは利用されていなかったこともありExperimentalな実装なためシンボルで切り替えられるようにしておく
+#define FAST_SCAN_UNITY_TYPECACHE
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#if SUPPORTS_SERIALIZED_GENERIC_INSTANCE
+#if SUPPORTS_GENERIC_SERIALIZATION
 using System.Reflection;
 #endif
 
@@ -16,13 +23,13 @@ namespace YukimaruGames.Terminal.Editor
 {
     internal static class TypeSearch
     {
-#if SUPPORTS_SERIALIZED_GENERIC_INSTANCE
+#if SUPPORTS_GENERIC_SERIALIZATION
         private static readonly Dictionary<Type, IList<Type>> _typeCacheDic = new();
 #endif
 
         internal static IEnumerable<Type> GetAvailableReferenceTypes(Type baseType)
         {
-#if SUPPORTS_SERIALIZED_GENERIC_INSTANCE
+#if SUPPORTS_GENERIC_SERIALIZATION
             if (baseType.IsGenericType)
             {
                 return GetCompatibleGenericTypes(baseType);
@@ -30,8 +37,8 @@ namespace YukimaruGames.Terminal.Editor
 #endif
             return GetSubtypesFast(baseType);
         }
-        
-#if SUPPORTS_SERIALIZED_GENERIC_INSTANCE
+
+#if SUPPORTS_GENERIC_SERIALIZATION
 
         [InitializeOnLoadMethod]
         private static void Clear()
@@ -40,7 +47,7 @@ namespace YukimaruGames.Terminal.Editor
             // ドメインリロードされてもキャッシュが残ってしまうので明示的にクリアする.
             _typeCacheDic?.Clear();
         }
-        
+
         private static IList<Type> GetCompatibleGenericTypes(Type baseType)
         {
             if (_typeCacheDic.TryGetValue(baseType, out var types))
@@ -56,7 +63,7 @@ namespace YukimaruGames.Terminal.Editor
         private static IList<Type> ScanCompatibleGenericTypeList(Type baseType)
         {
             var results = new List<Type>();
-            
+
             var genericTypeDefinition = baseType;
             var targetTypeArguments = Type.EmptyTypes;
             var genericTypeParameters = Type.EmptyTypes;
@@ -68,9 +75,14 @@ namespace YukimaruGames.Terminal.Editor
                 genericTypeParameters = genericTypeDefinition.GetGenericArguments();
             }
 
-            var eType = AppDomain.CurrentDomain.GetAssemblies()
+            var eType =
+#if FAST_SCAN_UNITY_TYPECACHE
+                TypeCache.GetTypesWithAttribute<SerializableAttribute>()
+#else
+                AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(x => x.GetTypes())
-                .Where(IsSupportedSerializableType);
+#endif
+                    .Where(IsSupportedSerializableType);
 
             foreach (var type in eType)
             {
@@ -131,8 +143,10 @@ namespace YukimaruGames.Terminal.Editor
         {
             return
                 !typeof(UnityEngine.Object).IsAssignableFrom(type) &&
+                #if !FAST_SCAN_UNITY_TYPECACHE
                 Attribute.IsDefined(type, typeof(SerializableAttribute)) &&
-                !Attribute.IsDefined(type,typeof(HideInTypeMenuAttribute)) &&
+                #endif
+                !Attribute.IsDefined(type, typeof(HideInTypeMenuAttribute)) &&
                 !type.IsGenericType &&
                 !type.IsAbstract &&
                 (type.IsPublic || type.IsNestedPublic || type.IsNestedPrivate);
