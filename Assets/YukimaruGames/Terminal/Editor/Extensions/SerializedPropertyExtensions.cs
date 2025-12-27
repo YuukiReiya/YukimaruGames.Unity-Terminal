@@ -30,8 +30,27 @@ namespace YukimaruGames.Terminal.Editor
             }
 
             var index = typeName.IndexOf(' ');
-            var assembly = Assembly.Load(typeName.Substring(0, index));
-            return assembly.GetType(typeName.Substring(index + 1));
+
+            if (index < 0 || typeName.Length - 1 < index)
+            {
+                return null;
+            }
+
+            var assemblyName = string.Empty;
+            var className = string.Empty;
+            try
+            {
+                assemblyName = typeName.Substring(0, index);
+                className = typeName.Substring(index + 1);
+                
+                var assembly = Assembly.Load(assemblyName);
+                return assembly?.GetType(className);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[{nameof(SerializedPropertyExtensions)}] Failed to load type: {typeName}.{Environment.NewLine}AssemblyName: \"{assemblyName}\", ClassName: \"{className}\".{Environment.NewLine}Exception: {e}");
+                return null;
+            }
         }
 
         internal static IEnumerable<SerializedProperty> GetChildProperties(this SerializedProperty self, int depth = 1)
