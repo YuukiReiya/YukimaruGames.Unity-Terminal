@@ -9,6 +9,12 @@ namespace YukimaruGames.Terminal.Editor
     {
         private static readonly Dictionary<Type, PropertyDrawer> _pool = new();
 
+        /// <summary>
+        /// Retrieves a PropertyDrawer for the specified type, creating and caching one if none is cached.
+        /// </summary>
+        /// <param name="type">The target type for which to resolve a PropertyDrawer.</param>
+        /// <param name="drawer">When this method returns, contains the resolved PropertyDrawer instance, or null if none was found.</param>
+        /// <returns>`true` if a non-null PropertyDrawer was obtained and returned in <paramref name="drawer"/>, `false` otherwise.</returns>
         internal static bool TryGet(Type type, out PropertyDrawer drawer)
         {
             if (!_pool.TryGetValue(type,out drawer))
@@ -28,6 +34,11 @@ namespace YukimaruGames.Terminal.Editor
             return drawer != null;
         }
 
+        /// <summary>
+        /// Finds the PropertyDrawer type associated with the provided target type by inspecting CustomPropertyDrawer attributes and honoring the attribute's "use for children" behavior.
+        /// </summary>
+        /// <param name="type">The target type to locate a corresponding PropertyDrawer for.</param>
+        /// <returns>The matching PropertyDrawer <see cref="Type"/> if found; otherwise <c>null</c>.</returns>
         private static Type GetDrawerType(Type type)
         {
             var interfaces = type.GetInterfaces();

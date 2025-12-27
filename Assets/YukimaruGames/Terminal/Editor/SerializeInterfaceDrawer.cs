@@ -18,6 +18,12 @@ namespace YukimaruGames.Terminal.Editor
         private readonly Dictionary<string, GUIContent> _typeNameDic = new();
         private readonly Dictionary<string, TypeDropdownCache> _typeDropdowns = new();
 
+        /// <summary>
+        /// Draws the inspector UI for the given SerializedProperty, rendering managed-reference controls when applicable and a notice otherwise.
+        /// </summary>
+        /// <param name="position">Area on the screen to draw the property.</param>
+        /// <param name="property">The SerializedProperty to render.</param>
+        /// <param name="label">The label content for the property field.</param>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             using var _ = new EditorGUI.PropertyScope(position, label, property);
@@ -35,6 +41,12 @@ namespace YukimaruGames.Terminal.Editor
             }
         }
 
+        /// <summary>
+        /// Renders the header line for a managed-reference property and, when applicable, replaces the label text with the managed reference's ToString() value for multi-object editing.
+        /// </summary>
+        /// <param name="rect">Layout rectangle for the header; height is set to a single line.</param>
+        /// <param name="property">The serialized managed-reference property being drawn.</param>
+        /// <param name="label">The field label content to render; may be modified to show the managed-reference's ToString() when configured.</param>
         private void DrawManagedReference(Rect rect, SerializedProperty property, GUIContent label)
         {
             rect.height = EditorGUIUtility.singleLineHeight;
@@ -52,11 +64,27 @@ namespace YukimaruGames.Terminal.Editor
 #endif
         }
 
+        /// <summary>
+        /// Draws a label indicating that the given property is not a managed reference.
+        /// </summary>
+        /// <param name="rect">Area in which to draw the label.</param>
+        /// <param name="label">The property label to display before the notice.</param>
         private void DrawNotManagedReference(in Rect rect, GUIContent label)
         {
             EditorGUI.LabelField(rect, label, _isNotManagedReferenceLabel);
         }
 
+        /// <summary>
+        /// Draws the type-selection dropdown next to the property's prefix label.
+        /// </summary>
+        /// <remarks>
+        /// Adjusts the prefix area to a single line to avoid covering child-property click targets.
+        /// When the dropdown button is pressed, the cached type dropdown for the property's field is prepared,
+        /// the drawer subscribes to item selection, and the dropdown is shown at the prefix area.
+        /// </remarks>
+        /// <param name="rect">The full rect available for the property row.</param>
+        /// <param name="property">The serialized property representing the managed reference field.</param>
+        /// <param name="label">The label to render as the property's prefix.</param>
         private void DrawDropdown(in Rect rect, SerializedProperty property, GUIContent label)
         {
             var prefixRect = EditorGUI.PrefixLabel(rect, label);
@@ -79,6 +107,11 @@ namespace YukimaruGames.Terminal.Editor
             }
         }
 
+        /// <summary>
+        /// Renders a foldout control that toggles the serialized property's expanded state for managed-reference values.
+        /// </summary>
+        /// <param name="rect">The rectangle on the inspector to draw the foldout within.</param>
+        /// <param name="property">The serialized property whose <see cref="SerializedProperty.isExpanded"/> will be toggled; no action is taken if the property has no managed reference type.</param>
         private void DrawFoldout(Rect rect, SerializedProperty property)
         {
             if (string.IsNullOrEmpty(property.managedReferenceFullTypename))
@@ -104,6 +137,12 @@ namespace YukimaruGames.Terminal.Editor
             property.isExpanded = EditorGUI.Foldout(rect, property.isExpanded, GUIContent.none, true);
         }
 
+        /// <summary>
+        /// Renders the expanded view of a managed-reference property: indents and draws either a specialized drawer for the concrete type or the property's child fields when expanded.
+        /// </summary>
+        /// <param name="rect">The layout rectangle to use for drawing the expanded contents; drawing begins after the property's single-line header within this rect.</param>
+        /// <param name="property">The serialized property whose expanded contents should be drawn; must be the managed-reference property shown by this drawer.</param>
+        /// <param name="label">The original label for the property, forwarded to any delegated drawer.</param>
         private void DrawExpanded(Rect rect, SerializedProperty property, GUIContent label)
         {
             if (!property.isExpanded)
@@ -137,6 +176,11 @@ namespace YukimaruGames.Terminal.Editor
             }
         }
 
+        /// <summary>
+        /// Retrieves a cached display name GUIContent for the property's managed reference type, or a null placeholder if none.
+        /// </summary>
+        /// <param name="property">The SerializedProperty representing the managed reference whose type name to obtain.</param>
+        /// <returns>A GUIContent containing the nicified display name for the property's managed reference type, or a placeholder GUIContent when no type is assigned.</returns>
         private GUIContent GetTypeName(SerializedProperty property)
         {
             var managedReferenceFullTypename = property.managedReferenceFullTypename;
@@ -174,6 +218,11 @@ namespace YukimaruGames.Terminal.Editor
             return content;
         }
 
+        /// <summary>
+        /// Retrieve or create a cached TypeDropdownCache for the managed-reference field represented by the given property.
+        /// </summary>
+        /// <param name="property">The SerializedProperty whose managedReferenceFieldTypename identifies the dropdown cache; expected to represent a managed reference field.</param>
+        /// <returns>The cached or newly created TypeDropdownCache associated with the property's managed reference field typename.</returns>
         private TypeDropdownCache GetTypeDropdown(SerializedProperty property)
         {
             var managedReferenceFieldTypename = property.managedReferenceFieldTypename;
@@ -194,6 +243,11 @@ namespace YukimaruGames.Terminal.Editor
             return result;
         }
 
+        /// <summary>
+        /// Retrieve the PropertyDrawer registered for the managed-reference runtime type represented by the given serialized property.
+        /// </summary>
+        /// <param name="property">SerializedProperty whose managed-reference full type name will be resolved to find a matching PropertyDrawer.</param>
+        /// <returns>The matching PropertyDrawer if one is registered for the resolved type, otherwise <c>null</c>.</returns>
         private PropertyDrawer GetDrawer(SerializedProperty property)
         {
             var propertyType = property.GetTypeByManagedReferenceFullTypename();
@@ -205,6 +259,10 @@ namespace YukimaruGames.Terminal.Editor
             return null;
         }
 
+        /// <summary>
+        /// Calculates the pixel height required to render the property in the inspector, accounting for a one-line header and any expanded contents provided by a type-specific drawer.
+        /// </summary>
+        /// <returns>The height in pixels required to draw the property. If the property is collapsed this is a single line height; if expanded, includes the header plus the nested property's required height (from a drawer if available, otherwise the default property height).</returns>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             var drawer = GetDrawer(property);
@@ -215,6 +273,11 @@ namespace YukimaruGames.Terminal.Editor
             };
         }
 
+        /// <summary>
+        /// Applies the selected concrete type from the type dropdown to the serialized managed-reference property for all target objects and updates their serialized state.
+        /// </summary>
+        /// <param name="property">The SerializedProperty that holds the managed reference to update.</param>
+        /// <param name="item">The selected dropdown item that specifies the concrete type to assign (may be null to clear the reference).</param>
         private void OnItemSelected(SerializedProperty property, AdvancedTypeDropdownItem item)
         {
             var cache = GetTypeDropdown(property);
