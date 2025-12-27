@@ -11,7 +11,7 @@ namespace YukimaruGames.Terminal.Editor
 
         internal static bool TryGet(Type type, out PropertyDrawer drawer)
         {
-            if (!_pool.TryGetValue(type,out drawer))
+            if (!_pool.TryGetValue(type, out drawer))
             {
                 var drawerType = GetDrawerType(type);
                 if (drawerType != null)
@@ -22,6 +22,7 @@ namespace YukimaruGames.Terminal.Editor
                         UnityEngine.Debug.LogError($"Failed to instantiate PropertyDrawer of type {drawerType}");
                     }
                 }
+
                 _pool[type] = drawer;
             }
 
@@ -32,7 +33,7 @@ namespace YukimaruGames.Terminal.Editor
         {
             var interfaces = type.GetInterfaces();
             const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
-            
+
             // 属性を持つTypeを取得.
             var caches = TypeCache.GetTypesWithAttribute<CustomPropertyDrawer>();
             foreach (var cache in caches)
@@ -49,7 +50,7 @@ namespace YukimaruGames.Terminal.Editor
                         {
                             return cache;
                         }
-                        
+
                         var useForChildrenField = attribute.GetType().GetField("m_UseForChildren", bindingFlags);
                         if (useForChildrenField != null)
                         {
@@ -76,6 +77,7 @@ namespace YukimaruGames.Terminal.Editor
                     }
                 }
             }
+
             return null;
         }
     }
