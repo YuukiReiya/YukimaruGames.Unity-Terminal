@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
-using YukimaruGames.Terminal.SharedKernel;
+using YukimaruGames.Terminal.Runtime.Shared;
 
 namespace YukimaruGames.Terminal.Editor
 {
@@ -228,7 +228,7 @@ namespace YukimaruGames.Terminal.Editor
                 var obj = individualProperty.SetManagedReferenceValue(type);
                 if (type != null && obj == null)
                 {
-                    Debug.LogError($"[{GetType().Name}] Type {(type?.FullName ?? "null")} does not have a parameterless public constructor.{Environment.NewLine}Please ensure the class is not abstract and has a default constructor.");
+                    Debug.LogError($"[{GetType().Name}] Type {(type.FullName ?? "null")} does not have a parameterless public constructor.{Environment.NewLine}Please ensure the class is not abstract and has a default constructor.");
                 }
                 individualProperty.isExpanded = obj != null;
 

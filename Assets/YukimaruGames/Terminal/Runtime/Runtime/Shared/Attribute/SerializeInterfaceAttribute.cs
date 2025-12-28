@@ -1,6 +1,6 @@
 using System;
 
-namespace YukimaruGames.Terminal.SharedKernel
+namespace YukimaruGames.Terminal.Runtime.Shared
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public sealed class SerializeInterfaceAttribute : UnityEngine.PropertyAttribute
