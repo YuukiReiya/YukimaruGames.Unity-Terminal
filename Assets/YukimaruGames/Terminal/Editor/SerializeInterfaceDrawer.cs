@@ -180,8 +180,13 @@ namespace YukimaruGames.Terminal.Editor
 
             if (!_typeDropdowns.TryGetValue(managedReferenceFieldTypename, out var result))
             {
-                var state = new AdvancedDropdownState();
                 var baseType = property.GetTypeByManagedReferenceFieldTypename();
+                if (baseType == null)
+                {
+                    Debug.LogError($"[{GetType().Name}] Failed to resolve base type from: '{managedReferenceFieldTypename}'.");
+                }
+                
+                var state = new AdvancedDropdownState();
                 var dropdown = new AdvancedTypeDropdown(
                     TypeSearch.GetAvailableReferenceTypes(baseType),
                     kMaxTypeDropdownLineCount,
