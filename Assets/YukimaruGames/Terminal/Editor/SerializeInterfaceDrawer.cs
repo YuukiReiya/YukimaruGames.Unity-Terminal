@@ -10,7 +10,6 @@ namespace YukimaruGames.Terminal.Editor
     [CustomPropertyDrawer(typeof(SerializeInterfaceAttribute))]
     public sealed class SerializeInterfaceDrawer : PropertyDrawer
     {
-
         private const int kMaxTypeDropdownLineCount = 13;
 
         private static readonly GUIContent _nullDisplayName = new("None(null)");
@@ -25,9 +24,6 @@ namespace YukimaruGames.Terminal.Editor
             {
                 case SerializedPropertyType.ManagedReference:
                     DrawManagedReference(position, property, label);
-                    DrawDropdown(position, property, label);
-                    DrawFoldout(position, property);
-                    DrawExpanded(position, property, label);
                     break;
                 default:
                     DrawNotManagedReference(position, label);
@@ -37,8 +33,6 @@ namespace YukimaruGames.Terminal.Editor
 
         private void DrawManagedReference(Rect rect, SerializedProperty property, GUIContent label)
         {
-            rect.height = EditorGUIUtility.singleLineHeight;
-
 #if UNITY_2021_3_OR_NEWER
             var customAttribute = attribute as SerializeInterfaceAttribute;
             if (property.hasMultipleDifferentValues && (customAttribute?.UseToStringAsLabel ?? false))
@@ -50,6 +44,9 @@ namespace YukimaruGames.Terminal.Editor
                 }
             }
 #endif
+            DrawDropdown(rect, property, label);
+            DrawFoldout(rect, property);
+            DrawExpanded(rect, property, label);
         }
 
         private void DrawNotManagedReference(in Rect rect, GUIContent label)
