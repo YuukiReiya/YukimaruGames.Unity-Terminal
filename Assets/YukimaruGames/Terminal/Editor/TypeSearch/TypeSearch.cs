@@ -29,6 +29,11 @@ namespace YukimaruGames.Terminal.Editor
 
         internal static IEnumerable<Type> GetAvailableReferenceTypes(Type baseType)
         {
+            if (baseType == null)
+            {
+                return Array.Empty<Type>();
+            }
+            
 #if SUPPORTS_GENERIC_SERIALIZATION
             if (baseType.IsGenericType)
             {
