@@ -151,19 +151,22 @@ namespace YukimaruGames.Terminal.Editor
             var type = property.GetTypeByManagedReferenceFullTypename();
             string typeName = null;
 
-            var typeMenu = TypeMenuUtility.GetAttribute(type);
-            if (typeMenu != null)
+            if (type != null)
             {
-                typeName = typeMenu.GetMenuNameWithoutPath();
-                if (!string.IsNullOrWhiteSpace(typeName))
+                var typeMenu = TypeMenuUtility.GetAttribute(type);
+                if (typeMenu != null)
                 {
-                    typeName = ObjectNames.NicifyVariableName(typeName);
+                    typeName = typeMenu.GetMenuNameWithoutPath();
+                    if (!string.IsNullOrWhiteSpace(typeName))
+                    {
+                        typeName = ObjectNames.NicifyVariableName(typeName);
+                    }
                 }
             }
 
             if (string.IsNullOrEmpty(typeName))
             {
-                typeName = ObjectNames.NicifyVariableName(type.Name);
+                typeName = ObjectNames.NicifyVariableName(type!.Name);
             }
 
             var content = new GUIContent(typeName);
