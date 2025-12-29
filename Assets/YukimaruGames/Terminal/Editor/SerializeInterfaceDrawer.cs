@@ -127,6 +127,9 @@ namespace YukimaruGames.Terminal.Editor
                 foreach (var childProp in property.GetChildProperties())
                 {
                     var height = EditorGUI.GetPropertyHeight(childProp, new GUIContent(childProp.displayName, childProp.tooltip), true);
+
+                    rect.height = height;
+                    
                     EditorGUI.PropertyField(rect, childProp, true);
 
                     rect.y += height + EditorGUIUtility.standardVerticalSpacing;
