@@ -63,7 +63,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// <returns>コマンドの実行型</returns>
         public CommandHandler Create(MethodInfo methodInfo)
         {
-            var attribute = methodInfo.GetCustomAttribute<RegisterAttribute>();
+            var attribute = methodInfo.GetCustomAttribute<TerminalCommandAttribute>();
             var length = methodInfo.GetParameters().Length;
             return Create(
                 null,
