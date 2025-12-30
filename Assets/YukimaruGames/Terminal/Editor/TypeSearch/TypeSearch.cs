@@ -94,6 +94,13 @@ namespace YukimaruGames.Terminal.Editor
                     }
 
                     var sourceTypeArguments = interfaceType.GetGenericArguments();
+
+                    if (sourceTypeArguments.Length != genericTypeParameters.Length ||
+                        targetTypeArguments.Length != genericTypeParameters.Length)
+                    {
+                        continue;
+                    }
+                    
                     var isAllArgumentsCompatible = true;
 
                     for (var i = 0; i < genericTypeParameters.Length; i++)
