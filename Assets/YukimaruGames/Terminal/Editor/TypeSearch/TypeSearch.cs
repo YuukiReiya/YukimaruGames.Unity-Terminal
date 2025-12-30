@@ -50,7 +50,7 @@ namespace YukimaruGames.Terminal.Editor
         {
             // NOTE:
             // ドメインリロードされてもキャッシュが残ってしまうので明示的にクリアする.
-            _typeCacheDic?.Clear();
+            _typeCacheDic.Clear();
         }
 
         private static IList<Type> GetCompatibleGenericTypes(Type baseType)
