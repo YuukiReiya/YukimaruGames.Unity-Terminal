@@ -7,14 +7,14 @@ namespace YukimaruGames.Terminal.Domain.Attribute
     /// コマンド登録のためのカスタム属性.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class RegisterAttribute : System.Attribute
+    public sealed class TerminalCommandAttribute : System.Attribute
     {
         /// <summary>
         /// メタ情報.
         /// </summary>
         public CommandMeta Meta { get; private set; }
         
-        public RegisterAttribute(string command, int maxArgCount = 0, int minArgCount = -1, string help = "")
+        public TerminalCommandAttribute(string command, int maxArgCount = 0, int minArgCount = -1, string help = "")
         {
             Meta = new CommandMeta(command, maxArgCount, minArgCount, help);
         }

@@ -72,18 +72,18 @@ https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal.git?path=Assets/Yukim
 ##### a. `static`メソッドの自動登録
 ```csharp
 using UnityEngine;
-using YukimaruGames.Terminal.Domain.Attribute; // Register属性のために必要
+using YukimaruGames.Terminal.Domain.Attribute; // TerminalCommand属性のために必要
 
 public static class MyCommands
 {
-    [Register("player.heal", Help = "プレイヤーを指定した量だけ回復させます。")]
+    [TerminalCommand("player.heal", Help = "プレイヤーを指定した量だけ回復させます。")]
     public static void HealPlayer(int amount)
     {
         // プレイヤーを回復させるロジック...
         Debug.Log($"Player healed by {amount} HP.");
     }
 
-    [Register("scene.load", Help = "指定した名前のシーンをロードします。")]
+    [TerminalCommand("scene.load", Help = "指定した名前のシーンをロードします。")]
     public static void LoadScene(string sceneName)
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);

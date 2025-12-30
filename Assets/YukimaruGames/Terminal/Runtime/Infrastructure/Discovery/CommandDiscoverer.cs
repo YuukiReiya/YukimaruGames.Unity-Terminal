@@ -152,11 +152,11 @@ namespace YukimaruGames.Terminal.Infrastructure
         /// <summary>
         /// アトリビュート取得の試行.
         /// </summary>
-        private bool TryGetAttribute(MethodInfo methodInfo, out RegisterAttribute attribute)
+        private bool TryGetAttribute(MethodInfo methodInfo, out TerminalCommandAttribute attribute)
         {
             try
             {
-                attribute = Attribute.GetCustomAttribute(methodInfo, typeof(RegisterAttribute)) as RegisterAttribute;
+                attribute = Attribute.GetCustomAttribute(methodInfo, typeof(TerminalCommandAttribute)) as TerminalCommandAttribute;
                 return attribute is not null;
             }
             catch (Exception e)
@@ -172,7 +172,7 @@ namespace YukimaruGames.Terminal.Infrastructure
         /// <summary>
         /// 発見可能か.
         /// </summary>
-        private bool IsDiscoverable(MethodInfo methodInfo, RegisterAttribute attribute)
+        private bool IsDiscoverable(MethodInfo methodInfo, TerminalCommandAttribute attribute)
         {
             // TODO:
             // kBindingFlagsでInstanceメソッドを取りのぞいているので基本的には通らないはず.
