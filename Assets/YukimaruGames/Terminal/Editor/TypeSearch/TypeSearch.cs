@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 #if SUPPORTS_GENERIC_SERIALIZATION
+using System.Collections.Concurrent;
 using System.Reflection;
 #endif
 
@@ -24,7 +25,7 @@ namespace YukimaruGames.Terminal.Editor
     internal static class TypeSearch
     {
 #if SUPPORTS_GENERIC_SERIALIZATION
-        private static readonly Dictionary<Type, IList<Type>> _typeCacheDic = new();
+        private static readonly ConcurrentDictionary<Type, IList<Type>> _typeCacheDic = new();
 #endif
 
         internal static IEnumerable<Type> GetAvailableReferenceTypes(Type baseType)
@@ -55,14 +56,7 @@ namespace YukimaruGames.Terminal.Editor
 
         private static IList<Type> GetCompatibleGenericTypes(Type baseType)
         {
-            if (_typeCacheDic.TryGetValue(baseType, out var types))
-            {
-                return types;
-            }
-
-            var scannedTypes = ScanCompatibleGenericTypeList(baseType);
-            _typeCacheDic[baseType] = scannedTypes;
-            return scannedTypes;
+            return _typeCacheDic.GetOrAdd(baseType, ScanCompatibleGenericTypeList);
         }
 
         private static IList<Type> ScanCompatibleGenericTypeList(Type baseType)
