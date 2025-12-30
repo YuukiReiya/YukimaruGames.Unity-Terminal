@@ -148,14 +148,13 @@ namespace YukimaruGames.Terminal.Editor
         {
             return
                 !typeof(UnityEngine.Object).IsAssignableFrom(type) &&
-                #if !FAST_SCAN_UNITY_TYPECACHE
+#if !FAST_SCAN_UNITY_TYPECACHE
                 Attribute.IsDefined(type, typeof(SerializableAttribute)) &&
-                #endif
+#endif
                 !Attribute.IsDefined(type, typeof(HideInTypeMenuAttribute)) &&
                 !type.IsGenericType &&
                 !type.IsAbstract &&
-                (type.IsPublic || type.IsNestedPublic || type.IsNestedPrivate);
-
+                type.IsClass;
         }
     }
 }
