@@ -56,7 +56,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// <param name="command">コマンド名</param>
         /// <param name="methodInfo">メソッド情報</param>
         /// <param name="attribute">属性</param>
-        private void Add(string command, MethodInfo methodInfo, RegisterAttribute attribute)
+        private void Add(string command, MethodInfo methodInfo, TerminalCommandAttribute attribute)
         {
             var proc = (CommandDelegate)Delegate.CreateDelegate(typeof(CommandDelegate), methodInfo);
             Add(command, new CommandHandler(
@@ -174,7 +174,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         {
             try
             {
-                if (System.Attribute.GetCustomAttribute(method, typeof(RegisterAttribute)) is not RegisterAttribute
+                if (System.Attribute.GetCustomAttribute(method, typeof(TerminalCommandAttribute)) is not TerminalCommandAttribute
                     attribute)
                 {
                     // 属性が付与されていないメソッドはスキップ.
