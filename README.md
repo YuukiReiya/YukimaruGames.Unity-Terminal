@@ -24,7 +24,7 @@ A powerful, extensible, and runtime command terminal for Unity.
 
 -   **🖥️ ランタイム実行:** ゲーム実行中にリアルタイムでコマンドを呼び出し。
 -   **✍️ 柔軟なコマンド登録:**
-    -   <b>自動登録</b>: C#のstaticメソッドに[Register]属性を付けるだけで、コマンドとして自動認識。
+    -   <b>自動登録</b>: C#のstaticメソッドに[TerminalCommand]属性を付けるだけで、コマンドとして自動認識。
     -   <b>手動登録</b>: staticでないインスタンスメソッドも、公開APIを通じて柔軟に登録可能。
 -   **⌨️ 入力補助機能:**
     -   <b>コマンド履歴</b>: 実行したコマンドを上下矢印キーで簡単に再呼び出し。
@@ -65,7 +65,7 @@ https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal.git?path=Assets/Yukim
 
 ### 2. Registering Commands.
 -   プロジェクト内の任意のC#スクリプトに、`public static`なメソッドを作成します。
--   そのメソッドに `[Register]` 属性を付けるだけで、コマンドとして自動的に登録されます。
+-   そのメソッドに `[TerminalCommand]` 属性を付けるだけで、コマンドとして自動的に登録されます。
 
 #### ▼ コマンド定義の例
 
