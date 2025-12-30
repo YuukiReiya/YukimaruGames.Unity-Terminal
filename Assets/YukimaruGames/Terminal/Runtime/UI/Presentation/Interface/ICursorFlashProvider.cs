@@ -2,9 +2,9 @@ using System;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public interface ICursorFlashSpeedProvider
+    public interface ICursorFlashProvider
     {
+        float FlashSpeed { get; }
         event Action<float> OnChangedFlashSpeed;
-        float GetFlashSpeed();
     }
 }
