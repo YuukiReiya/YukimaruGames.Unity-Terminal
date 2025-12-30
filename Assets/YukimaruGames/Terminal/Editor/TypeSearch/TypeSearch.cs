@@ -76,6 +76,7 @@ namespace YukimaruGames.Terminal.Editor
 
             var eType =
 #if FAST_SCAN_UNITY_TYPECACHE
+                // NOTE: Already filtered by SerializableAttribute here, so skip the check in IsSupportedSerializableType
                 TypeCache.GetTypesWithAttribute<SerializableAttribute>()
 #else
                 AppDomain.CurrentDomain.GetAssemblies()
@@ -150,6 +151,7 @@ namespace YukimaruGames.Terminal.Editor
             return
                 !typeof(UnityEngine.Object).IsAssignableFrom(type) &&
 #if !FAST_SCAN_UNITY_TYPECACHE
+                // NOTE: When FAST_SCAN_UNITY_TYPECACHE is enabled, this check is already done at the TypeCache query
                 Attribute.IsDefined(type, typeof(SerializableAttribute)) &&
 #endif
                 !Attribute.IsDefined(type, typeof(HideInTypeMenuAttribute)) &&
