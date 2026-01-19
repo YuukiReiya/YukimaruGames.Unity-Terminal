@@ -228,20 +228,26 @@ namespace YukimaruGames.Terminal.Runtime
             _executeButtonPresenter = new TerminalExecuteButtonPresenter(_executeButtonRenderer, _buttonVisibleConfigurator);
             _buttonPresenter = new TerminalButtonPresenter(_buttonRenderer, _windowPresenter, _buttonVisibleConfigurator);
             
-            _view = new TerminalView(
-                _windowRenderer,
-                _logRenderer,
-                _inputRenderer,
-                _promptRenderer,
-                _executeButtonRenderer,
-                _buttonRenderer,
-                _logCopyButtonRenderer,
-                _windowPresenter,
-                _logPresenter,
-                _inputPresenter,
-                _executeButtonPresenter,
-                _buttonPresenter,
-                scrollConfigurator);
+            var viewContext = new TerminalViewContext
+            {
+                WindowRenderer = _windowRenderer,
+                LogRenderer = _logRenderer,
+                InputRenderer = _inputRenderer,
+                PromptRenderer = _promptRenderer,
+                ExecuteButtonRenderer = _executeButtonRenderer,
+                ButtonRenderer = _buttonRenderer,
+                LogCopyButtonRenderer = _logCopyButtonRenderer,
+                
+                WindowRenderDataProvider = _windowPresenter,
+                LogRenderDataProvider = _logPresenter,
+                InputRenderDataProvider = _inputPresenter,
+                ExecuteButtonRenderDataProvider = _executeButtonPresenter,
+                ButtonRenderDataProvider = _buttonPresenter,
+                
+                ScrollConfigurator = scrollConfigurator
+            };
+
+            _view = new TerminalView(viewContext);
 
             _eventListener = new TerminalEventListener(CreateInputHandler());
             _coordinator = new TerminalCoordinator(
