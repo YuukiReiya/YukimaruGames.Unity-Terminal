@@ -4,7 +4,7 @@ using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.Infrastructure
 {
-    public sealed class CursorFlashContext : ICursorFlashProvider, ICursorFlashConfigurator
+    public sealed class CursorFlashContext : ICursorFlashProvider, ICursorFlashMutator
     {
         private float _cursorFlashSpeed;
         public float FlashSpeed

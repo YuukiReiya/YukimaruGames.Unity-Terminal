@@ -4,9 +4,6 @@
 //#undef ENABLE_INPUT_SYSTEM 
 //#undef ENABLE_LEGACY_INPUT_MANAGER
 
-#if ENABLE_INPUT_SYSTEM
-using YukimaruGames.Terminal.Runtime.Input.InputSystem;
-#endif
 #if ENABLE_LEGACY_INPUT_MANAGER
 using YukimaruGames.Terminal.Runtime.Input.LegacyInput;
 #endif
@@ -31,8 +28,58 @@ using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.Color
 
 namespace YukimaruGames.Terminal.Runtime
 {
-    public sealed partial class TerminalBootstrapper : MonoBehaviour,IDisposable
+    public sealed partial class TerminalBootstrapper : MonoBehaviour, IDisposable
     {
+        [SerializeReference, SerializeInterface]
+        private ITerminalInstaller _installer;
+
+        private void Start()
+        {
+            _installer.Install();
+        }
+
+        private void Update()
+        {
+            //if (_installer?.KeyboardInput is InputSystemKeyboardHandler)
+            {
+                // ReSharper disable once ForCanBeConvertedToForeach
+                // NOTE:foreachでアクセスするとコレクションから実体にアクセスする際に多少のオーバヘッドが生じてしまうためforを採用する.
+                for (var i = 0; i < _installer?.Updatables.Count; i++) _installer?.Updatables[i]?.Update(Time.deltaTime);
+            }
+        }
+
+        private void OnGUI()
+        {
+            //if (_installer?.KeyboardInput is LegacyInputKeyboardHandler)
+            {
+                // ReSharper disable once ForCanBeConvertedToForeach
+                // NOTE:foreachでアクセスするとコレクションから実体にアクセスする際に多少のオーバヘッドが生じてしまうためforを採用する.
+                //for (var i = 0; i < _installer?.Updatables.Count; i++) _installer?.Updatables[i]?.Update(Time.deltaTime);
+            }
+            
+            _installer?.View?.Render();
+        }
+
+        private void OnDestroy()
+        {
+            if (this is IDisposable self)
+            {
+                self.Dispose();
+            }
+        }
+
+        void IDisposable.Dispose()
+        {
+            _installer.Uninstall();
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        private void OnValidate()
+        {
+            if (!UnityEngine.Application.isPlaying) return;
+            _installer.Apply();
+        }
+#if false
         // view
         [SerializeField] private Font _font;
         [SerializeField] private int _fontSize = 55;
@@ -52,15 +99,15 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeField] private Color _buttonColor = new(0f, 0.7f, 0.8f);
         [SerializeField] private Color _copyButtonColor = new(0f, 0.7f, 0.8f);
         [SerializeField] private float _cursorFlashSpeed = 1.886792f;
-        
+
         // input
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
-        
+
 #if ENABLE_LEGACY_INPUT_MANAGER
         // legacy
         [SerializeField] private LegacyInputKey _legacyInputKey;
 #endif
-        
+
 #if ENABLE_INPUT_SYSTEM
         // input system
         [SerializeField] private InputSystemKey _inputSystemKey;
@@ -76,7 +123,7 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeField] private string _bootupCommand;
         [SerializeField] private bool _buttonVisible;
         [SerializeField] private bool _buttonReverse;
-        
+
         private readonly List<IUpdatable> _updatables = new();
         private readonly List<IDisposable> _disposables = new();
 
@@ -89,32 +136,32 @@ namespace YukimaruGames.Terminal.Runtime
             InputKeyboardType.Legacy;
 #else
             InputKeyboardType.None;
-        #endif
-        
+#endif
+
         // orchestrator
         private TerminalCoordinator _coordinator;
         private ITerminalView _view;
-        
+
         // listener.
         private TerminalEventListener _eventListener;
-        
+
         // domain.
         private ICommandLogger _logger;
         private ICommandRegistry _registry;
         private ICommandAutocomplete _autocomplete;
 
         // configurator.
-        private TerminalWindowAnimatorDataConfigurator _animatorDataConfigurator;
-        
+        private TerminalWindowAnimatorDataMutator _animatorDataMutator;
+
         // repository
         private IPixelTexture2DRepository _pixelTexture2DRepository;
-        
+
         // color-palette provider.
-        private ColorPaletteProvider _colorPaletteProvider;
-        
+        private ColorPaletteContext _colorPaletteProvider;
+
         // font provider.
-        private TerminalFontProvider _fontProvider;
-        
+        private TerminalFontContext _fontProvider;
+
         // gui-style provider.
         private TerminalGUIStyleContext _logStyleContext;
         private TerminalGUIStyleContext _inputStyleContext;
@@ -122,13 +169,13 @@ namespace YukimaruGames.Terminal.Runtime
         private TerminalGUIStyleContext _executeButtonsStyleContext;
         private TerminalGUIStyleContext _openButtonsStyleContext;
         private TerminalGUIStyleContext _logCopyButtonStyleContext;
-        
+
         // cursor-flash-speed provider.
         private CursorFlashContext _cursorFlashContext;
-        
+
         // button-visible
-        private TerminalButtonVisibleConfigurator _buttonVisibleConfigurator; 
-        
+        private TerminalButtonVisibleMutator _buttonVisibleMutator;
+
         // renderer.
         private TerminalWindowRenderer _windowRenderer;
         private TerminalLogRenderer _logRenderer;
@@ -137,20 +184,20 @@ namespace YukimaruGames.Terminal.Runtime
         private TerminalExecuteButtonRenderer _executeButtonRenderer;
         private ITerminalButtonRenderer _buttonRenderer;
         private TerminalLogCopyButtonRenderer _logCopyButtonRenderer;
-        
+
         // presenter.
         private TerminalWindowPresenter _windowPresenter;
         private TerminalLogPresenter _logPresenter;
         private TerminalInputPresenter _inputPresenter;
         private TerminalExecuteButtonPresenter _executeButtonPresenter;
         private TerminalButtonPresenter _buttonPresenter;
-        
+
         // application-service.
         private ITerminalService _service;
-        
+
         private void Awake()
         {
-            _animatorDataConfigurator = new TerminalWindowAnimatorDataConfigurator()
+            _animatorDataMutator = new TerminalWindowAnimatorDataMutator()
             {
                 State = _bootupWindowState,
                 Anchor = _anchor,
@@ -160,13 +207,13 @@ namespace YukimaruGames.Terminal.Runtime
             };
             _logger = new CommandLogger(_bufferSize);
 
-            var scrollConfigurator = new ScrollConfigurator();
+            var scrollConfigurator = new ScrollMutator();
             _registry = new CommandRegistry(_logger);
             var invoker = new CommandInvoker();
             var parser = new CommandParser();
             var history = new CommandHistory();
             var discover = new CommandDiscoverer(_logger);
-            _autocomplete = new CommandAutocomplete(); 
+            _autocomplete = new CommandAutocomplete();
             _service = new TerminalService(
                 _logger,
                 _registry,
@@ -186,7 +233,7 @@ namespace YukimaruGames.Terminal.Runtime
                 }
             }
 
-            _colorPaletteProvider = new ColorPaletteProvider(new Dictionary<string, Color>
+            _colorPaletteProvider = new ColorPaletteContext(new Dictionary<string, Color>
             {
                 { ColorPalette.Message, _messageColor },
                 { ColorPalette.Entry, _entryColor },
@@ -195,12 +242,12 @@ namespace YukimaruGames.Terminal.Runtime
                 { ColorPalette.Assert, _assertColor },
                 { ColorPalette.Exception, _exceptionColor },
                 { ColorPalette.System, _systemColor },
-                
+
                 { ColorPalette.Cursor, _caretColor },
                 { ColorPalette.Selection, _selectionColor },
             });
-            
-            _fontProvider = new TerminalFontProvider(_font);
+
+            _fontProvider = new TerminalFontContext(_font);
 
             _pixelTexture2DRepository = new PixelTexture2DRepository();
 
@@ -210,24 +257,24 @@ namespace YukimaruGames.Terminal.Runtime
             _executeButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _openButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _logCopyButtonStyleContext = new TerminalGUIStyleContext(_fontProvider);
-            
+
             _cursorFlashContext = new CursorFlashContext(_cursorFlashSpeed);
-            _buttonVisibleConfigurator = new TerminalButtonVisibleConfigurator();
-                
+            _buttonVisibleMutator = new TerminalButtonVisibleMutator();
+
             _windowRenderer = new TerminalWindowRenderer(_pixelTexture2DRepository);
-            _logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(_buttonVisibleConfigurator, _logCopyButtonStyleContext);
-            _logRenderer = new TerminalLogRenderer(_logCopyButtonRenderer,_logStyleContext, _colorPaletteProvider);
+            _logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(_buttonVisibleMutator, _logCopyButtonStyleContext);
+            _logRenderer = new TerminalLogRenderer(_logCopyButtonRenderer, _logStyleContext, _colorPaletteProvider);
             _inputRenderer = new TerminalInputRenderer(scrollConfigurator, _inputStyleContext, _colorPaletteProvider, _cursorFlashContext);
             _promptRenderer = new TerminalPromptRenderer(_promptStyleContext);
             _executeButtonRenderer = new TerminalExecuteButtonRenderer(_executeButtonsStyleContext);
             _buttonRenderer = new TerminalButtonRenderer(_pixelTexture2DRepository, _openButtonsStyleContext);
-            
-            _windowPresenter = new TerminalWindowPresenter(_animatorDataConfigurator, new TerminalWindowAnimator());
+
+            _windowPresenter = new TerminalWindowPresenter(_animatorDataMutator, new TerminalWindowAnimator());
             _logPresenter = new TerminalLogPresenter(_service);
             _inputPresenter = new TerminalInputPresenter(_inputRenderer, _bootupCommand);
-            _executeButtonPresenter = new TerminalExecuteButtonPresenter(_executeButtonRenderer, _buttonVisibleConfigurator);
-            _buttonPresenter = new TerminalButtonPresenter(_buttonRenderer, _windowPresenter, _buttonVisibleConfigurator);
-            
+            _executeButtonPresenter = new TerminalExecuteButtonPresenter(_executeButtonRenderer, _buttonVisibleMutator);
+            _buttonPresenter = new TerminalButtonPresenter(_buttonRenderer, _windowPresenter, _buttonVisibleMutator);
+
             _view = new TerminalView(
                 _windowRenderer,
                 _logRenderer,
@@ -253,7 +300,7 @@ namespace YukimaruGames.Terminal.Runtime
                 _executeButtonPresenter,
                 _buttonPresenter,
                 _eventListener);
-            
+
             var instances = new object[]
             {
                 scrollConfigurator,
@@ -268,16 +315,16 @@ namespace YukimaruGames.Terminal.Runtime
                 discover,
                 _registry,
                 _autocomplete,
-                
+
                 // provider.
-                _animatorDataConfigurator,
+                _animatorDataMutator,
                 _colorPaletteProvider,
                 _fontProvider,
                 _pixelTexture2DRepository,
-                
+
                 // listener.
                 _eventListener,
-                
+
                 // context.
                 _logStyleContext,
                 _inputStyleContext,
@@ -285,10 +332,9 @@ namespace YukimaruGames.Terminal.Runtime
                 _executeButtonsStyleContext,
                 _openButtonsStyleContext,
                 _logCopyButtonStyleContext,
-                
-                _cursorFlashSpeedProvider,
-                _buttonVisibleConfigurator,
-                
+
+                _buttonVisibleMutator,
+
                 // renderer.
                 _windowRenderer,
                 _logCopyButtonRenderer,
@@ -298,7 +344,7 @@ namespace YukimaruGames.Terminal.Runtime
                 _executeButtonRenderer,
                 _buttonRenderer,
                 _view,
-                
+
                 // presenter.
                 _windowPresenter,
                 _logPresenter,
@@ -329,12 +375,14 @@ namespace YukimaruGames.Terminal.Runtime
                 // ReSharper disable once ForCanBeConvertedToForeach
                 for (var i = 0; i < _updatables.Count; ++i) _updatables[i]?.Update(Time.deltaTime);
             }
+
             _view.Render();
         }
 
         private void OnDestroy()
         {
-            Dispose();
+            IDisposable disposer = this;
+            disposer.Dispose();
         }
 
         [Conditional("UNITY_EDITOR")]
@@ -346,12 +394,12 @@ namespace YukimaruGames.Terminal.Runtime
 
         private void Configure()
         {
-            if (_animatorDataConfigurator != null)
+            if (_animatorDataMutator != null)
             {
-                _animatorDataConfigurator.Anchor = _anchor;
-                _animatorDataConfigurator.Style = _windowStyle;
-                _animatorDataConfigurator.Scale = _compactScale;
-                _animatorDataConfigurator.Duration = _duration;
+                _animatorDataMutator.Anchor = _anchor;
+                _animatorDataMutator.Style = _windowStyle;
+                _animatorDataMutator.Scale = _compactScale;
+                _animatorDataMutator.Duration = _duration;
             }
 
             if (_fontProvider != null)
@@ -359,21 +407,21 @@ namespace YukimaruGames.Terminal.Runtime
                 _fontProvider.Font = _font;
                 _fontProvider.Size = _fontSize;
             }
-            
+
             //_windowRenderer?.SetBackgroundColor(_backgroundColor);
 
-            if (_colorPaletteProvider != null)
+            if (_colorPaletteProvider is IColorPaletteMutator colorPaletteMutator)
             {
-                _colorPaletteProvider.SetColor(ColorPalette.Error, _errorColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Assert, _assertColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Warning, _warningColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Message, _messageColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Exception, _exceptionColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Entry, _entryColor);
-                _colorPaletteProvider.SetColor(ColorPalette.System, _systemColor);
-                
-                _colorPaletteProvider.SetColor(ColorPalette.Cursor, _caretColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Selection, _selectionColor );
+                colorPaletteMutator.SetColor(ColorPalette.Error, _errorColor);
+                colorPaletteMutator.SetColor(ColorPalette.Assert, _assertColor);
+                colorPaletteMutator.SetColor(ColorPalette.Warning, _warningColor);
+                colorPaletteMutator.SetColor(ColorPalette.Message, _messageColor);
+                colorPaletteMutator.SetColor(ColorPalette.Exception, _exceptionColor);
+                colorPaletteMutator.SetColor(ColorPalette.Entry, _entryColor);
+                colorPaletteMutator.SetColor(ColorPalette.System, _systemColor);
+
+                colorPaletteMutator.SetColor(ColorPalette.Cursor, _caretColor);
+                colorPaletteMutator.SetColor(ColorPalette.Selection, _selectionColor);
             }
 
             if (_promptRenderer != null)
@@ -388,11 +436,11 @@ namespace YukimaruGames.Terminal.Runtime
             // _logCopyButtonStyleContext?.SetColor(_copyButtonColor);
             _eventListener?.SetInputHandler(CreateInputHandler());
             //_cursorFlashContext?.SetFlashSpeed(_cursorFlashSpeed);
-            
-            if (_buttonVisibleConfigurator != null)
+
+            if (_buttonVisibleMutator != null)
             {
-                _buttonVisibleConfigurator.IsVisible = _buttonVisible;
-                _buttonVisibleConfigurator.IsReverse = _buttonReverse;
+                _buttonVisibleMutator.IsVisible = _buttonVisible;
+                _buttonVisibleMutator.IsReverse = _buttonReverse;
             }
         }
 
@@ -405,20 +453,23 @@ namespace YukimaruGames.Terminal.Runtime
                 new TerminalKeyboardFactory(_inputSystemKey);
 #elif ENABLE_LEGACY_INPUT_MANAGER
                 new TerminalKeyboardFactory(_legacyInputKey);
-            #else
+#else
                 new TerminalKeyboardFactory();
-            #endif
+#endif
             return factory.Create(KeyboardType);
         }
-        
-        public void Dispose()
+
+        void IDisposable.Dispose()
         {
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < _disposables.Count; i++)
             {
                 _disposables[i]?.Dispose();
             }
+
             _disposables.Clear();
         }
+    }
+#endif
     }
 }

@@ -10,6 +10,8 @@ namespace YukimaruGames.Terminal.Runtime
             System.Reflection.BindingFlags.GetProperty | System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.GetField | System.Reflection.BindingFlags.SetField |
             System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.NonPublic;
 
+#if false
+        
         /// <summary>
         /// コマンドの登録解除.
         /// </summary>
@@ -117,5 +119,6 @@ namespace YukimaruGames.Terminal.Runtime
         /// </returns>
         private bool TryGetMethodInfo(Type type, string methodName, out System.Reflection.MethodInfo methodInfo) =>
             (methodInfo = type.GetMethod(methodName, BindingFlags)) != null;
+#endif
     }
 }

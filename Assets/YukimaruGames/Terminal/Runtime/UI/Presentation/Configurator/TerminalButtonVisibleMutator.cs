@@ -2,7 +2,7 @@ using System;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public sealed class TerminalButtonVisibleConfigurator : ITerminalButtonVisibleConfigurator, ITerminalButtonVisibleProvider, IDisposable
+    public sealed class TerminalButtonVisibleMutator : ITerminalButtonVisibleMutator, ITerminalButtonVisibleProvider, IDisposable
     {
         private bool _isVisible;
 

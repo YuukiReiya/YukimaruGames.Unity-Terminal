@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
 {
     public sealed class TerminalWindowPresenter : ITerminalWindowPresenter, IDisposable
     {
-        private readonly ITerminalWindowAnimatorDataConfigurator _configurator;
+        private readonly ITerminalWindowAnimatorDataMutator _mutator;
         private readonly ITerminalWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
@@ -20,32 +20,32 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         public TerminalState State
         {
-            get => _configurator.State;
-            set => _configurator.State = value;
+            get => _mutator.State;
+            set => _mutator.State = value;
         }
 
         public TerminalAnchor Anchor
         {
-            get => _configurator.Anchor;
-            set => _configurator.Anchor = value;
+            get => _mutator.Anchor;
+            set => _mutator.Anchor = value;
         }
 
         public TerminalWindowStyle Style
         {
-            get => _configurator.Style;
-            set => _configurator.Style = value;
+            get => _mutator.Style;
+            set => _mutator.Style = value;
         }
 
         public float Duration
         {
-            get => _configurator.Duration;
-            set => _configurator.Duration = value;
+            get => _mutator.Duration;
+            set => _mutator.Duration = value;
         }
 
         public float Scale
         {
-            get => _configurator.Scale;
-            set => _configurator.Scale = value;
+            get => _mutator.Scale;
+            set => _mutator.Scale = value;
         }
 
         public Rect Rect { get; private set; }
@@ -63,10 +63,10 @@ namespace YukimaruGames.Terminal.UI.Presentation
         }
 
         public TerminalWindowPresenter(
-            ITerminalWindowAnimatorDataConfigurator configurator,
+            ITerminalWindowAnimatorDataMutator mutator,
             ITerminalWindowAnimator animator)
         {
-            _configurator = configurator;
+            _mutator = mutator;
             _windowAnimator = animator;
         }
 

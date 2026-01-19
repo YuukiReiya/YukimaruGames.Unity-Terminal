@@ -24,6 +24,12 @@ namespace YukimaruGames.Terminal.UI.View.Input
             set => _isEnable = value;
         }
 
+        public IKeyboardInputHandler InputHandler
+        {
+            get => _inputHandler;
+            set => SetInputHandler(value);
+        }
+
         public TerminalEventListener(IKeyboardInputHandler handler)
         {
             _inputHandler = handler;

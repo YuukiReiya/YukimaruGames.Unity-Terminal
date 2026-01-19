@@ -2,7 +2,7 @@ using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public interface ITerminalWindowAnimatorDataConfigurator
+    public interface ITerminalWindowAnimatorDataMutator
     {
         TerminalState State { get; set; }
         TerminalAnchor Anchor { get; set; }

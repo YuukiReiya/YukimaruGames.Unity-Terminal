@@ -1,6 +1,6 @@
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public interface ICursorFlashConfigurator
+    public interface ICursorFlashMutator
     {
         float FlashSpeed { get; set; }
     }

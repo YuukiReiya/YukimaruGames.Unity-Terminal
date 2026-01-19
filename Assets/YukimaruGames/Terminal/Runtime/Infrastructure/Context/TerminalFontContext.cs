@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.Infrastructure
 {
-    public sealed class TerminalFontContext : IFontProvider, IFontConfigurator,IDisposable
+    public sealed class TerminalFontContext : IFontProvider, IFontMutator,IDisposable
     {
         private Font _font;
         private int _size;

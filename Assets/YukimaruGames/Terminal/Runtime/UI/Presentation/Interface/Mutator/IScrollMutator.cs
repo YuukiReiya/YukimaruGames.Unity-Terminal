@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public interface IScrollConfigurator
+    public interface IScrollMutator
     {
         Vector2 ScrollPosition { get; set; }
         event Action<Vector2> OnScrollChanged;

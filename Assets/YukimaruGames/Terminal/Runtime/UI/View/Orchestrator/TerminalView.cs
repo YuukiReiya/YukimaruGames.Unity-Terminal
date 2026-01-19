@@ -23,7 +23,7 @@ namespace YukimaruGames.Terminal.UI.View
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
         private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
         private readonly ITerminalButtonRenderDataProvider _buttonRenderDataProvider;
-        private readonly IScrollConfigurator _scrollConfigurator;
+        private readonly IScrollMutator _scrollMutator;
 
         // callbacks.
         private readonly List<ITerminalPreRenderer> _preRenderers;
@@ -49,7 +49,7 @@ namespace YukimaruGames.Terminal.UI.View
             ITerminalInputRenderDataProvider inputRenderDataProvider,
             ITerminalExecuteButtonRenderDataProvider executeButtonRenderDataProvider,
             ITerminalButtonRenderDataProvider buttonRenderDataProvider,
-            IScrollConfigurator scrollConfigurator
+            IScrollMutator scrollMutator
         )
         {
             _windowRenderer = windowRenderer;
@@ -65,7 +65,7 @@ namespace YukimaruGames.Terminal.UI.View
             _inputRenderDataProvider = inputRenderDataProvider;
             _executeButtonRenderDataProvider = executeButtonRenderDataProvider;
             _buttonRenderDataProvider = buttonRenderDataProvider;
-            _scrollConfigurator = scrollConfigurator;
+            _scrollMutator = scrollMutator;
 
             _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
 
@@ -116,9 +116,9 @@ namespace YukimaruGames.Terminal.UI.View
             using (new GUILayout.VerticalScope())
             {
                 using (var scope =
-                       new GUILayout.ScrollViewScope(_scrollConfigurator.ScrollPosition, false, false, GUIStyle.none, GUIStyle.none))
+                       new GUILayout.ScrollViewScope(_scrollMutator.ScrollPosition, false, false, GUIStyle.none, GUIStyle.none))
                 {
-                    _scrollConfigurator.ScrollPosition = scope.scrollPosition;
+                    _scrollMutator.ScrollPosition = scope.scrollPosition;
                     _logRenderer.Render(_logRenderDataProvider.GetRenderData());
                 }
 

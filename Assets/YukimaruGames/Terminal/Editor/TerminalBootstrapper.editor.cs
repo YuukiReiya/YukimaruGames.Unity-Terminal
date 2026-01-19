@@ -12,6 +12,7 @@ using UnityEngine;
 using YukimaruGames.Terminal.Runtime;
 using YukimaruGames.Terminal.UI.View.Model;
 
+#if false
 namespace YukimaruGames.Terminal.Editor
 {
     [CustomEditor(typeof(TerminalBootstrapper))]
@@ -161,6 +162,8 @@ namespace YukimaruGames.Terminal.Editor
 
         public override void OnInspectorGUI()
         {
+            base.OnInspectorGUI();
+            
             EditorGUILayout.Space(5f);
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -436,4 +439,5 @@ namespace YukimaruGames.Terminal.Editor
         }
     }
 }
+#endif
 #endif
