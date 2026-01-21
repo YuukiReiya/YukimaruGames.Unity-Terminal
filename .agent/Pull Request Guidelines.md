@@ -37,3 +37,8 @@ Content (内容):
 
 "変更点" must be granular per file. (変更内容はファイル単位で具体的に記述すること)
 "影響範囲" must list specific files and risks. (影響範囲は具体的なファイル名とリスクを挙げること)
+
+## GitHub Operations Rules
+- **Assignees**: Always assign `@Yuuki-CI-Bot`.
+- **Reviewers**: Always add `@YuukiReiya` as a reviewer.
+- **Labels**: Apply appropriate labels based on the change (e.g., `refactor`, `feat`, `fix`, `impact: core`, `size: M`, `priority: high`).
