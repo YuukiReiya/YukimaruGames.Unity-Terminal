@@ -38,6 +38,8 @@ namespace YukimaruGames.Terminal.UI.View
 
         public TerminalView(TerminalViewContext context)
         {
+            if (context == null) throw new ArgumentNullException(nameof(context));
+
             _windowRenderer = context.WindowRenderer;
             _logRenderer = context.LogRenderer;
             _inputRenderer = context.InputRenderer;
@@ -53,7 +55,10 @@ namespace YukimaruGames.Terminal.UI.View
             _buttonRenderDataProvider = context.ButtonRenderDataProvider;
             _scrollConfigurator = context.ScrollConfigurator;
 
-            _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
+            if (_logCopyButtonRenderer != null)
+            {
+                _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
+            }
 
             var renderers = new object[]
             {
