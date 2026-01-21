@@ -36,38 +36,29 @@ namespace YukimaruGames.Terminal.UI.View
         public event Action OnPreRender;
         public event Action OnPostRender;
 
-        public TerminalView(
-            ITerminalWindowRenderer windowRenderer,
-            ITerminalLogRenderer logRenderer,
-            ITerminalInputRenderer inputRenderer,
-            ITerminalPromptRenderer promptRenderer,
-            ITerminalExecuteButtonRenderer executeButtonRenderer,
-            ITerminalButtonRenderer buttonRenderer,
-            ITerminalLogCopyButtonRenderer logCopyButtonRenderer,
-            ITerminalWindowRenderDataProvider windowRenderDataProvider,
-            ITerminalLogRenderDataProvider logRenderDataProvider,
-            ITerminalInputRenderDataProvider inputRenderDataProvider,
-            ITerminalExecuteButtonRenderDataProvider executeButtonRenderDataProvider,
-            ITerminalButtonRenderDataProvider buttonRenderDataProvider,
-            IScrollConfigurator scrollConfigurator
-        )
+        public TerminalView(TerminalViewContext context)
         {
-            _windowRenderer = windowRenderer;
-            _logRenderer = logRenderer;
-            _inputRenderer = inputRenderer;
-            _promptRenderer = promptRenderer;
-            _executeButtonRenderer = executeButtonRenderer;
-            _buttonRenderer = buttonRenderer;
-            _logCopyButtonRenderer = logCopyButtonRenderer;
-            
-            _windowRenderDataProvider = windowRenderDataProvider;
-            _logRenderDataProvider = logRenderDataProvider;
-            _inputRenderDataProvider = inputRenderDataProvider;
-            _executeButtonRenderDataProvider = executeButtonRenderDataProvider;
-            _buttonRenderDataProvider = buttonRenderDataProvider;
-            _scrollConfigurator = scrollConfigurator;
+            if (context == null) throw new ArgumentNullException(nameof(context));
 
-            _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
+            _windowRenderer = context.WindowRenderer;
+            _logRenderer = context.LogRenderer;
+            _inputRenderer = context.InputRenderer;
+            _promptRenderer = context.PromptRenderer;
+            _executeButtonRenderer = context.ExecuteButtonRenderer;
+            _buttonRenderer = context.ButtonRenderer;
+            _logCopyButtonRenderer = context.LogCopyButtonRenderer;
+            
+            _windowRenderDataProvider = context.WindowRenderDataProvider;
+            _logRenderDataProvider = context.LogRenderDataProvider;
+            _inputRenderDataProvider = context.InputRenderDataProvider;
+            _executeButtonRenderDataProvider = context.ExecuteButtonRenderDataProvider;
+            _buttonRenderDataProvider = context.ButtonRenderDataProvider;
+            _scrollConfigurator = context.ScrollConfigurator;
+
+            if (_logCopyButtonRenderer != null)
+            {
+                _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
+            }
 
             var renderers = new object[]
             {
