@@ -1,7 +1,6 @@
 using System;
 using YukimaruGames.Terminal.Runtime.Shared;
 using YukimaruGames.Terminal.SharedKernel;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.View.Input
 {

@@ -1,4 +1,4 @@
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {

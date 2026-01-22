@@ -7,7 +7,7 @@ using System;
 
 using UnityEngine;
 using YukimaruGames.Terminal.UI.View.Input;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {

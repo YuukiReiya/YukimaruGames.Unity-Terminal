@@ -4,7 +4,7 @@
 
 #if ENABLE_LEGACY_INPUT_MANAGER
 using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {

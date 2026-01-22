@@ -90,53 +90,53 @@ namespace YukimaruGames.Terminal.Editor
             
             // view-prop
             {
-                _fontProp = _serializedObject.FindProperty("_font");
-                _fontSizeProp = _serializedObject.FindProperty("_fontSize");
-                _backgroundColorProp = _serializedObject.FindProperty("_backgroundColor");
-                _messageColorProp = _serializedObject.FindProperty("_messageColor");
-                _entryColorProp = _serializedObject.FindProperty("_entryColor");
-                _warningColorProp = _serializedObject.FindProperty("_warningColor");
-                _errorColorProp = _serializedObject.FindProperty("_errorColor");
-                _assertColorProp = _serializedObject.FindProperty("_assertColor");
-                _exceptionColorProp = _serializedObject.FindProperty("_exceptionColor");
-                _systemColorProp = _serializedObject.FindProperty("_systemColor");
-                _inputColorProp = _serializedObject.FindProperty("_inputColor");
-                _caretColorProp = _serializedObject.FindProperty("_caretColor");
-                _selectionColorProp = _serializedObject.FindProperty("_selectionColor");
-                _cursorFlashSpeedProp = _serializedObject.FindProperty("_cursorFlashSpeed");
-                _promptColorProp = _serializedObject.FindProperty("_promptColor");
-                _executeButtonColorProp = _serializedObject.FindProperty("_executeButtonColor");
-                _buttonColorProp = _serializedObject.FindProperty("_buttonColor");
-                _copyButtonColorProp = _serializedObject.FindProperty("_copyButtonColor");
+                _fontProp = _serializedObject.FindProperty("_theme._font");
+                _fontSizeProp = _serializedObject.FindProperty("_theme._fontSize");
+                _backgroundColorProp = _serializedObject.FindProperty("_theme._backgroundColor");
+                _messageColorProp = _serializedObject.FindProperty("_theme._messageColor");
+                _entryColorProp = _serializedObject.FindProperty("_theme._entryColor");
+                _warningColorProp = _serializedObject.FindProperty("_theme._warningColor");
+                _errorColorProp = _serializedObject.FindProperty("_theme._errorColor");
+                _assertColorProp = _serializedObject.FindProperty("_theme._assertColor");
+                _exceptionColorProp = _serializedObject.FindProperty("_theme._exceptionColor");
+                _systemColorProp = _serializedObject.FindProperty("_theme._systemColor");
+                _inputColorProp = _serializedObject.FindProperty("_theme._inputColor");
+                _caretColorProp = _serializedObject.FindProperty("_theme._caretColor");
+                _selectionColorProp = _serializedObject.FindProperty("_theme._selectionColor");
+                _cursorFlashSpeedProp = _serializedObject.FindProperty("_theme._cursorFlashSpeed");
+                _promptColorProp = _serializedObject.FindProperty("_theme._promptColor");
+                _executeButtonColorProp = _serializedObject.FindProperty("_theme._buttonTheme._execute");
+                _buttonColorProp = _serializedObject.FindProperty("_theme._buttonTheme._base");
+                _copyButtonColorProp = _serializedObject.FindProperty("_theme._buttonTheme._copy");
             }
 
             // input-prop
             {
-                _inputKeyboardTypeProp = _serializedObject.FindProperty("_inputKeyboardType");
+                _inputKeyboardTypeProp = _serializedObject.FindProperty("_options._inputKeyboardType");
 #if ENABLE_INPUT_SYSTEM
-                _inputSystemKeyProp = _serializedObject.FindProperty("_inputSystemKey");
+                _inputSystemKeyProp = _serializedObject.FindProperty("_options._inputSystemKey");
 #endif
 #if ENABLE_LEGACY_INPUT_MANAGER
-                _legacyInputKeyProp = _serializedObject.FindProperty("_legacyInputKey");
+                _legacyInputKeyProp = _serializedObject.FindProperty("_options._legacyInputKey");
 #endif
             }
 
             // animation-prop
             {
-                _anchorProp = _serializedObject.FindProperty("_anchor");
-                _windowStyleProp = _serializedObject.FindProperty("_windowStyle");
-                _durationProp = _serializedObject.FindProperty("_duration");
-                _compactScaleProp = _serializedObject.FindProperty("_compactScale");
+                _anchorProp = _serializedObject.FindProperty("_options._anchor");
+                _windowStyleProp = _serializedObject.FindProperty("_options._windowStyle");
+                _durationProp = _serializedObject.FindProperty("_theme._duration");
+                _compactScaleProp = _serializedObject.FindProperty("_theme._compactScale");
             }
             
             // system-prop
             {
-                _bufferSizeProp = _serializedObject.FindProperty("_bufferSize");
-                _promptProp = _serializedObject.FindProperty("_prompt");
-                _bootupCommandProp = _serializedObject.FindProperty("_bootupCommand");
-                _bootupWindowStateProp = _serializedObject.FindProperty("_bootupWindowState");
-                _buttonVisibleProp = _serializedObject.FindProperty("_buttonVisible");
-                _buttonReverseProp = _serializedObject.FindProperty("_buttonReverse");
+                _bufferSizeProp = _serializedObject.FindProperty("_options._bufferSize");
+                _promptProp = _serializedObject.FindProperty("_options._prompt");
+                _bootupCommandProp = _serializedObject.FindProperty("_options._bootupCommand");
+                _bootupWindowStateProp = _serializedObject.FindProperty("_options._bootupWindowState");
+                _buttonVisibleProp = _serializedObject.FindProperty("_options._buttonVisible");
+                _buttonReverseProp = _serializedObject.FindProperty("_options._buttonReverse");
             }
 
             _toolbarStyleLazy = new Lazy<GUIStyle>(() => new GUIStyle(GUI.skin.button)

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation.Model;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {

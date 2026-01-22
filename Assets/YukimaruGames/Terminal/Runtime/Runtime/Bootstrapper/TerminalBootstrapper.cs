@@ -22,6 +22,7 @@ using YukimaruGames.Terminal.Domain.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.Domain.Settings;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View;
@@ -34,62 +35,19 @@ namespace YukimaruGames.Terminal.Runtime
     public sealed partial class TerminalBootstrapper : MonoBehaviour,IDisposable
     {
         // view
-        [SerializeField] private Font _font;
-        [SerializeField] private int _fontSize = 55;
-        [SerializeField] private Color _backgroundColor = Color.black;
-        [SerializeField] private Color _messageColor = Color.white;
-        [SerializeField] private Color _entryColor = Color.white;
-        [SerializeField] private Color _warningColor = Color.yellow;
-        [SerializeField] private Color _errorColor = Color.red;
-        [SerializeField] private Color _assertColor = Color.red;
-        [SerializeField] private Color _exceptionColor = Color.red;
-        [SerializeField] private Color _systemColor = Color.white;
-        [SerializeField] private Color _inputColor = new(0f, 1f, 0.3f);
-        [SerializeField] private Color _caretColor = new(0f, 1f, 0.8f);
-        [SerializeField] private Color _selectionColor = new(1f, 0.5f, 0f);
-        [SerializeField] private Color _promptColor = new(0f, 0.8f, 0.15f);
-        [SerializeField] private Color _executeButtonColor = new(0f, 0.7f, 0.8f);
-        [SerializeField] private Color _buttonColor = new(0f, 0.7f, 0.8f);
-        [SerializeField] private Color _copyButtonColor = new(0f, 0.7f, 0.8f);
-        [SerializeField] private float _cursorFlashSpeed = 1.886792f;
-        
-        // input
-        [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
-        
-#if ENABLE_LEGACY_INPUT_MANAGER
-        // legacy
-        [SerializeField] private LegacyInputKey _legacyInputKey;
-#endif
-        
-#if ENABLE_INPUT_SYSTEM
-        // input system
-        [SerializeField] private InputSystemKey _inputSystemKey;
-#endif
+        [Header("Settings")]
+        [SerializeInterface]
+        [SerializeReference]
+        private ITerminalTheme _theme = new TerminalTheme();
 
-        [SerializeField] private TerminalState _bootupWindowState = TerminalState.Close;
-        [SerializeField] private TerminalAnchor _anchor = TerminalAnchor.Top;
-        [SerializeField] private TerminalWindowStyle _windowStyle = TerminalWindowStyle.Compact;
-        [SerializeField] private float _duration = 1f;
-        [SerializeField] private float _compactScale = 0.35f;
-        [SerializeField] private int _bufferSize = 256;
-        [SerializeField] private string _prompt = "$";
-        [SerializeField] private string _bootupCommand;
-        [SerializeField] private bool _buttonVisible;
-        [SerializeField] private bool _buttonReverse;
+        [SerializeInterface]
+        [SerializeReference]
+        private ITerminalOptions _options = new TerminalOptions();
         
         private readonly List<IUpdatable> _updatables = new();
         private readonly List<IDisposable> _disposables = new();
 
-        private InputKeyboardType KeyboardType =>
-#if ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
-            _inputKeyboardType;
-#elif ENABLE_INPUT_SYSTEM
-            InputKeyboardType.InputSystem;
-#elif ENABLE_LEGACY_INPUT_MANAGER
-            InputKeyboardType.Legacy;
-#else
-            InputKeyboardType.None;
-        #endif
+        private InputKeyboardType KeyboardType => _options?.InputKeyboardType ?? InputKeyboardType.None;
         
         // orchestrator
         private TerminalCoordinator _coordinator;
@@ -150,15 +108,18 @@ namespace YukimaruGames.Terminal.Runtime
         
         private void Awake()
         {
+            if (_theme == null) _theme = new TerminalTheme();
+            if (_options == null) _options = new TerminalOptions();
+
             _animatorDataConfigurator = new TerminalWindowAnimatorDataConfigurator()
             {
-                State = _bootupWindowState,
-                Anchor = _anchor,
-                Style = _windowStyle,
-                Duration = _duration,
-                Scale = _compactScale,
+                State = _options.BootupWindowState,
+                Anchor = _options.Anchor,
+                Style = _options.WindowStyle,
+                Duration = _theme.Duration,
+                Scale = _theme.CompactScale,
             };
-            _logger = new CommandLogger(_bufferSize);
+            _logger = new CommandLogger(_options.BufferSize);
 
             var scrollConfigurator = new ScrollConfigurator();
             _registry = new CommandRegistry(_logger);
@@ -188,19 +149,19 @@ namespace YukimaruGames.Terminal.Runtime
 
             _colorPaletteProvider = new ColorPaletteProvider(new Dictionary<string, Color>
             {
-                { ColorPalette.Message, _messageColor },
-                { ColorPalette.Entry, _entryColor },
-                { ColorPalette.Warning, _warningColor },
-                { ColorPalette.Error, _errorColor },
-                { ColorPalette.Assert, _assertColor },
-                { ColorPalette.Exception, _exceptionColor },
-                { ColorPalette.System, _systemColor },
+                { ColorPalette.Message, _theme.Message.ToUnityColor() },
+                { ColorPalette.Entry, _theme.Entry.ToUnityColor() },
+                { ColorPalette.Warning, _theme.Warning.ToUnityColor() },
+                { ColorPalette.Error, _theme.Error.ToUnityColor() },
+                { ColorPalette.Assert, _theme.Assert.ToUnityColor() },
+                { ColorPalette.Exception, _theme.Exception.ToUnityColor() },
+                { ColorPalette.System, _theme.System.ToUnityColor() },
                 
-                { ColorPalette.Cursor, _caretColor },
-                { ColorPalette.Selection, _selectionColor },
+                { ColorPalette.Cursor, _theme.Caret.ToUnityColor() },
+                { ColorPalette.Selection, _theme.Selection.ToUnityColor() },
             });
             
-            _fontProvider = new TerminalFontProvider(_font);
+            _fontProvider = new TerminalFontProvider(((_theme as TerminalTheme)?.Font));
 
             _pixelTexture2DRepository = new PixelTexture2DRepository();
 
@@ -211,7 +172,7 @@ namespace YukimaruGames.Terminal.Runtime
             _openButtonsStyleContext = new TerminalGUIStyleContext(_fontProvider);
             _logCopyButtonStyleContext = new TerminalGUIStyleContext(_fontProvider);
             
-            _cursorFlashSpeedProvider = new CursorFlashSpeedProvider(_cursorFlashSpeed);
+            _cursorFlashSpeedProvider = new CursorFlashSpeedProvider(_theme.CursorFlashSpeed);
             _buttonVisibleConfigurator = new TerminalButtonVisibleConfigurator();
                 
             _windowRenderer = new TerminalWindowRenderer(_pixelTexture2DRepository);
@@ -224,7 +185,7 @@ namespace YukimaruGames.Terminal.Runtime
             
             _windowPresenter = new TerminalWindowPresenter(_animatorDataConfigurator, new TerminalWindowAnimator());
             _logPresenter = new TerminalLogPresenter(_service);
-            _inputPresenter = new TerminalInputPresenter(_inputRenderer, _bootupCommand);
+            _inputPresenter = new TerminalInputPresenter(_inputRenderer, _options.BootupCommand);
             _executeButtonPresenter = new TerminalExecuteButtonPresenter(_executeButtonRenderer, _buttonVisibleConfigurator);
             _buttonPresenter = new TerminalButtonPresenter(_buttonRenderer, _windowPresenter, _buttonVisibleConfigurator);
             
@@ -246,6 +207,8 @@ namespace YukimaruGames.Terminal.Runtime
                 
                 ScrollConfigurator = scrollConfigurator
             };
+            
+            _promptStyleContext?.SetColor(_theme.Prompt.ToUnityColor());
 
             _view = new TerminalView(viewContext);
 
@@ -352,68 +315,78 @@ namespace YukimaruGames.Terminal.Runtime
 
         private void Configure()
         {
+            if (_theme == null) _theme = new TerminalTheme();
+            if (_options == null) _options = new TerminalOptions();
+
             if (_animatorDataConfigurator != null)
             {
-                _animatorDataConfigurator.Anchor = _anchor;
-                _animatorDataConfigurator.Style = _windowStyle;
-                _animatorDataConfigurator.Scale = _compactScale;
-                _animatorDataConfigurator.Duration = _duration;
+                _animatorDataConfigurator.Anchor = _options.Anchor;
+                _animatorDataConfigurator.Style = _options.WindowStyle;
+                _animatorDataConfigurator.Scale = _theme.CompactScale;
+                _animatorDataConfigurator.Duration = _theme.Duration;
             }
 
             if (_fontProvider != null)
             {
-                _fontProvider.Font = _font;
-                _fontProvider.Size = _fontSize;
+                _fontProvider.Font = (_theme as TerminalTheme)?.Font;
+                _fontProvider.Size = _theme.FontSize;
             }
             
-            _windowRenderer?.SetBackgroundColor(_backgroundColor);
+            _windowRenderer?.SetBackgroundColor(_theme.Background.ToUnityColor());
 
             if (_colorPaletteProvider != null)
             {
-                _colorPaletteProvider.SetColor(ColorPalette.Error, _errorColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Assert, _assertColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Warning, _warningColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Message, _messageColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Exception, _exceptionColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Entry, _entryColor);
-                _colorPaletteProvider.SetColor(ColorPalette.System, _systemColor);
+                _colorPaletteProvider.SetColor(ColorPalette.Error, _theme.Error.ToUnityColor());
+                _colorPaletteProvider.SetColor(ColorPalette.Assert, _theme.Assert.ToUnityColor());
+                _colorPaletteProvider.SetColor(ColorPalette.Warning, _theme.Warning.ToUnityColor());
+                _colorPaletteProvider.SetColor(ColorPalette.Message, _theme.Message.ToUnityColor());
+                _colorPaletteProvider.SetColor(ColorPalette.Exception, _theme.Exception.ToUnityColor());
+                _colorPaletteProvider.SetColor(ColorPalette.Entry, _theme.Entry.ToUnityColor());
+                _colorPaletteProvider.SetColor(ColorPalette.System, _theme.System.ToUnityColor());
                 
-                _colorPaletteProvider.SetColor(ColorPalette.Cursor, _caretColor);
-                _colorPaletteProvider.SetColor(ColorPalette.Selection, _selectionColor );
+                _colorPaletteProvider.SetColor(ColorPalette.Cursor, _theme.Caret.ToUnityColor());
+                _colorPaletteProvider.SetColor(ColorPalette.Selection, _theme.Selection.ToUnityColor());
             }
 
             if (_promptRenderer != null)
             {
-                _promptRenderer.Prompt = _prompt;
-                _promptStyleContext.SetColor(_promptColor);
+                _promptRenderer.Prompt = _options.Prompt;
+                _promptStyleContext.SetColor(_theme.Prompt.ToUnityColor());
             }
 
-            _inputStyleContext?.SetColor(_inputColor);
-            _executeButtonsStyleContext?.SetColor(_executeButtonColor);
-            _openButtonsStyleContext?.SetColor(_buttonColor);
-            _logCopyButtonStyleContext?.SetColor(_copyButtonColor);
+            _inputStyleContext?.SetColor(_theme.Input.ToUnityColor());
+
+            if (_theme is IButtonThemeProvider provider)
+            {
+                var buttonTheme = provider.ButtonTheme;
+                _executeButtonsStyleContext?.SetColor(buttonTheme.Execute.ToUnityColor());
+                _openButtonsStyleContext?.SetColor(buttonTheme.Base.ToUnityColor());
+                _logCopyButtonStyleContext?.SetColor(buttonTheme.Copy.ToUnityColor());
+            }
+
             _eventListener?.SetInputHandler(CreateInputHandler());
-            _cursorFlashSpeedProvider?.SetFlashSpeed(_cursorFlashSpeed);
+            _cursorFlashSpeedProvider?.SetFlashSpeed(_theme.CursorFlashSpeed);
             
             if (_buttonVisibleConfigurator != null)
             {
-                _buttonVisibleConfigurator.IsVisible = _buttonVisible;
-                _buttonVisibleConfigurator.IsReverse = _buttonReverse;
+                _buttonVisibleConfigurator.IsVisible = _options.ButtonVisible;
+                _buttonVisibleConfigurator.IsReverse = _options.ButtonReverse;
             }
         }
 
         private IKeyboardInputHandler CreateInputHandler()
         {
+            var options = _options as TerminalOptions;
             var factory =
 #if ENABLE_INPUT_SYSTEM && ENABLE_LEGACY_INPUT_MANAGER
-                new TerminalKeyboardFactory(_inputSystemKey, _legacyInputKey);
+                new TerminalKeyboardFactory(options?.InputSystemKey, options?.LegacyInputKey);
 #elif ENABLE_INPUT_SYSTEM
-                new TerminalKeyboardFactory(_inputSystemKey);
+                new TerminalKeyboardFactory(options?.InputSystemKey);
 #elif ENABLE_LEGACY_INPUT_MANAGER
-                new TerminalKeyboardFactory(_legacyInputKey);
-            #else
+                new TerminalKeyboardFactory(options?.LegacyInputKey);
+#else
                 new TerminalKeyboardFactory();
-            #endif
+#endif
             return factory.Create(KeyboardType);
         }
         
@@ -426,5 +399,9 @@ namespace YukimaruGames.Terminal.Runtime
             }
             _disposables.Clear();
         }
+    }
+    public static class TerminalColorExtensions
+    {
+        public static Color ToUnityColor(this TerminalColor color) => new(color.R, color.G, color.B, color.A);
     }
 }

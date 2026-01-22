@@ -2,6 +2,7 @@
 //#undef ENABLE_LEGACY_INPUT_MANAGER
 using System;
 using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.SharedKernel;
 
 #if ENABLE_INPUT_SYSTEM
 using YukimaruGames.Terminal.Runtime.Input.InputSystem;

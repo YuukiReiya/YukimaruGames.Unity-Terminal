@@ -1,0 +1,355 @@
+author:	coderabbitai
+association:	none
+edited:	true
+status:	none
+--
+<!-- This is an auto-generated comment: summarize by coderabbit.ai -->
+<!-- This is an auto-generated comment: review in progress by coderabbit.ai -->
+
+> [!NOTE]
+> Currently processing new changes in this PR. This may take a few minutes, please wait...
+> 
+> 
+> 
+> ```ascii
+>  _____________________________________________________________________________
+> < If you can't handle me at my v0.0.1, then you don't deserve me at my v1.0.0 >
+>  -----------------------------------------------------------------------------
+>   \
+>    \   \
+>         \ /\
+>         ( )
+>       .( o ).
+> ```
+> 
+> <sub>笨擾ｸ・Tip: You can disable in-progress messages and the fortune message in your review settings.</sub>
+
+<!-- end of auto-generated comment: review in progress by coderabbit.ai -->
+<!-- usage_tips_start -->
+
+> [!TIP]
+> <details>
+> <summary>CodeRabbit can enforce grammar and style rules using `languagetool`.</summary>
+> 
+> Configure `languagetool` in your project's settings in CodeRabbit enable/disable rules and categories. Refer to the [LanguageTool Community](https://community.languagetool.org/rule/list) to learn more.
+> 
+> </details>
+
+<!-- usage_tips_end -->
+<!-- walkthrough_start -->
+
+<details>
+<summary>統 Walkthrough</summary>
+
+## 繧ｦ繧ｩ繝ｼ繧ｯ繧ｹ繝ｫ繝ｼ
+
+繧ｿ繝ｼ繝溘リ繝ｫ繧ｷ繧ｹ繝・Β縺ｧ縲∫峩蛻怜喧縺輔ｌ縺溘ヵ繧｣繝ｼ繝ｫ繝峨ｒ `ITerminalTheme` 縺ｨ `ITerminalOptions` 縺ｮ謚ｽ雎｡蛹悶↓繝ｪ繝輔ぃ繧ｯ繧ｿ繝ｪ繝ｳ繧ｰ縺励∪縺励◆縲ゅ％繧後↓繧医ｊ縲√ヶ繝ｼ繝医せ繝医Λ繝・ヱ繝ｼ縺ｮ蛻晄悄蛹悶ヵ繝ｭ繝ｼ縺梧峩譁ｰ縺輔ｌ縲√ユ繝ｼ繝槭→險ｭ螳壹・繝ｭ繝代ユ繧｣縺碁嚴螻､逧・↓蜀肴ｧ区・縺輔ｌ縺ｾ縺励◆縲・
+## 螟画峩蜀・ｮｹ
+
+| 繧ｳ繝ｼ繝帙・繝・/ 繝輔ぃ繧､繝ｫ(s) | 螟画峩讎りｦ・|
+|---|---|
+| **繧ｨ繝・ぅ繧ｿ繝悶・繝医せ繝医Λ繝・ヱ繝ｼ譖ｴ譁ｰ** <br> `Assets/YukimaruGames/Terminal/Editor/TerminalBootstrapper.editor.cs` | 繝励Ο繝代ユ繧｣隗｣豎ｺ繝代せ繧・`_theme._font`縲～_theme._backgroundColor` 縺ｮ繧医≧縺ｪ繝阪せ繝医＆繧後◆繝代せ縺ｫ螟画峩縲ゅ・繧ｿ繝ｳ繝・・繝槭・繝ｭ繝代ユ繧｣繧・`_theme._buttonTheme.*` 縺ｫ遘ｻ蜍輔ょ・蜉幃未騾｣繝励Ο繝代ユ繧｣繧・`_options` 繧ｰ繝ｫ繝ｼ繝励↓邨ｱ蜷医ゅい繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ髢｢騾｣繝励Ο繝代ユ繧｣繧・`_theme` 縺ｨ `_options` 縺ｫ蛻・淵縲ゅす繧ｹ繝・Β髢｢騾｣繝励Ο繝代ユ繧｣繧・`_options` 縺ｫ邨ｱ蜷医・|
+| **繝ｩ繝ｳ繧ｿ繧､繝繝悶・繝医せ繝医Λ繝・ヱ繝ｼ譖ｴ譁ｰ** <br> `Assets/YukimaruGames/Terminal/Runtime/Runtime/Bootstrapper/TerminalBootstrapper.cs` | 逶ｴ蛻怜喧繝輔ぅ繝ｼ繝ｫ繝峨ｒ `_theme` 縺ｨ `_options` 縺ｮ蜿ら・縺ｫ鄂ｮ縺肴鋤縺医ょ・譛溷喧繝ｭ繧ｸ繝・け繧・`_options.BufferSize`縲～_theme.Font` 縺ｪ縺ｩ縺九ｉ隱ｭ縺ｿ蜿悶ｋ繧医≧縺ｫ譖ｴ譁ｰ縲ゅ・繧ｿ繝ｳ繝・・繝槭・繝ｭ繝舌う繝繝ｼ縺ｮ繧ｵ繝昴・繝郁ｿｽ蜉縲ゅく繝ｼ繝懊・繝牙・蜉帙ワ繝ｳ繝峨Λ繝ｼ逕滓・繧・`_options` 縺ｫ蝓ｺ縺･縺上ｈ縺・↓螟画峩縲・|
+| **繝・・繝槭・繧ｪ繝励す繝ｧ繝ｳ繧､繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ螳夂ｾｩ** <br> `Assets/YukimaruGames/Terminal/Runtime/Domain/API/Settings/ITerminal{Theme,Options,ButtonTheme}.cs`縲・br> `IButtonThemeProvider.cs` | 4縺､縺ｮ譁ｰ縺励＞繝代ヶ繝ｪ繝・け繧､繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ繧貞ｮ夂ｾｩ・壹ヵ繧ｩ繝ｳ繝医∬牡縲√ち繧､繝溘Φ繧ｰ險ｭ螳壹ｒ蜈ｬ髢九☆繧・`ITerminalTheme`・帛・蜉帙く繝ｼ繝懊・繝牙梛縲√ヰ繝・ヵ繧｡繧ｵ繧､繧ｺ縲√・繝ｭ繝ｳ繝励ヨ繧貞・髢九☆繧・`ITerminalOptions`・帙・繧ｿ繝ｳ濶ｲ繧貞・髢九☆繧・`ITerminalButtonTheme` 縺ｨ `IButtonThemeProvider`縲・|
+| **繝・・繝槭・繧ｪ繝励す繝ｧ繝ｳ螳溯｣・け繝ｩ繧ｹ** <br> `Assets/YukimaruGames/Terminal/Runtime/Domain/Core/Settings/Terminal{Theme,Options,ButtonTheme}.cs` | 繧､繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ螳溯｣・・3縺､縺ｮ譁ｰ縺励＞繧ｷ繝ｪ繧｢繝ｩ繧､繧ｺ蜿ｯ閭ｽ繧ｯ繝ｩ繧ｹ・啻TerminalTheme` 縺ｯ繝輔か繝ｳ繝医・濶ｲ繝ｻ繧ｿ繧､繝溘Φ繧ｰ繧堤ｮ｡逅・～TerminalOptions` 縺ｯ蜈･蜉帛梛繝ｻ迥ｶ諷九・UI繝輔Λ繧ｰ繧堤ｮ｡逅・～TerminalButtonTheme` 縺ｯ繝懊ち繝ｳ濶ｲ繧堤ｮ｡逅・ゅ☆縺ｹ縺ｦUnity繧､繝ｳ繧ｹ繝壹け繧ｿ險ｭ螳壹ｒ繧ｵ繝昴・繝医・|
+
+## 繧ｷ繝ｼ繧ｱ繝ｳ繧ｹ蝗ｳ
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Bootstrapper as TerminalBootstrapper
+    participant Options as ITerminalOptions
+    participant Theme as ITerminalTheme
+    participant ButtonProvider as IButtonThemeProvider
+    participant UI as Terminal UI
+
+    User->>Bootstrapper: Awake()
+    Bootstrapper->>Options: 隱ｭ縺ｿ蜿悶ｊ: BufferSize, Prompt, BootupCommand
+    Bootstrapper->>Theme: 隱ｭ縺ｿ蜿悶ｊ: Font, FontSize, Colors
+    Bootstrapper->>Theme: 隱ｭ縺ｿ蜿悶ｊ: Duration, CompactScale
+    Bootstrapper->>ButtonProvider: 隱ｭ縺ｿ蜿悶ｊ: ButtonTheme
+    Bootstrapper->>UI: Initialize (Options, Theme, ButtonTheme)
+    UI->>Theme: 繝輔か繝ｳ繝医・濶ｲ繝代Ξ繝・ヨ蜿門ｾ・    UI->>Options: 繧ｭ繝ｼ繝懊・繝峨ち繧､繝励・繝舌ャ繝輔ぃ繧ｵ繧､繧ｺ蜿門ｾ・    UI->>ButtonProvider: 繝懊ち繝ｳ濶ｲ險ｭ螳・    UI-->>User: 繧ｿ繝ｼ繝溘リ繝ｫUI繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ螳御ｺ・```
+
+## 謗ｨ螳壹さ繝ｼ繝峨Ξ繝薙Η繝ｼ蟾･謨ｰ
+
+識 4 (隍・尅) | 竢ｱ・・~45蛻・
+## 隧ｩ
+
+> 晴 譁ｰ縺励＞繝・・繝槭→繧ｪ繝励す繝ｧ繝ｳ縲・嚴螻､逧・↓闃ｱ縺ｲ繧峨￥  
+> 繧､繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ縺ｧ謚ｽ雎｡蛹悶√さ繝ｼ繝峨・縺励↑繧・°縺ｫ  
+> 逶ｴ蛻怜喧繝輔ぅ繝ｼ繝ｫ繝峨∵紛辟ｶ縺ｨ謨ｴ逅・＆繧・ 
+> 繝悶・繝医せ繝医Λ繝・・縲∫ｾ弱＠縺丞・譛溷喧  
+> 繧ｿ繝ｼ繝溘リ繝ｫ繧医√ｈ繧頑ｴ礼ｷｴ縺輔ｌ縺ｦ蜈峨ｋ 笨ｨ
+
+</details>
+
+<!-- walkthrough_end -->
+
+<!-- pre_merge_checks_walkthrough_start -->
+
+<details>
+<summary>嗇 Pre-merge checks | 笨・2 | 笶・1</summary>
+
+<details>
+<summary>笶・Failed checks (1 warning)</summary>
+
+|     Check name     | Status     | Explanation                                                                          | Resolution                                                                         |
+| :----------------: | :--------- | :----------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| Docstring Coverage | 笞・・Warning | Docstring coverage is 0.00% which is insufficient. The required threshold is 80.00%. | Write docstrings for the functions missing them to satisfy the coverage threshold. |
+
+</details>
+<details>
+<summary>笨・Passed checks (2 passed)</summary>
+
+|     Check name    | Status   | Explanation                                                                                 |
+| :---------------: | :------- | :------------------------------------------------------------------------------------------ |
+| Description Check | 笨・Passed | Check skipped - CodeRabbit窶冱 high-level summary is enabled.                                 |
+|    Title check    | 笨・Passed | 繝励Ν繝ｪ繧ｯ繧ｨ繧ｹ繝医・繧ｿ繧､繝医Ν縺ｯ縲ゝerminalBootstrapper 縺ｮ險ｭ螳壼・髮｢ (Phase 1) 縺ｨ縺・≧荳ｻ隕√↑螟画峩蜀・ｮｹ繧呈・遒ｺ縺ｫ遉ｺ縺励※縺翫ｊ縲√メ繧ｧ繝ｳ繧ｸ繧ｻ繝・ヨ縺ｮ荳ｻ縺ｪ逶ｮ逧・→荳閾ｴ縺励※縺・ｋ縲・|
+
+</details>
+
+<sub>笨擾ｸ・Tip: You can configure your own custom pre-merge checks in the settings.</sub>
+
+</details>
+
+<!-- pre_merge_checks_walkthrough_end -->
+
+<!-- finishing_touch_checkbox_start -->
+
+<details>
+<summary>笨ｨ Finishing touches</summary>
+
+- [ ] <!-- {"checkboxId": "7962f53c-55bc-4827-bfbf-6a18da830691"} --> 統 Generate docstrings
+
+</details>
+
+<!-- finishing_touch_checkbox_end -->
+
+<!-- tips_start -->
+
+---
+
+Thanks for using [CodeRabbit](https://coderabbit.ai?utm_source=oss&utm_medium=github&utm_campaign=YuukiReiya/YukimaruGames.Unity-Terminal&utm_content=31)! It's free for OSS, and your support helps us grow. If you like it, consider giving us a shout-out.
+
+<details>
+<summary>笶､・・Share</summary>
+
+- [X](https://twitter.com/intent/tweet?text=I%20just%20used%20%40coderabbitai%20for%20my%20code%20review%2C%20and%20it%27s%20fantastic%21%20It%27s%20free%20for%20OSS%20and%20offers%20a%20free%20trial%20for%20the%20proprietary%20code.%20Check%20it%20out%3A&url=https%3A//coderabbit.ai)
+- [Mastodon](https://mastodon.social/share?text=I%20just%20used%20%40coderabbitai%20for%20my%20code%20review%2C%20and%20it%27s%20fantastic%21%20It%27s%20free%20for%20OSS%20and%20offers%20a%20free%20trial%20for%20the%20proprietary%20code.%20Check%20it%20out%3A%20https%3A%2F%2Fcoderabbit.ai)
+- [Reddit](https://www.reddit.com/submit?title=Great%20tool%20for%20code%20review%20-%20CodeRabbit&text=I%20just%20used%20CodeRabbit%20for%20my%20code%20review%2C%20and%20it%27s%20fantastic%21%20It%27s%20free%20for%20OSS%20and%20offers%20a%20free%20trial%20for%20proprietary%20code.%20Check%20it%20out%3A%20https%3A//coderabbit.ai)
+- [LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fcoderabbit.ai&mini=true&title=Great%20tool%20for%20code%20review%20-%20CodeRabbit&summary=I%20just%20used%20CodeRabbit%20for%20my%20code%20review%2C%20and%20it%27s%20fantastic%21%20It%27s%20free%20for%20OSS%20and%20offers%20a%20free%20trial%20for%20proprietary%20code)
+
+</details>
+
+<sub>Comment `@coderabbitai help` to get the list of available commands and usage tips.</sub>
+
+<!-- tips_end -->
+
+<!-- internal state start -->
+
+
+<!-- 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 -->
+
+<!-- internal state end -->
+--
+author:	coderabbitai
+association:	none
+edited:	false
+status:	commented
+--
+**Actionable comments posted: 1**
+
+<details>
+<summary>､・Fix all issues with AI agents</summary>
+
+```
+In `@Assets/YukimaruGames/Terminal/Runtime/Domain/Settings/TerminalTheme.cs`:
+- Around line 31-33: TerminalTheme 縺ｮ繧ｷ繝ｪ繧｢繝ｩ繧､繧ｺ繝輔ぅ繝ｼ繝ｫ繝・_buttonTheme 縺梧悴蛻晄悄蛹悶□縺ｨ
+TerminalBootstrapper 縺九ｉ蜻ｼ縺ｰ繧後ｋ ButtonTheme.Execute 遲峨〒 NullReference
+縺ｫ縺ｪ繧九◆繧√ゝerminalTheme 繧ｯ繝ｩ繧ｹ蜀・〒 _buttonTheme 繧偵ョ繝輔か繝ｫ繝医う繝ｳ繧ｹ繧ｿ繝ｳ繧ｹ縺ｧ蛻晄悄蛹悶☆繧九°縲。uttonTheme
+繧剃ｽｿ逕ｨ縺吶ｋ繝｡繧ｽ繝・ラ・井ｾ・ ButtonTheme.Execute 繧貞他縺ｶ邂・園・峨↓ null
+繧ｬ繝ｼ繝峨ｒ霑ｽ蜉縺励※螳牙・縺ｫ譌ｩ譛溘Μ繧ｿ繝ｼ繝ｳ縺ｾ縺溘・莉｣譖ｿ蜃ｦ逅・ｒ陦後≧繧医≧縺ｫ菫ｮ豁｣縺励※縺上□縺輔＞縲ょｯｾ雎｡繧ｷ繝ｳ繝懊Ν: TerminalTheme::_buttonTheme,
+TerminalBootstrapper・亥他縺ｳ蜃ｺ縺礼ｮ・園・峨。uttonTheme.Execute縲・```
+
+</details>
+
+<details>
+<summary>ｧｹ Nitpick comments (1)</summary><blockquote>
+
+<details>
+<summary>Assets/YukimaruGames/Terminal/Runtime/Runtime/Bootstrapper/TerminalBootstrapper.cs (1)</summary><blockquote>
+
+`313-369`: **ButtonTheme 縺・null 縺ｮ螳溯｣・↓蛯吶∴縺溘ぎ繝ｼ繝峨ｒ蜈･繧後ｋ縺ｨ螳牙・縺ｧ縺吶・*  
+繧ｫ繧ｹ繧ｿ繝螳溯｣・ｄ譛ｪ險ｭ螳壹・迥ｶ諷九〒 `Execute/Base/Copy` 蜿ら・縺吶ｋ縺ｨ萓句､悶↓縺ｪ繧九◆繧√］ull 繝√ぉ繝・け繧呈検繧縺ｮ縺檎┌髮｣縺ｧ縺吶・ 
+
+<details>
+<summary>屏・・萓・ null 繧ｬ繝ｼ繝芽ｿｽ蜉</summary>
+
+```diff
+-            if (_theme is IButtonThemeProvider provider)
+-            {
+-                var buttonTheme = provider.ButtonTheme;
+-                _executeButtonsStyleContext?.SetColor(buttonTheme.Execute);
+-                _openButtonsStyleContext?.SetColor(buttonTheme.Base);
+-                _logCopyButtonStyleContext?.SetColor(buttonTheme.Copy);
+-            }
++            if (_theme is IButtonThemeProvider provider)
++            {
++                var buttonTheme = provider.ButtonTheme;
++                if (buttonTheme != null)
++                {
++                    _executeButtonsStyleContext?.SetColor(buttonTheme.Execute);
++                    _openButtonsStyleContext?.SetColor(buttonTheme.Base);
++                    _logCopyButtonStyleContext?.SetColor(buttonTheme.Copy);
++                }
++            }
+```
+</details>
+
+</blockquote></details>
+
+</blockquote></details>
+
+<!-- This is an auto-generated comment by CodeRabbit for review status -->
+--
+author:	coderabbitai
+association:	none
+edited:	false
+status:	commented
+--
+**Actionable comments posted: 1**
+
+<details>
+<summary>､・Fix all issues with AI agents</summary>
+
+```
+In
+`@Assets/YukimaruGames/Terminal/Runtime/Runtime/Bootstrapper/TerminalBootstrapper.cs`:
+- Around line 38-50: Awake 縺ｨ Configure 縺ｮ蜈磯ｭ縺ｧ SerializeReference 縺ｧ荳頑嶌縺阪＆繧・null
+縺ｫ縺ｪ繧雁ｾ励ｋ繝輔ぅ繝ｼ繝ｫ繝・_theme 縺ｨ _options 繧帝亟蠕｡逧・↓蛻晄悄蛹悶＠縺ｦ縺上□縺輔＞・井ｾ・ if (_theme == null) _theme = new
+TerminalTheme(); if (_options == null) _options = new TerminalOptions();・峨ょ粋繧上○縺ｦ
+KeyboardType 繝励Ο繝代ユ繧｣縺・_options 繧貞盾辣ｧ縺吶ｋ縺溘ａ null 螳牙・縺ｫ縺暦ｼ井ｾ九∴縺ｰ繝励Ο繝代ユ繧｣蜀・〒 _options == null
+繧偵メ繧ｧ繝・け縺励※譌｢螳壼､繧定ｿ斐☆縺九∽ｸ願ｨ倥・繝輔か繝ｼ繝ｫ繝舌ャ繧ｯ蛻晄悄蛹悶↓鬆ｼ繧具ｼ峨、wake/Configure 蜀・・蜃ｦ逅・′ NRE 繧定ｵｷ縺薙＆縺ｪ縺・ｈ縺・↓縺励※縺上□縺輔＞縲ょ盾辣ｧ邂・園:
+fields _theme/_options, methods Awake / Configure, interface 蝙・ITerminalTheme /
+ITerminalOptions, property KeyboardType.
+```
+
+</details>
+
+<details>
+<summary>ｧｹ Nitpick comments (2)</summary><blockquote>
+
+<details>
+<summary>Assets/YukimaruGames/Terminal/Runtime/Domain/Core/Settings/TerminalOptions.cs (1)</summary><blockquote>
+
+`27-34`: **繝舌ャ繝輔ぃ繧ｵ繧､繧ｺ縺ｮ荳矩剞繧棚nspector縺ｧ蛻ｶ邏・＠縺溘＞縺ｧ縺吶・*
+
+`_bufferSize` 縺・0/雋謨ｰ縺ｧ繧りｨｭ螳壹〒縺阪ｋ縺溘ａ縲∝ｾ梧ｮｵ縺ｧ繝舌ャ繝輔ぃ遒ｺ菫昴↓螟ｱ謨励☆繧九Μ繧ｹ繧ｯ縺後≠繧翫∪縺吶・nspector 縺ｧ荳矩剞繧剃ｻ倥￠縺ｦ縺翫￥縺ｨ螳牙・縺ｧ縺吶・ 
+
+
+<details>
+<summary>笙ｻ・・謠先｡医ヱ繝・メ</summary>
+
+```diff
+-        [SerializeField] private int _bufferSize = 256;
++        [SerializeField, Min(1)] private int _bufferSize = 256;
+```
+</details>
+
+</blockquote></details>
+<details>
+<summary>Assets/YukimaruGames/Terminal/Runtime/Domain/Core/Settings/TerminalTheme.cs (1)</summary><blockquote>
+
+`13-29`: **謨ｰ蛟､險ｭ螳壹・荳矩剞繝√ぉ繝・け繧棚nspector縺ｧ莉倥￠繧九→螳牙・縺ｧ縺吶・*
+
+`_fontSize`, `_cursorFlashSpeed`, `_duration` 縺ｫ雋謨ｰ縺悟・繧九→繝ｬ繝ｳ繝繝ｪ繝ｳ繧ｰ繧・い繝九Γ繝ｼ繧ｷ繝ｧ繝ｳ縺御ｸ榊ｮ牙ｮ壹↓縺ｪ繧雁ｾ励ｋ縺溘ａ縲！nspector蛻ｶ邏・ｒ莉倥￠縺ｦ縺翫￥縺ｨ螳牙・縺ｧ縺吶・ 
+
+
+<details>
+<summary>笙ｻ・・謠先｡医ヱ繝・メ</summary>
+
+```diff
+-        [SerializeField] private int _fontSize = 55;
++        [SerializeField, Min(1)] private int _fontSize = 55;
+@@
+-        [SerializeField] private float _cursorFlashSpeed = 1.886792f;
+-        [SerializeField] private float _duration = 1f;
++        [SerializeField, Min(0f)] private float _cursorFlashSpeed = 1.886792f;
++        [SerializeField, Min(0f)] private float _duration = 1f;
+```
+</details>
+
+</blockquote></details>
+
+</blockquote></details>
+
+<!-- This is an auto-generated comment by CodeRabbit for review status -->
+--
+author:	YuukiReiya
+association:	owner
+edited:	false
+status:	none
+--
+```
+Assets\YukimaruGames\Terminal\Runtime\Domain\API\Settings\ITerminalTheme.cs(23,9): error CS0246: The type or namespace name 'Color' could not be found (are you missing a using directive or an assembly reference?)
+```
+`docs/diagrams/Packages/packages.puml`繧貞盾辣ｧ縺励※縺上□縺輔＞縲・
+ITerminalTheme縺ｯDomain驟堺ｸ九↓蠖｢謌舌＆繧後※縺・∪縺吶′縲√い繝ｼ繧ｭ繝・け繝√Ε縺ｮ讒矩荳灰omain縺ｯpureC#縺ｮ讒区・縺ｨ縺ｪ縺｣縺ｦ縺翫ｊ縲・
+UnityEngine縺ｮAssembly蜿ら・縺ｯ險ｱ蜿ｯ縺励※縺・∪縺帙ｓ縲・
+縺昴・縺溘ａUnityEngine.Color縺ｮ螳夂ｾｩ縺ｧ繧ｨ繝ｩ繝ｼ縺悟・縺ｦ縺励∪縺｣縺ｦ縺・∪縺吶・
+
+---
+
+讒矩縺ｮ螟画峩繧偵♀鬘倥＞縺励∪縺吶・--
+author:	Yuuki-CI-Bot
+association:	collaborator
+edited:	false
+status:	none
+--
+PR縺ｧ縺ｮ縺疲欠鞫倥≠繧翫′縺ｨ縺・＃縺悶＞縺ｾ縺吶・
+
+## 菫ｮ豁｣蜀・ｮｹ
+1. **Domain螻､縺ｮ邏皮ｲ句喧**: 
+   - `ITerminalTheme` 縺ｪ縺ｩ縺ｮ繧､繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ縺九ｉ `UnityEngine` 縺ｸ縺ｮ萓晏ｭ倥ｒ螳悟・縺ｫ謗帝勁縺励∪縺励◆縲・
+   - `UnityEngine.Color` 縺ｮ莉｣譖ｿ縺ｨ縺励※ `SharedKernel` 縺ｫ `TerminalColor` 讒矩菴薙ｒ蟆主・縺励∪縺励◆縲・
+   - `Font` 繧｢繧ｻ繝・ヨ縺ｸ縺ｮ逶ｴ謗･蜿ら・繧偵う繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ縺九ｉ蜑企勁縺励∪縺励◆縲・
+2. **螳溯｣・け繝ｩ繧ｹ縺ｧ縺ｮ蟇ｾ蠢・*:
+   - `TerminalTheme`・・ore螻､縺ｮ螳溯｣・ｼ峨〒縺ｯ蠑輔″邯壹″ `[SerializeField]` 縺ｨ縺励※ `UnityEngine.Color` 繧・`Font` 繧剃ｿ晄戟縺励√う繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ雜翫＠縺ｫ縺ｯ `TerminalColor` 縺ｸ螟画鋤縺励※蜈ｬ髢九☆繧九ｈ縺・↓縺励※縺・∪縺吶・
+3. **Bootstrapper縺ｮ隱ｿ謨ｴ**:
+   - Bootstrapper 蛛ｴ縺ｧ `TerminalColor` 繧・`UnityEngine.Color` 縺ｫ謌ｻ縺励※蜷・Provider 縺ｸ貂｡縺吶ｈ縺・↓菫ｮ豁｣縺励∪縺励◆縲・
+
+縺皮｢ｺ隱阪ｒ縺企｡倥＞縺励∪縺吶・
+
+--
+author:	Yuuki-CI-Bot
+association:	collaborator
+edited:	false
+status:	none
+--
+PR縺ｧ縺ｮ縺疲欠鞫倥≠繧翫′縺ｨ縺・＃縺悶＞縺ｾ縺吶・
+
+## 菫ｮ豁｣蜀・ｮｹ
+1. **Domain螻､縺ｮ邏皮ｲ句喧**: 
+   - `ITerminalTheme` 縺ｪ縺ｩ縺ｮ繧､繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ縺九ｉ `UnityEngine` 縺ｸ縺ｮ萓晏ｭ倥ｒ螳悟・縺ｫ謗帝勁縺励∪縺励◆縲・
+   - `UnityEngine.Color` 縺ｮ莉｣譖ｿ縺ｨ縺励※ `SharedKernel` 縺ｫ `TerminalColor` 讒矩菴薙ｒ蟆主・縺励∪縺励◆縲・
+   - `Font` 繧｢繧ｻ繝・ヨ縺ｸ縺ｮ逶ｴ謗･蜿ら・繧偵う繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ縺九ｉ蜑企勁縺励∪縺励◆縲・
+2. **螳溯｣・け繝ｩ繧ｹ縺ｧ縺ｮ蟇ｾ蠢・*:
+   - `TerminalTheme`・・ore螻､縺ｮ螳溯｣・ｼ峨〒縺ｯ蠑輔″邯壹″ `[SerializeField]` 縺ｨ縺励※ `UnityEngine.Color` 繧・`Font` 繧剃ｿ晄戟縺励√う繝ｳ繧ｿ繝ｼ繝輔ぉ繝ｼ繧ｹ雜翫＠縺ｫ縺ｯ `TerminalColor` 縺ｸ螟画鋤縺励※蜈ｬ髢九☆繧九ｈ縺・↓縺励※縺・∪縺吶・
+3. **Bootstrapper縺ｮ隱ｿ謨ｴ**:
+   - Bootstrapper 蛛ｴ縺ｧ `TerminalColor` 繧・`UnityEngine.Color` 縺ｫ謌ｻ縺励※蜷・Provider 縺ｸ貂｡縺吶ｈ縺・↓菫ｮ豁｣縺励∪縺励◆縲・
+
+縺皮｢ｺ隱阪ｒ縺企｡倥＞縺励∪縺吶・
+
+--
+author:	YuukiReiya
+association:	owner
+edited:	false
+status:	none
+--
+```
+Assets\YukimaruGames\Terminal\Runtime\Domain\API\Settings\ITerminalOptions.cs(1,30): error CS0234: The type or namespace name 'Runtime' does not exist in the namespace 'YukimaruGames.Terminal' (are you missing an assembly reference?)
+```
+ITemrinalOption繧ょ酔讒倥〒縺吶・
+莉悶↓繧よｧ区・縺後・繧後※縺・↑縺・°遒ｺ隱阪・荳雁ｯｾ蠢懊ｒ縺企｡倥＞縺励∪縺吶・--

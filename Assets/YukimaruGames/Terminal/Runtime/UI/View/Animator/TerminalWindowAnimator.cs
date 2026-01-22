@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.UI.View
 {
