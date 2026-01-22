@@ -41,22 +41,22 @@
 `.agent` フォルダは、スレッドを跨いでAIエージェントがプロジェクト固有のルールやコンテキストを理解するための「知識ベース」として機能します。
 
 ### 更新タイミング
-- **新しいルールが確立された時**: 即座にドキュメント化
-- **実作業よりも優先**: 累積データの更新を最優先
-- **並行・後回し禁止**: 作業を止めて更新
-- **レビュー依頼必須**: 更新後は必ず `notify_user` でユーザーにレビューを依頼。既存ファイルを編集する場合も必ずコミット前にレビューを依頼し、必要であればartifactとして提示すること。
+- **内容のレビュー優先**: 指摘内容をガイドライン (.md) に反映した際、**commit/pushする前に必ず編集内容を `notify_user` にてユーザーにレビュー依頼すること。** 意図の取り違いによる誤ったルールのコミットを防止するため。
+- **PR作成・公開必須**: 承認後に `git add/commit/push` を行い、**Draftではなく「Ready for Review (Open)」状態のPR**を作成（または更新）すること。作成時は必ず [Pull Request Guidelines.md](./Pull%20Request%20Guidelines.md) を確認し、Assignee, Reviewer, Labels が規定通り設定されていることを徹底する。
+- **ブランチ移動の禁止**: 作成したPRがマージされるまで、他の作業ブランチへの移動や実装タスクの開始を禁止する。PRのマージを確認後、`master`を最新化してから次の作業ブランチを作成すること。
+- **実作業よりも優先**: 累積データの更新（知識ベースの同期）を最優先とする。
 
 ### ファイル命名規則
 - `<Category> Guidelines.md`: カテゴリごとのガイドライン
 - 例: `Pull Request Guidelines.md`, `Code Style Guidelines.md`
 
-### 想定ファイル
-- `Pull Request Guidelines.md`: PR作成ルール（既存）
-- `Agent Workflow Guidelines.md`: エージェントのワークフロー（本ファイル）
-- `Code Style Guidelines.md`: コーディング規約
-- `Architecture Overview.md`: アーキテクチャ概要
-- `Testing Guidelines.md`: テスト方針
-- `Deployment Workflow.md`: デプロイ手順
+### 管理ファイル一覧
+- [Pull Request Guidelines.md](./Pull%20Request%20Guidelines.md): PR作成ルール
+- [Agent Workflow Guidelines.md](./Agent%20Workflow%20Guidelines.md): エージェントのワークフロー（本ファイル）
+- [Code Style Guidelines.md](./Code%20Style%20Guidelines.md): コーディング規約
+- `Architecture Overview.md`: アーキテクチャ概要（未作成）
+- `Testing Guidelines.md`: テスト方針（未作成）
+- `Deployment Workflow.md`: デプロイ手順（未作成）
 
 ## Communication Rules
 
