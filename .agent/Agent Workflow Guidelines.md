@@ -42,7 +42,7 @@
 
 ### 更新タイミング
 - **内容のレビュー優先**: 指摘内容をガイドライン (.md) に反映した際、**commit/pushする前に必ず編集内容を `notify_user` にてユーザーにレビュー依頼すること。** 意図の取り違いによる誤ったルールのコミットを防止するため。
-- **PR作成・公開必須**: 承認後に `git add/commit/push` を行い、**Draftではなく「Ready for Review (Open)」状態のPR**を作成（または更新）すること。
+- **PR作成・公開必須**: 承認後に `git add/commit/push` を行い、**Draftではなく「Ready for Review (Open)」状態のPR**を作成（または更新）すること。作成時は必ず [Pull Request Guidelines.md](./Pull%20Request%20Guidelines.md) を確認し、Assignee, Reviewer, Labels が規定通り設定されていることを徹底する。
 - **ブランチ移動の禁止**: 作成したPRがマージされるまで、他の作業ブランチへの移動や実装タスクの開始を禁止する。PRのマージを確認後、`master`を最新化してから次の作業ブランチを作成すること。
 - **実作業よりも優先**: 累積データの更新（知識ベースの同期）を最優先とする。
 
