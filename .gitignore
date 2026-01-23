@@ -106,3 +106,7 @@ InitTestScene*.unity*
 
 # Mac
 *.DS_Store*
+
+# Compilation Test
+.bat/compile-test/temp/
+.bat/compile-test/*.log
