@@ -59,3 +59,9 @@ Split into two distinct assemblies to enforce Dependency Inversion.
 The `.asmdef` definitions currently enforce these rules physically.
 - `Domain.API` does NOT reference `Domain.Core`.
 - `Application` does NOT reference `Domain.Core` (it relies on abstraction).
+- `Bootstrapper` does NOT hold configuration state. It delegates configuration retrieval to the `Installer`.
+
+## Configuration & Extensibility Principles
+- **Zero Config Defaults**: Standard configurations must work out-of-the-box using POCOs (Plain Old C# Objects) without requiring asset creation (ScriptableObject).
+- **Installer Responsibility**: The `Installer` implementation is responsible for defining and retrieving its configuration. The Bootstrapper should not inject configuration dependencies into the Installer unless necessary for the interface contract.
+- **Meaningful Fields**: Do not expose `[SerializeField]` in the Bootstrapper that are only used by specific installer implementations. This is considered "Logic Leakage".

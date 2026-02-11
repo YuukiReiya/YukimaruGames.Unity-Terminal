@@ -46,7 +46,13 @@
 - **内容のレビュー優先**: 指摘内容をガイドライン (.md) に反映した際、**commit/pushする前に必ず編集内容を `notify_user` にてユーザーにレビュー依頼すること。** 意図の取り違いによる誤ったルールのコミットを防止するため。
 - **PR作成・公開必須**: 承認後に `git add/commit/push` を行い、**Draftではなく「Ready for Review (Open)」状態のPR**を作成（または更新）すること。作成時は必ず [Pull Request Guidelines.md](./Pull%20Request%20Guidelines.md) を確認し、Assignee, Reviewer, Labels が規定通り設定されていることを徹底する。
 - **ブランチ移動の禁止**: 作成したPRがマージされるまで、他の作業ブランチへの移動や実装タスクの開始を禁止する。PRのマージを確認後、`master`を最新化してから次の作業ブランチを作成すること。
-- **実作業よりも優先**: 累積データの更新（知識ベースの同期）を最優先とする。
+    - **実作業よりも優先**: 累積データの更新（知識ベースの同期）を最優先とする。新たなアーキテクチャルールや制約が判明した場合は、直ちに実装作業を中断（Stash）し、知識ベースの更新とレビュー依頼を優先すること。
+
+### Knowledge Base Update Workflow
+1.  **Suspend**: 実装タスクを中断する。
+2.  **Stash**: 現在の作業状態を `wip_task_name.md` 等のアーティファクトに退避する。
+3.  **Update**: `Architecture Overview.md` や `Agent Workflow Guidelines.md` に新たな知見を追記する。
+4.  **PR**: 知識ベースの更新のみを含むPRを作成し、承認を得るまで他作業を禁止する。
 
 ### ファイル命名規則
 - `<Category> Guidelines.md`: カテゴリごとのガイドライン
