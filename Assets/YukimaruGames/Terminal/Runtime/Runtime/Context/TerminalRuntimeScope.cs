@@ -33,7 +33,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         public void Dispose()
         {
-            EntryPoint?.Dispose();
+            (EntryPoint as IDisposable)?.Dispose();
             Coordinator?.Dispose();
         }
     }

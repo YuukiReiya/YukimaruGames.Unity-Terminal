@@ -48,7 +48,7 @@ namespace YukimaruGames.Terminal.Runtime
             _view?.Render();
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < _disposables.Count; i++)
