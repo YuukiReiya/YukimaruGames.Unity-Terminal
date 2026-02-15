@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Generic;
 using YukimaruGames.Terminal.Application;
 using YukimaruGames.Terminal.Domain.Interface;
-using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -12,29 +12,33 @@ namespace YukimaruGames.Terminal.Runtime
     public class TerminalRuntimeScope : IDisposable
     {
         public TerminalEntryPoint EntryPoint { get; }
-        public TerminalCoordinator Coordinator { get; }
         public ITerminalService Service { get; }
         public ICommandRegistry Registry { get; }
         public ICommandAutocomplete Autocomplete { get; }
 
+        private readonly IReadOnlyList<IDisposable> _disposables;
+
         public TerminalRuntimeScope(
-            TerminalEntryPoint entryPoint, 
-            TerminalCoordinator coordinator,
+            TerminalEntryPoint entryPoint,
             ITerminalService service,
             ICommandRegistry registry,
-            ICommandAutocomplete autocomplete)
+            ICommandAutocomplete autocomplete,
+            IReadOnlyList<IDisposable> disposables)
         {
             EntryPoint = entryPoint;
-            Coordinator = coordinator;
             Service = service;
             Registry = registry;
             Autocomplete = autocomplete;
+            _disposables = disposables ?? new List<IDisposable>(0);
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
-            (EntryPoint as IDisposable)?.Dispose();
-            Coordinator?.Dispose();
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < _disposables.Count; i++)
+            {
+                _disposables[i]?.Dispose();
+            }
         }
     }
 }

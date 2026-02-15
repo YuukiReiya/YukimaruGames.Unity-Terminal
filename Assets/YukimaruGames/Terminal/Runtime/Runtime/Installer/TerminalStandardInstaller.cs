@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
-using YukimaruGames.Terminal.Domain.Interface;
 using YukimaruGames.Terminal.Domain.Service;
 using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.SharedKernel;
@@ -23,7 +22,6 @@ using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Input;
-using YukimaruGames.Terminal.UI.View.Model;
 using ColorPalette = YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
 namespace YukimaruGames.Terminal.Runtime
@@ -37,7 +35,7 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeReference, SerializeInterface] 
         private ITerminalOptions _options = new TerminalStandardOptions();
 
-        public TerminalRuntimeScope Install()
+        TerminalRuntimeScope ITerminalInstaller.Install()
         {
             var theme = _theme;
             var options = _options;
@@ -201,10 +199,10 @@ namespace YukimaruGames.Terminal.Runtime
                 openButtonsStyleContext,
                 logCopyButtonStyleContext,
                 
-                // renderer.
                 cursorFlashSpeedProvider,
                 buttonVisibleConfigurator,
                 
+                // renderer.
                 windowRenderer,
                 logCopyButtonRenderer,
                 logRenderer,
@@ -225,15 +223,15 @@ namespace YukimaruGames.Terminal.Runtime
             
             var updatables = instances.OfType<IUpdatable>().ToList();
             var disposables = instances.OfType<IDisposable>().ToList();
-            
-            var entryPoint = new TerminalEntryPoint(updatables, disposables, keyboardType, view);
 
-            return new TerminalRuntimeScope(entryPoint, coordinator, service, registry, autocomplete);
+            var entryPoint = new TerminalEntryPoint(updatables, keyboardType, view);
+
+            return new TerminalRuntimeScope(entryPoint, service, registry, autocomplete, disposables);
         }
 
-        public void Uninstall(TerminalRuntimeScope scope)
+        void ITerminalInstaller.Uninstall(TerminalRuntimeScope scope)
         {
-            scope?.Dispose();
+            (scope as IDisposable)?.Dispose();
         }
 
         private InputKeyboardType ResolveKeyboardType(ITerminalOptions options)

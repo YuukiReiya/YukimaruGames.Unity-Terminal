@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.SharedKernel;
@@ -10,21 +9,18 @@ namespace YukimaruGames.Terminal.Runtime
     /// アプリケーションのライフサイクルイベント(Update, OnGUI, Dispose)を管理する.
     /// Installerによって構築され、TerminalRuntimeScopeを通じてBootstrapperから呼び出される.
     /// </summary>
-    public class TerminalEntryPoint : IDisposable
+    public class TerminalEntryPoint
     {
-        private readonly List<IUpdatable> _updatables;
-        private readonly List<IDisposable> _disposables;
+        private readonly IReadOnlyList<IUpdatable> _updatables;
         private readonly InputKeyboardType _keyboardType;
         private readonly ITerminalView _view;
 
         public TerminalEntryPoint(
-            List<IUpdatable> updatables, 
-            List<IDisposable> disposables,
+            IReadOnlyList<IUpdatable> updatables, 
             InputKeyboardType keyboardType,
             ITerminalView view)
         {
             _updatables = updatables;
-            _disposables = disposables;
             _keyboardType = keyboardType;
             _view = view;
         }
@@ -46,16 +42,6 @@ namespace YukimaruGames.Terminal.Runtime
                 for (var i = 0; i < _updatables.Count; ++i) _updatables[i]?.Update(Time.deltaTime);
             }
             _view?.Render();
-        }
-
-        void IDisposable.Dispose()
-        {
-            // ReSharper disable once ForCanBeConvertedToForeach
-            for (var i = 0; i < _disposables.Count; i++)
-            {
-                _disposables[i]?.Dispose();
-            }
-            _disposables.Clear();
         }
     }
 }

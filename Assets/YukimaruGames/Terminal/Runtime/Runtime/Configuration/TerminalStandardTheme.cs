@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.View.Model;
-using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.Runtime
 {
