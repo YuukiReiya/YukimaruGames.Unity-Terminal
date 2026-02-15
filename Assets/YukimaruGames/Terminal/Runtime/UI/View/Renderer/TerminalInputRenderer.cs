@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.UI.View
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly IGUIStyleProvider _styleProvider;
         private readonly IColorPaletteProvider _colorPaletteProvider;
-        private readonly ICursorFlashSpeedProvider _cursorFlashSpeedProvider;
+        private readonly ICursorFlashProvider _cursorFlashProvider;
 
         private bool _isCurrentlyFocused;
         private bool _isMoveCursorToEnd;
@@ -79,12 +79,12 @@ namespace YukimaruGames.Terminal.UI.View
             IScrollConfigurator scrollConfigurator,
             IGUIStyleProvider styleProvider,
             IColorPaletteProvider colorPaletteProvider,
-            ICursorFlashSpeedProvider cursorFlashSpeedProvider)
+            ICursorFlashProvider cursorFlashProvider)
         {
             _scrollConfigurator = scrollConfigurator;
             _styleProvider = styleProvider;
             _colorPaletteProvider = colorPaletteProvider;
-            _cursorFlashSpeedProvider = cursorFlashSpeedProvider;
+            _cursorFlashProvider = cursorFlashProvider;
         }
         
         void ITerminalPreRenderer.PreRender()
@@ -116,7 +116,7 @@ namespace YukimaruGames.Terminal.UI.View
             
             GUI.skin.settings.cursorColor = _colorPaletteProvider.GetColor(ColorPalette.Cursor);
             GUI.skin.settings.selectionColor = _colorPaletteProvider.GetColor(ColorPalette.Selection);
-            GUI.skin.settings.cursorFlashSpeed = _cursorFlashSpeedProvider.GetFlashSpeed();
+            GUI.skin.settings.cursorFlashSpeed = _cursorFlashProvider.FlashSpeed;
             
             InputText =  GUILayout.TextField(data.InputText, _styleProvider.GetStyle());
             SendImeComposingState();

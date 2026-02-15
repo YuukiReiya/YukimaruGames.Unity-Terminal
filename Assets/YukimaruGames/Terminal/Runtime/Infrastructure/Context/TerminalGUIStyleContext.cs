@@ -4,7 +4,7 @@ using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.Infrastructure
 {
-    public sealed class TerminalGUIStyleContext : IGUIStyleProvider, IDisposable
+    public sealed class TerminalGUIStyleContext : IGUIStyleProvider, IGUIStyleConfigurator, IDisposable
     {
         private readonly IFontProvider _provider;
         private readonly Lazy<GUIStyle> _styleLazy;
@@ -30,9 +30,9 @@ namespace YukimaruGames.Terminal.Infrastructure
             _provider.OnSizeChanged += HandleFontSizeChanged;
         }
 
-        public GUIStyle GetStyle() => _styleLazy.Value;
+        GUIStyle IGUIStyleProvider.GetStyle() => _styleLazy.Value;
 
-        public void SetPadding(int padding)
+        void IGUIStyleConfigurator.SetPadding(int padding)
         {
             if (_padding.left == padding &&
                 _padding.right == padding &&
@@ -50,7 +50,7 @@ namespace YukimaruGames.Terminal.Infrastructure
             OnStyleChanged?.Invoke();
         }
 
-        public void SetColor(Color color)
+        void IGUIStyleConfigurator.SetColor(in Color color)
         {
             if (_styleLazy.Value.normal.textColor == color) return;
 
