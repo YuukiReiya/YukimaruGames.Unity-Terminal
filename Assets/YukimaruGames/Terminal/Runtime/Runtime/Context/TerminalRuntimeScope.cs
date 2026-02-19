@@ -34,10 +34,25 @@ namespace YukimaruGames.Terminal.Runtime
 
         void IDisposable.Dispose()
         {
+            List<Exception> exceptions = null;
+            
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < _disposables.Count; i++)
             {
-                _disposables[i]?.Dispose();
+                try
+                {
+                    _disposables[i]?.Dispose();
+                }
+                catch (Exception e)
+                {
+                    exceptions ??= new List<Exception>();
+                    exceptions.Add(e);
+                }
+            }
+
+            if (exceptions != null)
+            {
+                throw new AggregateException($"One or more exceptions occurred while disposing resources.", exceptions);
             }
         }
     }
