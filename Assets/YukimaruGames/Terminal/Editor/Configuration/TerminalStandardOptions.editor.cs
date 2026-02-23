@@ -55,7 +55,7 @@ namespace YukimaruGames.Terminal.Editor
         private void RenderInputCategory(SerializedProperty property)
         {
             var keyboardTypeProp = property.FindPropertyRelative("_inputKeyboardType");
-            var keyboardType = (InputKeyboardType)keyboardTypeProp.enumValueIndex;
+            var keyboardType = (InputKeyboardType)keyboardTypeProp.intValue;
 
             EditorGUILayout.LabelField("Keyboard Type", EditorStyles.boldLabel);
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
@@ -68,7 +68,7 @@ namespace YukimaruGames.Terminal.Editor
                         bool isSelected = GUILayout.Toggle(keyboardType == type, type.ToString(), _typeStyle);
                         if (isSelected && keyboardType != type)
                         {
-                            keyboardTypeProp.enumValueIndex = (int)type;
+                            keyboardTypeProp.intValue = (int)type;
                         }
                     }
                 }
