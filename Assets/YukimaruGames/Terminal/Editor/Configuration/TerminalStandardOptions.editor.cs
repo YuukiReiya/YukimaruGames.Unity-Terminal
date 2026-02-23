@@ -19,6 +19,8 @@ namespace YukimaruGames.Terminal.Editor
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            if (property == null || property.serializedObject.targetObject == null) return;
+            
             InitStyles();
 
             // PropertyDrawerの基本：一つのRectの中で描画していく
