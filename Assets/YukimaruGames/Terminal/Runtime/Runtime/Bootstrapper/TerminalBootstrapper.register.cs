@@ -17,9 +17,14 @@ namespace YukimaruGames.Terminal.Runtime
         /// <param name="deletesAutocomplete">自動補完文字列として登録していた場合に登録文字列群から削除するか</param>
         public void UnregisterCommand(string command,bool deletesAutocomplete = true)
         {
-            if (_registry.Remove(command) && deletesAutocomplete)
+            if (_scope?.Registry == null)
             {
-                _autocomplete.Unregister(command);
+                return;
+            }
+            
+            if (_scope.Registry.Remove(command) && deletesAutocomplete)
+            {
+                _scope.Autocomplete?.Unregister(command);
             }
         }
         
@@ -56,17 +61,17 @@ namespace YukimaruGames.Terminal.Runtime
         {
             if (!TryGetMethodInfo(instance.GetType(), methodName, out var methodInfo))
             {
-                _service.Error($"'{methodName}' is not found. so not command registered '{command}'");
+                _scope?.Service?.Error($"'{methodName}' is not found. so not command registered '{command}'");
                 return;
             }
             
             var factory = new CommandFactory();
             var handler = factory.Create(instance, command, methodInfo);
 
-            if (_registry.Add(command, handler)
+            if ((_scope?.Registry?.Add(command, handler) ?? false)
                 && supportsAutocomplete)
             {
-                _autocomplete.Register(command);
+                _scope?.Autocomplete?.Register(command);
             }
         }
 
@@ -97,10 +102,10 @@ namespace YukimaruGames.Terminal.Runtime
             var factory = new CommandFactory();
             var handler = factory.Create(@delegate);
 
-            if (_registry.Add(command, handler)
+            if ((_scope?.Registry?.Add(command, handler) ?? false)
                 && supportsAutocomplete)
             {
-                _autocomplete.Register(command);
+                _scope?.Autocomplete?.Register(command);
             }
         }
 
