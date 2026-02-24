@@ -140,8 +140,6 @@ namespace YukimaruGames.Terminal.Editor
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            // GUILayoutを使用しているため、自動レイアウトに任せる。
-            // ただし、Assertion対策として最小限の1行分は返しておく。
             return 0f; 
         }
     }
