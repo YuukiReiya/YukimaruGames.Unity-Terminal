@@ -94,12 +94,13 @@ namespace YukimaruGames.Terminal.Editor
             
             // 子プロパティ（_openKeyなど）を全て回して表示
             var endProp = keyProp.GetEndProperty();
-            keyProp.NextVisible(true); // 最初の要素へ
-            while (!SerializedProperty.EqualContents(keyProp, endProp))
+            if (!keyProp.NextVisible(true)) return;
+            do
             {
+                if (SerializedProperty.EqualContents(keyProp, endProp)) break;
                 EditorGUILayout.PropertyField(keyProp, true);
-                if (!keyProp.NextVisible(false)) break;
             }
+            while (keyProp.NextVisible(false)) ;
         }
 
         private void RenderSystemCategory(SerializedProperty property)
