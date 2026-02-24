@@ -271,12 +271,12 @@ namespace YukimaruGames.Terminal.Runtime
             var viewContext = new TerminalViewContext
             {
                 WindowRenderer = windowRenderer,
+                LogCopyButtonRenderer = logCopyButtonRenderer,
                 LogRenderer = logRenderer,
                 InputRenderer = inputRenderer,
                 PromptRenderer = promptRenderer,
                 ExecuteButtonRenderer = executeButtonRenderer,
                 ButtonRenderer = buttonRenderer,
-                LogCopyButtonRenderer = logCopyButtonRenderer,
 
                 WindowRenderDataProvider = windowPresenter,
                 LogRenderDataProvider = logPresenter,
@@ -304,21 +304,24 @@ namespace YukimaruGames.Terminal.Runtime
                     fontProvider,
                     pixelTexture2DRepository,
                     scrollConfigurator,
+                    
                     logStyleContext,
                     inputStyleContext,
                     promptStyleContext,
                     executeButtonsStyleContext,
                     openButtonsStyleContext,
                     logCopyButtonStyleContext,
+                    
                     cursorFlashSpeedProvider,
-                    promptStyleContext,
-                    viewContext,
+                    buttonVisibleConfigurator,
                     
                     windowRenderer,
                     logCopyButtonRenderer,
                     logRenderer,
+                    inputRenderer,
                     promptRenderer,
                     executeButtonRenderer,
+                    buttonRenderer,
 
                     windowPresenter,
                     logPresenter,
@@ -326,6 +329,7 @@ namespace YukimaruGames.Terminal.Runtime
                     executeButtonPresenter,
                     buttonPresenter,
                     
+                    viewContext,
                     view
                 },
             };
