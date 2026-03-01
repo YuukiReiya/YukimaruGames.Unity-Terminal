@@ -106,17 +106,21 @@ namespace YukimaruGames.Terminal.Runtime
         private ITerminalTheme _theme = new TerminalStandardTheme();
 
         [SerializeReference, SerializeInterface] 
+        private ITerminalAnimation _animation = new TerminalStandardAnimation();
+
+        [SerializeReference, SerializeInterface] 
         private ITerminalOptions _options = new TerminalStandardOptions();
 
         TerminalRuntimeScope ITerminalInstaller.Install()
         {
             // Null Object Pattern: 意図的な null は Null 実装にフォールバック
             var theme = _theme ?? new TerminalNullTheme();
+            var animation = _animation ?? new TerminalNullAnimation();
             var options = _options ?? new TerminalNullOptions();
 
             var domain = BuildDomainContext(options);
             RegisterCommands(in domain);
-            var rendering = BuildRenderingContext(theme, options, in domain);
+            var rendering = BuildRenderingContext(theme, animation, options, in domain);
             var coordinator = BuildCoordinatorContext(in domain, in rendering, options);
 
             return BuildScope(in domain, in rendering, in coordinator);
@@ -200,15 +204,15 @@ namespace YukimaruGames.Terminal.Runtime
             }
         }
 
-        private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalOptions options, in DomainContext domain)
+        private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
             var animatorDataConfigurator = new TerminalWindowAnimatorDataConfigurator()
             {
-                State = theme.BootupWindowState,
-                Anchor = theme.Anchor,
-                Style = theme.WindowStyle,
-                Duration = theme.Duration,
-                Scale = theme.CompactScale,
+                State = animation.BootupWindowState,
+                Anchor = animation.Anchor,
+                Style = animation.WindowStyle,
+                Duration = animation.Duration,
+                Scale = animation.CompactScale,
             };
 
             var colorPaletteProvider = new ColorPaletteProvider(new Dictionary<string, Color>

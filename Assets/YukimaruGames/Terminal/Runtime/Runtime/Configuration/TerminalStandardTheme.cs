@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -27,13 +26,6 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeField] private Color _copyButtonColor = new(0f, 0.7f, 0.8f);
         [SerializeField] private float _cursorFlashSpeed = 1.886792f;
 
-        [Header("Window Settings")]
-        [SerializeField] private TerminalState _bootupWindowState = TerminalState.Close;
-        [SerializeField] private TerminalAnchor _anchor = TerminalAnchor.Top;
-        [SerializeField] private TerminalWindowStyle _windowStyle = TerminalWindowStyle.Compact;
-        [SerializeField] private float _duration = 1f;
-        [SerializeField] private float _compactScale = 0.35f;
-
         public Font Font => _font;
         public int FontSize => _fontSize;
         public Color BackgroundColor => _backgroundColor;
@@ -52,11 +44,5 @@ namespace YukimaruGames.Terminal.Runtime
         public Color ButtonColor => _buttonColor;
         public Color CopyButtonColor => _copyButtonColor;
         public float CursorFlashSpeed => _cursorFlashSpeed;
-        
-        public TerminalState BootupWindowState => _bootupWindowState;
-        public TerminalAnchor Anchor => _anchor;
-        public TerminalWindowStyle WindowStyle => _windowStyle;
-        public float Duration => _duration;
-        public float CompactScale => _compactScale;
     }
 }

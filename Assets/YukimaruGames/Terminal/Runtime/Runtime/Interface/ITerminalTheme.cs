@@ -1,5 +1,4 @@
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -23,11 +22,5 @@ namespace YukimaruGames.Terminal.Runtime
         Color ButtonColor { get; }
         Color CopyButtonColor { get; }
         float CursorFlashSpeed { get; }
-        
-        TerminalState BootupWindowState { get; }
-        TerminalAnchor Anchor { get; }
-        TerminalWindowStyle WindowStyle { get; }
-        float Duration { get; }
-        float CompactScale { get; }
     }
 }
