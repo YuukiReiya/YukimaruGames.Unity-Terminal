@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -37,14 +36,5 @@ namespace YukimaruGames.Terminal.Runtime
 
         // 控えめなカーソル速度
         public float CursorFlashSpeed => 0.0f;
-
-        // 起動時は閉じた状態
-        public TerminalState BootupWindowState => TerminalState.Close;
-
-        // デフォルト位置・スタイル
-        public TerminalAnchor Anchor => TerminalAnchor.Top;
-        public TerminalWindowStyle WindowStyle => TerminalWindowStyle.Full;
-        public float Duration => 0.0f;
-        public float CompactScale => 0.0f;
     }
 }
