@@ -28,7 +28,7 @@ using ColorPalette = YukimaruGames.Terminal.SharedKernel.Constants.Constants.Col
 namespace YukimaruGames.Terminal.Runtime
 {
     [Serializable]
-    public class TerminalStandardInstaller : ITerminalInstaller
+    public sealed class TerminalStandardInstaller : ITerminalInstaller
     {
         #region inner-struct
 

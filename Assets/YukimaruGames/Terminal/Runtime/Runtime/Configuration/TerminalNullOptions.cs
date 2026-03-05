@@ -19,7 +19,7 @@ namespace YukimaruGames.Terminal.Runtime
         /// ユーザーが意図的に Options を null にした場合のフォールバック先.
         /// </summary>
         [Serializable, HideInTypeMenu]
-        public class TerminalNullOptions : ITerminalOptions
+        public sealed class TerminalNullOptions : ITerminalOptions
         {
                 // 入力を無効化
                 public InputKeyboardType InputKeyboardType => InputKeyboardType.None;
