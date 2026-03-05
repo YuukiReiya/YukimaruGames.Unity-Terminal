@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.Runtime
     /// アプリケーションのライフサイクルイベント(Update, OnGUI, Dispose)を管理する.
     /// Installerによって構築され、TerminalRuntimeScopeを通じてBootstrapperから呼び出される.
     /// </summary>
-    public class TerminalEntryPoint
+    public sealed class TerminalEntryPoint
     {
         private readonly IReadOnlyList<IUpdatable> _updatables;
         private readonly InputKeyboardType _keyboardType;

@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.Domain.Service
     /// <summary>
     /// コマンドのログ発行クラス.
     /// </summary>
-    public class CommandLogger : ICommandLogger, IDisposable
+    public sealed class CommandLogger : ICommandLogger, IDisposable
     {
         /// <summary>
         /// バッファーに保存する最大数.

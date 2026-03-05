@@ -15,7 +15,7 @@ using UnityEngine;
 namespace YukimaruGames.Terminal.Runtime
 {
     [Serializable]
-    public class TerminalStandardOptions : ITerminalOptions
+    public sealed class TerminalStandardOptions : ITerminalOptions
     {
         [Header("Input Settings")]
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;

@@ -2,7 +2,7 @@ using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.UI.View
 {
-    public class TerminalViewContext
+    public sealed class TerminalViewContext
     {
         // Renderers
         public ITerminalWindowRenderer WindowRenderer { get; set; }

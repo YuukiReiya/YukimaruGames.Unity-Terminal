@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.Runtime
     /// アプリケーションの実行に必要なオブジェクト群を保持するコンテナ.
     /// Installerによって構築され、EntryPointに渡される.
     /// </summary>
-    public class TerminalRuntimeScope : IDisposable
+    public sealed class TerminalRuntimeScope : IDisposable
     {
         public TerminalEntryPoint EntryPoint { get; }
         public ITerminalService Service { get; }
