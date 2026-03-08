@@ -93,48 +93,5 @@ namespace YukimaruGames.Terminal.Domain.Service
             }
             return false;
         } 
-
-        /// <summary>
-        /// コマンドの追加.
-        /// </summary>
-        private void Add(Type declaringType, MethodInfo method)
-        {
-            try
-            {
-                if (System.Attribute.GetCustomAttribute(method, typeof(TerminalCommandAttribute)) is not TerminalCommandAttribute
-                    attribute)
-                {
-                    // 属性が付与されていないメソッドはスキップ.
-                    return;
-                }
-
-                if (!method.IsStatic)
-                {
-                    // Assemblyから登録するときは呼び出し元のインスタンスが特定できないはずなのでstaticのみ.
-                    _logger?.Send(
-                        MessageType.Warning,
-                        $"Skipping non-static method '{method.Name}' in type '{declaringType.FullName}'. Only static methods can be registered.");
-                    return;
-                }
-                
-                var command = attribute.Meta.Command;
-                if (string.IsNullOrEmpty(command) || string.IsNullOrWhiteSpace(command))
-                {
-                    _logger?.Send(
-                        MessageType.Warning,
-                        $"Command name is null or empty for method '{method.Name}' in type '{declaringType.FullName}'.");
-                    return;
-                }
-
-                Add(command, method, attribute);
-            }
-            catch (System.Exception e)
-            {
-                _logger?.Send(
-                    MessageType.Exception,
-                    $"Exception: {e.GetType().Name}{Environment.NewLine}{e.Message}");
-                throw;
-            }
-        }
     }
 }
