@@ -132,7 +132,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             }
             catch (OperationCanceledException)
             {
-                Invoke(_onAborted,State);
+                Invoke(_onAborted, State);
             }
             catch (Exception e)
             {
