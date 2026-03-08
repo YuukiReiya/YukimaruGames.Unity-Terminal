@@ -92,18 +92,22 @@ namespace YukimaruGames.Terminal.UI.Presentation
             Evaluate(0f, 0f);
         }
 
-        private async void Play()
+        private void Play()
+        {
+            _ = PlayAsync();
+        }
+
+        private async Task PlayAsync()
         {
             _cts?.Cancel();
             _cts?.Dispose();
 
             if (Mathf.Approximately(0f, Duration))
             {
-                _cts?.Dispose();
                 _cts = null;
                 IsAnimating = false;
                 Evaluate(0f, 0f);
-                _onCompleted?.Invoke(State);
+                Invoke(_onCompleted, State);
                 return;
             }
 
@@ -124,11 +128,15 @@ namespace YukimaruGames.Terminal.UI.Presentation
                 }
 
                 Evaluate(duration, duration);
-                _onCompleted?.Invoke(State);
+                Invoke(_onCompleted, State);
             }
             catch (OperationCanceledException)
             {
-                _onAborted?.Invoke(State);
+                Invoke(_onAborted, State);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
             }
             finally
             {
@@ -162,6 +170,18 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
             _cts?.Dispose();
             _cts = null;
+        }
+
+        private void Invoke(Action<TerminalState> action, TerminalState arg)
+        {
+            try
+            {
+                action?.Invoke(arg);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }
