@@ -92,49 +92,61 @@ namespace YukimaruGames.Terminal.UI.Presentation
             Evaluate(0f, 0f);
         }
 
-        private async void Play()
+        private void Play()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
+            _ = PlayAsync();
+        }
 
-            if (Mathf.Approximately(0f, Duration))
-            {
-                _cts?.Dispose();
-                _cts = null;
-                IsAnimating = false;
-                Evaluate(0f, 0f);
-                _onCompleted?.Invoke(State);
-                return;
-            }
-
-            _cts = new CancellationTokenSource();
-            IsAnimating = true;
-
+        private async Task PlayAsync()
+        {
             try
             {
-                var duration = Duration * Scale;
-                var token = _cts.Token;
-                var elapsedTime = 0f;
-                while (elapsedTime < duration)
+                _cts?.Cancel();
+                _cts?.Dispose();
+
+                if (Mathf.Approximately(0f, Duration))
                 {
-                    token.ThrowIfCancellationRequested();
-                    Evaluate(duration, elapsedTime);
-                    await Task.Yield();
-                    elapsedTime += Time.deltaTime;
+                    _cts?.Dispose();
+                    _cts = null;
+                    IsAnimating = false;
+                    Evaluate(0f, 0f);
+                    _onCompleted?.Invoke(State);
+                    return;
                 }
 
-                Evaluate(duration, duration);
-                _onCompleted?.Invoke(State);
+                _cts = new CancellationTokenSource();
+                IsAnimating = true;
+
+                try
+                {
+                    var duration = Duration * Scale;
+                    var token = _cts.Token;
+                    var elapsedTime = 0f;
+                    while (elapsedTime < duration)
+                    {
+                        token.ThrowIfCancellationRequested();
+                        Evaluate(duration, elapsedTime);
+                        await Task.Yield();
+                        elapsedTime += Time.deltaTime;
+                    }
+
+                    Evaluate(duration, duration);
+                    _onCompleted?.Invoke(State);
+                }
+                catch (OperationCanceledException)
+                {
+                    _onAborted?.Invoke(State);
+                }
+                finally
+                {
+                    IsAnimating = false;
+                    _cts?.Dispose();
+                    _cts = null;
+                }
             }
-            catch (OperationCanceledException)
+            catch (Exception e)
             {
-                _onAborted?.Invoke(State);
-            }
-            finally
-            {
-                IsAnimating = false;
-                _cts?.Dispose();
-                _cts = null;
+                Debug.LogException(e);
             }
         }
 
