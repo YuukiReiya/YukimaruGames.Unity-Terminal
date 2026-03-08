@@ -99,54 +99,50 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         private async Task PlayAsync()
         {
+            _cts?.Cancel();
+            _cts?.Dispose();
+
+            if (Mathf.Approximately(0f, Duration))
+            {
+                _cts = null;
+                IsAnimating = false;
+                Evaluate(0f, 0f);
+                _onCompleted?.Invoke(State);
+                return;
+            }
+
+            _cts = new CancellationTokenSource();
+            IsAnimating = true;
+
             try
             {
-                _cts?.Cancel();
-                _cts?.Dispose();
-
-                if (Mathf.Approximately(0f, Duration))
+                var duration = Duration * Scale;
+                var token = _cts.Token;
+                var elapsedTime = 0f;
+                while (elapsedTime < duration)
                 {
-                    _cts?.Dispose();
-                    _cts = null;
-                    IsAnimating = false;
-                    Evaluate(0f, 0f);
-                    _onCompleted?.Invoke(State);
-                    return;
+                    token.ThrowIfCancellationRequested();
+                    Evaluate(duration, elapsedTime);
+                    await Task.Yield();
+                    elapsedTime += Time.deltaTime;
                 }
 
-                _cts = new CancellationTokenSource();
-                IsAnimating = true;
-
-                try
-                {
-                    var duration = Duration * Scale;
-                    var token = _cts.Token;
-                    var elapsedTime = 0f;
-                    while (elapsedTime < duration)
-                    {
-                        token.ThrowIfCancellationRequested();
-                        Evaluate(duration, elapsedTime);
-                        await Task.Yield();
-                        elapsedTime += Time.deltaTime;
-                    }
-
-                    Evaluate(duration, duration);
-                    _onCompleted?.Invoke(State);
-                }
-                catch (OperationCanceledException)
-                {
-                    _onAborted?.Invoke(State);
-                }
-                finally
-                {
-                    IsAnimating = false;
-                    _cts?.Dispose();
-                    _cts = null;
-                }
+                Evaluate(duration, duration);
+                _onCompleted?.Invoke(State);
+            }
+            catch (OperationCanceledException)
+            {
+                _onAborted?.Invoke(State);
             }
             catch (Exception e)
             {
                 Debug.LogException(e);
+            }
+            finally
+            {
+                IsAnimating = false;
+                _cts?.Dispose();
+                _cts = null;
             }
         }
 
