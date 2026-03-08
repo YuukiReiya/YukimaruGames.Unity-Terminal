@@ -107,7 +107,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
                 _cts = null;
                 IsAnimating = false;
                 Evaluate(0f, 0f);
-                _onCompleted?.Invoke(State);
+                Invoke(_onCompleted, State);
                 return;
             }
 
