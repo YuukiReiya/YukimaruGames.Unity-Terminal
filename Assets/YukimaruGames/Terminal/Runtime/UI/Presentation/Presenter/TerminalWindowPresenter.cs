@@ -128,11 +128,11 @@ namespace YukimaruGames.Terminal.UI.Presentation
                 }
 
                 Evaluate(duration, duration);
-                _onCompleted?.Invoke(State);
+                Invoke(_onCompleted, State);
             }
             catch (OperationCanceledException)
             {
-                _onAborted?.Invoke(State);
+                Invoke(_onAborted,State);
             }
             catch (Exception e)
             {
@@ -170,6 +170,18 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
             _cts?.Dispose();
             _cts = null;
+        }
+
+        private void Invoke(Action<TerminalState> action, TerminalState arg)
+        {
+            try
+            {
+                action?.Invoke(arg);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }
