@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.Domain.Attribute;
 using YukimaruGames.Terminal.Domain.Exception;
 using YukimaruGames.Terminal.Domain.Model;
 
-namespace YukimaruGames.Terminal.Domain.Service
+namespace YukimaruGames.Terminal.Infrastructure.Service
 {
     /// <summary>
     /// 実行コマンドのFactory.
