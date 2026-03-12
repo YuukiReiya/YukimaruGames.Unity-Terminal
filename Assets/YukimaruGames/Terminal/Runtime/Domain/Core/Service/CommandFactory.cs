@@ -10,7 +10,7 @@ namespace YukimaruGames.Terminal.Domain.Service
     /// <summary>
     /// 実行コマンドのFactory.
     /// </summary>
-    public sealed class CommandFactory
+    public static class CommandFactory
     {
         /// <summary>
         /// コマンドハンドラーの生成.
@@ -22,7 +22,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// <param name="maxArgCount">メソッドの最大引数</param>
         /// <param name="help">ヘルプ</param>
         /// <returns>コマンドの実行型</returns>
-        private CommandHandler Create(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help)
+        private static CommandHandler Create(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help)
         {
             var parameter4Ex = Expression.Parameter(typeof(CommandArgument[]), "args");
             var methodParameters = methodInfo.GetParameters();
@@ -61,7 +61,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// </summary>
         /// <param name="methodInfo">呼び出しメソッド情報</param>
         /// <returns>コマンドの実行型</returns>
-        public CommandHandler Create(MethodInfo methodInfo)
+        public static CommandHandler Create(MethodInfo methodInfo)
         {
             var attribute = methodInfo.GetCustomAttribute<TerminalCommandAttribute>();
             var length = methodInfo.GetParameters().Length;
@@ -86,7 +86,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// <p>TODO:</p>
         /// <p>オーバーロードされたメソッドの呼び出しをサポート出来ていない</p>
         /// </remarks>
-        public CommandHandler Create<T>(T instance, string command, MethodInfo methodInfo) where T : class
+        public static CommandHandler Create<T>(T instance, string command, MethodInfo methodInfo) where T : class
         {
             var length = methodInfo.GetParameters().Length;
             return Create(
@@ -116,7 +116,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         ///     var handler = Create(@delegate);
         /// }
         /// </code></sample>
-        public CommandHandler Create<TDelegate>(TDelegate @delegate) where TDelegate : Delegate
+        public static CommandHandler Create<TDelegate>(TDelegate @delegate) where TDelegate : Delegate
         {
             var methodInfo = @delegate.Method;
             var instance = @delegate.Target;
@@ -138,7 +138,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// <param name="parameterExpression">呼び出し引数のExpression</param>
         /// <param name="methodParameters">メソッドに定義されている引数</param>
         /// <returns>構築したメソッドのExpression</returns>
-        private Expression BuildMethodCallExpression(
+        private static Expression BuildMethodCallExpression(
             object instance,
             MethodInfo methodInfo,
             ParameterExpression parameterExpression,
@@ -181,7 +181,7 @@ namespace YukimaruGames.Terminal.Domain.Service
         /// <param name="minArgCount">メソッドの引数の最小数</param>
         /// <param name="maxArgCount">メソッドの引数の最大数</param>
         /// <returns>メソッドの呼び出し引数が閾値に収まっているか判定する条件式のExpression</returns>
-        private Expression BuildValidateExpression(
+        private static Expression BuildValidateExpression(
             ParameterExpression parameterExpression,
             int minArgCount,
             int maxArgCount)

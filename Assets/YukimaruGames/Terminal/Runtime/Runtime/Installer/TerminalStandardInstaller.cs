@@ -54,8 +54,6 @@ namespace YukimaruGames.Terminal.Runtime
             public ICommandAutocomplete Autocomplete;
             /// <inheritdoc cref="ICommandDiscoverer"/>
             public ICommandDiscoverer Discoverer;
-            /// <inheritdoc cref="CommandFactory"/>
-            public CommandFactory Factory;
         }
 
         /// <summary>
@@ -168,7 +166,6 @@ namespace YukimaruGames.Terminal.Runtime
             var history = new CommandHistory();
             var discover = new CommandDiscoverer(logger);
             var autocomplete = new CommandAutocomplete();
-            var factory = new CommandFactory();
             var service = new TerminalService(
                 logger,
                 registry,
@@ -180,13 +177,12 @@ namespace YukimaruGames.Terminal.Runtime
 
             return new DomainContext
             {
-                Components = new object[] { logger, registry, history, autocomplete, discover, factory, service },
+                Components = new object[] { logger, registry, history, autocomplete, discover, service },
                 Logger = logger,
                 Registry = registry,
                 History = history,
                 Autocomplete = autocomplete,
                 Discoverer = discover,
-                Factory = factory,
                 Service = service,
             };
         }
@@ -196,7 +192,7 @@ namespace YukimaruGames.Terminal.Runtime
             var specs = domain.Discoverer.Discover();
             foreach (var spec in specs)
             {
-                var handler = domain.Factory.Create(spec.Method);
+                var handler = CommandFactory.Create(spec.Method);
                 if (domain.Registry.Add(spec.Meta.Command, handler))
                 {
                     domain.Autocomplete.Register(spec.Meta.Command);

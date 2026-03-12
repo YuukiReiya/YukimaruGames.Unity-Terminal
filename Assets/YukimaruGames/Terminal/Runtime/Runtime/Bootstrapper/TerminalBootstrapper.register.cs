@@ -65,8 +65,7 @@ namespace YukimaruGames.Terminal.Runtime
                 return;
             }
             
-            var factory = new CommandFactory();
-            var handler = factory.Create(instance, command, methodInfo);
+            var handler = CommandFactory.Create(instance, command, methodInfo);
 
             if ((_scope?.Registry?.Add(command, handler) ?? false)
                 && supportsAutocomplete)
@@ -99,8 +98,7 @@ namespace YukimaruGames.Terminal.Runtime
         /// </code></sample>
         public void RegisterCommand<TDelegate>(string command, TDelegate @delegate, bool supportsAutocomplete = true) where TDelegate : Delegate
         {
-            var factory = new CommandFactory();
-            var handler = factory.Create(@delegate);
+            var handler = CommandFactory.Create(@delegate);
 
             if ((_scope?.Registry?.Add(command, handler) ?? false)
                 && supportsAutocomplete)
