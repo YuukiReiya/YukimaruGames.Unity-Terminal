@@ -1,19 +1,20 @@
 using System;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
     public sealed class TerminalButtonPresenter : ITerminalButtonPresenter, ITerminalButtonRenderDataProvider, IDisposable
     {
         private readonly ITerminalButtonRenderer _renderer;
-        private readonly ITerminalWindowPresenter _windowPresenter;
+        private readonly IWindowPresenter _windowPresenter;
         private readonly ITerminalButtonVisibleProvider _buttonVisibleProvider;
 
         public event Action OnOpenTriggered;
         public event Action OnCloseTriggered;
 
-        public TerminalButtonPresenter(ITerminalButtonRenderer renderer, ITerminalWindowPresenter windowPresenter, ITerminalButtonVisibleProvider buttonVisibleProvider)
+        public TerminalButtonPresenter(ITerminalButtonRenderer renderer, IWindowPresenter windowPresenter, ITerminalButtonVisibleProvider buttonVisibleProvider)
         {
             _renderer = renderer;
             _windowPresenter = windowPresenter;

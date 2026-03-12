@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public interface ITerminalWindowPresenter : ITerminalWindowRenderDataProvider
+    public interface IWindowPresenter : IWindowRenderDataProvider
     {
         bool IsAnimating { get; }
         TerminalState State { get; set; }

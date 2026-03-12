@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace YukimaruGames.Terminal.UI.Presentation.Model
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public readonly struct TerminalWindowRenderData
+    public readonly struct WindowRenderData
     {
         public int Id { get; }
         public Rect Rect { get; }
 
-        public TerminalWindowRenderData(int id, Rect rect)
+        public WindowRenderData(int id, Rect rect)
         {
             Id = id;
             Rect = rect;

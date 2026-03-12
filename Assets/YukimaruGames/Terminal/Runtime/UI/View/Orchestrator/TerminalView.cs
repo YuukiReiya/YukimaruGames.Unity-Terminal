@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.UI.View
 {
     public sealed class TerminalView : ITerminalView, IDisposable
     {
         // renderer.
-        private readonly ITerminalWindowRenderer _windowRenderer;
+        private readonly IWindowRenderer _windowRenderer;
         private readonly ITerminalLogRenderer _logRenderer;
         private readonly ITerminalInputRenderer _inputRenderer;
         private readonly ITerminalPromptRenderer _promptRenderer;
@@ -18,7 +19,7 @@ namespace YukimaruGames.Terminal.UI.View
         private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         
         // provider.
-        private readonly ITerminalWindowRenderDataProvider _windowRenderDataProvider;
+        private readonly IWindowRenderDataProvider _windowRenderDataProvider;
         private readonly ITerminalLogRenderDataProvider _logRenderDataProvider;
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
         private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;

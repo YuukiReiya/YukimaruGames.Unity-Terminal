@@ -24,6 +24,7 @@ using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Input;
+using YukimaruGames.Terminal.UI.Window;
 using ColorPalette = YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
 namespace YukimaruGames.Terminal.Runtime
@@ -71,8 +72,8 @@ namespace YukimaruGames.Terminal.Runtime
             public ITerminalView View;
             /// <inheritdoc cref="IScrollConfigurator"/>
             public IScrollConfigurator ScrollConfigurator;
-            /// <inheritdoc cref="ITerminalWindowPresenter"/>
-            public ITerminalWindowPresenter WindowPresenter;
+            /// <inheritdoc cref="IWindowPresenter"/>
+            public IWindowPresenter WindowPresenter;
             /// <inheritdoc cref="ITerminalInputPresenter"/>
             public ITerminalInputPresenter InputPresenter;
             /// <inheritdoc cref="ITerminalExecuteButtonPresenter"/>
@@ -252,7 +253,7 @@ namespace YukimaruGames.Terminal.Runtime
             };
 
             // Renderers
-            var windowRenderer = new TerminalWindowRenderer(pixelTexture2DRepository);
+            var windowRenderer = new WindowRenderer(pixelTexture2DRepository);
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
             var logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(buttonVisibleConfigurator, logCopyButtonStyleContext);
             var logRenderer = new TerminalLogRenderer(logCopyButtonRenderer, logStyleContext, colorPaletteProvider);
@@ -262,7 +263,7 @@ namespace YukimaruGames.Terminal.Runtime
             var buttonRenderer = new TerminalButtonRenderer(pixelTexture2DRepository, openButtonsStyleContext);
 
             // Presenters
-            var windowPresenter = new TerminalWindowPresenter(animatorDataConfigurator, new TerminalWindowAnimator());
+            var windowPresenter = new WindowPresenter(animatorDataConfigurator, new TerminalWindowAnimator());
             var logPresenter = new TerminalLogPresenter(domain.Service);
             var inputPresenter = new TerminalInputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new TerminalExecuteButtonPresenter(executeButtonRenderer, buttonVisibleConfigurator);

@@ -2,12 +2,13 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public sealed class TerminalWindowPresenter : ITerminalWindowPresenter, IDisposable
+    public sealed class WindowPresenter : IWindowPresenter, IDisposable
     {
         private readonly ITerminalWindowAnimatorDataConfigurator _configurator;
         private readonly ITerminalWindowAnimator _windowAnimator;
@@ -62,7 +63,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             remove => _onAborted -= value;
         }
 
-        public TerminalWindowPresenter(
+        public WindowPresenter(
             ITerminalWindowAnimatorDataConfigurator configurator,
             ITerminalWindowAnimator animator)
         {
@@ -158,9 +159,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
                 State, Anchor, Style, duration, Scale, elapsed);
         }
 
-        TerminalWindowRenderData ITerminalWindowRenderDataProvider.GetRenderData()
+        WindowRenderData IWindowRenderDataProvider.GetRenderData()
         {
-            return new TerminalWindowRenderData(GetHashCode(), Rect);
+            return new WindowRenderData(GetHashCode(), Rect);
         }
 
         public void Dispose()

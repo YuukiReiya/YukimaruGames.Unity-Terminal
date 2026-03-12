@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Presentation.Model;
+using YukimaruGames.Terminal.UI.View;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public sealed class TerminalWindowRenderer : ITerminalWindowRenderer
+    public sealed class WindowRenderer : IWindowRenderer
     {
         private readonly IPixelTexture2DRepository _textureRepository;
         
@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.UI.View
 
         private readonly Lazy<GUIStyle> _styleLazy;
 
-        public TerminalWindowRenderer(IPixelTexture2DRepository pixelTextureRepository)
+        public WindowRenderer(IPixelTexture2DRepository pixelTextureRepository)
         {
             _textureRepository = pixelTextureRepository;
             _textureRepository.SetColor(Key, Color.black);
@@ -31,7 +31,7 @@ namespace YukimaruGames.Terminal.UI.View
             _textureRepository.SetColor(Key, color);
         }
 
-        public void Render(TerminalWindowRenderData viewModel, GUI.WindowFunction func)
+        public void Render(WindowRenderData viewModel, GUI.WindowFunction func)
         {
             GUI.Window(viewModel.Id, viewModel.Rect, func, string.Empty, _styleLazy.Value);
         }

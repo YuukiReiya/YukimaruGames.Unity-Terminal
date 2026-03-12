@@ -1,11 +1,12 @@
 using YukimaruGames.Terminal.UI.Presentation;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.UI.View
 {
     public sealed class TerminalViewContext
     {
         // Renderers
-        public ITerminalWindowRenderer WindowRenderer { get; set; }
+        public IWindowRenderer WindowRenderer { get; set; }
         public ITerminalLogRenderer LogRenderer { get; set; }
         public ITerminalInputRenderer InputRenderer { get; set; }
         public ITerminalPromptRenderer PromptRenderer { get; set; }
@@ -14,7 +15,7 @@ namespace YukimaruGames.Terminal.UI.View
         public ITerminalLogCopyButtonRenderer LogCopyButtonRenderer { get; set; }
         
         // Data Providers
-        public ITerminalWindowRenderDataProvider WindowRenderDataProvider { get; set; }
+        public IWindowRenderDataProvider WindowRenderDataProvider { get; set; }
         public ITerminalLogRenderDataProvider LogRenderDataProvider { get; set; }
         public ITerminalInputRenderDataProvider InputRenderDataProvider { get; set; }
         public ITerminalExecuteButtonRenderDataProvider ExecuteButtonRenderDataProvider { get; set; }
