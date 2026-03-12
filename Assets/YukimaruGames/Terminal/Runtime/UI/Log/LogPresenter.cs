@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using YukimaruGames.Terminal.Application;
-using YukimaruGames.Terminal.Application.Model;
+using YukimaruGames.Terminal.Application.Dto;
 
-namespace YukimaruGames.Terminal.UI.Presentation.Model
+namespace YukimaruGames.Terminal.UI.Log
 {
-    public sealed class TerminalLogPresenter : ITerminalLogPresenter, IDisposable
+    public sealed class LogPresenter : ILogPresenter, IDisposable
     {
         private readonly ITerminalService _service;
         
@@ -16,19 +16,19 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
         /// <remarks>
         /// TerminalService.Logsのプロパティを介してデータを取得するとアクセスの度にMappingによるコストが掛かるためキャッシュの役割も兼ねる.
         /// </remarks>
-        private readonly List<LogRenderData> _logs;
+        private readonly List<LogEntry> _logs;
         
         /// <summary>
         /// ログの描画データのキャッシュ.
         /// </summary>
-        private TerminalLogRenderData _cachedLogRenderData;
+        private LogRenderData _cachedLogRenderData;
 
-        public TerminalLogPresenter(ITerminalService service)
+        public LogPresenter(ITerminalService service)
         {
             _service = service;
-            _logs = new List<LogRenderData>(service.LogBufferSize);
+            _logs = new List<LogEntry>(service.LogBufferSize);
             _logs.AddRange(service.Logs);
-            _cachedLogRenderData = new TerminalLogRenderData(_service.Logs);
+            _cachedLogRenderData = new LogRenderData(_service.Logs);
 
             _service.OnLogUpdated += HandleLogUpdated;
             _service.OnLogAdded += HandleLogAdded;
@@ -40,7 +40,7 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
         /// <p>OnGUIを介して毎フレーム呼び出される想定のため、ここでは new せずにキャッシュを返す。</p>
         /// <p>キャッシュは更新</p>
         /// </remarks>
-        TerminalLogRenderData ITerminalLogRenderDataProvider.GetRenderData() => _cachedLogRenderData;
+        LogRenderData ILogRenderDataProvider.GetRenderData() => _cachedLogRenderData;
 
         public void Dispose()
         {
@@ -49,14 +49,14 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
             _service.OnLogRemoved -= HandleLogRemoved;
         }
 
-        private void HandleLogUpdated() => _cachedLogRenderData = new TerminalLogRenderData(_logs);
+        private void HandleLogUpdated() => _cachedLogRenderData = new LogRenderData(_logs);
         
-        private void HandleLogAdded(LogRenderData[] renderDataArray)
+        private void HandleLogAdded(LogEntry[] renderDataArray)
         {
             _logs.AddRange(renderDataArray);
         }
 
-        private void HandleLogRemoved(LogRenderData[] renderDataArray)
+        private void HandleLogRemoved(LogEntry[] renderDataArray)
         {
             _logs.RemoveAll(renderDataArray.Contains);
         }

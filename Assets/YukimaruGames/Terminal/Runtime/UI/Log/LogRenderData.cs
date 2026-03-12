@@ -5,40 +5,40 @@
 using System;
 #endif
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Application.Model;
+using YukimaruGames.Terminal.Application.Dto;
 
-namespace YukimaruGames.Terminal.UI.Presentation.Model
+namespace YukimaruGames.Terminal.UI.Log
 {
     public
 #if FALLBACK
-        class TerminalLogRenderData : IEquatable<TerminalLogRenderData>
+        class LogRenderData : IEquatable<LogRenderData>
 #else
-        record TerminalLogRenderData(IReadOnlyCollection<LogRenderData> LogRenderDataCollection)
+        record LogRenderData(IReadOnlyCollection<LogEntry> LogRenderDataCollection)
 #endif
     {
         #region FALLBACK
 
 #if FALLBACK
-        public TerminalLogRenderData(IReadOnlyCollection<LogRenderData> logRenderDataCollection)
+        public LogRenderData(IReadOnlyCollection<LogEntry> logRenderDataCollection)
         {
             LogRenderDataCollection = logRenderDataCollection;
         }
 
-        public bool Equals(TerminalLogRenderData other)
+        public bool Equals(LogRenderData other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(LogRenderDataCollection, other.LogRenderDataCollection);
         }
 
-        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is TerminalLogRenderData other && Equals(other);
+        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is LogRenderData other && Equals(other);
 
         public override int GetHashCode() => (LogRenderDataCollection != null ? LogRenderDataCollection.GetHashCode() : 0);
 #endif
 
         #endregion
 
-        public IReadOnlyCollection<LogRenderData> LogRenderDataCollection { get; }
+        public IReadOnlyCollection<LogEntry> LogRenderDataCollection { get; }
 #if !FALLBACK
             = LogRenderDataCollection;
 #endif

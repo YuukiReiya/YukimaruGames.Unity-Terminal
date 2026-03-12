@@ -9,20 +9,20 @@ using YukimaruGames.Terminal.SharedKernel;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace YukimaruGames.Terminal.Application.Model
+namespace YukimaruGames.Terminal.Application.Dto
 {
     public
 #if FALLBACK
-        class LogRenderData : IEquatable<LogRenderData>, IComparable<LogRenderData>, IComparable
+        class LogEntry : IEquatable<LogEntry>, IComparable<LogEntry>, IComparable
 #else
-        record LogRenderData(int Id, MessageType MessageType, DateTimeOffset Timestamp, string Message)
-        : IComparable<LogRenderData>, IComparable
+        record LogEntry(int Id, MessageType MessageType, DateTimeOffset Timestamp, string Message)
+        : IComparable<LogEntry>, IComparable
 #endif
     {
         #region FALLBACK
 
 #if FALLBACK
-        public LogRenderData(int id, MessageType type, DateTimeOffset timestamp, string message)
+        public LogEntry(int id, MessageType type, DateTimeOffset timestamp, string message)
         {
             Id = id;
             MessageType = type;
@@ -30,12 +30,12 @@ namespace YukimaruGames.Terminal.Application.Model
             Message = message;
         }
 
-        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is LogRenderData other && Equals(other);
+        public override bool Equals(object obj) => ReferenceEquals(this, obj) || obj is LogEntry other && Equals(other);
         public override int GetHashCode() => HashCode.Combine(Id, MessageType, Timestamp, Message);
-        public static bool operator ==(LogRenderData left, LogRenderData right) => left?.Equals(right) ?? ReferenceEquals(right, null);
-        public static bool operator !=(LogRenderData left, LogRenderData right) => !(left == right);
+        public static bool operator ==(LogEntry left, LogEntry right) => left?.Equals(right) ?? ReferenceEquals(right, null);
+        public static bool operator !=(LogEntry left, LogEntry right) => !(left == right);
 
-        public bool Equals(LogRenderData other)
+        public bool Equals(LogEntry other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -101,7 +101,7 @@ namespace YukimaruGames.Terminal.Application.Model
             = Message;
 #endif
 
-        public int CompareTo(LogRenderData other)
+        public int CompareTo(LogEntry other)
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
@@ -112,10 +112,10 @@ namespace YukimaruGames.Terminal.Application.Model
 
         public int CompareTo(object obj) => obj is CommandLog other ? CompareTo(other) : throw new ArgumentException($"Object is not a {nameof(CommandLog)}", nameof(obj));
 
-        public static bool operator <(LogRenderData left, LogRenderData right) => Comparer<LogRenderData>.Default.Compare(left, right) < 0;
-        public static bool operator >(LogRenderData left, LogRenderData right) => Comparer<LogRenderData>.Default.Compare(left, right) > 0;
-        public static bool operator <=(LogRenderData left, LogRenderData right) => Comparer<LogRenderData>.Default.Compare(left, right) <= 0;
-        public static bool operator >=(LogRenderData left, LogRenderData right) => Comparer<LogRenderData>.Default.Compare(left, right) >= 0;
+        public static bool operator <(LogEntry left, LogEntry right) => Comparer<LogEntry>.Default.Compare(left, right) < 0;
+        public static bool operator >(LogEntry left, LogEntry right) => Comparer<LogEntry>.Default.Compare(left, right) > 0;
+        public static bool operator <=(LogEntry left, LogEntry right) => Comparer<LogEntry>.Default.Compare(left, right) <= 0;
+        public static bool operator >=(LogEntry left, LogEntry right) => Comparer<LogEntry>.Default.Compare(left, right) >= 0;
     }
 }
 

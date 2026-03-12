@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Window;
 
@@ -11,7 +12,7 @@ namespace YukimaruGames.Terminal.UI.View
     {
         // renderer.
         private readonly IWindowRenderer _windowRenderer;
-        private readonly ITerminalLogRenderer _logRenderer;
+        private readonly ILogRenderer _logRenderer;
         private readonly ITerminalInputRenderer _inputRenderer;
         private readonly ITerminalPromptRenderer _promptRenderer;
         private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
@@ -20,7 +21,7 @@ namespace YukimaruGames.Terminal.UI.View
         
         // provider.
         private readonly IWindowRenderDataProvider _windowRenderDataProvider;
-        private readonly ITerminalLogRenderDataProvider _logRenderDataProvider;
+        private readonly ILogRenderDataProvider _logRenderDataProvider;
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
         private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
         private readonly ITerminalButtonRenderDataProvider _buttonRenderDataProvider;

@@ -1,12 +1,12 @@
 using YukimaruGames.Terminal.UI.Presentation.Model;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Log
 {
-    public interface ITerminalLogRenderDataProvider
+    public interface ILogRenderDataProvider
     {
         /// <summary>
         /// ログ表示のための描画データの取得.
         /// </summary>
-        TerminalLogRenderData GetRenderData();
+        LogRenderData GetRenderData();
     }
 }

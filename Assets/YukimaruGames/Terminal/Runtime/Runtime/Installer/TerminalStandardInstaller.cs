@@ -20,6 +20,7 @@ using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View;
@@ -256,7 +257,7 @@ namespace YukimaruGames.Terminal.Runtime
             var windowRenderer = new WindowRenderer(pixelTexture2DRepository);
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
             var logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(buttonVisibleConfigurator, logCopyButtonStyleContext);
-            var logRenderer = new TerminalLogRenderer(logCopyButtonRenderer, logStyleContext, colorPaletteProvider);
+            var logRenderer = new LogRenderer(logCopyButtonRenderer, logStyleContext, colorPaletteProvider);
             var inputRenderer = new TerminalInputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new TerminalPromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new TerminalExecuteButtonRenderer(executeButtonsStyleContext);
@@ -264,7 +265,7 @@ namespace YukimaruGames.Terminal.Runtime
 
             // Presenters
             var windowPresenter = new WindowPresenter(animatorDataConfigurator, new TerminalWindowAnimator());
-            var logPresenter = new TerminalLogPresenter(domain.Service);
+            var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new TerminalInputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new TerminalExecuteButtonPresenter(executeButtonRenderer, buttonVisibleConfigurator);
             var buttonPresenter = new TerminalButtonPresenter(buttonRenderer, windowPresenter, buttonVisibleConfigurator);

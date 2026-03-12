@@ -1,29 +1,29 @@
 using System;
-using YukimaruGames.Terminal.Application.Model;
+using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.Domain.Model;
 
 namespace YukimaruGames.Terminal.Application.Mapper
 {
     public static class LogMapper
     {
-        public static LogRenderData Mapping(CommandLog log)
+        public static LogEntry Mapping(CommandLog log)
         {
-            return new LogRenderData(
+            return new LogEntry(
                 log.Id,
                 log.MessageType,
                 log.Timestamp,
                 log.Message);
         }
 
-        public static LogRenderData[] Mapping(CommandLog[] logs)
+        public static LogEntry[] Mapping(CommandLog[] logs)
         {
             var size = logs is { Length: > 0 } ? logs.Length : 0;
             if (size == 0)
             {
-                return Array.Empty<LogRenderData>();
+                return Array.Empty<LogEntry>();
             }
 
-            var array = new LogRenderData[size];
+            var array = new LogEntry[size];
             for (var i = 0; i < size; i++)
             {
                 array[i] = Mapping(logs[i]);
