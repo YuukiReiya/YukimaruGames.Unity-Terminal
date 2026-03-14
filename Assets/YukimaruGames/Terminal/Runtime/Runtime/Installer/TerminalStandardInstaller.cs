@@ -25,8 +25,6 @@ using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.Presentation.Model;
-using YukimaruGames.Terminal.UI.Submit;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Input;
 using YukimaruGames.Terminal.UI.Window;

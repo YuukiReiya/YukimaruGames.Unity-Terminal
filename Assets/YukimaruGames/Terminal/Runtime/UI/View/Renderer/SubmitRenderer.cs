@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.Presentation.Model;
 
-namespace YukimaruGames.Terminal.UI.Submit
+namespace YukimaruGames.Terminal.UI.Input
 {
     public sealed class SubmitRenderer : ISubmitRenderer, IDisposable
     {

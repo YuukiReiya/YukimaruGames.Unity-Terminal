@@ -1,4 +1,4 @@
-namespace YukimaruGames.Terminal.UI.Submit
+namespace YukimaruGames.Terminal.UI.Input
 {
     /// <summary>
     /// 実行ボタンの描画データ

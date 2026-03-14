@@ -1,6 +1,6 @@
 using System;
 
-namespace YukimaruGames.Terminal.UI.Submit
+namespace YukimaruGames.Terminal.UI.Input
 {
     public interface ISubmitPresenter : ISubmitRenderDataProvider
     {

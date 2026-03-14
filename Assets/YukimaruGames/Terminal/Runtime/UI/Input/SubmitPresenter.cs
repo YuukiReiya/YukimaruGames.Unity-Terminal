@@ -1,7 +1,7 @@
 using System;
 using YukimaruGames.Terminal.UI.Launcher;
 
-namespace YukimaruGames.Terminal.UI.Submit
+namespace YukimaruGames.Terminal.UI.Input
 {
     public sealed class SubmitPresenter : ISubmitPresenter, IDisposable
     {

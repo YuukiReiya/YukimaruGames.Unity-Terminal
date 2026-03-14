@@ -6,7 +6,6 @@ using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.Submit;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.Window;
 
