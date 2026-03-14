@@ -1,9 +1,7 @@
-using YukimaruGames.Terminal.UI.Presentation.Model;
-
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Input
 {
     public interface ITerminalInputRenderDataProvider
     {
-        TerminalInputRenderData GetRenderData();
+        InputRenderData GetRenderData();
     }
 }

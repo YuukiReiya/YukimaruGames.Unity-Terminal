@@ -1,3 +1,4 @@
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Window;
@@ -9,7 +10,7 @@ namespace YukimaruGames.Terminal.UI.View
         // Renderers
         public IWindowRenderer WindowRenderer { get; set; }
         public ILogRenderer LogRenderer { get; set; }
-        public ITerminalInputRenderer InputRenderer { get; set; }
+        public IInputRenderer InputRenderer { get; set; }
         public ITerminalPromptRenderer PromptRenderer { get; set; }
         public ITerminalExecuteButtonRenderer ExecuteButtonRenderer { get; set; }
         public ITerminalButtonRenderer ButtonRenderer { get; set; }

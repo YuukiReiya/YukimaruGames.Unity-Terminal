@@ -1,6 +1,6 @@
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.Runtime.Shared
+namespace YukimaruGames.Terminal.UI.Input
 {
     public interface IKeyboardInputHandler
     {

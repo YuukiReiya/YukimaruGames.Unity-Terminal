@@ -20,6 +20,7 @@ using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
@@ -75,8 +76,8 @@ namespace YukimaruGames.Terminal.Runtime
             public IScrollConfigurator ScrollConfigurator;
             /// <inheritdoc cref="IWindowPresenter"/>
             public IWindowPresenter WindowPresenter;
-            /// <inheritdoc cref="ITerminalInputPresenter"/>
-            public ITerminalInputPresenter InputPresenter;
+            /// <inheritdoc cref="IInputPresenter"/>
+            public IInputPresenter InputPresenter;
             /// <inheritdoc cref="ITerminalExecuteButtonPresenter"/>
             public ITerminalExecuteButtonPresenter ExecuteButtonPresenter;
             /// <inheritdoc cref="ITerminalButtonPresenter"/>
@@ -258,7 +259,7 @@ namespace YukimaruGames.Terminal.Runtime
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
             var logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(buttonVisibleConfigurator, logCopyButtonStyleContext);
             var logRenderer = new LogRenderer(logCopyButtonRenderer, logStyleContext, colorPaletteProvider);
-            var inputRenderer = new TerminalInputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
+            var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new TerminalPromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new TerminalExecuteButtonRenderer(executeButtonsStyleContext);
             var buttonRenderer = new TerminalButtonRenderer(pixelTexture2DRepository, openButtonsStyleContext);
@@ -266,7 +267,7 @@ namespace YukimaruGames.Terminal.Runtime
             // Presenters
             var windowPresenter = new WindowPresenter(animatorDataConfigurator, new TerminalWindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
-            var inputPresenter = new TerminalInputPresenter(inputRenderer, options.BootupCommand);
+            var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new TerminalExecuteButtonPresenter(executeButtonRenderer, buttonVisibleConfigurator);
             var buttonPresenter = new TerminalButtonPresenter(buttonRenderer, windowPresenter, buttonVisibleConfigurator);
 

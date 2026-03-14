@@ -1,15 +1,13 @@
 using System;
-using YukimaruGames.Terminal.UI.Presentation.Model;
-using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Input
 {
-    public sealed class TerminalInputPresenter : ITerminalInputPresenter, IDisposable
+    public sealed class InputPresenter : IInputPresenter, IDisposable
     {
-        private readonly ITerminalInputRenderer _renderer;
+        private readonly IInputRenderer _renderer;
 
-        public TerminalInputPresenter(ITerminalInputRenderer renderer,string bootupCommand)
+        public InputPresenter(IInputRenderer renderer,string bootupCommand)
         {
             _renderer = renderer;
             _renderer.OnInputTextChanged += HandleTextChanged;
@@ -38,9 +36,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         public void SetMoveCursorToEnd() => _isMoveCursorToEnd = true;
 
-        TerminalInputRenderData ITerminalInputRenderDataProvider.GetRenderData()
+        InputRenderData ITerminalInputRenderDataProvider.GetRenderData()
         {
-            return new TerminalInputRenderData(InputText, FocusControl, _isMoveCursorToEnd);
+            return new InputRenderData(InputText, FocusControl, _isMoveCursorToEnd);
         }
 
         private FocusControl FocusControl { get; set; }

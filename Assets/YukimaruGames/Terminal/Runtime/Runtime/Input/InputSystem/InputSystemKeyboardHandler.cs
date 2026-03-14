@@ -1,6 +1,6 @@
 using UnityEngine.InputSystem;
 using YukimaruGames.Terminal.Runtime.Input.InputSystem;
-using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.Runtime

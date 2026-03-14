@@ -2,18 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
+using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.Window;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Input
 {
     public sealed class TerminalView : ITerminalView, IDisposable
     {
         // renderer.
         private readonly IWindowRenderer _windowRenderer;
         private readonly ILogRenderer _logRenderer;
-        private readonly ITerminalInputRenderer _inputRenderer;
+        private readonly IInputRenderer _inputRenderer;
         private readonly ITerminalPromptRenderer _promptRenderer;
         private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
         private readonly ITerminalButtonRenderer _buttonRenderer;

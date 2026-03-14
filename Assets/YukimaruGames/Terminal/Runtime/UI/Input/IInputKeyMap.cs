@@ -1,8 +1,8 @@
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.View.Input
+namespace YukimaruGames.Terminal.UI.Input
 {
-    public interface ITerminalInputKeyMap<out T>
+    public interface IInputKeyMap<out T>
     {
         T GetKey(TerminalAction action);
     }

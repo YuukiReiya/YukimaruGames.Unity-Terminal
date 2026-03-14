@@ -6,13 +6,13 @@
 using System;
 
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Input;
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {
     [Serializable]
-    public sealed class LegacyInputKey : ITerminalInputKeyMap<KeyCode>
+    public sealed class LegacyInputKey : IInputKeyMap<KeyCode>
     {
         [SerializeField] private KeyCode _openKeyCode = KeyCode.LeftBracket;
         [SerializeField] private KeyCode _closeKeyCode = KeyCode.Escape;

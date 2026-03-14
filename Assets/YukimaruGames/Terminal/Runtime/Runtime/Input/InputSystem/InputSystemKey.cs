@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using YukimaruGames.Terminal.UI.View.Input;
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.View.Model;
 
 // ReSharper disable InconsistentNaming
@@ -9,7 +9,7 @@ using YukimaruGames.Terminal.UI.View.Model;
 namespace YukimaruGames.Terminal.Runtime.Input.InputSystem
 {
     [Serializable]
-    public sealed class InputSystemKey : ITerminalInputKeyMap<Key>
+    public sealed class InputSystemKey : IInputKeyMap<Key>
     {
         [SerializeField] private Key _openKey = Key.LeftBracket;
         [SerializeField] private Key _closeKey = Key.Escape;

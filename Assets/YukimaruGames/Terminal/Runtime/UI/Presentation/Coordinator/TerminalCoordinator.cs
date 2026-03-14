@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Model;
 using YukimaruGames.Terminal.UI.Window;
@@ -12,7 +13,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly ITerminalView _view;
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly IWindowPresenter _windowPresenter;
-        private readonly ITerminalInputPresenter _inputPresenter;
+        private readonly IInputPresenter _inputPresenter;
         private readonly ITerminalExecuteButtonPresenter _executeButtonPresenter;
         private readonly ITerminalButtonPresenter _buttonPresenter;
         private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
@@ -32,7 +33,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             ITerminalView view,
             IScrollConfigurator scrollConfigurator,
             IWindowPresenter windowPresenter,
-            ITerminalInputPresenter inputPresenter,
+            IInputPresenter inputPresenter,
             ITerminalExecuteButtonPresenter executeButtonPresenter,
             ITerminalButtonPresenter buttonPresenter,
             ITerminalEventListener eventListener

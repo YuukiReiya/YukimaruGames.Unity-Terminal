@@ -1,15 +1,14 @@
 using System;
-using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Input
 {
-    public interface ITerminalInputRenderer
+    public interface IInputRenderer
     {
         /// <summary>
         /// 描画.
         /// </summary>
-        void Render(TerminalInputRenderData data);
+        void Render(InputRenderData data);
 
         /// <summary>
         /// 入力文字の更新を通知.

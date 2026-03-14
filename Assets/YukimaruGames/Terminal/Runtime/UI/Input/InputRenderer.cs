@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.Presentation.Model;
+using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Model;
-using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette; 
+using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Input
 {
-    public sealed class TerminalInputRenderer : ITerminalInputRenderer,ITerminalPreRenderer
+    public sealed class InputRenderer : IInputRenderer, ITerminalPreRenderer
     {
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly IGUIStyleProvider _styleProvider;
@@ -62,7 +62,7 @@ namespace YukimaruGames.Terminal.UI.View
                 OnImeComposingStateChanged?.Invoke(value);
             }
         }
-        
+
         public string InputText
         {
             get => _inputField;
@@ -75,7 +75,7 @@ namespace YukimaruGames.Terminal.UI.View
             }
         }
 
-        public TerminalInputRenderer(
+        public InputRenderer(
             IScrollConfigurator scrollConfigurator,
             IGUIStyleProvider styleProvider,
             IColorPaletteProvider colorPaletteProvider,
@@ -86,7 +86,7 @@ namespace YukimaruGames.Terminal.UI.View
             _colorPaletteProvider = colorPaletteProvider;
             _cursorFlashSpeedProvider = cursorFlashSpeedProvider;
         }
-        
+
         void ITerminalPreRenderer.PreRender()
         {
             var evt = Event.current;
@@ -94,46 +94,46 @@ namespace YukimaruGames.Terminal.UI.View
             {
                 // Tabキー入力されると他のTextFieldにフォーカスが移ってしまうためフォーカスをコントロールする.
                 if (evt.keyCode is KeyCode.Tab) GUI.FocusControl(ControlName);
-                
+
                 // Enterキーが入力されSubmitされると履歴のTextFieldにフォーカスが移ってしまうためフォーカスを補正する.
                 if (evt.keyCode is KeyCode.Return) GUI.FocusControl(ControlName);
-                
+
                 // 入力テキストの折り返しを考慮しキー入力がされたらスクロール位置を終端へ補正する.
                 _scrollConfigurator.ScrollToEnd();
             }
         }
 
-        public void Render(TerminalInputRenderData data)
+        public void Render(InputRenderData data)
         {
             _id = GUIUtility.GetControlID(FocusType.Keyboard);
             _evt = Event.current.GetTypeForControl(_id);
             GUI.SetNextControlName(ControlName);
             _isCurrentlyFocused = GUI.GetNameOfFocusedControl() == ControlName;
-            
+
             var cursorColor = GUI.skin.settings.cursorColor;
             var selectionColor = GUI.skin.settings.selectionColor;
             var cursorFlashSpeed = GUI.skin.settings.cursorFlashSpeed;
-            
+
             GUI.skin.settings.cursorColor = _colorPaletteProvider.GetColor(ColorPalette.Cursor);
             GUI.skin.settings.selectionColor = _colorPaletteProvider.GetColor(ColorPalette.Selection);
             GUI.skin.settings.cursorFlashSpeed = _cursorFlashSpeedProvider.GetFlashSpeed();
-            
-            InputText =  GUILayout.TextField(data.InputText, _styleProvider.GetStyle());
+
+            InputText = GUILayout.TextField(data.InputText, _styleProvider.GetStyle());
             SendImeComposingState();
-            
+
             GUI.skin.settings.cursorColor = cursorColor;
             GUI.skin.settings.selectionColor = selectionColor;
             GUI.skin.settings.cursorFlashSpeed = cursorFlashSpeed;
 
             _focusControl = data.FocusControl;
             _isMoveCursorToEnd = data.IsMoveCursorToEnd;
-            
+
             FocusControlIfNeeded();
             CursorToEnd();
         }
 
         public void SetMoveCursorToEnd() => _isMoveCursorToEnd = true;
-        
+
         private void FocusControlIfNeeded()
         {
             if (FocusControl is FocusControl.None) return;
@@ -141,16 +141,18 @@ namespace YukimaruGames.Terminal.UI.View
             switch (FocusControl)
             {
                 case FocusControl.Focus:
-                    if(!_isCurrentlyFocused)
+                    if (!_isCurrentlyFocused)
                     {
                         GUI.FocusControl(ControlName);
                     }
+
                     break;
                 case FocusControl.UnFocus:
-                    if(_isCurrentlyFocused)
+                    if (_isCurrentlyFocused)
                     {
                         GUI.FocusControl(null);
                     }
+
                     break;
             }
 
@@ -163,7 +165,7 @@ namespace YukimaruGames.Terminal.UI.View
             if (!_isCurrentlyFocused || !IsMoveCursorToEndTrigger) return;
 
             if (!UsedInputEvent(_evt)) return;
-                
+
             var textEditor = GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl) as TextEditor;
             textEditor!.MoveTextEnd();
             GUI.changed = true;
