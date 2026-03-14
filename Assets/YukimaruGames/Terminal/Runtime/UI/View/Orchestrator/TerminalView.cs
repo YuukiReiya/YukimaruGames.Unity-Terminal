@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
@@ -20,7 +21,7 @@ namespace YukimaruGames.Terminal.UI.Input
         private readonly ITerminalPromptRenderer _promptRenderer;
         private readonly ISubmitRenderer _submitRenderer;
         private readonly ILauncherRenderer _launcherRenderer;
-        private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
+        private readonly IClipboardRenderer _clipboardRenderer;
         
         // provider.
         private readonly IWindowRenderDataProvider _windowRenderDataProvider;
@@ -51,7 +52,7 @@ namespace YukimaruGames.Terminal.UI.Input
             _promptRenderer = context.PromptRenderer;
             _submitRenderer = context.SubmitRenderer;
             _launcherRenderer = context.LauncherRenderer;
-            _logCopyButtonRenderer = context.LogCopyButtonRenderer;
+            _clipboardRenderer = context.ClipboardRenderer;
             
             _windowRenderDataProvider = context.WindowRenderDataProvider;
             _logRenderDataProvider = context.LogRenderDataProvider;
@@ -60,9 +61,9 @@ namespace YukimaruGames.Terminal.UI.Input
             _buttonRenderDataProvider = context.LauncherRenderDataProvider;
             _scrollConfigurator = context.ScrollConfigurator;
 
-            if (_logCopyButtonRenderer != null)
+            if (_clipboardRenderer != null)
             {
-                _logCopyButtonRenderer.OnClickButton += HandleLogCopied;
+                _clipboardRenderer.OnClickButton += HandleLogCopied;
             }
 
             var renderers = new object[]
@@ -141,7 +142,7 @@ namespace YukimaruGames.Terminal.UI.Input
 
         public void Dispose()
         {
-            _logCopyButtonRenderer.OnClickButton -= HandleLogCopied;
+            _clipboardRenderer.OnClickButton -= HandleLogCopied;
             
             OnPreRender -= ExecutePreRender;
             OnPostRender -= ExecutePostRender;

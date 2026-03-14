@@ -20,6 +20,7 @@ using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
@@ -259,8 +260,8 @@ namespace YukimaruGames.Terminal.Runtime
             // Renderers
             var windowRenderer = new WindowRenderer(pixelTexture2DRepository);
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
-            var logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(launcherVisibleConfigurator, logCopyButtonStyleContext);
-            var logRenderer = new LogRenderer(logCopyButtonRenderer, logStyleContext, colorPaletteProvider);
+            var clipboardRenderer = new ClipboardRenderer(launcherVisibleConfigurator, logCopyButtonStyleContext);
+            var logRenderer = new LogRenderer(clipboardRenderer, logStyleContext, colorPaletteProvider);
             var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new TerminalPromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
@@ -277,7 +278,7 @@ namespace YukimaruGames.Terminal.Runtime
             var viewContext = new TerminalViewContext
             {
                 WindowRenderer = windowRenderer,
-                LogCopyButtonRenderer = logCopyButtonRenderer,
+                ClipboardRenderer = clipboardRenderer,
                 LogRenderer = logRenderer,
                 InputRenderer = inputRenderer,
                 PromptRenderer = promptRenderer,
@@ -322,7 +323,7 @@ namespace YukimaruGames.Terminal.Runtime
                     launcherVisibleConfigurator,
                     
                     windowRenderer,
-                    logCopyButtonRenderer,
+                    clipboardRenderer,
                     logRenderer,
                     inputRenderer,
                     promptRenderer,

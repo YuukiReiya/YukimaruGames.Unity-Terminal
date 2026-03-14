@@ -1,8 +1,8 @@
 using System;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Clipboard
 {
-    public interface ITerminalLogCopyButtonRenderer
+    public interface IClipboardRenderer
     {
         event Action<string> OnClickButton;
         void Render(string copyText);

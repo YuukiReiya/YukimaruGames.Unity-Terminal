@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
+using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Submit;
@@ -18,7 +19,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly IInputPresenter _inputPresenter;
         private readonly ISubmitPresenter _submitPresenter;
         private readonly ILauncherPresenter _launcherPresenter;
-        private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
+        private readonly IClipboardRenderer _clipboardRenderer;
         private readonly ITerminalEventListener _eventListener;
 
         private readonly ITerminalService _service;

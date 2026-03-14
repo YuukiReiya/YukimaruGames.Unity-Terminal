@@ -3,9 +3,9 @@ using UnityEngine;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Presentation;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Clipboard
 {
-    public sealed class TerminalLogCopyButtonRenderer : ITerminalLogCopyButtonRenderer, IDisposable
+    public sealed class ClipboardRenderer : IClipboardRenderer, IDisposable
     {
         private readonly ILauncherVisibleProvider _launcherVisibleProvider;
         private readonly IGUIStyleProvider _styleProvider;
@@ -14,7 +14,7 @@ namespace YukimaruGames.Terminal.UI.View
 
         public event Action<string> OnClickButton;
         
-        public TerminalLogCopyButtonRenderer(ILauncherVisibleProvider launcherVisibleProvider,IGUIStyleProvider styleProvider)
+        public ClipboardRenderer(ILauncherVisibleProvider launcherVisibleProvider,IGUIStyleProvider styleProvider)
         {
             _launcherVisibleProvider = launcherVisibleProvider;
             _styleProvider = styleProvider;

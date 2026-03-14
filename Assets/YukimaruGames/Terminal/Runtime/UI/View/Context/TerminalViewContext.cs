@@ -1,3 +1,4 @@
+using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
@@ -16,7 +17,7 @@ namespace YukimaruGames.Terminal.UI.View
         public ITerminalPromptRenderer PromptRenderer { get; set; }
         public ISubmitRenderer SubmitRenderer { get; set; }
         public ILauncherRenderer LauncherRenderer { get; set; }
-        public ITerminalLogCopyButtonRenderer LogCopyButtonRenderer { get; set; }
+        public IClipboardRenderer ClipboardRenderer { get; set; }
         
         // Data Providers
         public IWindowRenderDataProvider WindowRenderDataProvider { get; set; }

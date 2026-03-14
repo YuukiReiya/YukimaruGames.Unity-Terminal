@@ -2,24 +2,24 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.SharedKernel;
+using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.View;
 using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
 namespace YukimaruGames.Terminal.UI.Log
 {
     public sealed class LogRenderer : ILogRenderer, IDisposable
     {
-        private readonly ITerminalLogCopyButtonRenderer _copyButtonRenderer;
+        private readonly IClipboardRenderer _clipboardRenderer;
         private readonly IGUIStyleProvider _styleProvider;
         private readonly IColorPaletteProvider _colorPaletteProvider;
 
         public event Action<LogEntry> OnPreRender;
         public event Action<LogEntry> OnPostRender;
 
-        public LogRenderer(ITerminalLogCopyButtonRenderer logCopyButtonRenderer, IGUIStyleProvider styleProvider, IColorPaletteProvider colorPaletteProvider)
+        public LogRenderer(IClipboardRenderer clipboardRenderer, IGUIStyleProvider styleProvider, IColorPaletteProvider colorPaletteProvider)
         {
-            _copyButtonRenderer = logCopyButtonRenderer;
+            _clipboardRenderer = clipboardRenderer;
             _styleProvider = styleProvider;
             _colorPaletteProvider = colorPaletteProvider;
         }
@@ -55,7 +55,7 @@ namespace YukimaruGames.Terminal.UI.Log
                 _styleProvider.SetColor(GetColor(renderData.MessageType));
                 // TODO:コピペ可能な選択フィールドの実装が理想.
                 GUILayout.Label(renderData.Message, _styleProvider.GetStyle());
-                if (ShouldDrawCopyButton(renderData)) _copyButtonRenderer.Render(renderData.Message);
+                if (ShouldDrawCopyButton(renderData)) _clipboardRenderer.Render(renderData.Message);
 
                 OnPostRender?.Invoke(renderData);
             }
