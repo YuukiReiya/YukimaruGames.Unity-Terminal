@@ -3,6 +3,7 @@ using UnityEngine;
 using YukimaruGames.Terminal.Application;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
+using YukimaruGames.Terminal.UI.Submit;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Model;
 using YukimaruGames.Terminal.UI.Window;
@@ -15,7 +16,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly IWindowPresenter _windowPresenter;
         private readonly IInputPresenter _inputPresenter;
-        private readonly ITerminalExecuteButtonPresenter _executeButtonPresenter;
+        private readonly ISubmitPresenter _submitPresenter;
         private readonly ILauncherPresenter _launcherPresenter;
         private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         private readonly ITerminalEventListener _eventListener;
@@ -35,7 +36,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             IScrollConfigurator scrollConfigurator,
             IWindowPresenter windowPresenter,
             IInputPresenter inputPresenter,
-            ITerminalExecuteButtonPresenter executeButtonPresenter,
+            ISubmitPresenter submitPresenter,
             ILauncherPresenter launcherPresenter,
             ITerminalEventListener eventListener
         )
@@ -45,7 +46,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _scrollConfigurator = scrollConfigurator;
             _windowPresenter = windowPresenter;
             _inputPresenter = inputPresenter;
-            _executeButtonPresenter = executeButtonPresenter;
+            _submitPresenter = submitPresenter;
             _launcherPresenter = launcherPresenter;
             _eventListener = eventListener;
 
@@ -56,7 +57,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         private void RegisterEvents()
         {
-            _executeButtonPresenter.OnExecuteTriggered += OnExecuteTriggered;
+            _submitPresenter.OnExecuteTriggered += OnExecuteTriggered;
             _launcherPresenter.OnOpenTriggered += OnOpenTriggered;
             _launcherPresenter.OnCloseTriggered += OnCloseTriggered;
             
@@ -74,7 +75,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
 
         private void UnregisterEvents()
         {
-            _executeButtonPresenter.OnExecuteTriggered -= OnExecuteTriggered;
+            _submitPresenter.OnExecuteTriggered -= OnExecuteTriggered;
             _launcherPresenter.OnOpenTriggered -= OnOpenTriggered;
             _launcherPresenter.OnCloseTriggered -= OnCloseTriggered;
             

@@ -5,6 +5,7 @@ using UnityEngine;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
+using YukimaruGames.Terminal.UI.Submit;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.Window;
 
@@ -17,7 +18,7 @@ namespace YukimaruGames.Terminal.UI.Input
         private readonly ILogRenderer _logRenderer;
         private readonly IInputRenderer _inputRenderer;
         private readonly ITerminalPromptRenderer _promptRenderer;
-        private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
+        private readonly ISubmitRenderer _submitRenderer;
         private readonly ILauncherRenderer _launcherRenderer;
         private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         
@@ -25,7 +26,7 @@ namespace YukimaruGames.Terminal.UI.Input
         private readonly IWindowRenderDataProvider _windowRenderDataProvider;
         private readonly ILogRenderDataProvider _logRenderDataProvider;
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
-        private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
+        private readonly ISubmitRenderDataProvider _submitRenderDataProvider;
         private readonly ILauncherRenderDataProvider _buttonRenderDataProvider;
         private readonly IScrollConfigurator _scrollConfigurator;
 
@@ -48,14 +49,14 @@ namespace YukimaruGames.Terminal.UI.Input
             _logRenderer = context.LogRenderer;
             _inputRenderer = context.InputRenderer;
             _promptRenderer = context.PromptRenderer;
-            _executeButtonRenderer = context.ExecuteButtonRenderer;
+            _submitRenderer = context.SubmitRenderer;
             _launcherRenderer = context.LauncherRenderer;
             _logCopyButtonRenderer = context.LogCopyButtonRenderer;
             
             _windowRenderDataProvider = context.WindowRenderDataProvider;
             _logRenderDataProvider = context.LogRenderDataProvider;
             _inputRenderDataProvider = context.InputRenderDataProvider;
-            _executeButtonRenderDataProvider = context.ExecuteButtonRenderDataProvider;
+            _submitRenderDataProvider = context.SubmitRenderDataProvider;
             _buttonRenderDataProvider = context.LauncherRenderDataProvider;
             _scrollConfigurator = context.ScrollConfigurator;
 
@@ -70,7 +71,7 @@ namespace YukimaruGames.Terminal.UI.Input
                 _logRenderer,
                 _inputRenderer,
                 _promptRenderer,
-                _executeButtonRenderer,
+                _submitRenderer,
                 _launcherRenderer,
             };
 
@@ -121,7 +122,7 @@ namespace YukimaruGames.Terminal.UI.Input
                 {
                     _promptRenderer?.Render();
                     _inputRenderer?.Render(_inputRenderDataProvider.GetRenderData());
-                    _executeButtonRenderer?.Render(_executeButtonRenderDataProvider.GetRenderData());
+                    _submitRenderer?.Render(_submitRenderDataProvider.GetRenderData());
                 }
             }
 

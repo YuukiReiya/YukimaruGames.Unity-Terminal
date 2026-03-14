@@ -3,9 +3,9 @@ using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Submit
 {
-    public sealed class TerminalExecuteButtonRenderer : ITerminalExecuteButtonRenderer, IDisposable
+    public sealed class SubmitRenderer : ISubmitRenderer, IDisposable
     {
         private readonly IGUIStyleProvider _provider;
 
@@ -40,14 +40,14 @@ namespace YukimaruGames.Terminal.UI.View
         /// <inheritdoc/>
         public event Action OnClickButton;
 
-        public TerminalExecuteButtonRenderer(IGUIStyleProvider provider)
+        public SubmitRenderer(IGUIStyleProvider provider)
         {
             _provider = provider;
             _provider.OnStyleChanged += OnStyleChanged;
         }
 
         /// <inheritdoc/>
-        public void Render(TerminalExecuteButtonRenderData renderData)
+        public void Render(SubmitRenderData renderData)
         {
             if (!renderData.IsVisible) return;
 

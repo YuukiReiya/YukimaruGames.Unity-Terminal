@@ -1,12 +1,11 @@
 using System;
-using YukimaruGames.Terminal.UI.Presentation.Model;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Submit
 {
     /// <summary>
     /// 実行ボタンの描画クラス
     /// </summary>
-    public interface ITerminalExecuteButtonRenderer
+    public interface ISubmitRenderer
     {
         /// <summary>
         /// 表示テキスト
@@ -17,7 +16,7 @@ namespace YukimaruGames.Terminal.UI.View
         /// 描画
         /// </summary>
         /// <param name="renderData">描画に利用するパラメータ</param>
-        void Render(TerminalExecuteButtonRenderData renderData);
+        void Render(SubmitRenderData renderData);
 
         /// <summary>
         /// ボタンのクリック処理.

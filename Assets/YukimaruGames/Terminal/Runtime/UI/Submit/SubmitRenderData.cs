@@ -1,13 +1,13 @@
-namespace YukimaruGames.Terminal.UI.Presentation.Model
+namespace YukimaruGames.Terminal.UI.Submit
 {
     /// <summary>
     /// 実行ボタンの描画データ
     /// </summary>
-    public readonly struct TerminalExecuteButtonRenderData
+    public readonly struct SubmitRenderData
     {
         public bool IsVisible { get; }
 
-        public TerminalExecuteButtonRenderData(bool isVisible)
+        public SubmitRenderData(bool isVisible)
         {
             IsVisible = isVisible;
         }

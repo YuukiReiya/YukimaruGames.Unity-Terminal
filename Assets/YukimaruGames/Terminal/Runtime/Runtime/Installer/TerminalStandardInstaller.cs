@@ -25,6 +25,7 @@ using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
+using YukimaruGames.Terminal.UI.Submit;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Input;
 using YukimaruGames.Terminal.UI.Window;
@@ -79,8 +80,8 @@ namespace YukimaruGames.Terminal.Runtime
             public IWindowPresenter WindowPresenter;
             /// <inheritdoc cref="IInputPresenter"/>
             public IInputPresenter InputPresenter;
-            /// <inheritdoc cref="ITerminalExecuteButtonPresenter"/>
-            public ITerminalExecuteButtonPresenter ExecuteButtonPresenter;
+            /// <inheritdoc cref="ISubmitPresenter"/>
+            public ISubmitPresenter SubmitPresenter;
             /// <inheritdoc cref="ILauncherPresenter"/>
             public ILauncherPresenter LauncherPresenter;
         }
@@ -262,14 +263,14 @@ namespace YukimaruGames.Terminal.Runtime
             var logRenderer = new LogRenderer(logCopyButtonRenderer, logStyleContext, colorPaletteProvider);
             var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new TerminalPromptRenderer(promptStyleContext) { Prompt = options.Prompt };
-            var executeButtonRenderer = new TerminalExecuteButtonRenderer(executeButtonsStyleContext);
+            var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
             var launcherRenderer = new LauncherRenderer(pixelTexture2DRepository, openButtonsStyleContext);
 
             // Presenters
             var windowPresenter = new WindowPresenter(animatorDataConfigurator, new TerminalWindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
-            var executeButtonPresenter = new TerminalExecuteButtonPresenter(executeButtonRenderer, launcherVisibleConfigurator);
+            var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, launcherVisibleConfigurator);
             var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, launcherVisibleConfigurator);
 
             // View
@@ -280,13 +281,13 @@ namespace YukimaruGames.Terminal.Runtime
                 LogRenderer = logRenderer,
                 InputRenderer = inputRenderer,
                 PromptRenderer = promptRenderer,
-                ExecuteButtonRenderer = executeButtonRenderer,
+                SubmitRenderer = executeButtonRenderer,
                 LauncherRenderer = launcherRenderer,
 
                 WindowRenderDataProvider = windowPresenter,
                 LogRenderDataProvider = logPresenter,
                 InputRenderDataProvider = inputPresenter,
-                ExecuteButtonRenderDataProvider = executeButtonPresenter,
+                SubmitRenderDataProvider = executeButtonPresenter,
                 LauncherRenderDataProvider = launcherPresenter,
 
                 ScrollConfigurator = scrollConfigurator,
@@ -299,7 +300,7 @@ namespace YukimaruGames.Terminal.Runtime
                 ScrollConfigurator = scrollConfigurator,
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
-                ExecuteButtonPresenter = executeButtonPresenter,
+                SubmitPresenter = executeButtonPresenter,
                 LauncherPresenter = launcherPresenter,
                 
                 Components = new object[]
@@ -355,7 +356,7 @@ namespace YukimaruGames.Terminal.Runtime
                 rendering.ScrollConfigurator,
                 rendering.WindowPresenter,
                 rendering.InputPresenter,
-                rendering.ExecuteButtonPresenter,
+                rendering.SubmitPresenter,
                 rendering.LauncherPresenter,
                 eventListener);
 
