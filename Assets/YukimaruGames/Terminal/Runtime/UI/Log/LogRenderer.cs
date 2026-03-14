@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.SharedKernel;
-using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Presentation;
 using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 

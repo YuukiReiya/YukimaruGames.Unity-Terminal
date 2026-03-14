@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
-using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
+using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.View.Model;
 using YukimaruGames.Terminal.UI.Window;
@@ -16,9 +16,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly IWindowPresenter _windowPresenter;
         private readonly IInputPresenter _inputPresenter;
+        private readonly ILogPresenter _logPresenter;
         private readonly ISubmitPresenter _submitPresenter;
         private readonly ILauncherPresenter _launcherPresenter;
-        private readonly IClipboardRenderer _clipboardRenderer;
         private readonly ITerminalEventListener _eventListener;
 
         private readonly ITerminalService _service;
@@ -36,6 +36,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             IScrollConfigurator scrollConfigurator,
             IWindowPresenter windowPresenter,
             IInputPresenter inputPresenter,
+            ILogPresenter logPresenter,
             ISubmitPresenter submitPresenter,
             ILauncherPresenter launcherPresenter,
             ITerminalEventListener eventListener
@@ -46,6 +47,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _scrollConfigurator = scrollConfigurator;
             _windowPresenter = windowPresenter;
             _inputPresenter = inputPresenter;
+            _logPresenter = logPresenter;
             _submitPresenter = submitPresenter;
             _launcherPresenter = launcherPresenter;
             _eventListener = eventListener;

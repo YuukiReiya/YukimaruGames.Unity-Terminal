@@ -1,6 +1,6 @@
 using System;
 
-namespace YukimaruGames.Terminal.UI.Clipboard
+namespace YukimaruGames.Terminal.UI.Log
 {
     public interface IClipboardRenderer
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Presentation;
 
-namespace YukimaruGames.Terminal.UI.Clipboard
+namespace YukimaruGames.Terminal.UI.Log
 {
     public sealed class ClipboardRenderer : IClipboardRenderer, IDisposable
     {

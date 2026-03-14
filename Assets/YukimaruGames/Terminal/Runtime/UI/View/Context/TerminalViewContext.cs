@@ -1,4 +1,3 @@
-using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;

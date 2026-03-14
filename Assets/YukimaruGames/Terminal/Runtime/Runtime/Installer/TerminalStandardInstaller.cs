@@ -20,7 +20,6 @@ using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI.Clipboard;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
@@ -79,6 +78,8 @@ namespace YukimaruGames.Terminal.Runtime
             public IWindowPresenter WindowPresenter;
             /// <inheritdoc cref="IInputPresenter"/>
             public IInputPresenter InputPresenter;
+            /// <inheritdoc cref="ILogPresenter"/>
+            public ILogPresenter LogPresenter;
             /// <inheritdoc cref="ISubmitPresenter"/>
             public ISubmitPresenter SubmitPresenter;
             /// <inheritdoc cref="ILauncherPresenter"/>
@@ -299,6 +300,7 @@ namespace YukimaruGames.Terminal.Runtime
                 ScrollConfigurator = scrollConfigurator,
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
+                LogPresenter = logPresenter,
                 SubmitPresenter = executeButtonPresenter,
                 LauncherPresenter = launcherPresenter,
                 
@@ -355,6 +357,7 @@ namespace YukimaruGames.Terminal.Runtime
                 rendering.ScrollConfigurator,
                 rendering.WindowPresenter,
                 rendering.InputPresenter,
+                rendering.LogPresenter,
                 rendering.SubmitPresenter,
                 rendering.LauncherPresenter,
                 eventListener);
