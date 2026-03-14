@@ -1,20 +1,18 @@
 using System;
-using YukimaruGames.Terminal.UI.Presentation.Model;
-using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.Window;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Launcher
 {
-    public sealed class TerminalButtonPresenter : ITerminalButtonPresenter, ITerminalButtonRenderDataProvider, IDisposable
+    public sealed class LauncherPresenter : ILauncherPresenter, ILauncherRenderDataProvider, IDisposable
     {
-        private readonly ITerminalButtonRenderer _renderer;
+        private readonly ILauncherRenderer _renderer;
         private readonly IWindowPresenter _windowPresenter;
-        private readonly ITerminalButtonVisibleProvider _buttonVisibleProvider;
+        private readonly ILauncherVisibleProvider _buttonVisibleProvider;
 
         public event Action OnOpenTriggered;
         public event Action OnCloseTriggered;
 
-        public TerminalButtonPresenter(ITerminalButtonRenderer renderer, IWindowPresenter windowPresenter, ITerminalButtonVisibleProvider buttonVisibleProvider)
+        public LauncherPresenter(ILauncherRenderer renderer, IWindowPresenter windowPresenter, ILauncherVisibleProvider buttonVisibleProvider)
         {
             _renderer = renderer;
             _windowPresenter = windowPresenter;
@@ -24,9 +22,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
             _renderer.OnClickCloseButton += HandleClickCloseButton;
         }
 
-        TerminalButtonRenderData ITerminalButtonRenderDataProvider.GetRenderData()
+        LauncherRenderData ILauncherRenderDataProvider.GetRenderData()
         {
-            return new TerminalButtonRenderData(_buttonVisibleProvider.IsVisible, _buttonVisibleProvider.IsReverse, _windowPresenter.Rect, _windowPresenter.Anchor);
+            return new LauncherRenderData(_buttonVisibleProvider.IsVisible, _buttonVisibleProvider.IsReverse, _windowPresenter.Rect, _windowPresenter.Anchor);
         }
 
         private void HandleClickOpenButton() => OnOpenTriggered?.Invoke();

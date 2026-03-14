@@ -1,27 +1,28 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.UI.View
 {
     public sealed class TerminalLogCopyButtonRenderer : ITerminalLogCopyButtonRenderer, IDisposable
     {
-        private readonly ITerminalButtonVisibleProvider _buttonVisibleButtonVisibleProvider;
+        private readonly ILauncherVisibleProvider _launcherVisibleProvider;
         private readonly IGUIStyleProvider _styleProvider;
 
         private const string DisplayText = "📋";//"🔗"
 
         public event Action<string> OnClickButton;
         
-        public TerminalLogCopyButtonRenderer(ITerminalButtonVisibleProvider buttonVisibleProvider,IGUIStyleProvider styleProvider)
+        public TerminalLogCopyButtonRenderer(ILauncherVisibleProvider launcherVisibleProvider,IGUIStyleProvider styleProvider)
         {
-            _buttonVisibleButtonVisibleProvider = buttonVisibleProvider;
+            _launcherVisibleProvider = launcherVisibleProvider;
             _styleProvider = styleProvider;
         }
 
         public void Render(string copyText)
         {
-            if (!_buttonVisibleButtonVisibleProvider.IsVisible) return;
+            if (!_launcherVisibleProvider.IsVisible) return;
 
             if (GUILayout.Button(DisplayText, _styleProvider.GetStyle()))
             {

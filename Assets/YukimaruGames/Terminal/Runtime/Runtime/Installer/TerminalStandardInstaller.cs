@@ -21,6 +21,7 @@ using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
 using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
@@ -80,8 +81,8 @@ namespace YukimaruGames.Terminal.Runtime
             public IInputPresenter InputPresenter;
             /// <inheritdoc cref="ITerminalExecuteButtonPresenter"/>
             public ITerminalExecuteButtonPresenter ExecuteButtonPresenter;
-            /// <inheritdoc cref="ITerminalButtonPresenter"/>
-            public ITerminalButtonPresenter ButtonPresenter;
+            /// <inheritdoc cref="ILauncherPresenter"/>
+            public ILauncherPresenter LauncherPresenter;
         }
         
         /// <summary>
@@ -248,7 +249,7 @@ namespace YukimaruGames.Terminal.Runtime
             logCopyButtonStyleContext.SetColor(theme.CopyButtonColor);
 
             var cursorFlashSpeedProvider = new CursorFlashSpeedProvider(theme.CursorFlashSpeed);
-            var buttonVisibleConfigurator = new TerminalButtonVisibleConfigurator
+            var launcherVisibleConfigurator = new LauncherVisibleConfigurator
             {
                 IsVisible = options.IsButtonVisible,
                 IsReverse = options.IsButtonReverse,
@@ -257,19 +258,19 @@ namespace YukimaruGames.Terminal.Runtime
             // Renderers
             var windowRenderer = new WindowRenderer(pixelTexture2DRepository);
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
-            var logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(buttonVisibleConfigurator, logCopyButtonStyleContext);
+            var logCopyButtonRenderer = new TerminalLogCopyButtonRenderer(launcherVisibleConfigurator, logCopyButtonStyleContext);
             var logRenderer = new LogRenderer(logCopyButtonRenderer, logStyleContext, colorPaletteProvider);
             var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new TerminalPromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new TerminalExecuteButtonRenderer(executeButtonsStyleContext);
-            var buttonRenderer = new TerminalButtonRenderer(pixelTexture2DRepository, openButtonsStyleContext);
+            var launcherRenderer = new LauncherRenderer(pixelTexture2DRepository, openButtonsStyleContext);
 
             // Presenters
             var windowPresenter = new WindowPresenter(animatorDataConfigurator, new TerminalWindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
-            var executeButtonPresenter = new TerminalExecuteButtonPresenter(executeButtonRenderer, buttonVisibleConfigurator);
-            var buttonPresenter = new TerminalButtonPresenter(buttonRenderer, windowPresenter, buttonVisibleConfigurator);
+            var executeButtonPresenter = new TerminalExecuteButtonPresenter(executeButtonRenderer, launcherVisibleConfigurator);
+            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, launcherVisibleConfigurator);
 
             // View
             var viewContext = new TerminalViewContext
@@ -280,13 +281,13 @@ namespace YukimaruGames.Terminal.Runtime
                 InputRenderer = inputRenderer,
                 PromptRenderer = promptRenderer,
                 ExecuteButtonRenderer = executeButtonRenderer,
-                ButtonRenderer = buttonRenderer,
+                LauncherRenderer = launcherRenderer,
 
                 WindowRenderDataProvider = windowPresenter,
                 LogRenderDataProvider = logPresenter,
                 InputRenderDataProvider = inputPresenter,
                 ExecuteButtonRenderDataProvider = executeButtonPresenter,
-                ButtonRenderDataProvider = buttonPresenter,
+                LauncherRenderDataProvider = launcherPresenter,
 
                 ScrollConfigurator = scrollConfigurator,
             };
@@ -299,7 +300,7 @@ namespace YukimaruGames.Terminal.Runtime
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
                 ExecuteButtonPresenter = executeButtonPresenter,
-                ButtonPresenter = buttonPresenter,
+                LauncherPresenter = launcherPresenter,
                 
                 Components = new object[]
                 {
@@ -317,7 +318,7 @@ namespace YukimaruGames.Terminal.Runtime
                     logCopyButtonStyleContext,
                     
                     cursorFlashSpeedProvider,
-                    buttonVisibleConfigurator,
+                    launcherVisibleConfigurator,
                     
                     windowRenderer,
                     logCopyButtonRenderer,
@@ -325,13 +326,13 @@ namespace YukimaruGames.Terminal.Runtime
                     inputRenderer,
                     promptRenderer,
                     executeButtonRenderer,
-                    buttonRenderer,
+                    launcherRenderer,
 
                     windowPresenter,
                     logPresenter,
                     inputPresenter,
                     executeButtonPresenter,
-                    buttonPresenter,
+                    launcherPresenter,
                     
                     viewContext,
                     view
@@ -355,7 +356,7 @@ namespace YukimaruGames.Terminal.Runtime
                 rendering.WindowPresenter,
                 rendering.InputPresenter,
                 rendering.ExecuteButtonPresenter,
-                rendering.ButtonPresenter,
+                rendering.LauncherPresenter,
                 eventListener);
 
             return new CoordinatorContext

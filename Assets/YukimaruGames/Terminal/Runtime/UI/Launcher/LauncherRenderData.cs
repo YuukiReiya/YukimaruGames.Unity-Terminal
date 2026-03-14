@@ -1,16 +1,16 @@
 using UnityEngine;
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.Presentation.Model
+namespace YukimaruGames.Terminal.UI.Launcher
 {
-    public readonly struct TerminalButtonRenderData
+    public readonly struct LauncherRenderData
     {
         public bool IsVisible { get; }
         public bool IsReverse { get; }
         public Rect WindowRect { get; }
         public TerminalAnchor Anchor { get; }
 
-        public TerminalButtonRenderData(bool isVisible,bool isReverse,Rect windowRect,TerminalAnchor anchor)
+        public LauncherRenderData(bool isVisible,bool isReverse,Rect windowRect,TerminalAnchor anchor)
         {
             IsVisible = isVisible;
             IsReverse = isReverse;

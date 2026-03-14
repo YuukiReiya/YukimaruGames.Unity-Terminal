@@ -1,8 +1,8 @@
 using System;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Launcher
 {
-    public interface ITerminalButtonVisibleProvider
+    public interface ILauncherVisibleProvider
     {
         bool IsVisible { get; }
         bool IsReverse { get; }

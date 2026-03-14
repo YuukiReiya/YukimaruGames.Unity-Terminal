@@ -1,8 +1,8 @@
 using System;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Launcher
 {
-    public interface ITerminalButtonPresenter
+    public interface ILauncherPresenter
     {
         event Action OnOpenTriggered;
         event Action OnCloseTriggered;

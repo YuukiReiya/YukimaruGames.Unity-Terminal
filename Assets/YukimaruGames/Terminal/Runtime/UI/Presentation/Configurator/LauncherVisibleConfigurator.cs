@@ -1,8 +1,9 @@
 using System;
+using YukimaruGames.Terminal.UI.Launcher;
 
 namespace YukimaruGames.Terminal.UI.Presentation
 {
-    public sealed class TerminalButtonVisibleConfigurator : ITerminalButtonVisibleConfigurator, ITerminalButtonVisibleProvider, IDisposable
+    public sealed class LauncherVisibleConfigurator : ILauncherVisibleConfigurator, ILauncherVisibleProvider, IDisposable
     {
         private bool _isVisible;
 

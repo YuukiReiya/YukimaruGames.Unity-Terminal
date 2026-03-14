@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.View;
@@ -18,7 +18,7 @@ namespace YukimaruGames.Terminal.UI.Input
         private readonly IInputRenderer _inputRenderer;
         private readonly ITerminalPromptRenderer _promptRenderer;
         private readonly ITerminalExecuteButtonRenderer _executeButtonRenderer;
-        private readonly ITerminalButtonRenderer _buttonRenderer;
+        private readonly ILauncherRenderer _launcherRenderer;
         private readonly ITerminalLogCopyButtonRenderer _logCopyButtonRenderer;
         
         // provider.
@@ -26,7 +26,7 @@ namespace YukimaruGames.Terminal.UI.Input
         private readonly ILogRenderDataProvider _logRenderDataProvider;
         private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
         private readonly ITerminalExecuteButtonRenderDataProvider _executeButtonRenderDataProvider;
-        private readonly ITerminalButtonRenderDataProvider _buttonRenderDataProvider;
+        private readonly ILauncherRenderDataProvider _buttonRenderDataProvider;
         private readonly IScrollConfigurator _scrollConfigurator;
 
         // callbacks.
@@ -49,14 +49,14 @@ namespace YukimaruGames.Terminal.UI.Input
             _inputRenderer = context.InputRenderer;
             _promptRenderer = context.PromptRenderer;
             _executeButtonRenderer = context.ExecuteButtonRenderer;
-            _buttonRenderer = context.ButtonRenderer;
+            _launcherRenderer = context.LauncherRenderer;
             _logCopyButtonRenderer = context.LogCopyButtonRenderer;
             
             _windowRenderDataProvider = context.WindowRenderDataProvider;
             _logRenderDataProvider = context.LogRenderDataProvider;
             _inputRenderDataProvider = context.InputRenderDataProvider;
             _executeButtonRenderDataProvider = context.ExecuteButtonRenderDataProvider;
-            _buttonRenderDataProvider = context.ButtonRenderDataProvider;
+            _buttonRenderDataProvider = context.LauncherRenderDataProvider;
             _scrollConfigurator = context.ScrollConfigurator;
 
             if (_logCopyButtonRenderer != null)
@@ -71,7 +71,7 @@ namespace YukimaruGames.Terminal.UI.Input
                 _inputRenderer,
                 _promptRenderer,
                 _executeButtonRenderer,
-                _buttonRenderer,
+                _launcherRenderer,
             };
 
             _preRenderers = new List<ITerminalPreRenderer>(renderers.OfType<ITerminalPreRenderer>());
@@ -96,7 +96,7 @@ namespace YukimaruGames.Terminal.UI.Input
             _windowRenderer.Render(_windowRenderDataProvider.GetRenderData(), Render);
 
             // WindowのRect外に描画する.
-            _buttonRenderer.Render(_buttonRenderDataProvider.GetRenderData());
+            _launcherRenderer.Render(_buttonRenderDataProvider.GetRenderData());
         }
 
         private void ExecutePreRender()

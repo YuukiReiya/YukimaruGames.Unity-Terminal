@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.View
 {
-    public sealed class TerminalButtonRenderer : ITerminalButtonRenderer, IDisposable
+    public sealed class LauncherRenderer : ILauncherRenderer, IDisposable
     {
         private readonly IGUIStyleProvider _styleProvider;
 
@@ -33,7 +34,7 @@ namespace YukimaruGames.Terminal.UI.View
         public event Action OnClickOpenButton;
         public event Action OnClickCloseButton;
 
-        public TerminalButtonRenderer(IPixelTexture2DRepository repository, IGUIStyleProvider styleProvider)
+        public LauncherRenderer(IPixelTexture2DRepository repository, IGUIStyleProvider styleProvider)
         {
             _styleProvider = styleProvider;
 
@@ -41,7 +42,7 @@ namespace YukimaruGames.Terminal.UI.View
             _styleProvider.GetStyle().normal.background = repository.GetTexture2D(Key);
         }
 
-        public void Render(TerminalButtonRenderData renderData)
+        public void Render(LauncherRenderData renderData)
         {
             if (!renderData.IsVisible) return;
 
