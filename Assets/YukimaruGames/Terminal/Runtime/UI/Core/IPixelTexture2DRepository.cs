@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Core
 {
     public interface IPixelTexture2DRepository
     {

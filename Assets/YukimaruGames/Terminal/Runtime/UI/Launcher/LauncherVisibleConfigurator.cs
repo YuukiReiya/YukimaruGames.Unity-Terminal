@@ -1,7 +1,7 @@
 using System;
 using YukimaruGames.Terminal.UI.Launcher;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Launcher
 {
     public sealed class LauncherVisibleConfigurator : ILauncherVisibleConfigurator, ILauncherVisibleProvider, IDisposable
     {

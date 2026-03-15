@@ -2,21 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Core;
+using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
-using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.Window;
 
-namespace YukimaruGames.Terminal.UI.Input
+namespace YukimaruGames.Terminal.UI.Main
 {
-    public sealed class TerminalView : ITerminalView, IDisposable
+    public sealed class MainView : IMainView, IDisposable
     {
         // renderer.
         private readonly IWindowRenderer _windowRenderer;
         private readonly ILogRenderer _logRenderer;
         private readonly IInputRenderer _inputRenderer;
-        private readonly ITerminalPromptRenderer _promptRenderer;
+        private readonly IPromptRenderer _promptRenderer;
         private readonly ISubmitRenderer _submitRenderer;
         private readonly ILauncherRenderer _launcherRenderer;
         private readonly IClipboardRenderer _clipboardRenderer;
@@ -30,8 +30,8 @@ namespace YukimaruGames.Terminal.UI.Input
         private readonly IScrollConfigurator _scrollConfigurator;
 
         // callbacks.
-        private readonly List<ITerminalPreRenderer> _preRenderers;
-        private readonly List<ITerminalPostRenderer> _postRenderers;
+        private readonly List<IPreRenderer> _preRenderers;
+        private readonly List<IPostRenderer> _postRenderers;
 
         private Vector2Int _size;
 
@@ -40,7 +40,7 @@ namespace YukimaruGames.Terminal.UI.Input
         public event Action OnPreRender;
         public event Action OnPostRender;
 
-        public TerminalView(TerminalViewContext context)
+        public MainView(ViewContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
 
@@ -74,15 +74,15 @@ namespace YukimaruGames.Terminal.UI.Input
                 _launcherRenderer,
             };
 
-            _preRenderers = new List<ITerminalPreRenderer>(renderers.OfType<ITerminalPreRenderer>());
+            _preRenderers = new List<IPreRenderer>(renderers.OfType<IPreRenderer>());
             OnPreRender += ExecutePreRender;
 
-            _postRenderers = new List<ITerminalPostRenderer>(renderers.OfType<ITerminalPostRenderer>());
+            _postRenderers = new List<IPostRenderer>(renderers.OfType<IPostRenderer>());
             OnPostRender += ExecutePostRender;
         }
 
         /// <inheritdoc/> 
-        void ITerminalView.Render()
+        void IMainView.Render()
         {
             var size = new Vector2Int(Screen.width, Screen.height);
             if (_size != size)

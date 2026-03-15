@@ -5,14 +5,13 @@ using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
-using YukimaruGames.Terminal.UI.View;
 using YukimaruGames.Terminal.UI.Window;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Main
 {
-    public sealed class TerminalCoordinator : IDisposable
+    public sealed class Coordinator : IDisposable
     {
-        private readonly ITerminalView _view;
+        private readonly IMainView _view;
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly IWindowPresenter _windowPresenter;
         private readonly IInputPresenter _inputPresenter;
@@ -30,9 +29,9 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private bool IsVisible =>
             _windowPresenter.State is WindowState.Open && !_windowPresenter.IsAnimating;
         
-        public TerminalCoordinator(
+        public Coordinator(
             ITerminalService service,
-            ITerminalView view,
+            IMainView view,
             IScrollConfigurator scrollConfigurator,
             IWindowPresenter windowPresenter,
             IInputPresenter inputPresenter,

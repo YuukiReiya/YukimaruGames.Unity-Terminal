@@ -1,12 +1,11 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.View;
+using YukimaruGames.Terminal.UI.Log;
 
 namespace YukimaruGames.Terminal.UI.Input
 {
-    public sealed class InputRenderer : IInputRenderer, ITerminalPreRenderer
+    public sealed class InputRenderer : IInputRenderer, IPreRenderer
     {
         private readonly IScrollConfigurator _scrollConfigurator;
         private readonly IGUIStyleProvider _styleProvider;
@@ -86,7 +85,7 @@ namespace YukimaruGames.Terminal.UI.Input
             _cursorFlashSpeedProvider = cursorFlashSpeedProvider;
         }
 
-        void ITerminalPreRenderer.PreRender()
+        void IPreRenderer.PreRender()
         {
             var evt = Event.current;
             if (UsedInputEvent(evt.type))

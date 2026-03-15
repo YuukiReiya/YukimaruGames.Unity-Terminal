@@ -2,14 +2,15 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Core;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Input
 {
-    public sealed class TerminalPromptRenderer : ITerminalPromptRenderer,IDisposable
+    public sealed class PromptRenderer : IPromptRenderer, IDisposable
     {
         private readonly IGUIStyleProvider _provider;
         private Vector2 _promptSize;
 
-        private string _prompt= "$";
+        private string _prompt = "$";
+
         public string Prompt
         {
             private get => _prompt;
@@ -19,15 +20,15 @@ namespace YukimaruGames.Terminal.UI.View
                 _prompt = value;
                 _promptSize = CalcSize(_provider, value);
             }
-        } 
+        }
 
-        public TerminalPromptRenderer(IGUIStyleProvider provider)
+        public PromptRenderer(IGUIStyleProvider provider)
         {
             _provider = provider;
             _promptSize = CalcSize(_provider, _prompt);
             _provider.OnStyleChanged += OnChangedStyle;
         }
-        
+
         public void Dispose()
         {
             if (_provider != null)
@@ -42,7 +43,7 @@ namespace YukimaruGames.Terminal.UI.View
             GUILayout.Label(Prompt, _provider.GetStyle(), GUILayout.Width(_promptSize.x), GUILayout.Height(_promptSize.y));
         }
 
-        private Vector2 CalcSize(IGUIStyleProvider provider,string prompt) => provider?.GetStyle().CalcSize(new GUIContent(prompt)) ?? Vector2.zero;
+        private Vector2 CalcSize(IGUIStyleProvider provider, string prompt) => provider?.GetStyle().CalcSize(new GUIContent(prompt)) ?? Vector2.zero;
 
         private void OnChangedStyle()
         {

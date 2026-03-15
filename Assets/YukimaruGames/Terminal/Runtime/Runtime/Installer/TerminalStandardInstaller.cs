@@ -24,8 +24,7 @@ using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
-using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.View;
+using YukimaruGames.Terminal.UI.Main;
 using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Runtime
@@ -69,8 +68,8 @@ namespace YukimaruGames.Terminal.Runtime
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="ITerminalView"/> 
-            public ITerminalView View;
+            /// <inheritdoc cref="IMainView"/> 
+            public IMainView View;
             /// <inheritdoc cref="IScrollConfigurator"/>
             public IScrollConfigurator ScrollConfigurator;
             /// <inheritdoc cref="IWindowPresenter"/>
@@ -95,8 +94,8 @@ namespace YukimaruGames.Terminal.Runtime
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="TerminalCoordinator"/> 
-            public TerminalCoordinator Coordinator;
+            /// <inheritdoc cref="UI.Presentation.Coordinator"/> 
+            public Coordinator Coordinator;
             /// <inheritdoc cref="IEventListener"/> 
             public IEventListener EventListener;
             /// <summary>解決済みキーボード入力種別.</summary>
@@ -261,7 +260,7 @@ namespace YukimaruGames.Terminal.Runtime
             var clipboardRenderer = new ClipboardRenderer(launcherVisibleConfigurator, logCopyButtonStyleContext);
             var logRenderer = new LogRenderer(clipboardRenderer, logStyleContext, colorPaletteProvider);
             var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
-            var promptRenderer = new TerminalPromptRenderer(promptStyleContext) { Prompt = options.Prompt };
+            var promptRenderer = new PromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
             var launcherRenderer = new LauncherRenderer(pixelTexture2DRepository, openButtonsStyleContext);
 
@@ -273,7 +272,7 @@ namespace YukimaruGames.Terminal.Runtime
             var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, launcherVisibleConfigurator);
 
             // View
-            var viewContext = new TerminalViewContext
+            var viewContext = new ViewContext
             {
                 WindowRenderer = windowRenderer,
                 ClipboardRenderer = clipboardRenderer,
@@ -291,7 +290,7 @@ namespace YukimaruGames.Terminal.Runtime
 
                 ScrollConfigurator = scrollConfigurator,
             };
-            var view = new TerminalView(viewContext);
+            var view = new MainView(viewContext);
 
             return new RenderingContext
             {
@@ -350,7 +349,7 @@ namespace YukimaruGames.Terminal.Runtime
             var inputHandler = CreateInputHandler(options, keyboardType);
             var eventListener = new EventListener(inputHandler);
 
-            var coordinator = new TerminalCoordinator(
+            var coordinator = new Coordinator(
                 domain.Service,
                 rendering.View,
                 rendering.ScrollConfigurator,

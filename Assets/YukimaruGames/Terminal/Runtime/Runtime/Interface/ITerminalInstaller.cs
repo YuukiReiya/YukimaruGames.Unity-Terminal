@@ -1,5 +1,3 @@
-using YukimaruGames.Terminal.UI.View;
-
 namespace YukimaruGames.Terminal.Runtime
 {
     public interface ITerminalInstaller

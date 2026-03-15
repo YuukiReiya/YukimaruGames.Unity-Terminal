@@ -3,7 +3,6 @@ using UnityEngine;
 using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.UI.Log
 {

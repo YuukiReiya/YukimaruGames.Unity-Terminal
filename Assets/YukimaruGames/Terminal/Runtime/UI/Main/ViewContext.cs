@@ -1,18 +1,17 @@
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
-using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Window;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Main
 {
-    public sealed class TerminalViewContext
+    public sealed class ViewContext
     {
         // Renderers
         public IWindowRenderer WindowRenderer { get; set; }
         public ILogRenderer LogRenderer { get; set; }
         public IInputRenderer InputRenderer { get; set; }
-        public ITerminalPromptRenderer PromptRenderer { get; set; }
+        public IPromptRenderer PromptRenderer { get; set; }
         public ISubmitRenderer SubmitRenderer { get; set; }
         public ILauncherRenderer LauncherRenderer { get; set; }
         public IClipboardRenderer ClipboardRenderer { get; set; }
