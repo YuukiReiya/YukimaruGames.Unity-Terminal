@@ -1,4 +1,4 @@
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -12,13 +12,13 @@ namespace YukimaruGames.Terminal.Runtime
     public interface ITerminalAnimation
     {
         /// <summary>起動時のウィンドウ状態を取得します。</summary>
-        TerminalState BootupWindowState { get; }
+        WindowState BootupWindowState { get; }
 
         /// <summary>ウィンドウの表示アンカー位置を取得します。</summary>
-        TerminalAnchor Anchor { get; }
+        WindowAnchor Anchor { get; }
 
         /// <summary>ウィンドウスタイルを取得します。</summary>
-        TerminalWindowStyle WindowStyle { get; }
+        WindowStyle WindowStyle { get; }
 
         /// <summary>アニメーションの再生時間（秒）を取得します。</summary>
         float Duration { get; }

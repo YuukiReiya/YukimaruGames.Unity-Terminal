@@ -4,15 +4,14 @@
 //#undef ENABLE_LEGACY_INPUT_MANAGER
 #if ENABLE_LEGACY_INPUT_MANAGER
 using System;
-
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Input;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.UI.Core;
+using YukimaruGames.Terminal.UI.Input;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {
     [Serializable]
-    public sealed class LegacyInputKey : ITerminalInputKeyMap<KeyCode>
+    public sealed class LegacyInputKey : IInputKeyMap<KeyCode>
     {
         [SerializeField] private KeyCode _openKeyCode = KeyCode.LeftBracket;
         [SerializeField] private KeyCode _closeKeyCode = KeyCode.Escape;
@@ -22,16 +21,16 @@ namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
         [SerializeField] private KeyCode _autocompleteKeyCode = KeyCode.Tab;
         [SerializeField] private KeyCode _focusKeyCode = KeyCode.LeftControl;
 
-        public KeyCode GetKey(TerminalAction action) => action switch
+        public KeyCode GetKey(Trigger action) => action switch
         {
-            TerminalAction.None => KeyCode.None,
-            TerminalAction.Open => _openKeyCode,
-            TerminalAction.Close => _closeKeyCode,
-            TerminalAction.Execute => _executeKeyCode,
-            TerminalAction.PreviousHistory => _prevHistoryKeyCode,
-            TerminalAction.NextHistory => _nextHistoryKeyCode,
-            TerminalAction.Autocomplete => _autocompleteKeyCode,
-            TerminalAction.Focus => _focusKeyCode,
+            Trigger.None => KeyCode.None,
+            Trigger.Open => _openKeyCode,
+            Trigger.Close => _closeKeyCode,
+            Trigger.Execute => _executeKeyCode,
+            Trigger.PreviousHistory => _prevHistoryKeyCode,
+            Trigger.NextHistory => _nextHistoryKeyCode,
+            Trigger.Autocomplete => _autocompleteKeyCode,
+            Trigger.Focus => _focusKeyCode,
             _ => throw new ArgumentOutOfRangeException(nameof(action), action, null)
         };
     }

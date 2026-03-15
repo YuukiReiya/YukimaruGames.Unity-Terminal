@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.Application.Mapper;
-using YukimaruGames.Terminal.Application.Model;
 using YukimaruGames.Terminal.Domain.Exception;
 using YukimaruGames.Terminal.Domain.Model;
 using YukimaruGames.Terminal.Domain.Interface;
@@ -28,15 +28,15 @@ namespace YukimaruGames.Terminal.Application
         private readonly ICommandDiscoverer _discoverer;
 
         private Action _onLogUpdated;
-        private Action<LogRenderData[]> _onLogAdded;
-        private Action<LogRenderData[]> _onLogRemoved;
+        private Action<LogEntry[]> _onLogAdded;
+        private Action<LogEntry[]> _onLogRemoved;
 
         /// <inheritdoc/>
         /// <remarks>
         /// <p>ステートレス</p>
         /// <p>プロパティの呼び出しの度にMapperを介したDtoのマッピングが行われるため呼び出し側でキャッシュする機構が望まれる</p>
         /// </remarks>
-        public IReadOnlyCollection<LogRenderData> Logs => 0 < (_logger?.Logs?.Count ?? 0) ? LogMapper.Mapping(_logger.Logs.ToArray()) : Array.Empty<LogRenderData>();
+        public IReadOnlyCollection<LogEntry> Logs => 0 < (_logger?.Logs?.Count ?? 0) ? LogMapper.Mapping(_logger.Logs.ToArray()) : Array.Empty<LogEntry>();
         
         /// <inheritdoc/>
         /// <remarks>
@@ -50,14 +50,14 @@ namespace YukimaruGames.Terminal.Application
         }
 
         /// <inheritdoc/>
-        public event Action<LogRenderData[]> OnLogAdded
+        public event Action<LogEntry[]> OnLogAdded
         {
             add => _onLogAdded += value;
             remove => _onLogAdded -= value;
         }
 
         /// <inheritdoc/>
-        public event Action<LogRenderData[]> OnLogRemoved
+        public event Action<LogEntry[]> OnLogRemoved
         {
             add => _onLogRemoved += value;
             remove => _onLogRemoved -= value;

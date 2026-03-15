@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Application.Model;
+using YukimaruGames.Terminal.Application.Dto;
 
 namespace YukimaruGames.Terminal.Application
 {
@@ -18,12 +18,12 @@ namespace YukimaruGames.Terminal.Application
         /// <summary>
         /// ログの追加通知.
         /// </summary>
-        event System.Action<LogRenderData[]> OnLogAdded;
+        event System.Action<LogEntry[]> OnLogAdded;
 
         /// <summary>
         /// ログの削除通知.
         /// </summary>
-        event System.Action<LogRenderData[]> OnLogRemoved;
+        event System.Action<LogEntry[]> OnLogRemoved;
         
         #endregion
         
@@ -48,7 +48,7 @@ namespace YukimaruGames.Terminal.Application
         /// <remarks>
         /// <p>Dto</p>
         /// </remarks>
-        IReadOnlyCollection<LogRenderData> Logs { get; }
+        IReadOnlyCollection<LogEntry> Logs { get; }
         
         /// <summary>
         /// ログのバッファーサイズ.
