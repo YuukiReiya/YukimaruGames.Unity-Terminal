@@ -2,8 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Window
 {
@@ -13,24 +11,24 @@ namespace YukimaruGames.Terminal.UI.Window
         private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
-        private Action<TerminalState> _onCompleted;
-        private Action<TerminalState> _onAborted;
+        private Action<WindowState> _onCompleted;
+        private Action<WindowState> _onAborted;
 
         public bool IsAnimating { get; private set; }
 
-        public TerminalState State
+        public WindowState State
         {
             get => _configurator.State;
             set => _configurator.State = value;
         }
 
-        public TerminalAnchor Anchor
+        public WindowAnchor Anchor
         {
             get => _configurator.Anchor;
             set => _configurator.Anchor = value;
         }
 
-        public TerminalWindowStyle Style
+        public WindowStyle Style
         {
             get => _configurator.Style;
             set => _configurator.Style = value;
@@ -50,13 +48,13 @@ namespace YukimaruGames.Terminal.UI.Window
 
         public Rect Rect { get; private set; }
 
-        public event Action<TerminalState> OnCompleted
+        public event Action<WindowState> OnCompleted
         {
             add => _onCompleted += value;
             remove => _onCompleted -= value;
         }
 
-        public event Action<TerminalState> OnAborted
+        public event Action<WindowState> OnAborted
         {
             add => _onAborted += value;
             remove => _onAborted -= value;
@@ -73,16 +71,16 @@ namespace YukimaruGames.Terminal.UI.Window
         public void Open()
         {
             if (IsAnimating) return;
-            if (State is TerminalState.Open) return;
-            State = TerminalState.Open;
+            if (State is WindowState.Open) return;
+            State = WindowState.Open;
             Play();
         }
 
         public void Close()
         {
             if (IsAnimating) return;
-            if (State is TerminalState.Close) return;
-            State = TerminalState.Close;
+            if (State is WindowState.Close) return;
+            State = WindowState.Close;
             Play();
         }
 
@@ -172,7 +170,7 @@ namespace YukimaruGames.Terminal.UI.Window
             _cts = null;
         }
 
-        private void Invoke(Action<TerminalState> action, TerminalState arg)
+        private void Invoke(Action<WindowState> action, WindowState arg)
         {
             try
             {

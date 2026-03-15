@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Window
 {
@@ -23,14 +22,14 @@ namespace YukimaruGames.Terminal.UI.Window
         {
             step = data.State switch
             {
-                TerminalState.Open => step,
-                TerminalState.Close => Mathf.Clamp01(1f - step),
+                WindowState.Open => step,
+                WindowState.Close => Mathf.Clamp01(1f - step),
                 _ => throw new ArgumentOutOfRangeException()
             };
             var scale = data.Style switch
             {
-                TerminalWindowStyle.Compact => Mathf.Clamp01(data.Scale),
-                TerminalWindowStyle.Full => 1f,
+                WindowStyle.Compact => Mathf.Clamp01(data.Scale),
+                WindowStyle.Full => 1f,
                 _ => throw new ArgumentOutOfRangeException()
             };
             
@@ -41,26 +40,26 @@ namespace YukimaruGames.Terminal.UI.Window
 #pragma warning disable CS8509
             switch (data.Anchor)
             {
-                case TerminalAnchor.Left:
-                case TerminalAnchor.Right:
+                case WindowAnchor.Left:
+                case WindowAnchor.Right:
                     rect.height = screen.height;
                     rect.width = screen.width * Mathf.Clamp01(scale);
 
                     rect.x = data.Anchor switch
                     {
-                        TerminalAnchor.Left => -rect.width + rect.width * Mathf.Clamp01(step),
-                        TerminalAnchor.Right => screen.width - rect.width * Mathf.Clamp01(step),
+                        WindowAnchor.Left => -rect.width + rect.width * Mathf.Clamp01(step),
+                        WindowAnchor.Right => screen.width - rect.width * Mathf.Clamp01(step),
                     };
                     break;
-                case TerminalAnchor.Top:
-                case TerminalAnchor.Bottom:
+                case WindowAnchor.Top:
+                case WindowAnchor.Bottom:
                     rect.height = screen.height * Mathf.Clamp01(scale);
                     rect.width = screen.width;
 
                     rect.y = data.Anchor switch
                     {
-                        TerminalAnchor.Top => -rect.height + rect.height * Mathf.Clamp01(step),
-                        TerminalAnchor.Bottom => screen.height - rect.height * Mathf.Clamp01(step),
+                        WindowAnchor.Top => -rect.height + rect.height * Mathf.Clamp01(step),
+                        WindowAnchor.Bottom => screen.height - rect.height * Mathf.Clamp01(step),
                     };
                     break;
                 default:

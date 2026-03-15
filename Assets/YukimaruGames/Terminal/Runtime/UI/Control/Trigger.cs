@@ -1,6 +1,6 @@
-namespace YukimaruGames.Terminal.UI.View.Model
+namespace YukimaruGames.Terminal.UI
 {
-    public enum TerminalAction
+    public enum Trigger
     {
         None = 0,
         Open = 1,

@@ -1,6 +1,6 @@
-namespace YukimaruGames.Terminal.UI.View.Model
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public enum TerminalAnchor : byte
+    public enum WindowAnchor : byte
     {
         /// <summary>
         /// 左寄せ.

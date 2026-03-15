@@ -1,9 +1,9 @@
-namespace YukimaruGames.Terminal.UI.View.Model
+namespace YukimaruGames.Terminal.UI.Window
 {
     /// <summary>
     /// 画面サイズ.
     /// </summary>
-    public enum TerminalWindowStyle : byte
+    public enum WindowStyle : byte
     {
         /// <summary>
         /// コンパクト(画面に対して一定比率).

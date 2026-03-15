@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -12,15 +12,15 @@ namespace YukimaruGames.Terminal.Runtime
     [Serializable]
     public sealed class TerminalStandardAnimation : ITerminalAnimation
     {
-        [SerializeField] private TerminalState _bootupWindowState = TerminalState.Close;
-        [SerializeField] private TerminalAnchor _anchor = TerminalAnchor.Top;
-        [SerializeField] private TerminalWindowStyle _windowStyle = TerminalWindowStyle.Compact;
+        [SerializeField] private WindowState _bootupWindowState = WindowState.Close;
+        [SerializeField] private WindowAnchor _anchor = WindowAnchor.Top;
+        [SerializeField] private WindowStyle _windowStyle = WindowStyle.Compact;
         [SerializeField] private float _duration = 1f;
         [SerializeField] private float _compactScale = 0.35f;
 
-        public TerminalState BootupWindowState => _bootupWindowState;
-        public TerminalAnchor Anchor => _anchor;
-        public TerminalWindowStyle WindowStyle => _windowStyle;
+        public WindowState BootupWindowState => _bootupWindowState;
+        public WindowAnchor Anchor => _anchor;
+        public WindowStyle WindowStyle => _windowStyle;
         public float Duration => _duration;
         public float CompactScale => _compactScale;
     }

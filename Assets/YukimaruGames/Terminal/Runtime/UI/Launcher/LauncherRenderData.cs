@@ -1,5 +1,5 @@
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.UI.Launcher
 {
@@ -8,9 +8,9 @@ namespace YukimaruGames.Terminal.UI.Launcher
         public bool IsVisible { get; }
         public bool IsReverse { get; }
         public Rect WindowRect { get; }
-        public TerminalAnchor Anchor { get; }
+        public WindowAnchor Anchor { get; }
 
-        public LauncherRenderData(bool isVisible,bool isReverse,Rect windowRect,TerminalAnchor anchor)
+        public LauncherRenderData(bool isVisible,bool isReverse,Rect windowRect,WindowAnchor anchor)
         {
             IsVisible = isVisible;
             IsReverse = isReverse;

@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.View;
-using YukimaruGames.Terminal.UI.View.Model;
 using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
 namespace YukimaruGames.Terminal.UI.Input
@@ -17,7 +16,7 @@ namespace YukimaruGames.Terminal.UI.Input
         private bool _isCurrentlyFocused;
         private bool _isMoveCursorToEnd;
         private string _inputField;
-        private FocusControl _focusControl = FocusControl.None;
+        private Focus _focus = Focus.None;
         private EventType _evt;
         private bool _isImeComposing;
 
@@ -25,18 +24,18 @@ namespace YukimaruGames.Terminal.UI.Input
         private const string ControlName = "COMMAND_INPUT_CONTROL";
 
         public event Action<string> OnInputTextChanged;
-        public event Action<FocusControl> OnFocusControlChanged;
+        public event Action<Focus> OnFocusControlChanged;
         public event Action<bool> OnMoveCursorToEndTriggerChanged;
         public event Action<bool> OnImeComposingStateChanged;
 
-        private FocusControl FocusControl
+        private Focus Focus
         {
-            get => _focusControl;
+            get => _focus;
             set
             {
-                if (_focusControl == value) return;
+                if (_focus == value) return;
 
-                _focusControl = value;
+                _focus = value;
                 OnFocusControlChanged?.Invoke(value);
             }
         }
@@ -125,7 +124,7 @@ namespace YukimaruGames.Terminal.UI.Input
             GUI.skin.settings.selectionColor = selectionColor;
             GUI.skin.settings.cursorFlashSpeed = cursorFlashSpeed;
 
-            _focusControl = data.FocusControl;
+            _focus = data.Focus;
             _isMoveCursorToEnd = data.IsMoveCursorToEnd;
 
             FocusControlIfNeeded();
@@ -136,18 +135,18 @@ namespace YukimaruGames.Terminal.UI.Input
 
         private void FocusControlIfNeeded()
         {
-            if (FocusControl is FocusControl.None) return;
+            if (Focus is Focus.None) return;
 
-            switch (FocusControl)
+            switch (Focus)
             {
-                case FocusControl.Focus:
+                case Focus.Apply:
                     if (!_isCurrentlyFocused)
                     {
                         GUI.FocusControl(ControlName);
                     }
 
                     break;
-                case FocusControl.UnFocus:
+                case Focus.Release:
                     if (_isCurrentlyFocused)
                     {
                         GUI.FocusControl(null);
@@ -157,7 +156,7 @@ namespace YukimaruGames.Terminal.UI.Input
             }
 
             GUI.changed = true;
-            FocusControl = FocusControl.None;
+            Focus = Focus.None;
         }
 
         private void CursorToEnd()

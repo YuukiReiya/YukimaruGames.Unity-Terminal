@@ -1,7 +1,7 @@
 using UnityEngine.InputSystem;
 using YukimaruGames.Terminal.Runtime.Input.InputSystem;
+using YukimaruGames.Terminal.UI;
 using YukimaruGames.Terminal.UI.Input;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -14,13 +14,13 @@ namespace YukimaruGames.Terminal.Runtime
             _inputSystemKey = inputSystemKey;
         }
 
-        public bool WasPressedThisFrame(TerminalAction action)
+        public bool WasPressedThisFrame(Trigger action)
         {
             var key = _inputSystemKey.GetKey(action);
             return key is not Key.None && (Keyboard.current?[key].wasPressedThisFrame ?? false);
         }
 
-        public bool WasReleasedThisFrame(TerminalAction action)
+        public bool WasReleasedThisFrame(Trigger action)
         {
             var key = _inputSystemKey.GetKey(action);
             return key is not Key.None && (Keyboard.current?[key].wasReleasedThisFrame ?? false);

@@ -1,21 +1,20 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Window
 {
     public interface IWindowPresenter : IWindowRenderDataProvider
     {
         bool IsAnimating { get; }
-        TerminalState State { get; set; }
-        TerminalAnchor Anchor { get; set; }
-        TerminalWindowStyle Style { get; set; }
+        WindowState State { get; set; }
+        WindowAnchor Anchor { get; set; }
+        WindowStyle Style { get; set; }
         float Duration { set; }
         float Scale { set; }
         Rect Rect { get; }
 
-        event Action<TerminalState> OnCompleted;
-        event Action<TerminalState> OnAborted;
+        event Action<WindowState> OnCompleted;
+        event Action<WindowState> OnAborted;
 
         void Open();
         void Close();

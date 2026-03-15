@@ -1,6 +1,6 @@
 using System;
 using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -11,9 +11,9 @@ namespace YukimaruGames.Terminal.Runtime
     [Serializable, HideInTypeMenu]
     public sealed class TerminalNullAnimation : ITerminalAnimation
     {
-        public TerminalState BootupWindowState => TerminalState.Close;
-        public TerminalAnchor Anchor => TerminalAnchor.Top;
-        public TerminalWindowStyle WindowStyle => TerminalWindowStyle.Full;
+        public WindowState BootupWindowState => WindowState.Close;
+        public WindowAnchor Anchor => WindowAnchor.Top;
+        public WindowStyle WindowStyle => WindowStyle.Full;
         public float Duration => 0f;
         public float CompactScale => 0f;
     }

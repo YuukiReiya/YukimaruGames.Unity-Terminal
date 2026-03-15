@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.View.Model;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.UI.View
 {
@@ -57,7 +57,7 @@ namespace YukimaruGames.Terminal.UI.View
             switch (anchor)
             {
                 // 左上(左下)
-                case TerminalAnchor.Left:
+                case WindowAnchor.Left:
                     rect.x += rect.width;
                     rect.width = Mathf.Ceil(Mathf.Max(_openButtonTextSize.x, _closeButtonTextSize.x));
                     var height = Mathf.Floor(_openButtonTextSize.y + _closeButtonTextSize.y);
@@ -66,7 +66,7 @@ namespace YukimaruGames.Terminal.UI.View
                     break;
 
                 // 右下(右上)
-                case TerminalAnchor.Right:
+                case WindowAnchor.Right:
                     var width = Mathf.Ceil(Mathf.Max(_openButtonTextSize.x, _closeButtonTextSize.x));
                     rect.x -= width;
                     rect.width = width;
@@ -76,7 +76,7 @@ namespace YukimaruGames.Terminal.UI.View
                     break;
 
                 // 左上(右上)
-                case TerminalAnchor.Top:
+                case WindowAnchor.Top:
                     width = Mathf.Ceil(_openButtonTextSize.x + _closeButtonTextSize.x);
                     height = Mathf.Max(_openButtonTextSize.y, _closeButtonTextSize.y);
                     if (renderData.IsReverse) rect.x = rect.width - width;
@@ -86,7 +86,7 @@ namespace YukimaruGames.Terminal.UI.View
                     break;
 
                 // 右下(左下)
-                case TerminalAnchor.Bottom:
+                case WindowAnchor.Bottom:
                     width = Mathf.Ceil(_openButtonTextSize.x + _closeButtonTextSize.x);
                     height = Mathf.Max(_openButtonTextSize.y, _closeButtonTextSize.y);
                     if (!renderData.IsReverse) rect.x = rect.width - width;
@@ -98,7 +98,7 @@ namespace YukimaruGames.Terminal.UI.View
 
             using (new GUILayout.AreaScope(rect))
             {
-                using (GUI.Scope _ = anchor is TerminalAnchor.Left or TerminalAnchor.Right ? new GUILayout.VerticalScope() : new GUILayout.HorizontalScope())
+                using (GUI.Scope _ = anchor is WindowAnchor.Left or WindowAnchor.Right ? new GUILayout.VerticalScope() : new GUILayout.HorizontalScope())
                 {
                     DrawButtons();
                 }

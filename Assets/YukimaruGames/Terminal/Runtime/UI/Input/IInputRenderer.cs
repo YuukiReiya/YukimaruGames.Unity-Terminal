@@ -1,5 +1,4 @@
 using System;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Input
 {
@@ -18,7 +17,7 @@ namespace YukimaruGames.Terminal.UI.Input
         /// <summary>
         /// フォーカス状況の更新を通知.
         /// </summary>
-        event Action<FocusControl> OnFocusControlChanged;
+        event Action<Focus> OnFocusControlChanged;
 
         /// <summary>
         /// カーソル位置の終端トリガーの変更通知.

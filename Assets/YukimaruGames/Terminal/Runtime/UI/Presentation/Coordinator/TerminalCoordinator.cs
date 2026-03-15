@@ -5,7 +5,6 @@ using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.View;
-using YukimaruGames.Terminal.UI.View.Model;
 using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.UI.Presentation
@@ -28,7 +27,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         /// 表示されているか.
         /// </summary>
         private bool IsVisible =>
-            _windowPresenter.State is TerminalState.Open && !_windowPresenter.IsAnimating;
+            _windowPresenter.State is WindowState.Open && !_windowPresenter.IsAnimating;
         
         public TerminalCoordinator(
             ITerminalService service,

@@ -1,5 +1,4 @@
 using System;
-using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Input
 {
@@ -31,26 +30,26 @@ namespace YukimaruGames.Terminal.UI.Input
 
         public void SetFocus(bool focus)
         {
-            FocusControl = focus ? FocusControl.Focus : FocusControl.UnFocus;
+            Focus = focus ? Focus.Apply : Focus.Release;
         }
 
         public void SetMoveCursorToEnd() => _isMoveCursorToEnd = true;
 
         InputRenderData IInputRenderDataProvider.GetRenderData()
         {
-            return new InputRenderData(InputText, FocusControl, _isMoveCursorToEnd);
+            return new InputRenderData(InputText, Focus, _isMoveCursorToEnd);
         }
 
-        private FocusControl FocusControl { get; set; }
+        private Focus Focus { get; set; }
 
         private void HandleTextChanged(string input)
         {
             InputText = !IsEditable ? string.Empty : input;
         }
 
-        private void HandleFocusChanged(FocusControl focus)
+        private void HandleFocusChanged(Focus focus)
         {
-            FocusControl = focus;
+            Focus = focus;
         }
 
         private void HandleMoveCursorToEndTriggerChanged(bool moveCursorToEnd)

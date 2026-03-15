@@ -2,8 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using YukimaruGames.Terminal.Runtime;
-using YukimaruGames.Terminal.UI.View.Model;
-using YukimaruGames.Terminal.UI.Presentation;
+using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Editor
 {
@@ -46,9 +45,9 @@ namespace YukimaruGames.Terminal.Editor
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 EditorGUILayout.Space(2f);
-                DrawPopup(property.FindPropertyRelative("_bootupWindowState"), typeof(TerminalState), "Bootup State");
-                DrawPopup(property.FindPropertyRelative("_anchor"), typeof(TerminalAnchor), "Anchor");
-                DrawPopup(property.FindPropertyRelative("_windowStyle"), typeof(TerminalWindowStyle), "Style");
+                DrawPopup(property.FindPropertyRelative("_bootupWindowState"), typeof(WindowState), "Bootup State");
+                DrawPopup(property.FindPropertyRelative("_anchor"), typeof(WindowAnchor), "Anchor");
+                DrawPopup(property.FindPropertyRelative("_windowStyle"), typeof(WindowStyle), "Style");
                 EditorGUILayout.Space(2f);
             }
         }
