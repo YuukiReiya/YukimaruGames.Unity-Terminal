@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.View;
-using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
 namespace YukimaruGames.Terminal.UI.Input
 {
@@ -113,8 +113,8 @@ namespace YukimaruGames.Terminal.UI.Input
             var selectionColor = GUI.skin.settings.selectionColor;
             var cursorFlashSpeed = GUI.skin.settings.cursorFlashSpeed;
 
-            GUI.skin.settings.cursorColor = _colorPaletteProvider.GetColor(ColorPalette.Cursor);
-            GUI.skin.settings.selectionColor = _colorPaletteProvider.GetColor(ColorPalette.Selection);
+            GUI.skin.settings.cursorColor = _colorPaletteProvider.GetColor(Constants.ColorPalette.Cursor);
+            GUI.skin.settings.selectionColor = _colorPaletteProvider.GetColor(Constants.ColorPalette.Selection);
             GUI.skin.settings.cursorFlashSpeed = _cursorFlashSpeedProvider.GetFlashSpeed();
 
             InputText = GUILayout.TextField(data.InputText, _styleProvider.GetStyle());

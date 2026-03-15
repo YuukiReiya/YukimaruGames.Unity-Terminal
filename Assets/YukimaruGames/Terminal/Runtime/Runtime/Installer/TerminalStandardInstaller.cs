@@ -20,14 +20,13 @@ using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
 using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.View;
-using YukimaruGames.Terminal.UI.View.Input;
 using YukimaruGames.Terminal.UI.Window;
-using ColorPalette = YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -98,8 +97,8 @@ namespace YukimaruGames.Terminal.Runtime
             
             /// <inheritdoc cref="TerminalCoordinator"/> 
             public TerminalCoordinator Coordinator;
-            /// <inheritdoc cref="ITerminalEventListener"/> 
-            public ITerminalEventListener EventListener;
+            /// <inheritdoc cref="IEventListener"/> 
+            public IEventListener EventListener;
             /// <summary>解決済みキーボード入力種別.</summary>
             public InputKeyboardType KeyboardType;
         }
@@ -219,15 +218,15 @@ namespace YukimaruGames.Terminal.Runtime
 
             var colorPaletteProvider = new ColorPaletteProvider(new Dictionary<string, Color>
             {
-                { ColorPalette.Message, theme.MessageColor },
-                { ColorPalette.Entry, theme.EntryColor },
-                { ColorPalette.Warning, theme.WarningColor },
-                { ColorPalette.Error, theme.ErrorColor },
-                { ColorPalette.Assert, theme.AssertColor },
-                { ColorPalette.Exception, theme.ExceptionColor },
-                { ColorPalette.System, theme.SystemColor },
-                { ColorPalette.Cursor, theme.CaretColor },
-                { ColorPalette.Selection, theme.SelectionColor },
+                { Constants.ColorPalette.Message, theme.MessageColor },
+                { Constants.ColorPalette.Entry, theme.EntryColor },
+                { Constants.ColorPalette.Warning, theme.WarningColor },
+                { Constants.ColorPalette.Error, theme.ErrorColor },
+                { Constants.ColorPalette.Assert, theme.AssertColor },
+                { Constants.ColorPalette.Exception, theme.ExceptionColor },
+                { Constants.ColorPalette.System, theme.SystemColor },
+                { Constants.ColorPalette.Cursor, theme.CaretColor },
+                { Constants.ColorPalette.Selection, theme.SelectionColor },
             });
 
             var fontProvider = new TerminalFontProvider(theme.Font) { Size = theme.FontSize };
@@ -349,7 +348,7 @@ namespace YukimaruGames.Terminal.Runtime
         {
             var keyboardType = ResolveKeyboardType(options);
             var inputHandler = CreateInputHandler(options, keyboardType);
-            var eventListener = new TerminalEventListener(inputHandler);
+            var eventListener = new EventListener(inputHandler);
 
             var coordinator = new TerminalCoordinator(
                 domain.Service,

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Core
 {
     public interface IColorPaletteProvider
     {

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using YukimaruGames.Terminal.UI;
+using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Input;
 
 // ReSharper disable InconsistentNaming

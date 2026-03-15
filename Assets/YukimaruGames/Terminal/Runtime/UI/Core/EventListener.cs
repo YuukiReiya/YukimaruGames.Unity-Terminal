@@ -2,9 +2,9 @@ using System;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.UI.Input;
 
-namespace YukimaruGames.Terminal.UI.View.Input
+namespace YukimaruGames.Terminal.UI.Core
 {
-    public sealed class TerminalEventListener : ITerminalEventListener, IUpdatable
+    public sealed class EventListener : IEventListener, IUpdatable
     {
         private IKeyboardInputHandler _inputHandler;
         private bool _isEnable = true;
@@ -23,7 +23,7 @@ namespace YukimaruGames.Terminal.UI.View.Input
             set => _isEnable = value;
         }
 
-        public TerminalEventListener(IKeyboardInputHandler handler)
+        public EventListener(IKeyboardInputHandler handler)
         {
             _inputHandler = handler;
         }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Launcher;
-using YukimaruGames.Terminal.UI.Presentation;
 
 namespace YukimaruGames.Terminal.UI.Log
 {
@@ -10,7 +10,7 @@ namespace YukimaruGames.Terminal.UI.Log
         private readonly ILauncherVisibleProvider _launcherVisibleProvider;
         private readonly IGUIStyleProvider _styleProvider;
 
-        private const string DisplayText = "📋";//"🔗"
+        private const string DisplayText = "[COPY]";
 
         public event Action<string> OnClickButton;
         

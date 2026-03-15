@@ -2,8 +2,8 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.SharedKernel;
+using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Presentation;
-using ColorPalette=YukimaruGames.Terminal.SharedKernel.Constants.Constants.ColorPalette;
 
 namespace YukimaruGames.Terminal.UI.Log
 {
@@ -25,13 +25,13 @@ namespace YukimaruGames.Terminal.UI.Log
 
         private Color GetColor(MessageType type) => type switch
         {
-            MessageType.Error => _colorPaletteProvider.GetColor(ColorPalette.Error),
-            MessageType.Assert => _colorPaletteProvider.GetColor(ColorPalette.Assert),
-            MessageType.Warning => _colorPaletteProvider.GetColor(ColorPalette.Warning),
-            MessageType.Message => _colorPaletteProvider.GetColor(ColorPalette.Message),
-            MessageType.Exception => _colorPaletteProvider.GetColor(ColorPalette.Exception),
-            MessageType.Entry => _colorPaletteProvider.GetColor(ColorPalette.Entry),
-            MessageType.System => _colorPaletteProvider.GetColor(ColorPalette.System),
+            MessageType.Error => _colorPaletteProvider.GetColor(Constants.ColorPalette.Error),
+            MessageType.Assert => _colorPaletteProvider.GetColor(Constants.ColorPalette.Assert),
+            MessageType.Warning => _colorPaletteProvider.GetColor(Constants.ColorPalette.Warning),
+            MessageType.Message => _colorPaletteProvider.GetColor(Constants.ColorPalette.Message),
+            MessageType.Exception => _colorPaletteProvider.GetColor(Constants.ColorPalette.Exception),
+            MessageType.Entry => _colorPaletteProvider.GetColor(Constants.ColorPalette.Entry),
+            MessageType.System => _colorPaletteProvider.GetColor(Constants.ColorPalette.System),
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 

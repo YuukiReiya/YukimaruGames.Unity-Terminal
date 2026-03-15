@@ -1,4 +1,5 @@
 using System;
+using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.UI.Input
 {

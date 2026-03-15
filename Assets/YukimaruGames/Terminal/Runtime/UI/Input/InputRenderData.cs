@@ -1,3 +1,5 @@
+using YukimaruGames.Terminal.UI.Core;
+
 namespace YukimaruGames.Terminal.UI.Input
 {
     public readonly struct InputRenderData

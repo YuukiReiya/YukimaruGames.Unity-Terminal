@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Presentation;
+using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure
 {

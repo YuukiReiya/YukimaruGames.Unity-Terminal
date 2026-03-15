@@ -1,8 +1,8 @@
 using System;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Core
 {
-    public interface ITerminalEventListener
+    public interface IEventListener
     {
         bool IsEnabled { get; set; }
         event Action OnOpenTriggered;

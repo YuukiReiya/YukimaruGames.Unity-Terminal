@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
+using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
 using YukimaruGames.Terminal.UI.Log;
@@ -18,7 +19,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
         private readonly ILogPresenter _logPresenter;
         private readonly ISubmitPresenter _submitPresenter;
         private readonly ILauncherPresenter _launcherPresenter;
-        private readonly ITerminalEventListener _eventListener;
+        private readonly IEventListener _eventListener;
 
         private readonly ITerminalService _service;
         private const string BootUpMessage = "Welcome to Runtime YukimaruGames.CLI!\n(c) Independent Developer. All rights reserved.\nType your command below.";
@@ -38,7 +39,7 @@ namespace YukimaruGames.Terminal.UI.Presentation
             ILogPresenter logPresenter,
             ISubmitPresenter submitPresenter,
             ILauncherPresenter launcherPresenter,
-            ITerminalEventListener eventListener
+            IEventListener eventListener
         )
         {
             _service = service;

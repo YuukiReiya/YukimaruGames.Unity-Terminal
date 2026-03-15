@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Launcher;
-using YukimaruGames.Terminal.UI.Presentation;
 using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.UI.View

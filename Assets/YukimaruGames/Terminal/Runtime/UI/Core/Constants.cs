@@ -1,4 +1,6 @@
-namespace YukimaruGames.Terminal.SharedKernel.Constants
+using YukimaruGames.Terminal.SharedKernel;
+
+namespace YukimaruGames.Terminal.UI.Core
 {
     public static class Constants
     {

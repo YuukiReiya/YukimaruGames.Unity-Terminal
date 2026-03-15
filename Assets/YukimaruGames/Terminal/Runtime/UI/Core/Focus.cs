@@ -1,4 +1,4 @@
-namespace YukimaruGames.Terminal.UI
+namespace YukimaruGames.Terminal.UI.Core
 {
     public enum Focus
     {
