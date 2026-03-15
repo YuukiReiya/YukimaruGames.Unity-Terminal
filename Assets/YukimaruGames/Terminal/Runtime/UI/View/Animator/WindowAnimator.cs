@@ -1,14 +1,12 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.View
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public sealed class TerminalWindowAnimator : ITerminalWindowAnimator
+    public sealed class WindowAnimator : IWindowAnimator
     {
-        public Rect Evaluate(TerminalWindowAnimatorData data)
+        public Rect Evaluate(WindowAnimatorData data)
         {
             if (Mathf.Approximately(0f, data.Duration))
             {
@@ -21,7 +19,7 @@ namespace YukimaruGames.Terminal.UI.View
             return Calculate(data, step);
         }
 
-        private Rect Calculate(in TerminalWindowAnimatorData data, float step)
+        private Rect Calculate(in WindowAnimatorData data, float step)
         {
             step = data.State switch
             {

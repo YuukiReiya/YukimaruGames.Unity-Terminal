@@ -20,7 +20,7 @@ namespace YukimaruGames.Terminal.UI.View
         // Data Providers
         public IWindowRenderDataProvider WindowRenderDataProvider { get; set; }
         public ILogRenderDataProvider LogRenderDataProvider { get; set; }
-        public ITerminalInputRenderDataProvider InputRenderDataProvider { get; set; }
+        public IInputRenderDataProvider InputRenderDataProvider { get; set; }
         public ISubmitRenderDataProvider SubmitRenderDataProvider { get; set; }
         public ILauncherRenderDataProvider LauncherRenderDataProvider { get; set; }
         

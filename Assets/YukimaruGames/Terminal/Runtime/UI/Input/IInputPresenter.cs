@@ -1,6 +1,6 @@
 namespace YukimaruGames.Terminal.UI.Input
 {
-    public interface IInputPresenter : ITerminalInputRenderDataProvider
+    public interface IInputPresenter : IInputRenderDataProvider
     {
         string InputText { get; }
         /// <summary>

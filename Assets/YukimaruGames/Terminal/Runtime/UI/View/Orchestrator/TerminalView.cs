@@ -24,7 +24,7 @@ namespace YukimaruGames.Terminal.UI.Input
         // provider.
         private readonly IWindowRenderDataProvider _windowRenderDataProvider;
         private readonly ILogRenderDataProvider _logRenderDataProvider;
-        private readonly ITerminalInputRenderDataProvider _inputRenderDataProvider;
+        private readonly IInputRenderDataProvider _inputRenderDataProvider;
         private readonly ISubmitRenderDataProvider _submitRenderDataProvider;
         private readonly ILauncherRenderDataProvider _buttonRenderDataProvider;
         private readonly IScrollConfigurator _scrollConfigurator;

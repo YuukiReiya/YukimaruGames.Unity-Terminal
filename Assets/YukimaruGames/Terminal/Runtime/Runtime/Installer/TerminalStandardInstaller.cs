@@ -208,7 +208,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
-            var animatorDataConfigurator = new TerminalWindowAnimatorDataConfigurator()
+            var animatorDataConfigurator = new WindowAnimatorDataConfigurator()
             {
                 State = animation.BootupWindowState,
                 Anchor = animation.Anchor,
@@ -267,7 +267,7 @@ namespace YukimaruGames.Terminal.Runtime
             var launcherRenderer = new LauncherRenderer(pixelTexture2DRepository, openButtonsStyleContext);
 
             // Presenters
-            var windowPresenter = new WindowPresenter(animatorDataConfigurator, new TerminalWindowAnimator());
+            var windowPresenter = new WindowPresenter(animatorDataConfigurator, new WindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, launcherVisibleConfigurator);

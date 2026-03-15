@@ -3,15 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Presentation;
-using YukimaruGames.Terminal.UI.Presentation.Model;
 using YukimaruGames.Terminal.UI.View.Model;
 
 namespace YukimaruGames.Terminal.UI.Window
 {
     public sealed class WindowPresenter : IWindowPresenter, IDisposable
     {
-        private readonly ITerminalWindowAnimatorDataConfigurator _configurator;
-        private readonly ITerminalWindowAnimator _windowAnimator;
+        private readonly IWindowAnimatorDataConfigurator _configurator;
+        private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
         private Action<TerminalState> _onCompleted;
@@ -64,8 +63,8 @@ namespace YukimaruGames.Terminal.UI.Window
         }
 
         public WindowPresenter(
-            ITerminalWindowAnimatorDataConfigurator configurator,
-            ITerminalWindowAnimator animator)
+            IWindowAnimatorDataConfigurator configurator,
+            IWindowAnimator animator)
         {
             _configurator = configurator;
             _windowAnimator = animator;
@@ -152,9 +151,9 @@ namespace YukimaruGames.Terminal.UI.Window
             Rect = _windowAnimator.Evaluate(GetAnimatorData(duration, elapsed));
         }
 
-        private TerminalWindowAnimatorData GetAnimatorData(float duration, float elapsed)
+        private WindowAnimatorData GetAnimatorData(float duration, float elapsed)
         {
-            return new TerminalWindowAnimatorData(
+            return new WindowAnimatorData(
                 (Screen.width, Screen.height),
                 State, Anchor, Style, duration, Scale, elapsed);
         }

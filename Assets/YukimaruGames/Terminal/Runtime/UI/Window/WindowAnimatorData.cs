@@ -1,8 +1,8 @@
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.Presentation.Model
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public readonly struct TerminalWindowAnimatorData
+    public readonly struct WindowAnimatorData
     {
         public (int width, int height) Size { get; }
         public TerminalState State { get; }
@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.UI.Presentation.Model
         public float Scale { get; }
         public float Elapsed { get; }
 
-        public TerminalWindowAnimatorData(
+        public WindowAnimatorData(
             (int width,int height)size,
             TerminalState state,
             TerminalAnchor anchor,

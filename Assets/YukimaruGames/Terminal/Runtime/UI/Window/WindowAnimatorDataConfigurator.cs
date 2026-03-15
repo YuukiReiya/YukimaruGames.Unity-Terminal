@@ -1,8 +1,8 @@
 using YukimaruGames.Terminal.UI.View.Model;
 
-namespace YukimaruGames.Terminal.UI.Presentation
+namespace YukimaruGames.Terminal.UI.Window
 {
-    public sealed class TerminalWindowAnimatorDataConfigurator : ITerminalWindowAnimatorDataConfigurator, ITerminalWindowAnimatorDataProvider
+    public sealed class WindowAnimatorDataConfigurator : IWindowAnimatorDataConfigurator, IWindowAnimatorDataProvider
     {
         public TerminalState State { get; set; }
         public TerminalAnchor Anchor { get; set; }
