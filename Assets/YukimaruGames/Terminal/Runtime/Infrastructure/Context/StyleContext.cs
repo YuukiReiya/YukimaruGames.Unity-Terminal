@@ -4,7 +4,7 @@ using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure
 {
-    public sealed class TerminalGUIStyleContext : IGUIStyleProvider, IDisposable
+    public sealed class StyleContext : IGUIStyleProvider, IDisposable
     {
         private readonly IFontProvider _provider;
         private readonly Lazy<GUIStyle> _styleLazy;
@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.Infrastructure
 
         public event Action OnStyleChanged;
 
-        public TerminalGUIStyleContext(IFontProvider provider)
+        public StyleContext(IFontProvider provider)
         {
             _provider = provider;
             _styleLazy = new Lazy<GUIStyle>(() => new GUIStyle

@@ -233,12 +233,12 @@ namespace YukimaruGames.Terminal.Runtime
             var scrollConfigurator = new ScrollConfigurator();
 
             // Style contexts
-            var logStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var inputStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var promptStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var executeButtonsStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var openButtonsStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var logCopyButtonStyleContext = new TerminalGUIStyleContext(fontProvider);
+            var logStyleContext = new StyleContext(fontProvider);
+            var inputStyleContext = new StyleContext(fontProvider);
+            var promptStyleContext = new StyleContext(fontProvider);
+            var executeButtonsStyleContext = new StyleContext(fontProvider);
+            var openButtonsStyleContext = new StyleContext(fontProvider);
+            var logCopyButtonStyleContext = new StyleContext(fontProvider);
 
             // Apply Colors immediately
             inputStyleContext.SetColor(theme.InputColor);
