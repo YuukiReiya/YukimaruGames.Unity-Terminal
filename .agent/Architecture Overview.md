@@ -65,3 +65,15 @@ The `.asmdef` definitions currently enforce these rules physically.
 - **Zero Config Defaults**: Standard configurations must work out-of-the-box using POCOs (Plain Old C# Objects) without requiring asset creation (ScriptableObject).
 - **Installer Responsibility**: The `Installer` implementation is responsible for defining and retrieving its configuration. The Bootstrapper should not inject configuration dependencies into the Installer unless necessary for the interface contract.
 - **Meaningful Fields**: Do not expose `[SerializeField]` in the Bootstrapper that are only used by specific installer implementations. This is considered "Logic Leakage".
+
+## Internal Module Organization (Vertical Slice)
+各レイヤー（特にUI層）の内部構造は、技術的な役割（Presenter/View等）ではなく、機能単位（Vertical Slice）で整理します。
+
+### 1. Functional Folders
+単一の機能に関わるファイル（Presenter, Renderer, Interface等）は、同一のフォルダ内に集約します。
+- **UI/...**: `Main/`, `Core/`, `Log/`, `Input/`, `Launcher/` 等
+
+### 2. Naming Conventions (No Prefix)
+- **原則**: 各モジュール（asmdef）の内部クラスには、ライブラリ名（`Terminal`）のプリフィックスを付けない。
+- **理由**: 名前空間によって既にコンテキストが定義されているため、重複を避けて簡潔にする。
+- **例**: `TerminalView` → `MainView`, `TerminalLogRenderer` → `LogRenderer`
