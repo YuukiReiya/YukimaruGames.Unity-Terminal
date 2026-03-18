@@ -229,7 +229,7 @@ namespace YukimaruGames.Terminal.Runtime
             });
 
             var fontProvider = new TerminalFontProvider(theme.Font) { Size = theme.FontSize };
-            var pixelTexture2DRepository = new PixelTexture2DRepository();
+            var pixelTexture2DRepository = new PixelTextureRepository();
             var scrollConfigurator = new ScrollConfigurator();
 
             // Style contexts

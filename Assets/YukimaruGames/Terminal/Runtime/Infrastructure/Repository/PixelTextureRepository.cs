@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure
 {
-    public sealed class PixelTexture2DRepository : IPixelTexture2DRepository, IDisposable
+    public sealed class PixelTextureRepository : IPixelTextureRepository, IDisposable
     {
         private readonly Dictionary<string, PixelTextureHandle> _dic = new();
 
