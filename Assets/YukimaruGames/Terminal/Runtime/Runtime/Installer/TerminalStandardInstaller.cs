@@ -228,7 +228,7 @@ namespace YukimaruGames.Terminal.Runtime
                 { Constants.ColorPalette.Selection, theme.SelectionColor },
             });
 
-            var fontProvider = new TerminalFontProvider(theme.Font) { Size = theme.FontSize };
+            var fontProvider = new FontProvider(theme.Font) { Size = theme.FontSize };
             var pixelTexture2DRepository = new PixelTextureRepository();
             var scrollConfigurator = new ScrollConfigurator();
 
