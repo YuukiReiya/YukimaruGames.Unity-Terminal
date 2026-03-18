@@ -7,11 +7,11 @@ namespace YukimaruGames.Terminal.Infrastructure
 {
     public sealed class PixelTexture2DRepository : IPixelTexture2DRepository, IDisposable
     {
-        private readonly Dictionary<string, PixelTexture2DHandle> _dic = new();
+        private readonly Dictionary<string, PixelTextureHandle> _dic = new();
 
         public void Add(string key, Color color)
         {
-            _dic.TryAdd(key, new PixelTexture2DHandle(color));
+            _dic.TryAdd(key, new PixelTextureHandle(color));
         }
 
         public Texture2D GetTexture2D(string key)
@@ -27,7 +27,7 @@ namespace YukimaruGames.Terminal.Infrastructure
             }
             else
             {
-                _dic.Add(key, new PixelTexture2DHandle(color));
+                _dic.Add(key, new PixelTextureHandle(color));
             }
         }
 
