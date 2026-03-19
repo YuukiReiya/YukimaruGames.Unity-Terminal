@@ -3,7 +3,7 @@ using YukimaruGames.Terminal.Runtime.Shared;
 
 namespace YukimaruGames.Terminal.Runtime
 {
-    public sealed partial class TerminalBootstrapper : MonoBehaviour
+    public sealed partial class Bootstrapper : MonoBehaviour
     {
         [Header("Installer")]
         [SerializeReference, SerializeInterface] 
