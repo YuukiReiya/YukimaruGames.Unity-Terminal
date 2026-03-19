@@ -30,7 +30,7 @@ using YukimaruGames.Terminal.UI.Window;
 namespace YukimaruGames.Terminal.Runtime
 {
     [Serializable]
-    public sealed class TerminalStandardInstaller : ITerminalInstaller
+    public sealed class StandardInstaller : IInstaller
     {
         #region inner-struct
 
@@ -113,7 +113,7 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeReference, SerializeInterface] 
         private ITerminalOptions _options = new TerminalStandardOptions();
 
-        TerminalRuntimeScope ITerminalInstaller.Install()
+        TerminalRuntimeScope IInstaller.Install()
         {
             // Null Object Pattern: 意図的な null は Null 実装にフォールバック
             var theme = _theme ?? new TerminalNullTheme();
@@ -128,7 +128,7 @@ namespace YukimaruGames.Terminal.Runtime
             return BuildScope(in domain, in rendering, in coordinator);
         }
 
-        void ITerminalInstaller.Uninstall(TerminalRuntimeScope scope)
+        void IInstaller.Uninstall(TerminalRuntimeScope scope)
         {
             (scope as IDisposable)?.Dispose();
         }
