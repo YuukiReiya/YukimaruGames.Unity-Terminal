@@ -232,7 +232,7 @@ namespace YukimaruGames.Terminal.Runtime
             });
 
             var fontProvider = new FontProvider(theme.Font) { Size = theme.FontSize };
-            var pixelTexture2DRepository = new PixelTextureRepository();
+            var pixelTextureRepository = new PixelTextureRepository();
             var scrollConfigurator = new ScrollConfigurator();
 
             // Style contexts
@@ -258,14 +258,14 @@ namespace YukimaruGames.Terminal.Runtime
             };
 
             // Renderers
-            var windowRenderer = new WindowRenderer(pixelTexture2DRepository);
+            var windowRenderer = new WindowRenderer(pixelTextureRepository);
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
             var clipboardRenderer = new ClipboardRenderer(launcherVisibleConfigurator, logCopyButtonStyleContext);
             var logRenderer = new LogRenderer(clipboardRenderer, logStyleContext, colorPaletteProvider);
             var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new PromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
-            var launcherRenderer = new LauncherRenderer(pixelTexture2DRepository, openButtonsStyleContext);
+            var launcherRenderer = new LauncherRenderer(pixelTextureRepository, openButtonsStyleContext);
 
             // Presenters
             var windowPresenter = new WindowPresenter(animatorDataConfigurator, new WindowAnimator());
@@ -310,7 +310,7 @@ namespace YukimaruGames.Terminal.Runtime
                     animatorDataConfigurator,
                     colorPaletteProvider,
                     fontProvider,
-                    pixelTexture2DRepository,
+                    pixelTextureRepository,
                     scrollConfigurator,
                     
                     logStyleContext,
