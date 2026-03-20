@@ -18,6 +18,7 @@ using YukimaruGames.Terminal.Domain.Interface;
 using YukimaruGames.Terminal.Domain.Service;
 using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Infrastructure.Context;
+using YukimaruGames.Terminal.Infrastructure.Discovery;
 using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
@@ -95,7 +96,7 @@ namespace YukimaruGames.Terminal.Runtime
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="UI.Presentation.Coordinator"/> 
+            /// <inheritdoc cref="UI.Main.Coordinator"/> 
             public Coordinator Coordinator;
             /// <inheritdoc cref="IEventListener"/> 
             public IEventListener EventListener;
