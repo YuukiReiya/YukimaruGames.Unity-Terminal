@@ -1,6 +1,6 @@
 namespace YukimaruGames.Terminal.Runtime
 {
-    public interface ITerminalInstaller
+    public interface IInstaller
     {
         /// <summary>
         /// アプリケーションを構築し、Scopeを返す.

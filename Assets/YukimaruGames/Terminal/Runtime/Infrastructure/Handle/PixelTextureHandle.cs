@@ -2,15 +2,15 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Runtime.Shared.Extensions;
 
-namespace YukimaruGames.Terminal.Infrastructure
+namespace YukimaruGames.Terminal.Infrastructure.Handle
 {
-    public sealed class PixelTexture2DHandle : IDisposable
+    public sealed class PixelTextureHandle : IDisposable
     {
         private Texture2D _content;
         private const int Width = 1;
         private const int Height = 1;
 
-        public PixelTexture2DHandle(Color color)
+        public PixelTextureHandle(Color color)
         {
             Create(color);
         }

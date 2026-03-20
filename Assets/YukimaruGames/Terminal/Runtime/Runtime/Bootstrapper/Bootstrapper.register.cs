@@ -1,9 +1,9 @@
 using System;
-using YukimaruGames.Terminal.Infrastructure.Service;
+using YukimaruGames.Terminal.Infrastructure.Factory;
 
 namespace YukimaruGames.Terminal.Runtime
 {
-    public sealed partial class TerminalBootstrapper
+    public sealed partial class Bootstrapper
     {
         private const System.Reflection.BindingFlags BindingFlags =
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.CreateInstance |

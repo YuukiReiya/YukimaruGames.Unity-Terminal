@@ -3,11 +3,11 @@ using YukimaruGames.Terminal.Runtime.Shared;
 
 namespace YukimaruGames.Terminal.Runtime
 {
-    public sealed partial class TerminalBootstrapper : MonoBehaviour
+    public sealed partial class Bootstrapper : MonoBehaviour
     {
         [Header("Installer")]
         [SerializeReference, SerializeInterface] 
-        private ITerminalInstaller _installer = new TerminalStandardInstaller();
+        private IInstaller _installer = new StandardInstaller();
 
         private TerminalRuntimeScope _scope;
 
@@ -15,7 +15,7 @@ namespace YukimaruGames.Terminal.Runtime
         {
             if (_installer == null)
             {
-                _installer = new TerminalStandardInstaller();
+                _installer = new StandardInstaller();
             }
             
             _scope = _installer.Install();

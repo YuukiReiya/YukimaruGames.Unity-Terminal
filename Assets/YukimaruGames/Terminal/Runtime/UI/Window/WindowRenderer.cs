@@ -6,13 +6,13 @@ namespace YukimaruGames.Terminal.UI.Window
 {
     public sealed class WindowRenderer : IWindowRenderer
     {
-        private readonly IPixelTexture2DRepository _textureRepository;
+        private readonly IPixelTextureRepository _textureRepository;
         
         private const string Key = "WindowGUIStyle";
 
         private readonly Lazy<GUIStyle> _styleLazy;
 
-        public WindowRenderer(IPixelTexture2DRepository pixelTextureRepository)
+        public WindowRenderer(IPixelTextureRepository pixelTextureRepository)
         {
             _textureRepository = pixelTextureRepository;
             _textureRepository.SetColor(Key, Color.black);

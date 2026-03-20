@@ -16,8 +16,11 @@ using UnityEngine;
 using YukimaruGames.Terminal.Application;
 using YukimaruGames.Terminal.Domain.Interface;
 using YukimaruGames.Terminal.Domain.Service;
-using YukimaruGames.Terminal.Infrastructure;
-using YukimaruGames.Terminal.Infrastructure.Service;
+using YukimaruGames.Terminal.Infrastructure.Context;
+using YukimaruGames.Terminal.Infrastructure.Discovery;
+using YukimaruGames.Terminal.Infrastructure.Factory;
+using YukimaruGames.Terminal.Infrastructure.Provider;
+using YukimaruGames.Terminal.Infrastructure.Repository;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
 using YukimaruGames.Terminal.UI.Core;
@@ -30,7 +33,7 @@ using YukimaruGames.Terminal.UI.Window;
 namespace YukimaruGames.Terminal.Runtime
 {
     [Serializable]
-    public sealed class TerminalStandardInstaller : ITerminalInstaller
+    public sealed class StandardInstaller : IInstaller
     {
         #region inner-struct
 
@@ -94,7 +97,7 @@ namespace YukimaruGames.Terminal.Runtime
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="UI.Presentation.Coordinator"/> 
+            /// <inheritdoc cref="UI.Main.Coordinator"/> 
             public Coordinator Coordinator;
             /// <inheritdoc cref="IEventListener"/> 
             public IEventListener EventListener;
@@ -113,7 +116,7 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeReference, SerializeInterface] 
         private ITerminalOptions _options = new TerminalStandardOptions();
 
-        TerminalRuntimeScope ITerminalInstaller.Install()
+        TerminalRuntimeScope IInstaller.Install()
         {
             // Null Object Pattern: 意図的な null は Null 実装にフォールバック
             var theme = _theme ?? new TerminalNullTheme();
@@ -128,7 +131,7 @@ namespace YukimaruGames.Terminal.Runtime
             return BuildScope(in domain, in rendering, in coordinator);
         }
 
-        void ITerminalInstaller.Uninstall(TerminalRuntimeScope scope)
+        void IInstaller.Uninstall(TerminalRuntimeScope scope)
         {
             (scope as IDisposable)?.Dispose();
         }
@@ -228,17 +231,17 @@ namespace YukimaruGames.Terminal.Runtime
                 { Constants.ColorPalette.Selection, theme.SelectionColor },
             });
 
-            var fontProvider = new TerminalFontProvider(theme.Font) { Size = theme.FontSize };
-            var pixelTexture2DRepository = new PixelTexture2DRepository();
+            var fontProvider = new FontProvider(theme.Font) { Size = theme.FontSize };
+            var pixelTextureRepository = new PixelTextureRepository();
             var scrollConfigurator = new ScrollConfigurator();
 
             // Style contexts
-            var logStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var inputStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var promptStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var executeButtonsStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var openButtonsStyleContext = new TerminalGUIStyleContext(fontProvider);
-            var logCopyButtonStyleContext = new TerminalGUIStyleContext(fontProvider);
+            var logStyleContext = new StyleContext(fontProvider);
+            var inputStyleContext = new StyleContext(fontProvider);
+            var promptStyleContext = new StyleContext(fontProvider);
+            var executeButtonsStyleContext = new StyleContext(fontProvider);
+            var openButtonsStyleContext = new StyleContext(fontProvider);
+            var logCopyButtonStyleContext = new StyleContext(fontProvider);
 
             // Apply Colors immediately
             inputStyleContext.SetColor(theme.InputColor);
@@ -255,14 +258,14 @@ namespace YukimaruGames.Terminal.Runtime
             };
 
             // Renderers
-            var windowRenderer = new WindowRenderer(pixelTexture2DRepository);
+            var windowRenderer = new WindowRenderer(pixelTextureRepository);
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
             var clipboardRenderer = new ClipboardRenderer(launcherVisibleConfigurator, logCopyButtonStyleContext);
             var logRenderer = new LogRenderer(clipboardRenderer, logStyleContext, colorPaletteProvider);
             var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new PromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
-            var launcherRenderer = new LauncherRenderer(pixelTexture2DRepository, openButtonsStyleContext);
+            var launcherRenderer = new LauncherRenderer(pixelTextureRepository, openButtonsStyleContext);
 
             // Presenters
             var windowPresenter = new WindowPresenter(animatorDataConfigurator, new WindowAnimator());
@@ -307,7 +310,7 @@ namespace YukimaruGames.Terminal.Runtime
                     animatorDataConfigurator,
                     colorPaletteProvider,
                     fontProvider,
-                    pixelTexture2DRepository,
+                    pixelTextureRepository,
                     scrollConfigurator,
                     
                     logStyleContext,

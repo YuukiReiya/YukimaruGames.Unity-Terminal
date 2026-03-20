@@ -32,7 +32,7 @@ namespace YukimaruGames.Terminal.UI.Launcher
         public event Action OnClickOpenButton;
         public event Action OnClickCloseButton;
 
-        public LauncherRenderer(IPixelTexture2DRepository repository, IGUIStyleProvider styleProvider)
+        public LauncherRenderer(IPixelTextureRepository repository, IGUIStyleProvider styleProvider)
         {
             _styleProvider = styleProvider;
 

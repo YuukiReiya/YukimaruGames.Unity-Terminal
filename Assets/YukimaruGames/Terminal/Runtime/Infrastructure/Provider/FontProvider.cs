@@ -3,9 +3,9 @@ using UnityEngine;
 using YukimaruGames.Terminal.Runtime.Shared.Extensions;
 using YukimaruGames.Terminal.UI.Core;
 
-namespace YukimaruGames.Terminal.Infrastructure
+namespace YukimaruGames.Terminal.Infrastructure.Provider
 {
-    public sealed class TerminalFontProvider : IFontProvider, IDisposable
+    public sealed class FontProvider : IFontProvider, IDisposable
     {
         private Font _font;
         private int _size;
@@ -63,7 +63,7 @@ namespace YukimaruGames.Terminal.Infrastructure
             _font = null;
         }
 
-        public TerminalFontProvider(Font font = null)
+        public FontProvider(Font font = null)
         {
             if (font != null)
             {
