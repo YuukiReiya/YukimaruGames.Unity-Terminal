@@ -19,6 +19,7 @@ using YukimaruGames.Terminal.Domain.Service;
 using YukimaruGames.Terminal.Infrastructure;
 using YukimaruGames.Terminal.Infrastructure.Context;
 using YukimaruGames.Terminal.Infrastructure.Discovery;
+using YukimaruGames.Terminal.Infrastructure.Provider;
 using YukimaruGames.Terminal.Infrastructure.Service;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
