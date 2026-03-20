@@ -1,5 +1,5 @@
 using System;
-using YukimaruGames.Terminal.Infrastructure.Service;
+using YukimaruGames.Terminal.Infrastructure.Factory;
 
 namespace YukimaruGames.Terminal.Runtime
 {
