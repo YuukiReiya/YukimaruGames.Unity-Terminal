@@ -16,7 +16,6 @@ using UnityEngine;
 using YukimaruGames.Terminal.Application;
 using YukimaruGames.Terminal.Domain.Core.Commands;
 using YukimaruGames.Terminal.Domain.Interface;
-using YukimaruGames.Terminal.Domain.Service;
 using YukimaruGames.Terminal.Infrastructure.Context;
 using YukimaruGames.Terminal.Infrastructure.Discovery;
 using YukimaruGames.Terminal.Infrastructure.Factory;
