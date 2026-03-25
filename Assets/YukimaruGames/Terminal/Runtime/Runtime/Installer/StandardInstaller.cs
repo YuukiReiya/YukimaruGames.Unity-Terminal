@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
+using YukimaruGames.Terminal.Domain.Core.Commands;
 using YukimaruGames.Terminal.Domain.Interface;
 using YukimaruGames.Terminal.Domain.Service;
 using YukimaruGames.Terminal.Infrastructure.Context;
