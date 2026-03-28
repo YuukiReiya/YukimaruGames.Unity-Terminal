@@ -1,5 +1,5 @@
 using System;
-using YukimaruGames.Terminal.Domain.Model;
+using YukimaruGames.Terminal.Domain.API.Commands;
 
 namespace YukimaruGames.Terminal.Domain.Attribute
 {

@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.Attribute;
-using YukimaruGames.Terminal.Domain.Interface;
-using YukimaruGames.Terminal.Domain.Model;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Infrastructure.Discovery

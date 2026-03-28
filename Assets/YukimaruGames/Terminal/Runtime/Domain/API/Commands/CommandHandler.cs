@@ -1,6 +1,6 @@
 using System;
 
-namespace YukimaruGames.Terminal.Domain.Model
+namespace YukimaruGames.Terminal.Domain.API.Commands
 {
     /// <summary>
     /// コマンドのデリゲート.

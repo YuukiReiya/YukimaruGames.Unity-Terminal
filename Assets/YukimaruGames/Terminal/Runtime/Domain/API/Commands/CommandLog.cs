@@ -8,7 +8,7 @@ using YukimaruGames.Terminal.SharedKernel;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace YukimaruGames.Terminal.Domain.Model
+namespace YukimaruGames.Terminal.Domain.API.Commands
 {
     public
 #if FALLBACK

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.Interface;
+using YukimaruGames.Terminal.Domain.API.Commands;
 
 namespace YukimaruGames.Terminal.Domain.Core.Commands
 {

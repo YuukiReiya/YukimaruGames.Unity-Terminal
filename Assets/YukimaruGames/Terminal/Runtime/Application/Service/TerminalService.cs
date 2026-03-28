@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.Application.Mapper;
+using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.Exception;
-using YukimaruGames.Terminal.Domain.Model;
-using YukimaruGames.Terminal.Domain.Interface;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Application

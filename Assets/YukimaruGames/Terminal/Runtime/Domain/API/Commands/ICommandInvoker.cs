@@ -1,6 +1,4 @@
-using YukimaruGames.Terminal.Domain.Model;
-
-namespace YukimaruGames.Terminal.Domain.Interface
+namespace YukimaruGames.Terminal.Domain.API.Commands
 {
     /// <summary>
     /// コマンドの実行インターフェイス.

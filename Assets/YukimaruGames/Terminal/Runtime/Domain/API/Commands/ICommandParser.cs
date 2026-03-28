@@ -1,7 +1,6 @@
 using System;
-using YukimaruGames.Terminal.Domain.Model;
 
-namespace YukimaruGames.Terminal.Domain.Interface
+namespace YukimaruGames.Terminal.Domain.API.Commands
 {
     /// <summary>
     /// コマンド引数のパーサーインターフェイス.

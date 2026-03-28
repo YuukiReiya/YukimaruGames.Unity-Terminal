@@ -1,6 +1,6 @@
 using System;
 using YukimaruGames.Terminal.Application.Dto;
-using YukimaruGames.Terminal.Domain.Model;
+using YukimaruGames.Terminal.Domain.API.Commands;
 
 namespace YukimaruGames.Terminal.Application.Mapper
 {
