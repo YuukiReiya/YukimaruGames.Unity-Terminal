@@ -4,7 +4,7 @@ using YukimaruGames.Terminal.Runtime;
 
 namespace YukimaruGames.Terminal.Editor
 {
-    [CustomEditor(typeof(Bootstrapper))]
+    [CustomEditor(typeof(TerminalBootstrapper))]
     public sealed class BootstrapperEditor : UnityEditor.Editor
     {
         private SerializedProperty _installerProp;

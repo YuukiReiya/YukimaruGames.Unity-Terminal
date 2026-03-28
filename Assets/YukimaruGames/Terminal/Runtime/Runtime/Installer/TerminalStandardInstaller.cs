@@ -33,7 +33,7 @@ using YukimaruGames.Terminal.UI.Window;
 namespace YukimaruGames.Terminal.Runtime
 {
     [Serializable]
-    public sealed class StandardInstaller : IInstaller
+    public sealed class TerminalStandardInstaller : IInstaller
     {
         #region inner-struct
 
