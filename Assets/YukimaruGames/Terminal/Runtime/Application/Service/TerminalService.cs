@@ -4,7 +4,7 @@ using System.Linq;
 using YukimaruGames.Terminal.Application.Dto;
 using YukimaruGames.Terminal.Application.Mapper;
 using YukimaruGames.Terminal.Domain.API.Commands;
-using YukimaruGames.Terminal.Domain.Exception;
+using YukimaruGames.Terminal.Domain.API.Exceptions;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Application

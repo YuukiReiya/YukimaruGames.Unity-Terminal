@@ -2,8 +2,8 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using YukimaruGames.Terminal.Domain.API.Commands;
-using YukimaruGames.Terminal.Domain.Attribute;
-using YukimaruGames.Terminal.Domain.Exception;
+using YukimaruGames.Terminal.Domain.Attributes;
+using YukimaruGames.Terminal.Domain.API.Exceptions;
 
 namespace YukimaruGames.Terminal.Infrastructure.Factory
 {
