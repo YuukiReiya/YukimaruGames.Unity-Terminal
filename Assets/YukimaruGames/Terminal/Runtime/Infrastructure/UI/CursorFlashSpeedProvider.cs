@@ -24,7 +24,7 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
             }
 
             _cursorFlashSpeed = Mathf.Max(0, value);
-            OnChangedFlashSpeed?.Invoke(value);
+            OnChangedFlashSpeed?.Invoke(_cursorFlashSpeed);
         }
     }
 }
