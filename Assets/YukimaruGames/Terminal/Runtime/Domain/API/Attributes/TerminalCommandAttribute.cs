@@ -1,7 +1,7 @@
 using System;
 using YukimaruGames.Terminal.Domain.API.Commands;
 
-namespace YukimaruGames.Terminal.Domain.Attributes
+namespace YukimaruGames.Terminal.Domain.API.Attributes
 {
     /// <summary>
     /// コマンド登録のためのカスタム属性.
