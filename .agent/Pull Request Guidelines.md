@@ -85,6 +85,18 @@ Content (内容):
 "影響範囲" must list specific files and risks. (影響範囲は具体的なファイル名とリスクを挙げること)
 
 ## GitHub Operations Rules
-- **Assignees**: Always assign `@Yuuki-CI-Bot`.
-- **Reviewers**: Always add `@YuukiReiya` as a reviewer.
-- **Labels**: Apply appropriate labels based on the change (e.g., `refactor`, `feat`, `fix`, `impact: core`, `size: M`, `priority: high`).
+- **Assignees**: Always assign `Yuuki-CI-Bot`.
+- **Reviewers**: Always add `YuukiReiya` as a reviewer.
+- **Labels**: Apply appropriate labels based on the change (e.g., `refactor`, `feat`, `fix`, `docs`, `size: M`, `priority: high`).
+
+### `gh pr create` サンプルコマンド
+PR作成時は以下の構造に従ってコマンドを実行してください（ボディファイルの使用を強く推奨します）。
+
+```powershell
+gh pr create `
+  --title "【master/refactor】タイトルをここに記述" `
+  --body-file "tmp_pr_body.md" `
+  --assignee "Yuuki-CI-Bot" `
+  --reviewer "YuukiReiya" `
+  --label "refactor,size: M,priority: high"
+```

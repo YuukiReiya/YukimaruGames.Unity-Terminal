@@ -97,9 +97,55 @@ AIエージェントは以下の状況が発生した際、ユーザーからの
 - [Pull Request Guidelines.md](./Pull%20Request%20Guidelines.md): PR作成ルール
 - [Agent Workflow Guidelines.md](./Agent%20Workflow%20Guidelines.md): エージェントのワークフロー（本ファイル）
 - [Code Style Guidelines.md](./Code%20Style%20Guidelines.md): コーディング規約
-- `Architecture Overview.md`: アーキテクチャ概要（未作成）
-- `Testing Guidelines.md`: テスト方針（未作成）
-- `Deployment Workflow.md`: デプロイ手順（未作成）
+- `Architecture Overview.md`: アーキテクチャ概要
+
+## GitHub CLI Command Templates
+
+エージェントが GitHub 操作を行う際は、環境設定に依存せず、以下のテンプレートに従って**明示的な指定**を行ってください。
+特に `--assignee "Yuuki-CI-Bot"` の指定は、正しいアカウントでの作業を担保するために**必須**です。
+
+### 1. 作業ブランチの作成とプッシュ
+```powershell
+# masterを最新にしてから作業ブランチ作成
+git fetch origin master; git checkout master; git pull --rebase origin master; git checkout -b feat/your-feature-name
+
+# 作業完了後のコミットとプッシュ
+git add .; git commit -m "feat: your meaningful message"; git push origin feat/your-feature-name
+```
+
+### 2. プルリクエスト (PR) の作成
+シェルによるエスケープエラーを避けるため、必ず `--body-file` を使用してください。
+
+```powershell
+# 1. PR本文を一時ファイルに書き出す
+$prBody = @"
+## 概要
+(概要をここに記述)
+## 変更点
+- `File.cs`: (変更内容)
+"@
+$prBody | Out-File -FilePath "tmp_pr_body.md" -Encoding utf8
+
+# 2. ghコマンドでPR作成 (Assignee, Reviewer, Labelを明示)
+gh pr create `
+  --title "【master/feat】Your PR Title" `
+  --body-file "tmp_pr_body.md" `
+  --assignee "Yuuki-CI-Bot" `
+  --reviewer "YuukiReiya" `
+  --label "refactor,size: M,priority: high"
+
+# 3. 一時ファイルの削除
+rm tmp_pr_body.md
+```
+
+### 3. Issue の作成
+```powershell
+gh issue create `
+  --title "Task: Your Task Name" `
+  --body "Issue description here" `
+  --assignee "Yuuki-CI-Bot" `
+  --label "task"
+```
 
 ## Communication Rules
 
