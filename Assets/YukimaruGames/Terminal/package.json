@@ -13,7 +13,7 @@
         {
             "displayName": "Basic Setup & Commands",
             "description": "A demo scene showing how to set up the terminal UI, apply themes, and register custom executable commands.",
-            "path": "Samples/"
+            "path": "Samples~/"
         }
     ]
 }
