@@ -97,7 +97,8 @@ AIエージェントは以下の状況が発生した際、ユーザーからの
 - [Pull Request Guidelines.md](./Pull%20Request%20Guidelines.md): PR作成ルール
 - [Agent Workflow Guidelines.md](./Agent%20Workflow%20Guidelines.md): エージェントのワークフロー（本ファイル）
 - [Code Style Guidelines.md](./Code%20Style%20Guidelines.md): コーディング規約
-- `Architecture Overview.md`: アーキテクチャ概要
+- [Architecture Overview.md](./Architecture%20Overview.md): アーキテクチャ概要
+- [Testing Guidelines.md](./Testing%20Guidelines.md): テスト方針
 
 ## GitHub CLI Command Templates
 
