@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.SharedKernel;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
@@ -110,7 +109,7 @@ namespace YukimaruGames.Terminal.Application.Commands
             return timestampComparison == 0 ? Id.CompareTo(other.Id) : timestampComparison;
         }
 
-        public int CompareTo(object obj) => obj is LogEntry other ? CompareTo(other) : throw new ArgumentException($"Object is not a {nameof(CommandLog)}", nameof(obj));
+        public int CompareTo(object obj) => obj is LogEntry other ? CompareTo(other) : throw new ArgumentException($"Object is not a {nameof(LogEntry)}", nameof(obj));
 
         public static bool operator <(LogEntry left, LogEntry right) => Comparer<LogEntry>.Default.Compare(left, right) < 0;
         public static bool operator >(LogEntry left, LogEntry right) => Comparer<LogEntry>.Default.Compare(left, right) > 0;
