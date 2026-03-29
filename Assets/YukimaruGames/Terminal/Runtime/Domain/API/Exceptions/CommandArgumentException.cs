@@ -24,7 +24,7 @@ namespace YukimaruGames.Terminal.Domain.API.Exceptions
         /// </summary>
         public int ExpectedMax { get; }
 
-        public CommandArgumentException(int actual, int expectedMin, int expectedMax, System.Exception innerException)
+        public CommandArgumentException(int actual, int expectedMin, int expectedMax, Exception innerException)
             : base(BuildMessage(actual, expectedMin, expectedMax), innerException)
         {
             Actual = actual;
