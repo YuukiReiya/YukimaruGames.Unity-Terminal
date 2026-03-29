@@ -8,5 +8,12 @@
         "name": "YuukiReiya",
         "url": "https://github.com/YuukiReiya"
     },
-    "documentationUrl": "https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal/tree/master"
+    "documentationUrl": "https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal/tree/master",
+    "samples" : [
+        {
+            "displayName": "Basic Setup & Commands",
+            "description": "A demo scene showing how to set up the terminal UI, apply themes, and register custom executable commands.",
+            "path": "Samples/"
+        }
+    ]
 }

@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -250,12 +250,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,6 +336,9 @@ Light:
   m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &410087041
 Transform:
   m_ObjectHideFlags: 0
@@ -374,6 +377,118 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &656205192
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 656205194}
+  - component: {fileID: 656205193}
+  m_Layer: 0
+  m_Name: Terminal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &656205193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656205192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fa5a663a78ed3147abc5862b8bb4936, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _installer:
+    rid: 3231918332055126074
+  references:
+    version: 2
+    RefIds:
+    - rid: 3231918332055126074
+      type: {class: TerminalStandardInstaller, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      data:
+        _theme:
+          rid: 3231918332055126075
+        _animation:
+          rid: 3231918332055126076
+        _options:
+          rid: 3231918332055126077
+    - rid: 3231918332055126075
+      type: {class: TerminalStandardTheme, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      data:
+        _font: {fileID: 0}
+        _fontSize: 55
+        _backgroundColor: {r: 0, g: 0, b: 0, a: 0.78431374}
+        _messageColor: {r: 1, g: 1, b: 1, a: 1}
+        _entryColor: {r: 1, g: 1, b: 1, a: 1}
+        _warningColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+        _errorColor: {r: 1, g: 0, b: 0, a: 1}
+        _assertColor: {r: 1, g: 0, b: 0, a: 1}
+        _exceptionColor: {r: 1, g: 0, b: 0, a: 1}
+        _systemColor: {r: 1, g: 1, b: 1, a: 1}
+        _inputColor: {r: 0, g: 1, b: 0.3, a: 1}
+        _caretColor: {r: 0, g: 1, b: 0.8, a: 1}
+        _selectionColor: {r: 1, g: 0.5, b: 0, a: 1}
+        _promptColor: {r: 0, g: 0.8, b: 0.15, a: 1}
+        _executeButtonColor: {r: 0, g: 0.7, b: 0.8, a: 1}
+        _buttonColor: {r: 0, g: 0.7, b: 0.8, a: 1}
+        _copyButtonColor: {r: 0, g: 0.7, b: 0.8, a: 1}
+        _cursorFlashSpeed: 1.886792
+    - rid: 3231918332055126076
+      type: {class: TerminalStandardAnimation, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      data:
+        _bootupWindowState: 2
+        _anchor: 3
+        _windowStyle: 1
+        _duration: 1
+        _compactScale: 0.35
+    - rid: 3231918332055126077
+      type: {class: TerminalStandardOptions, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      data:
+        _inputKeyboardType: 1
+        _legacyInputKey:
+          _openKeyCode: 91
+          _closeKeyCode: 27
+          _executeKeyCode: 13
+          _prevHistoryKeyCode: 273
+          _nextHistoryKeyCode: 274
+          _autocompleteKeyCode: 9
+          _focusKeyCode: 306
+        _inputSystemKey:
+          _openKey: 11
+          _closeKey: 60
+          _executeKey: 2
+          _prevHistoryKey: 63
+          _nextHistoryKey: 64
+          _autocompleteKey: 3
+          _focusKey: 55
+        _bufferSize: 256
+        _prompt: $
+        _bootupCommand: 
+        _buttonVisible: 0
+        _buttonReverse: 0
+--- !u!4 &656205194
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656205192}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -430,3 +545,4 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
+  - {fileID: 656205194}
