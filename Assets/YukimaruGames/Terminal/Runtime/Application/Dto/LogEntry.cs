@@ -4,7 +4,7 @@
 
 using System;
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.Model;
+using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.SharedKernel;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode

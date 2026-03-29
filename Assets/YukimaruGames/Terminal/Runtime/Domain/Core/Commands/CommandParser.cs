@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using YukimaruGames.Terminal.Domain.Interface;
-using YukimaruGames.Terminal.Domain.Model;
+using YukimaruGames.Terminal.Domain.API.Commands;
 
-namespace YukimaruGames.Terminal.Domain.Service
+namespace YukimaruGames.Terminal.Domain.Core.Commands
 {
     /// <summary>
     /// コマンド引数のパーサー.

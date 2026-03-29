@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace YukimaruGames.Terminal.Domain.Exception
+namespace YukimaruGames.Terminal.Domain.API.Exceptions
 {
     /// <summary>
     /// コマンド引数の引数の数が違う場合に送出するカスタム例外.
@@ -24,7 +24,7 @@ namespace YukimaruGames.Terminal.Domain.Exception
         /// </summary>
         public int ExpectedMax { get; }
 
-        public CommandArgumentException(int actual, int expectedMin, int expectedMax, System.Exception innerException)
+        public CommandArgumentException(int actual, int expectedMin, int expectedMax, Exception innerException)
             : base(BuildMessage(actual, expectedMin, expectedMax), innerException)
         {
             Actual = actual;

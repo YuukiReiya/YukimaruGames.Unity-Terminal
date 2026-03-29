@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using YukimaruGames.Terminal.Domain.Interface;
+using YukimaruGames.Terminal.Domain.API.Commands;
 
-namespace YukimaruGames.Terminal.Domain.Service
+namespace YukimaruGames.Terminal.Domain.Core.Commands
 {
     /// <summary>
     /// コマンドの自動補完クラス.

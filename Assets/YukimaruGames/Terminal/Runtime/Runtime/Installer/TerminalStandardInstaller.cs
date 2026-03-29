@@ -14,8 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Application;
-using YukimaruGames.Terminal.Domain.Interface;
-using YukimaruGames.Terminal.Domain.Service;
+using YukimaruGames.Terminal.Domain.API.Commands;
+using YukimaruGames.Terminal.Domain.Core.Commands;
 using YukimaruGames.Terminal.Infrastructure.Context;
 using YukimaruGames.Terminal.Infrastructure.Discovery;
 using YukimaruGames.Terminal.Infrastructure.Factory;
@@ -33,7 +33,7 @@ using YukimaruGames.Terminal.UI.Window;
 namespace YukimaruGames.Terminal.Runtime
 {
     [Serializable]
-    public sealed class StandardInstaller : IInstaller
+    public sealed class TerminalStandardInstaller : IInstaller
     {
         #region inner-struct
 

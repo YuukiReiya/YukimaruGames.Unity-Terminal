@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace YukimaruGames.Terminal.Domain.Model
+namespace YukimaruGames.Terminal.Domain.API.Commands
 {
     /// <summary>
     /// コマンドの設計情報.

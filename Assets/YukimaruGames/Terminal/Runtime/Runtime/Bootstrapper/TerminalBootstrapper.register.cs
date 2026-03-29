@@ -3,7 +3,7 @@ using YukimaruGames.Terminal.Infrastructure.Factory;
 
 namespace YukimaruGames.Terminal.Runtime
 {
-    public sealed partial class Bootstrapper
+    public sealed partial class TerminalBootstrapper
     {
         private const System.Reflection.BindingFlags BindingFlags =
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.CreateInstance |

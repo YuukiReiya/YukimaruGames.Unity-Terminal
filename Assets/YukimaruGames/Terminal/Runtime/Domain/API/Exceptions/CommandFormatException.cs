@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace YukimaruGames.Terminal.Domain.Exception
+namespace YukimaruGames.Terminal.Domain.API.Exceptions
 {
     /// <summary>
     /// コマンド引数の型変換失敗時に送出するカスタム例外.
@@ -13,7 +13,7 @@ namespace YukimaruGames.Terminal.Domain.Exception
         /// 引数インデックス.
         /// </summary>
         /// <remarks>
-        /// <p><see cref="CommandDelegate"/></p>
+        /// <p><see cref="YukimaruGames.Terminal.Domain.API.Commands.CommandDelegate"/></p>
         /// 配列で受け取る引数の対象インデックス.
         /// </remarks>
         public int ArgumentIndex { get; }
@@ -28,7 +28,7 @@ namespace YukimaruGames.Terminal.Domain.Exception
         /// </summary>
         public Type TargetType { get; }
 
-        public CommandFormatException(int argumentIndex, string failedValue, Type targetType, System.Exception innerException)
+        public CommandFormatException(int argumentIndex, string failedValue, Type targetType, Exception innerException)
             : base(BuildMessage(argumentIndex, failedValue, targetType), innerException)
         {
             ArgumentIndex = argumentIndex;
