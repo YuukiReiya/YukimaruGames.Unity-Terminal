@@ -15,7 +15,27 @@ We'll proceed with using a `Label` for the log display as our primary approach f
 
 ---
 
-## [1.0.0] - yyyy-MM-DD
+## [1.0.1] - 2026-03-29
+
+### Added
+- **Testing Guidelines**: Established formal testing policies and documentation in `.agent/Testing Guidelines.md`.
+- **Architectural Knowledge Base**: Reorganized and enhanced the `.agent/` directory to serve as a single source of truth for architectural and workflow rules.
+
+### Changed
+- **Architectural Overhaul (Vertical Slice)**:
+    - Refactored `Domain`, `Application`, and `Infrastructure` layers from technical-type-based folder structures to functional "Vertical Slice" organizations.
+    - Separated `Domain.API` (Interfaces/Models) and `Domain.Core` (Logic) to enforce strict Dependency Inversion.
+    - Flattened internal folder structures within functional slices to improve discoverability.
+- **Naming Convention Refinement (Semantic Prefix)**:
+    - Standardized naming rules where public-facing APIs (e.g., `TerminalService`) keep the `Terminal` prefix, while internal implementation details (e.g., `CommandRegistry`, `LogPresenter`) drop it to reduce redundancy.
+- **Improved UX/State Management**:
+    - Renamed and refactored `Configurator` classes to `Mutator` (e.g., `ScrollMutator`, `WindowAnimatorDataMutator`) to better reflect their role in reactive state mutation and event dispatching.
+- **Namespace Realignment**: Updated namespaces project-wide to match the new vertical slice structure (e.g., `Application.Core`, `Application.Commands`, `Infrastructure.UI`).
+
+### Fixed
+- **LogEntry Bug**: Fixed a logic error in `LogEntry.CompareTo` where it incorrectly attempted to compare with a `CommandLog` instead of a `LogEntry`.
+
+## [1.0.0] - 2025-08-30
 
 ### Changed
 - This is a complete redesign and refactor based on a previous internal alpha project, rebuilt from the ground up on Clean Architecture principles with new features like dependency separation and dynamic delegate generation.
