@@ -15,7 +15,7 @@ namespace YukimaruGames.Terminal.Runtime
         {
             if (_installer == null)
             {
-                _installer = new TerminalStandardInstaller();
+                _installer = new TerminalNullInstaller();
             }
             
             _scope = _installer.Install();

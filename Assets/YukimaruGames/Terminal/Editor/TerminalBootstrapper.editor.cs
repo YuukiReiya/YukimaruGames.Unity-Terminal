@@ -17,12 +17,7 @@ namespace YukimaruGames.Terminal.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            
-            //using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                EditorGUILayout.PropertyField(_installerProp);
-            }
-
+            EditorGUILayout.PropertyField(_installerProp);
             serializedObject.ApplyModifiedProperties();
         }
     }
