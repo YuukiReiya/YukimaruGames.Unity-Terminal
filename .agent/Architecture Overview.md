@@ -19,12 +19,16 @@ This document outlines the high-level architecture of `YukimaruGames.Terminal`, 
 Split into two distinct assemblies to enforce Dependency Inversion.
 
 #### Domain.API (`YukimaruGames.Terminal.Domain.API`)
-- **Role**: Defines the Interfaces (`IUseCases`, `IRepositories`, `IServices`) and Domain Models (pure POCOs).
+- **Role**: Defines the Interfaces (`IUseCases`, `IRepositories`, `IServices`), Domain Models, and Value Objects.
+- **Organization**: Categorized by functional areas (Vertical Slices):
+  - `Commands/`: Primary area for command-related interfaces and metadata.
+  - `Attributes/`, `Exceptions/`: Technical categories (pluralized).
 - **Dependencies**: `SharedKernel`.
-- **Rule**: **Must NOT depend on Core, Application, or UI.** Pure abstraction.
+- **Rule**: **Pure abstraction.** Must NOT depend on Core, Application, or UI.
 
 #### Domain.Core (`YukimaruGames.Terminal.Domain.Core`)
 - **Role**: Implements the Domain Logic (UseCase implementations, Domain Services).
+- **Organization**: Follows functional categorization (e.g., `Commands/`).
 - **Dependencies**: `Domain.API`, `SharedKernel`.
 - **Rule**: **Must NOT depend on Infrastructure or UI.**
 
@@ -67,13 +71,24 @@ The `.asmdef` definitions currently enforce these rules physically.
 - **Meaningful Fields**: Do not expose `[SerializeField]` in the Bootstrapper that are only used by specific installer implementations. This is considered "Logic Leakage".
 
 ## Internal Module Organization (Vertical Slice)
-各レイヤー（特にUI層）の内部構造は、技術的な役割（Presenter/View等）ではなく、機能単位（Vertical Slice）で整理します。
+各レイヤー（特にUI層やドメイン層）の内部構造は、技術的な役割（Presenter/View等）ではなく、機能単位（Vertical Slice）で整理します。
 
 ### 1. Functional Folders
 単一の機能に関わるファイル（Presenter, Renderer, Interface等）は、同一のフォルダ内に集約します。
 - **UI/...**: `Main/`, `Core/`, `Log/`, `Input/`, `Launcher/` 等
+- **Domain/...**: `Commands/`, `Logging/` 等
 
-### 2. Naming Conventions (No Prefix)
-- **原則**: 各モジュール（asmdef）の内部クラスには、ライブラリ名（`Terminal`）のプリフィックスを付けない。
-- **理由**: 名前空間によって既にコンテキストが定義されているため、重複を避けて簡潔にする。
-- **例**: `TerminalView` → `MainView`, `TerminalLogRenderer` → `LogRenderer`
+### 2. Semantic Prefix Rule (Semantic Naming)
+「ライブラリ名（`Terminal`）のプリフィックス」の要否は、利用用途（公開APIか内部実装か）という「セマンティック」に基づいて決定します。
+
+- **プレフィックスを【付与する】対象（Public API）**: 
+  - ユーザーが直接 Inspector でアタッチしたり、コードから呼び出したりするもの。
+  - **例**: `TerminalBootstrapper`, `TerminalStandardInstaller`, `TerminalService`
+  - ユーザーが属性として使用するもの。
+  - **例**: `TerminalCommandAttribute`
+  - 他のライブラリや Unity 標準の型と名前が衝突しやすく、明示的な曖昧さ回避が必要なもの。
+
+- **プレフィックスを【付与しない】対象（Internal Implementation）**:
+  - 内部ロジックの実装クラス、インフラ層の具象クラス、UI層の内部 Presenter 等。
+  - **例**: `CommandRegistry`, `LogPresenter`, `FontProvider`, `CommandParser`
+  - 名前空間（Namespace）によって既に意味が限定されている内部的な抽象・具象。
