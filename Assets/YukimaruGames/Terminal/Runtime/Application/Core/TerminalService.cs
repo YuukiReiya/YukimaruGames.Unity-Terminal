@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using YukimaruGames.Terminal.Application.Commands;
-using YukimaruGames.Terminal.Application.Commands;
 using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.API.Exceptions;
 using YukimaruGames.Terminal.SharedKernel;
