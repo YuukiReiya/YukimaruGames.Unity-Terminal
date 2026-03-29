@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using YukimaruGames.Terminal.Infrastructure.Handle;
+using YukimaruGames.Terminal.Infrastructure.UI;
 using YukimaruGames.Terminal.UI.Core;
 
-namespace YukimaruGames.Terminal.Infrastructure.Repository
+namespace YukimaruGames.Terminal.Infrastructure.UI
 {
     public sealed class PixelTextureRepository : IPixelTextureRepository, IDisposable
     {

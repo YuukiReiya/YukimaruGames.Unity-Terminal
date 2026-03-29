@@ -6,7 +6,7 @@ using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.API.Attributes;
 using YukimaruGames.Terminal.SharedKernel;
 
-namespace YukimaruGames.Terminal.Infrastructure.Discovery
+namespace YukimaruGames.Terminal.Infrastructure.Commands
 {
     /// <summary>
     /// コマンドを検出するためのクラス.

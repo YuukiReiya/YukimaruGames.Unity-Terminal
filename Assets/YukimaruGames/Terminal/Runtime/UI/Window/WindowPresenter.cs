@@ -7,7 +7,7 @@ namespace YukimaruGames.Terminal.UI.Window
 {
     public sealed class WindowPresenter : IWindowPresenter, IDisposable
     {
-        private readonly IWindowAnimatorDataConfigurator _configurator;
+        private readonly IWindowAnimatorDataMutator _configurator;
         private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
@@ -61,7 +61,7 @@ namespace YukimaruGames.Terminal.UI.Window
         }
 
         public WindowPresenter(
-            IWindowAnimatorDataConfigurator configurator,
+            IWindowAnimatorDataMutator configurator,
             IWindowAnimator animator)
         {
             _configurator = configurator;

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using YukimaruGames.Terminal.Application;
-using YukimaruGames.Terminal.Application.Dto;
+using YukimaruGames.Terminal.Application.Core;
+using YukimaruGames.Terminal.Application.Commands;
 
 namespace YukimaruGames.Terminal.UI.Log
 {

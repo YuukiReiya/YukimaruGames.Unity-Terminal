@@ -1,6 +1,6 @@
 namespace YukimaruGames.Terminal.UI.Window
 {
-    public interface IWindowAnimatorDataConfigurator
+    public interface IWindowAnimatorDataMutator
     {
         WindowState State { get; set; }
         WindowAnchor Anchor { get; set; }

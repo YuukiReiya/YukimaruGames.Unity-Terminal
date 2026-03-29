@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.API.Attributes;
 using YukimaruGames.Terminal.Domain.API.Exceptions;
 
-namespace YukimaruGames.Terminal.Infrastructure.Factory
+namespace YukimaruGames.Terminal.Infrastructure.Commands
 {
     /// <summary>
     /// 実行コマンドのFactory.
