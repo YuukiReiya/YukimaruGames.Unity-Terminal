@@ -5,7 +5,7 @@
 using System;
 #endif
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Application.Dto;
+using YukimaruGames.Terminal.Application.Commands;
 
 namespace YukimaruGames.Terminal.UI.Log
 {

@@ -7,7 +7,7 @@ namespace YukimaruGames.Terminal.UI.Input
 {
     public sealed class InputRenderer : IInputRenderer, IPreRenderer
     {
-        private readonly IScrollConfigurator _scrollConfigurator;
+        private readonly IScrollMutator _scrollMutator;
         private readonly IGUIStyleProvider _styleProvider;
         private readonly IColorPaletteProvider _colorPaletteProvider;
         private readonly ICursorFlashSpeedProvider _cursorFlashSpeedProvider;
@@ -74,12 +74,12 @@ namespace YukimaruGames.Terminal.UI.Input
         }
 
         public InputRenderer(
-            IScrollConfigurator scrollConfigurator,
+            IScrollMutator scrollMutator,
             IGUIStyleProvider styleProvider,
             IColorPaletteProvider colorPaletteProvider,
             ICursorFlashSpeedProvider cursorFlashSpeedProvider)
         {
-            _scrollConfigurator = scrollConfigurator;
+            _scrollMutator = scrollMutator;
             _styleProvider = styleProvider;
             _colorPaletteProvider = colorPaletteProvider;
             _cursorFlashSpeedProvider = cursorFlashSpeedProvider;
@@ -97,7 +97,7 @@ namespace YukimaruGames.Terminal.UI.Input
                 if (evt.keyCode is KeyCode.Return) GUI.FocusControl(ControlName);
 
                 // 入力テキストの折り返しを考慮しキー入力がされたらスクロール位置を終端へ補正する.
-                _scrollConfigurator.ScrollToEnd();
+                _scrollMutator.ScrollToEnd();
             }
         }
 

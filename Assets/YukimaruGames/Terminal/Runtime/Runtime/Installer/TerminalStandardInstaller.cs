@@ -13,14 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using YukimaruGames.Terminal.Application;
+using YukimaruGames.Terminal.Application.Core;
 using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.Core.Commands;
-using YukimaruGames.Terminal.Infrastructure.Context;
-using YukimaruGames.Terminal.Infrastructure.Discovery;
-using YukimaruGames.Terminal.Infrastructure.Factory;
-using YukimaruGames.Terminal.Infrastructure.Provider;
-using YukimaruGames.Terminal.Infrastructure.Repository;
+using YukimaruGames.Terminal.Infrastructure.Commands;
+using YukimaruGames.Terminal.Infrastructure.UI;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
 using YukimaruGames.Terminal.UI.Core;
@@ -73,8 +70,8 @@ namespace YukimaruGames.Terminal.Runtime
             
             /// <inheritdoc cref="IMainView"/> 
             public IMainView View;
-            /// <inheritdoc cref="IScrollConfigurator"/>
-            public IScrollConfigurator ScrollConfigurator;
+            /// <inheritdoc cref="IScrollMutator"/>
+            public IScrollMutator ScrollMutator;
             /// <inheritdoc cref="IWindowPresenter"/>
             public IWindowPresenter WindowPresenter;
             /// <inheritdoc cref="IInputPresenter"/>
@@ -209,7 +206,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
-            var animatorDataConfigurator = new WindowAnimatorDataConfigurator()
+            var animatorDataMutator = new WindowAnimatorDataMutator()
             {
                 State = animation.BootupWindowState,
                 Anchor = animation.Anchor,
@@ -233,7 +230,7 @@ namespace YukimaruGames.Terminal.Runtime
 
             var fontProvider = new FontProvider(theme.Font) { Size = theme.FontSize };
             var pixelTextureRepository = new PixelTextureRepository();
-            var scrollConfigurator = new ScrollConfigurator();
+            var scrollMutator = new ScrollMutator();
 
             // Style contexts
             var logStyleContext = new StyleContext(fontProvider);
@@ -251,7 +248,7 @@ namespace YukimaruGames.Terminal.Runtime
             logCopyButtonStyleContext.SetColor(theme.CopyButtonColor);
 
             var cursorFlashSpeedProvider = new CursorFlashSpeedProvider(theme.CursorFlashSpeed);
-            var launcherVisibleConfigurator = new LauncherVisibleConfigurator
+            var launcherVisibleMutator = new LauncherVisibleMutator
             {
                 IsVisible = options.IsButtonVisible,
                 IsReverse = options.IsButtonReverse,
@@ -260,19 +257,19 @@ namespace YukimaruGames.Terminal.Runtime
             // Renderers
             var windowRenderer = new WindowRenderer(pixelTextureRepository);
             windowRenderer.SetBackgroundColor(theme.BackgroundColor);
-            var clipboardRenderer = new ClipboardRenderer(launcherVisibleConfigurator, logCopyButtonStyleContext);
+            var clipboardRenderer = new ClipboardRenderer(launcherVisibleMutator, logCopyButtonStyleContext);
             var logRenderer = new LogRenderer(clipboardRenderer, logStyleContext, colorPaletteProvider);
-            var inputRenderer = new InputRenderer(scrollConfigurator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
+            var inputRenderer = new InputRenderer(scrollMutator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
             var promptRenderer = new PromptRenderer(promptStyleContext) { Prompt = options.Prompt };
             var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
             var launcherRenderer = new LauncherRenderer(pixelTextureRepository, openButtonsStyleContext);
 
             // Presenters
-            var windowPresenter = new WindowPresenter(animatorDataConfigurator, new WindowAnimator());
+            var windowPresenter = new WindowPresenter(animatorDataMutator, new WindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
-            var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, launcherVisibleConfigurator);
-            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, launcherVisibleConfigurator);
+            var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, launcherVisibleMutator);
+            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, launcherVisibleMutator);
 
             // View
             var viewContext = new ViewContext
@@ -291,14 +288,14 @@ namespace YukimaruGames.Terminal.Runtime
                 SubmitRenderDataProvider = executeButtonPresenter,
                 LauncherRenderDataProvider = launcherPresenter,
 
-                ScrollConfigurator = scrollConfigurator,
+                ScrollMutator = scrollMutator,
             };
             var view = new MainView(viewContext);
 
             return new RenderingContext
             {
                 View = view,
-                ScrollConfigurator = scrollConfigurator,
+                ScrollMutator = scrollMutator,
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
                 LogPresenter = logPresenter,
@@ -307,11 +304,11 @@ namespace YukimaruGames.Terminal.Runtime
                 
                 Components = new object[]
                 {
-                    animatorDataConfigurator,
+                    animatorDataMutator,
                     colorPaletteProvider,
                     fontProvider,
                     pixelTextureRepository,
-                    scrollConfigurator,
+                    scrollMutator,
                     
                     logStyleContext,
                     inputStyleContext,
@@ -321,7 +318,7 @@ namespace YukimaruGames.Terminal.Runtime
                     logCopyButtonStyleContext,
                     
                     cursorFlashSpeedProvider,
-                    launcherVisibleConfigurator,
+                    launcherVisibleMutator,
                     
                     windowRenderer,
                     clipboardRenderer,
@@ -355,7 +352,7 @@ namespace YukimaruGames.Terminal.Runtime
             var coordinator = new Coordinator(
                 domain.Service,
                 rendering.View,
-                rendering.ScrollConfigurator,
+                rendering.ScrollMutator,
                 rendering.WindowPresenter,
                 rendering.InputPresenter,
                 rendering.LogPresenter,

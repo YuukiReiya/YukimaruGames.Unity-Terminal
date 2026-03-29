@@ -27,7 +27,7 @@ namespace YukimaruGames.Terminal.UI.Main
         private readonly IInputRenderDataProvider _inputRenderDataProvider;
         private readonly ISubmitRenderDataProvider _submitRenderDataProvider;
         private readonly ILauncherRenderDataProvider _buttonRenderDataProvider;
-        private readonly IScrollConfigurator _scrollConfigurator;
+        private readonly IScrollMutator _scrollMutator;
 
         // callbacks.
         private readonly List<IPreRenderer> _preRenderers;
@@ -57,7 +57,7 @@ namespace YukimaruGames.Terminal.UI.Main
             _inputRenderDataProvider = context.InputRenderDataProvider;
             _submitRenderDataProvider = context.SubmitRenderDataProvider;
             _buttonRenderDataProvider = context.LauncherRenderDataProvider;
-            _scrollConfigurator = context.ScrollConfigurator;
+            _scrollMutator = context.ScrollMutator;
 
             if (_clipboardRenderer != null)
             {
@@ -111,9 +111,9 @@ namespace YukimaruGames.Terminal.UI.Main
             using (new GUILayout.VerticalScope())
             {
                 using (var scope =
-                       new GUILayout.ScrollViewScope(_scrollConfigurator.ScrollPosition, false, false, GUIStyle.none, GUIStyle.none))
+                       new GUILayout.ScrollViewScope(_scrollMutator.ScrollPosition, false, false, GUIStyle.none, GUIStyle.none))
                 {
-                    _scrollConfigurator.ScrollPosition = scope.scrollPosition;
+                    _scrollMutator.ScrollPosition = scope.scrollPosition;
                     _logRenderer.Render(_logRenderDataProvider.GetRenderData());
                 }
 

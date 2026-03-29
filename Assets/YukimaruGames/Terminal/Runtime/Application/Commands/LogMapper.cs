@@ -1,8 +1,8 @@
 using System;
-using YukimaruGames.Terminal.Application.Dto;
+using YukimaruGames.Terminal.Application.Commands;
 using YukimaruGames.Terminal.Domain.API.Commands;
 
-namespace YukimaruGames.Terminal.Application.Mapper
+namespace YukimaruGames.Terminal.Application.Commands
 {
     public static class LogMapper
     {

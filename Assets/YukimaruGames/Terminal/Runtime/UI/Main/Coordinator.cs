@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.Application;
+using YukimaruGames.Terminal.Application.Core;
 using YukimaruGames.Terminal.UI.Core;
 using YukimaruGames.Terminal.UI.Input;
 using YukimaruGames.Terminal.UI.Launcher;
@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.UI.Main
     public sealed class Coordinator : IDisposable
     {
         private readonly IMainView _view;
-        private readonly IScrollConfigurator _scrollConfigurator;
+        private readonly IScrollMutator _scrollMutator;
         private readonly IWindowPresenter _windowPresenter;
         private readonly IInputPresenter _inputPresenter;
         private readonly ILogPresenter _logPresenter;
@@ -32,7 +32,7 @@ namespace YukimaruGames.Terminal.UI.Main
         public Coordinator(
             ITerminalService service,
             IMainView view,
-            IScrollConfigurator scrollConfigurator,
+            IScrollMutator scrollMutator,
             IWindowPresenter windowPresenter,
             IInputPresenter inputPresenter,
             ILogPresenter logPresenter,
@@ -43,7 +43,7 @@ namespace YukimaruGames.Terminal.UI.Main
         {
             _service = service;
             _view = view;
-            _scrollConfigurator = scrollConfigurator;
+            _scrollMutator = scrollMutator;
             _windowPresenter = windowPresenter;
             _inputPresenter = inputPresenter;
             _logPresenter = logPresenter;
@@ -98,7 +98,7 @@ namespace YukimaruGames.Terminal.UI.Main
             
             _windowPresenter.Open();
             _inputPresenter.SetFocus(true);
-            _scrollConfigurator.ScrollToEnd();
+            _scrollMutator.ScrollToEnd();
         }
 
         private void OnCloseTriggered()
@@ -121,7 +121,7 @@ namespace YukimaruGames.Terminal.UI.Main
             _inputPresenter.SetInputField(string.Empty);
             _inputPresenter.SetFocus(true);
             _inputPresenter.SetMoveCursorToEnd();
-            _scrollConfigurator.ScrollToEnd();
+            _scrollMutator.ScrollToEnd();
         }
 
         private void OnPreviousHistoryTriggered()
@@ -130,7 +130,7 @@ namespace YukimaruGames.Terminal.UI.Main
             
             _inputPresenter.SetInputField(_service.PrevHistory());
             _inputPresenter.SetMoveCursorToEnd();
-            _scrollConfigurator.ScrollToEnd();
+            _scrollMutator.ScrollToEnd();
         }
 
         private void OnNextHistoryTriggered()
@@ -139,7 +139,7 @@ namespace YukimaruGames.Terminal.UI.Main
             
             _inputPresenter.SetInputField(_service.NextHistory());
             _inputPresenter.SetMoveCursorToEnd();
-            _scrollConfigurator.ScrollToEnd();
+            _scrollMutator.ScrollToEnd();
         }
 
         private void OnAutocompleteTriggered()
@@ -163,7 +163,7 @@ namespace YukimaruGames.Terminal.UI.Main
                     break;
             }
             
-            _scrollConfigurator.ScrollToEnd();
+            _scrollMutator.ScrollToEnd();
         }
 
         private void OnFocusTriggered()
@@ -176,7 +176,7 @@ namespace YukimaruGames.Terminal.UI.Main
         private void OnScreenSizeChanged(Vector2Int size)
         {
             _windowPresenter.Refresh();
-            _scrollConfigurator.ScrollToEnd();
+            _scrollMutator.ScrollToEnd();
         }
 
         private void OnLogCopiedTriggered(string copiedText)

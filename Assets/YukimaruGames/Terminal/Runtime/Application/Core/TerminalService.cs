@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using YukimaruGames.Terminal.Application.Dto;
-using YukimaruGames.Terminal.Application.Mapper;
+using YukimaruGames.Terminal.Application.Commands;
 using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.API.Exceptions;
 using YukimaruGames.Terminal.SharedKernel;
 
-namespace YukimaruGames.Terminal.Application
+namespace YukimaruGames.Terminal.Application.Core
 {
     /// <summary>
     /// ドメインサービスを全般を統括し、外部へAPIを提供するアプリケーションサービス.

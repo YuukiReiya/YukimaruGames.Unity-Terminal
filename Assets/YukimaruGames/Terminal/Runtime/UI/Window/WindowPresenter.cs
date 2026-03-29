@@ -7,7 +7,7 @@ namespace YukimaruGames.Terminal.UI.Window
 {
     public sealed class WindowPresenter : IWindowPresenter, IDisposable
     {
-        private readonly IWindowAnimatorDataConfigurator _configurator;
+        private readonly IWindowAnimatorDataMutator _mutator;
         private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
@@ -18,32 +18,32 @@ namespace YukimaruGames.Terminal.UI.Window
 
         public WindowState State
         {
-            get => _configurator.State;
-            set => _configurator.State = value;
+            get => _mutator.State;
+            set => _mutator.State = value;
         }
 
         public WindowAnchor Anchor
         {
-            get => _configurator.Anchor;
-            set => _configurator.Anchor = value;
+            get => _mutator.Anchor;
+            set => _mutator.Anchor = value;
         }
 
         public WindowStyle Style
         {
-            get => _configurator.Style;
-            set => _configurator.Style = value;
+            get => _mutator.Style;
+            set => _mutator.Style = value;
         }
 
         public float Duration
         {
-            get => _configurator.Duration;
-            set => _configurator.Duration = value;
+            get => _mutator.Duration;
+            set => _mutator.Duration = value;
         }
 
         public float Scale
         {
-            get => _configurator.Scale;
-            set => _configurator.Scale = value;
+            get => _mutator.Scale;
+            set => _mutator.Scale = value;
         }
 
         public Rect Rect { get; private set; }
@@ -61,10 +61,10 @@ namespace YukimaruGames.Terminal.UI.Window
         }
 
         public WindowPresenter(
-            IWindowAnimatorDataConfigurator configurator,
+            IWindowAnimatorDataMutator mutator,
             IWindowAnimator animator)
         {
-            _configurator = configurator;
+            _mutator = mutator;
             _windowAnimator = animator;
         }
 

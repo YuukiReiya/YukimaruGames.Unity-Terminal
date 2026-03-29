@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.UI.Core;
 
-namespace YukimaruGames.Terminal.Infrastructure.Provider
+namespace YukimaruGames.Terminal.Infrastructure.UI
 {
     public sealed class CursorFlashSpeedProvider : ICursorFlashSpeedProvider
     {
@@ -24,7 +24,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Provider
             }
 
             _cursorFlashSpeed = Mathf.Max(0, value);
-            OnChangedFlashSpeed?.Invoke(value);
+            OnChangedFlashSpeed?.Invoke(_cursorFlashSpeed);
         }
     }
 }
