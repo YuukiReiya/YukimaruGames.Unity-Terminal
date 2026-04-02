@@ -3,6 +3,7 @@ using System.Linq;
 using YukimaruGames.Terminal.Application.Core;
 using YukimaruGames.Terminal.Domain.Core.Commands;
 using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -17,7 +18,7 @@ namespace YukimaruGames.Terminal.Runtime
             var parser = new CommandParser();
             var history = new CommandHistory();
             var autocomplete = new CommandAutocomplete();
-            var entryPoint = new TerminalEntryPoint(null, InputKeyboardType.None, null);
+            var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), InputKeyboardType.None, null);
             var disposables = new object[]
             {
                 logger,
