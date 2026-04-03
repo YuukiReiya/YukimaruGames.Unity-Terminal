@@ -7,7 +7,11 @@ namespace YukimaruGames.Terminal.UI.Window
 {
     public sealed class WindowPresenter : IWindowPresenter, IDisposable
     {
-        private readonly IWindowAnimatorDataMutator _mutator;
+        // FIXME:
+        // エラー解決のために一時的にProviderを宣言.
+        // 後ほど見直しが必要
+        private readonly IAnimationDataProvider _provider;
+        private readonly IAnimationDataMutator _mutator;
         private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
@@ -18,31 +22,31 @@ namespace YukimaruGames.Terminal.UI.Window
 
         public WindowState State
         {
-            get => _mutator.State;
+            get => _provider.State;
             set => _mutator.State = value;
         }
 
         public WindowAnchor Anchor
         {
-            get => _mutator.Anchor;
+            get => _provider.Anchor;
             set => _mutator.Anchor = value;
         }
 
         public WindowStyle Style
         {
-            get => _mutator.Style;
+            get => _provider.Style;
             set => _mutator.Style = value;
         }
 
         public float Duration
         {
-            get => _mutator.Duration;
+            get => _provider.Duration;
             set => _mutator.Duration = value;
         }
 
         public float Scale
         {
-            get => _mutator.Scale;
+            get => _provider.Scale;
             set => _mutator.Scale = value;
         }
 
@@ -61,9 +65,11 @@ namespace YukimaruGames.Terminal.UI.Window
         }
 
         public WindowPresenter(
-            IWindowAnimatorDataMutator mutator,
+            IAnimationDataProvider provider,
+            IAnimationDataMutator mutator,
             IWindowAnimator animator)
         {
+            _provider = provider;
             _mutator = mutator;
             _windowAnimator = animator;
         }

@@ -48,5 +48,10 @@ namespace YukimaruGames.Terminal.Runtime
         {
             (scope as IDisposable)?.Dispose();
         }
+
+        public void Resolve(TerminalRuntimeScope scope)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

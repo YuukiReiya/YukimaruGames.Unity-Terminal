@@ -4,6 +4,6 @@ namespace YukimaruGames.Terminal.UI.Core
 {
     public interface IColorPaletteProvider
     {
-        Color GetColor(string key);
+        Color this[string key] { get; }
     }
 }

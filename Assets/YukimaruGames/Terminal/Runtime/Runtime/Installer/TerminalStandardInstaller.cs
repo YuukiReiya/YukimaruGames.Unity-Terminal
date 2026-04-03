@@ -113,6 +113,26 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeReference, SerializeInterface] 
         private ITerminalOptions _options = new TerminalStandardOptions();
 
+        #region runtime-instances
+
+        [NonSerialized] private FontAccessor _fontAccessor;
+        [NonSerialized] private ColorPaletteAccessor _colorPaletteAccessor;
+        [NonSerialized] private AnimationDataAccessor _animationDataAccessor;
+        [NonSerialized] private LauncherVisibleAccessor _launcherVisibleAccessor;
+        [NonSerialized] private IWindowRenderer _windowRenderer;
+        [NonSerialized] private IPromptRenderer _promptRenderer;
+        [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
+        
+        [NonSerialized] private StyleContext _logStyleContext;
+        [NonSerialized] private StyleContext _inputStyleContext;
+        [NonSerialized] private StyleContext _promptStyleContext;
+        [NonSerialized] private StyleContext _executeButtonsStyleContext;
+        [NonSerialized] private StyleContext _launcherStyleContext;
+        [NonSerialized] private StyleContext _logCopyButtonStyleContext;
+
+        [NonSerialized] private IPixelTextureRepository _pixelTextureRepository;
+        #endregion
+
         TerminalRuntimeScope IInstaller.Install()
         {
             // Null Object Pattern: 意図的な null は Null 実装にフォールバック
@@ -131,6 +151,89 @@ namespace YukimaruGames.Terminal.Runtime
         void IInstaller.Uninstall(TerminalRuntimeScope scope)
         {
             (scope as IDisposable)?.Dispose();
+            ClearReferences();
+        }
+
+        void IInstaller.Resolve(TerminalRuntimeScope scope)
+        {
+            if (scope == null) return;
+            
+            var theme = _theme ?? new TerminalNullTheme();
+            var animation = _animation ?? new TerminalNullAnimation();
+            var options = _options ?? new TerminalNullOptions();
+            
+            SyncTheme(theme);
+            SyncAnimation(animation);
+            SyncOptions(options);
+        }
+
+        private void ClearReferences()
+        {
+            _fontAccessor = null;
+            _colorPaletteAccessor = null;
+            _animationDataAccessor = null;
+            _launcherVisibleAccessor = null;
+            _windowRenderer = null;
+            _promptRenderer = null;
+            _cursorFlashSpeedAccessor = null;
+            _logStyleContext = null;
+            _inputStyleContext = null;
+            _promptStyleContext = null;
+            _executeButtonsStyleContext = null;
+            _launcherStyleContext = null;
+            _logCopyButtonStyleContext = null;
+        }
+
+        private void SyncTheme(ITerminalTheme theme)
+        {
+            if (_fontAccessor != null) _fontAccessor.Size = theme.FontSize;
+            _inputStyleContext?.SetColor(theme.InputColor);
+            _promptStyleContext?.SetColor(theme.PromptColor);
+            _executeButtonsStyleContext?.SetColor(theme.ExecuteButtonColor);
+            _launcherStyleContext?.SetColor(theme.ButtonColor);
+            _logCopyButtonStyleContext?.SetColor(theme.CopyButtonColor);
+
+            if (_cursorFlashSpeedAccessor != null)
+            {
+                _cursorFlashSpeedAccessor.FlashSpeed = theme.CursorFlashSpeed;
+            }
+
+            _colorPaletteAccessor[Constants.ColorPalette.Message] = theme.MessageColor;
+            _colorPaletteAccessor[Constants.ColorPalette.Entry] = theme.EntryColor;
+            _colorPaletteAccessor[Constants.ColorPalette.Warning] = theme.WarningColor;
+            _colorPaletteAccessor[Constants.ColorPalette.Error] = theme.ErrorColor;
+            _colorPaletteAccessor[Constants.ColorPalette.Assert] = theme.AssertColor;
+            _colorPaletteAccessor[Constants.ColorPalette.Exception] = theme.ExceptionColor;
+            _colorPaletteAccessor[Constants.ColorPalette.System] = theme.SystemColor;
+            _colorPaletteAccessor[Constants.ColorPalette.Cursor] = theme.CaretColor;
+            _colorPaletteAccessor[Constants.ColorPalette.Selection] = theme.SelectionColor;
+
+            _pixelTextureRepository.SetColor(Constants.ColorPalette.Window, theme.BackgroundColor);
+        }
+
+        private void SyncAnimation(ITerminalAnimation animation)
+        {
+            if (_animationDataAccessor == null) return;
+            
+            _animationDataAccessor.State = animation.BootupWindowState;
+            _animationDataAccessor.Anchor = animation.Anchor;
+            _animationDataAccessor.Style = animation.WindowStyle;
+            _animationDataAccessor.Duration = animation.Duration;
+            _animationDataAccessor.Scale = animation.CompactScale;
+        }
+
+        private void SyncOptions(ITerminalOptions options)
+        {
+            if (_launcherVisibleAccessor != null)
+            {
+                _launcherVisibleAccessor.IsVisible = options.IsButtonVisible;
+                _launcherVisibleAccessor.IsReverse = options.IsButtonReverse;
+            }
+
+            if (_promptRenderer != null)
+            {
+                _promptRenderer.Prompt = options.Prompt;
+            }
         }
 
         private InputKeyboardType ResolveKeyboardType(ITerminalOptions options)
@@ -206,7 +309,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
-            var animatorDataMutator = new WindowAnimatorDataMutator()
+            _animationDataAccessor = new AnimationDataAccessor()
             {
                 State = animation.BootupWindowState,
                 Anchor = animation.Anchor,
@@ -215,7 +318,7 @@ namespace YukimaruGames.Terminal.Runtime
                 Scale = animation.CompactScale,
             };
 
-            var colorPaletteProvider = new ColorPaletteProvider(new Dictionary<string, Color>
+            _colorPaletteAccessor = new ColorPaletteAccessor(new Dictionary<string, Color>
             {
                 { Constants.ColorPalette.Message, theme.MessageColor },
                 { Constants.ColorPalette.Entry, theme.EntryColor },
@@ -224,61 +327,58 @@ namespace YukimaruGames.Terminal.Runtime
                 { Constants.ColorPalette.Assert, theme.AssertColor },
                 { Constants.ColorPalette.Exception, theme.ExceptionColor },
                 { Constants.ColorPalette.System, theme.SystemColor },
+                { Constants.ColorPalette.Window, theme.BackgroundColor },
                 { Constants.ColorPalette.Cursor, theme.CaretColor },
                 { Constants.ColorPalette.Selection, theme.SelectionColor },
             });
 
-            var fontProvider = new FontProvider(theme.Font) { Size = theme.FontSize };
-            var pixelTextureRepository = new PixelTextureRepository();
+            _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };
+            _pixelTextureRepository = new PixelTextureRepository();
             var scrollMutator = new ScrollMutator();
 
             // Style contexts
-            var logStyleContext = new StyleContext(fontProvider);
-            var inputStyleContext = new StyleContext(fontProvider);
-            var promptStyleContext = new StyleContext(fontProvider);
-            var executeButtonsStyleContext = new StyleContext(fontProvider);
-            var openButtonsStyleContext = new StyleContext(fontProvider);
-            var logCopyButtonStyleContext = new StyleContext(fontProvider);
+            _logStyleContext = new StyleContext(_fontAccessor);
+            _inputStyleContext = new StyleContext(_fontAccessor);
+            _promptStyleContext = new StyleContext(_fontAccessor);
+            _executeButtonsStyleContext = new StyleContext(_fontAccessor);
+            _launcherStyleContext = new StyleContext(_fontAccessor);
+            _logCopyButtonStyleContext = new StyleContext(_fontAccessor);
 
             // Apply Colors immediately
-            inputStyleContext.SetColor(theme.InputColor);
-            promptStyleContext.SetColor(theme.PromptColor);
-            executeButtonsStyleContext.SetColor(theme.ExecuteButtonColor);
-            openButtonsStyleContext.SetColor(theme.ButtonColor);
-            logCopyButtonStyleContext.SetColor(theme.CopyButtonColor);
+            SyncTheme(theme);
 
-            var cursorFlashSpeedProvider = new CursorFlashSpeedProvider(theme.CursorFlashSpeed);
-            var launcherVisibleMutator = new LauncherVisibleMutator
+            _cursorFlashSpeedAccessor = new CursorFlashSpeedAccessor(theme.CursorFlashSpeed);
+            _launcherVisibleAccessor = new LauncherVisibleAccessor
             {
                 IsVisible = options.IsButtonVisible,
                 IsReverse = options.IsButtonReverse,
             };
 
             // Renderers
-            var windowRenderer = new WindowRenderer(pixelTextureRepository);
-            windowRenderer.SetBackgroundColor(theme.BackgroundColor);
-            var clipboardRenderer = new ClipboardRenderer(launcherVisibleMutator, logCopyButtonStyleContext);
-            var logRenderer = new LogRenderer(clipboardRenderer, logStyleContext, colorPaletteProvider);
-            var inputRenderer = new InputRenderer(scrollMutator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
-            var promptRenderer = new PromptRenderer(promptStyleContext) { Prompt = options.Prompt };
-            var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
-            var launcherRenderer = new LauncherRenderer(pixelTextureRepository, openButtonsStyleContext);
+            _windowRenderer = new WindowRenderer(_pixelTextureRepository);
+            
+            var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor, _logCopyButtonStyleContext);
+            var logRenderer = new LogRenderer(clipboardRenderer, _logStyleContext, _colorPaletteAccessor);
+            var inputRenderer = new InputRenderer(scrollMutator, _inputStyleContext, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+            _promptRenderer = new PromptRenderer(_promptStyleContext) { Prompt = options.Prompt };
+            var executeButtonRenderer = new SubmitRenderer(_executeButtonsStyleContext);
+            var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherStyleContext);
 
             // Presenters
-            var windowPresenter = new WindowPresenter(animatorDataMutator, new WindowAnimator());
+            var windowPresenter = new WindowPresenter(_animationDataAccessor, _animationDataAccessor, new WindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
-            var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, launcherVisibleMutator);
-            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, launcherVisibleMutator);
+            var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, _launcherVisibleAccessor);
+            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, _launcherVisibleAccessor);
 
             // View
             var viewContext = new ViewContext
             {
-                WindowRenderer = windowRenderer,
+                WindowRenderer = _windowRenderer,
                 ClipboardRenderer = clipboardRenderer,
                 LogRenderer = logRenderer,
                 InputRenderer = inputRenderer,
-                PromptRenderer = promptRenderer,
+                PromptRenderer = _promptRenderer,
                 SubmitRenderer = executeButtonRenderer,
                 LauncherRenderer = launcherRenderer,
 
@@ -304,27 +404,27 @@ namespace YukimaruGames.Terminal.Runtime
                 
                 Components = new object[]
                 {
-                    animatorDataMutator,
-                    colorPaletteProvider,
-                    fontProvider,
-                    pixelTextureRepository,
+                    _animationDataAccessor,
+                    _colorPaletteAccessor,
+                    _fontAccessor,
+                    _pixelTextureRepository,
                     scrollMutator,
                     
-                    logStyleContext,
-                    inputStyleContext,
-                    promptStyleContext,
-                    executeButtonsStyleContext,
-                    openButtonsStyleContext,
-                    logCopyButtonStyleContext,
+                    _logStyleContext,
+                    _inputStyleContext,
+                    _promptStyleContext,
+                    _executeButtonsStyleContext,
+                    _launcherStyleContext,
+                    _logCopyButtonStyleContext,
                     
-                    cursorFlashSpeedProvider,
-                    launcherVisibleMutator,
+                    _cursorFlashSpeedAccessor,
+                    _launcherVisibleAccessor,
                     
-                    windowRenderer,
+                    _windowRenderer,
                     clipboardRenderer,
                     logRenderer,
                     inputRenderer,
-                    promptRenderer,
+                    _promptRenderer,
                     executeButtonRenderer,
                     launcherRenderer,
 

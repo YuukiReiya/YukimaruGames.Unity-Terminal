@@ -1,5 +1,4 @@
 using YukimaruGames.Terminal.SharedKernel;
-
 namespace YukimaruGames.Terminal.UI.Core
 {
     public static class Constants
@@ -14,6 +13,7 @@ namespace YukimaruGames.Terminal.UI.Core
             public const string Entry = nameof(MessageType.Entry);
             public const string System = nameof(MessageType.System);
 
+            public const string Window = nameof(YukimaruGames.Terminal.UI.Window.WindowRenderer);
             public const string Cursor = nameof(UnityEngine.GUI.skin.settings.cursorColor);
             public const string Selection = nameof(UnityEngine.GUI.skin.settings.selectionColor);
         }
