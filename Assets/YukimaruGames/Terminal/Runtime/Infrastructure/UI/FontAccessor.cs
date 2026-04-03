@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
-    public sealed class FontProvider : IFontProvider, IDisposable
+    public sealed class FontAccessor : IFontProvider, IFontMutator, IDisposable
     {
         private Font _font;
         private int _size;
@@ -63,7 +63,7 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
             _font = null;
         }
 
-        public FontProvider(Font font = null)
+        public FontAccessor(Font font = null)
         {
             if (font != null)
             {
