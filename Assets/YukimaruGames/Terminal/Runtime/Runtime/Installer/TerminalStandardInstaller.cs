@@ -142,12 +142,43 @@ namespace YukimaruGames.Terminal.Runtime
             var animation = _animation ?? new TerminalNullAnimation();
             var options = _options ?? new TerminalNullOptions();
 
-            var domain = BuildDomainContext(options);
-            RegisterCommands(in domain);
-            var rendering = BuildRenderingContext(theme, animation, options, in domain);
-            var coordinator = BuildCoordinatorContext(in domain, in rendering, options);
+            DomainContext domainContext = default;
+            RenderingContext renderingContext = default;
+            CoordinatorContext coordinatorContext = default;
 
-            return BuildScope(in domain, in rendering, in coordinator);
+            try
+            {
+                domainContext = BuildDomainContext(options);
+                RegisterCommands(in domainContext);
+                renderingContext = BuildRenderingContext(theme, animation, options, in domainContext);
+                coordinatorContext = BuildCoordinatorContext(in domainContext, in renderingContext, options);
+                return BuildScope(in domainContext, in renderingContext, in coordinatorContext);
+            }
+            catch (Exception e)
+            {
+                void CleanUp(IReadOnlyList<object> components)
+                {
+                    if (components == null)
+                    {
+                        return;
+                    }
+
+                    // Interface 越しの foreach による GC Alloc を避けるため、for で列挙
+                    for (var i = 0; i < components.Count; i++)
+                    {
+                        if (components[i] is IDisposable component)
+                        {
+                            component.Dispose();
+                        }
+                    }
+                }
+                
+                CleanUp(domainContext.Components);
+                CleanUp(renderingContext.Components);
+                CleanUp(coordinatorContext.Components);
+                ClearReferences();
+                throw;
+            }
         }
 
         void IInstaller.Uninstall(TerminalRuntimeScope scope)
