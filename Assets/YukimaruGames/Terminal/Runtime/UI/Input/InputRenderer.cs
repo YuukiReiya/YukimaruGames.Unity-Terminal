@@ -112,9 +112,9 @@ namespace YukimaruGames.Terminal.UI.Input
             var selectionColor = GUI.skin.settings.selectionColor;
             var cursorFlashSpeed = GUI.skin.settings.cursorFlashSpeed;
 
-            GUI.skin.settings.cursorColor = _colorPaletteProvider.GetColor(Constants.ColorPalette.Cursor);
-            GUI.skin.settings.selectionColor = _colorPaletteProvider.GetColor(Constants.ColorPalette.Selection);
-            GUI.skin.settings.cursorFlashSpeed = _cursorFlashSpeedProvider.GetFlashSpeed();
+            GUI.skin.settings.cursorColor = _colorPaletteProvider[Constants.ThemeLabel.Cursor];
+            GUI.skin.settings.selectionColor = _colorPaletteProvider[Constants.ThemeLabel.Selection];
+            GUI.skin.settings.cursorFlashSpeed = _cursorFlashSpeedProvider.FlashSpeed;
 
             InputText = GUILayout.TextField(data.InputText, _styleProvider.GetStyle());
             SendImeComposingState();

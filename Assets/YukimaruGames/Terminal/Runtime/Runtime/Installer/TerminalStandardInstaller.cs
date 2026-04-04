@@ -72,6 +72,8 @@ namespace YukimaruGames.Terminal.Runtime
             public IMainView View;
             /// <inheritdoc cref="IScrollMutator"/>
             public IScrollMutator ScrollMutator;
+            /// <inheritdoc cref="IAnimationDataAccessor"/>
+            public IAnimationDataAccessor AnimationDataAccessor;
             /// <inheritdoc cref="IWindowPresenter"/>
             public IWindowPresenter WindowPresenter;
             /// <inheritdoc cref="IInputPresenter"/>
@@ -113,6 +115,26 @@ namespace YukimaruGames.Terminal.Runtime
         [SerializeReference, SerializeInterface] 
         private ITerminalOptions _options = new TerminalStandardOptions();
 
+        #region runtime-instances
+
+        [NonSerialized] private FontAccessor _fontAccessor;
+        [NonSerialized] private ColorPaletteAccessor _colorPaletteAccessor;
+        [NonSerialized] private AnimationDataAccessor _animationDataAccessor;
+        [NonSerialized] private LauncherVisibleAccessor _launcherVisibleAccessor;
+        [NonSerialized] private IWindowRenderer _windowRenderer;
+        [NonSerialized] private IPromptRenderer _promptRenderer;
+        [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
+        
+        [NonSerialized] private StyleContext _logStyleContext;
+        [NonSerialized] private StyleContext _inputStyleContext;
+        [NonSerialized] private StyleContext _promptStyleContext;
+        [NonSerialized] private StyleContext _executeButtonsStyleContext;
+        [NonSerialized] private StyleContext _launcherStyleContext;
+        [NonSerialized] private StyleContext _logCopyButtonStyleContext;
+
+        [NonSerialized] private IPixelTextureRepository _pixelTextureRepository;
+        #endregion
+
         TerminalRuntimeScope IInstaller.Install()
         {
             // Null Object Pattern: 意図的な null は Null 実装にフォールバック
@@ -120,17 +142,145 @@ namespace YukimaruGames.Terminal.Runtime
             var animation = _animation ?? new TerminalNullAnimation();
             var options = _options ?? new TerminalNullOptions();
 
-            var domain = BuildDomainContext(options);
-            RegisterCommands(in domain);
-            var rendering = BuildRenderingContext(theme, animation, options, in domain);
-            var coordinator = BuildCoordinatorContext(in domain, in rendering, options);
+            DomainContext domainContext = default;
+            RenderingContext renderingContext = default;
+            CoordinatorContext coordinatorContext = default;
 
-            return BuildScope(in domain, in rendering, in coordinator);
+            try
+            {
+                domainContext = BuildDomainContext(options);
+                RegisterCommands(in domainContext);
+                renderingContext = BuildRenderingContext(theme, animation, options, in domainContext);
+                coordinatorContext = BuildCoordinatorContext(in domainContext, in renderingContext, options);
+                return BuildScope(in domainContext, in renderingContext, in coordinatorContext);
+            }
+            catch (Exception e)
+            {
+                void CleanUp(IReadOnlyList<object> components)
+                {
+                    if (components == null)
+                    {
+                        return;
+                    }
+
+                    // Interface 越しの foreach による GC Alloc を避けるため、for で列挙
+                    for (var i = 0; i < components.Count; i++)
+                    {
+                        if (components[i] is IDisposable component)
+                        {
+                            component.Dispose();
+                        }
+                    }
+                }
+                
+                CleanUp(domainContext.Components);
+                CleanUp(renderingContext.Components);
+                CleanUp(coordinatorContext.Components);
+                ClearReferences();
+                throw;
+            }
         }
 
         void IInstaller.Uninstall(TerminalRuntimeScope scope)
         {
-            (scope as IDisposable)?.Dispose();
+            try
+            {
+                (scope as IDisposable)?.Dispose();
+            }
+            finally
+            {
+                ClearReferences();
+            }
+        }
+
+        void IInstaller.Resolve(TerminalRuntimeScope scope)
+        {
+            if (scope == null) return;
+            
+            var theme = _theme ?? new TerminalNullTheme();
+            var animation = _animation ?? new TerminalNullAnimation();
+            var options = _options ?? new TerminalNullOptions();
+            
+            SyncTheme(theme);
+            SyncAnimation(animation);
+            SyncOptions(options);
+        }
+
+        private void ClearReferences()
+        {
+            _fontAccessor = null;
+            _colorPaletteAccessor = null;
+            _animationDataAccessor = null;
+            _launcherVisibleAccessor = null;
+            _windowRenderer = null;
+            _promptRenderer = null;
+            _cursorFlashSpeedAccessor = null;
+            _logStyleContext = null;
+            _inputStyleContext = null;
+            _promptStyleContext = null;
+            _executeButtonsStyleContext = null;
+            _launcherStyleContext = null;
+            _logCopyButtonStyleContext = null;
+            _pixelTextureRepository = null;
+        }
+
+        private void SyncTheme(ITerminalTheme theme)
+        {
+            if (_fontAccessor != null)
+            {
+                _fontAccessor.Font = theme.Font;
+                _fontAccessor.Size = theme.FontSize;
+            }
+            
+            _inputStyleContext?.SetColor(theme.InputColor);
+            _promptStyleContext?.SetColor(theme.PromptColor);
+            _executeButtonsStyleContext?.SetColor(theme.ExecuteButtonColor);
+            _launcherStyleContext?.SetColor(theme.ButtonColor);
+            _logCopyButtonStyleContext?.SetColor(theme.CopyButtonColor);
+
+            if (_cursorFlashSpeedAccessor != null)
+            {
+                _cursorFlashSpeedAccessor.FlashSpeed = theme.CursorFlashSpeed;
+            }
+
+            if (_colorPaletteAccessor != null)
+            {
+                _colorPaletteAccessor[Constants.ThemeLabel.Message] = theme.MessageColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Entry] = theme.EntryColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Warning] = theme.WarningColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Error] = theme.ErrorColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Assert] = theme.AssertColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Exception] = theme.ExceptionColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.System] = theme.SystemColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Cursor] = theme.CaretColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Selection] = theme.SelectionColor;
+            }
+
+            _pixelTextureRepository?.SetColor(Constants.ThemeLabel.Window, theme.BackgroundColor);
+        }
+
+        private void SyncAnimation(ITerminalAnimation animation)
+        {
+            if (_animationDataAccessor == null) return;
+            
+            _animationDataAccessor.Anchor = animation.Anchor;
+            _animationDataAccessor.Style = animation.WindowStyle;
+            _animationDataAccessor.Duration = animation.Duration;
+            _animationDataAccessor.Scale = animation.CompactScale;
+        }
+
+        private void SyncOptions(ITerminalOptions options)
+        {
+            if (_launcherVisibleAccessor != null)
+            {
+                _launcherVisibleAccessor.IsVisible = options.IsButtonVisible;
+                _launcherVisibleAccessor.IsReverse = options.IsButtonReverse;
+            }
+
+            if (_promptRenderer != null)
+            {
+                _promptRenderer.Prompt = options.Prompt;
+            }
         }
 
         private InputKeyboardType ResolveKeyboardType(ITerminalOptions options)
@@ -206,7 +356,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
-            var animatorDataMutator = new WindowAnimatorDataMutator()
+            _animationDataAccessor = new AnimationDataAccessor()
             {
                 State = animation.BootupWindowState,
                 Anchor = animation.Anchor,
@@ -215,70 +365,66 @@ namespace YukimaruGames.Terminal.Runtime
                 Scale = animation.CompactScale,
             };
 
-            var colorPaletteProvider = new ColorPaletteProvider(new Dictionary<string, Color>
+            _colorPaletteAccessor = new ColorPaletteAccessor(new Dictionary<string, Color>
             {
-                { Constants.ColorPalette.Message, theme.MessageColor },
-                { Constants.ColorPalette.Entry, theme.EntryColor },
-                { Constants.ColorPalette.Warning, theme.WarningColor },
-                { Constants.ColorPalette.Error, theme.ErrorColor },
-                { Constants.ColorPalette.Assert, theme.AssertColor },
-                { Constants.ColorPalette.Exception, theme.ExceptionColor },
-                { Constants.ColorPalette.System, theme.SystemColor },
-                { Constants.ColorPalette.Cursor, theme.CaretColor },
-                { Constants.ColorPalette.Selection, theme.SelectionColor },
+                { Constants.ThemeLabel.Message, theme.MessageColor },
+                { Constants.ThemeLabel.Entry, theme.EntryColor },
+                { Constants.ThemeLabel.Warning, theme.WarningColor },
+                { Constants.ThemeLabel.Error, theme.ErrorColor },
+                { Constants.ThemeLabel.Assert, theme.AssertColor },
+                { Constants.ThemeLabel.Exception, theme.ExceptionColor },
+                { Constants.ThemeLabel.System, theme.SystemColor },
+                { Constants.ThemeLabel.Cursor, theme.CaretColor },
+                { Constants.ThemeLabel.Selection, theme.SelectionColor },
             });
 
-            var fontProvider = new FontProvider(theme.Font) { Size = theme.FontSize };
-            var pixelTextureRepository = new PixelTextureRepository();
+            _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };
+            _pixelTextureRepository = new PixelTextureRepository();
             var scrollMutator = new ScrollMutator();
 
             // Style contexts
-            var logStyleContext = new StyleContext(fontProvider);
-            var inputStyleContext = new StyleContext(fontProvider);
-            var promptStyleContext = new StyleContext(fontProvider);
-            var executeButtonsStyleContext = new StyleContext(fontProvider);
-            var openButtonsStyleContext = new StyleContext(fontProvider);
-            var logCopyButtonStyleContext = new StyleContext(fontProvider);
+            _logStyleContext = new StyleContext(_fontAccessor);
+            _inputStyleContext = new StyleContext(_fontAccessor);
+            _promptStyleContext = new StyleContext(_fontAccessor);
+            _executeButtonsStyleContext = new StyleContext(_fontAccessor);
+            _launcherStyleContext = new StyleContext(_fontAccessor);
+            _logCopyButtonStyleContext = new StyleContext(_fontAccessor);
 
             // Apply Colors immediately
-            inputStyleContext.SetColor(theme.InputColor);
-            promptStyleContext.SetColor(theme.PromptColor);
-            executeButtonsStyleContext.SetColor(theme.ExecuteButtonColor);
-            openButtonsStyleContext.SetColor(theme.ButtonColor);
-            logCopyButtonStyleContext.SetColor(theme.CopyButtonColor);
+            SyncTheme(theme);
 
-            var cursorFlashSpeedProvider = new CursorFlashSpeedProvider(theme.CursorFlashSpeed);
-            var launcherVisibleMutator = new LauncherVisibleMutator
+            _cursorFlashSpeedAccessor = new CursorFlashSpeedAccessor(theme.CursorFlashSpeed);
+            _launcherVisibleAccessor = new LauncherVisibleAccessor
             {
                 IsVisible = options.IsButtonVisible,
                 IsReverse = options.IsButtonReverse,
             };
 
             // Renderers
-            var windowRenderer = new WindowRenderer(pixelTextureRepository);
-            windowRenderer.SetBackgroundColor(theme.BackgroundColor);
-            var clipboardRenderer = new ClipboardRenderer(launcherVisibleMutator, logCopyButtonStyleContext);
-            var logRenderer = new LogRenderer(clipboardRenderer, logStyleContext, colorPaletteProvider);
-            var inputRenderer = new InputRenderer(scrollMutator, inputStyleContext, colorPaletteProvider, cursorFlashSpeedProvider);
-            var promptRenderer = new PromptRenderer(promptStyleContext) { Prompt = options.Prompt };
-            var executeButtonRenderer = new SubmitRenderer(executeButtonsStyleContext);
-            var launcherRenderer = new LauncherRenderer(pixelTextureRepository, openButtonsStyleContext);
+            _windowRenderer = new WindowRenderer(_pixelTextureRepository);
+            
+            var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor, _logCopyButtonStyleContext);
+            var logRenderer = new LogRenderer(clipboardRenderer, _logStyleContext, _colorPaletteAccessor);
+            var inputRenderer = new InputRenderer(scrollMutator, _inputStyleContext, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+            _promptRenderer = new PromptRenderer(_promptStyleContext) { Prompt = options.Prompt };
+            var executeButtonRenderer = new SubmitRenderer(_executeButtonsStyleContext);
+            var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherStyleContext);
 
             // Presenters
-            var windowPresenter = new WindowPresenter(animatorDataMutator, new WindowAnimator());
+            var windowPresenter = new WindowPresenter(_animationDataAccessor,  new WindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
-            var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, launcherVisibleMutator);
-            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, launcherVisibleMutator);
+            var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, _launcherVisibleAccessor);
+            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, _launcherVisibleAccessor, _animationDataAccessor);
 
             // View
             var viewContext = new ViewContext
             {
-                WindowRenderer = windowRenderer,
+                WindowRenderer = _windowRenderer,
                 ClipboardRenderer = clipboardRenderer,
                 LogRenderer = logRenderer,
                 InputRenderer = inputRenderer,
-                PromptRenderer = promptRenderer,
+                PromptRenderer = _promptRenderer,
                 SubmitRenderer = executeButtonRenderer,
                 LauncherRenderer = launcherRenderer,
 
@@ -296,6 +442,7 @@ namespace YukimaruGames.Terminal.Runtime
             {
                 View = view,
                 ScrollMutator = scrollMutator,
+                AnimationDataAccessor = _animationDataAccessor,
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
                 LogPresenter = logPresenter,
@@ -304,27 +451,27 @@ namespace YukimaruGames.Terminal.Runtime
                 
                 Components = new object[]
                 {
-                    animatorDataMutator,
-                    colorPaletteProvider,
-                    fontProvider,
-                    pixelTextureRepository,
+                    _animationDataAccessor,
+                    _colorPaletteAccessor,
+                    _fontAccessor,
+                    _pixelTextureRepository,
                     scrollMutator,
                     
-                    logStyleContext,
-                    inputStyleContext,
-                    promptStyleContext,
-                    executeButtonsStyleContext,
-                    openButtonsStyleContext,
-                    logCopyButtonStyleContext,
+                    _logStyleContext,
+                    _inputStyleContext,
+                    _promptStyleContext,
+                    _executeButtonsStyleContext,
+                    _launcherStyleContext,
+                    _logCopyButtonStyleContext,
                     
-                    cursorFlashSpeedProvider,
-                    launcherVisibleMutator,
+                    _cursorFlashSpeedAccessor,
+                    _launcherVisibleAccessor,
                     
-                    windowRenderer,
+                    _windowRenderer,
                     clipboardRenderer,
                     logRenderer,
                     inputRenderer,
-                    promptRenderer,
+                    _promptRenderer,
                     executeButtonRenderer,
                     launcherRenderer,
 
@@ -353,6 +500,7 @@ namespace YukimaruGames.Terminal.Runtime
                 domain.Service,
                 rendering.View,
                 rendering.ScrollMutator,
+                rendering.AnimationDataAccessor,
                 rendering.WindowPresenter,
                 rendering.InputPresenter,
                 rendering.LogPresenter,

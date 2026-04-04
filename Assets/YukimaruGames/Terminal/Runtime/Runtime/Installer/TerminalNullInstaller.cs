@@ -48,5 +48,10 @@ namespace YukimaruGames.Terminal.Runtime
         {
             (scope as IDisposable)?.Dispose();
         }
+
+        public void Resolve(TerminalRuntimeScope scope)
+        {
+            // NullInstallerには再解決する設定がないため、何もしない
+        }
     }
 }

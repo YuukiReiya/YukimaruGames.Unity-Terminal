@@ -1,9 +1,8 @@
 using System;
-using YukimaruGames.Terminal.UI.Launcher;
 
 namespace YukimaruGames.Terminal.UI.Launcher
 {
-    public sealed class LauncherVisibleMutator : ILauncherVisibleMutator, ILauncherVisibleProvider, IDisposable
+    public sealed class LauncherVisibleAccessor : ILauncherVisibleMutator, ILauncherVisibleProvider, IDisposable
     {
         private bool _isVisible;
 

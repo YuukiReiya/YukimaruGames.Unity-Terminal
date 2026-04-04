@@ -4,19 +4,22 @@ using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
-    public sealed class CursorFlashSpeedProvider : ICursorFlashSpeedProvider
+    public sealed class CursorFlashSpeedAccessor : ICursorFlashSpeedProvider,ICursorFlashSpeedMutator
     {
         private float _cursorFlashSpeed;
         public event Action<float> OnChangedFlashSpeed;
+        public float FlashSpeed
+        {
+            get => _cursorFlashSpeed;
+            set => SetFlashSpeed(value);
+        }
 
-        public CursorFlashSpeedProvider(float flashSpeed)
+        public CursorFlashSpeedAccessor(float flashSpeed)
         {
             _cursorFlashSpeed = flashSpeed;
         }
         
-        public float GetFlashSpeed() => _cursorFlashSpeed;
-
-        public void SetFlashSpeed(float value)
+        private void SetFlashSpeed(float value)
         {
             if (Mathf.Approximately(_cursorFlashSpeed, value))
             {

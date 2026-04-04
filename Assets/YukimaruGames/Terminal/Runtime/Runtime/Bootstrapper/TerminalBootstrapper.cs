@@ -21,6 +21,14 @@ namespace YukimaruGames.Terminal.Runtime
             _scope = _installer.Install();
         }
 
+        private void OnValidate()
+        {
+            if (UnityEngine.Application.isPlaying && _scope != null)
+            {
+                _installer?.Resolve(_scope);
+            }
+        }
+
         private void Update()
         {
             _scope?.EntryPoint.Update();

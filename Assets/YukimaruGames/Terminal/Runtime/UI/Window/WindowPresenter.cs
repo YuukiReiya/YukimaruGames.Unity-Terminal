@@ -7,7 +7,7 @@ namespace YukimaruGames.Terminal.UI.Window
 {
     public sealed class WindowPresenter : IWindowPresenter, IDisposable
     {
-        private readonly IWindowAnimatorDataMutator _mutator;
+        private readonly IAnimationDataAccessor _accessor;
         private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
@@ -15,36 +15,6 @@ namespace YukimaruGames.Terminal.UI.Window
         private Action<WindowState> _onAborted;
 
         public bool IsAnimating { get; private set; }
-
-        public WindowState State
-        {
-            get => _mutator.State;
-            set => _mutator.State = value;
-        }
-
-        public WindowAnchor Anchor
-        {
-            get => _mutator.Anchor;
-            set => _mutator.Anchor = value;
-        }
-
-        public WindowStyle Style
-        {
-            get => _mutator.Style;
-            set => _mutator.Style = value;
-        }
-
-        public float Duration
-        {
-            get => _mutator.Duration;
-            set => _mutator.Duration = value;
-        }
-
-        public float Scale
-        {
-            get => _mutator.Scale;
-            set => _mutator.Scale = value;
-        }
 
         public Rect Rect { get; private set; }
 
@@ -61,26 +31,26 @@ namespace YukimaruGames.Terminal.UI.Window
         }
 
         public WindowPresenter(
-            IWindowAnimatorDataMutator mutator,
+            IAnimationDataAccessor accessor,
             IWindowAnimator animator)
         {
-            _mutator = mutator;
+            _accessor = accessor;
             _windowAnimator = animator;
         }
 
         public void Open()
         {
             if (IsAnimating) return;
-            if (State is WindowState.Open) return;
-            State = WindowState.Open;
+            if (_accessor.State is WindowState.Open) return;
+            _accessor.State = WindowState.Open;
             Play();
         }
 
         public void Close()
         {
             if (IsAnimating) return;
-            if (State is WindowState.Close) return;
-            State = WindowState.Close;
+            if (_accessor.State is WindowState.Close) return;
+            _accessor.State = WindowState.Close;
             Play();
         }
 
@@ -100,12 +70,12 @@ namespace YukimaruGames.Terminal.UI.Window
             _cts?.Cancel();
             _cts?.Dispose();
 
-            if (Mathf.Approximately(0f, Duration))
+            if (Mathf.Approximately(0f, _accessor.Duration))
             {
                 _cts = null;
                 IsAnimating = false;
                 Evaluate(0f, 0f);
-                Invoke(_onCompleted, State);
+                Invoke(_onCompleted, _accessor.State);
                 return;
             }
 
@@ -114,7 +84,7 @@ namespace YukimaruGames.Terminal.UI.Window
 
             try
             {
-                var duration = Duration * Scale;
+                var duration = _accessor.Duration * _accessor.Scale;
                 var token = _cts.Token;
                 var elapsedTime = 0f;
                 while (elapsedTime < duration)
@@ -126,11 +96,11 @@ namespace YukimaruGames.Terminal.UI.Window
                 }
 
                 Evaluate(duration, duration);
-                Invoke(_onCompleted, State);
+                Invoke(_onCompleted, _accessor.State);
             }
             catch (OperationCanceledException)
             {
-                Invoke(_onAborted, State);
+                Invoke(_onAborted, _accessor.State);
             }
             catch (Exception e)
             {
@@ -153,7 +123,7 @@ namespace YukimaruGames.Terminal.UI.Window
         {
             return new WindowAnimatorData(
                 (Screen.width, Screen.height),
-                State, Anchor, Style, duration, Scale, elapsed);
+                _accessor.State, _accessor.Anchor, _accessor.Style, duration, _accessor.Scale, elapsed);
         }
 
         WindowRenderData IWindowRenderDataProvider.GetRenderData()

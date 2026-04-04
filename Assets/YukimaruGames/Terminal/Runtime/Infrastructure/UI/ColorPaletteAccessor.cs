@@ -4,21 +4,20 @@ using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
-    public sealed class ColorPaletteProvider : IColorPaletteProvider
+    public sealed class ColorPaletteAccessor : IColorPaletteProvider,IColorPaletteMutator
     {
         private readonly Dictionary<string, Color> _map = new();
 
-        public ColorPaletteProvider(IReadOnlyDictionary<string, Color> map)
+        public ColorPaletteAccessor(IReadOnlyDictionary<string, Color> map)
         {
             _map.Clear();
             foreach (var kvp in map) _map[kvp.Key] = kvp.Value;
         }
-        
-        public Color GetColor(string key) => _map[key];
 
-        public void SetColor(string key, Color color)
+        public Color this[string key]
         {
-            _map[key] = color;
+            get => _map[key];
+            set => _map[key] = value;
         }
     }
 }

@@ -24,13 +24,13 @@ namespace YukimaruGames.Terminal.UI.Log
 
         private Color GetColor(MessageType type) => type switch
         {
-            MessageType.Error => _colorPaletteProvider.GetColor(Constants.ColorPalette.Error),
-            MessageType.Assert => _colorPaletteProvider.GetColor(Constants.ColorPalette.Assert),
-            MessageType.Warning => _colorPaletteProvider.GetColor(Constants.ColorPalette.Warning),
-            MessageType.Message => _colorPaletteProvider.GetColor(Constants.ColorPalette.Message),
-            MessageType.Exception => _colorPaletteProvider.GetColor(Constants.ColorPalette.Exception),
-            MessageType.Entry => _colorPaletteProvider.GetColor(Constants.ColorPalette.Entry),
-            MessageType.System => _colorPaletteProvider.GetColor(Constants.ColorPalette.System),
+            MessageType.Error => _colorPaletteProvider[Constants.ThemeLabel.Error],
+            MessageType.Assert => _colorPaletteProvider[Constants.ThemeLabel.Assert],
+            MessageType.Warning => _colorPaletteProvider[Constants.ThemeLabel.Warning],
+            MessageType.Message => _colorPaletteProvider[Constants.ThemeLabel.Message],
+            MessageType.Exception => _colorPaletteProvider[Constants.ThemeLabel.Exception],
+            MessageType.Entry => _colorPaletteProvider[Constants.ThemeLabel.Entry],
+            MessageType.System => _colorPaletteProvider[Constants.ThemeLabel.System],
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
