@@ -51,7 +51,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         public void Resolve(TerminalRuntimeScope scope)
         {
-            throw new NotImplementedException();
+            // NullInstallerには再解決する設定がないため、何もしない
         }
     }
 }
