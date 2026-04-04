@@ -214,18 +214,18 @@ namespace YukimaruGames.Terminal.Runtime
 
             if (_colorPaletteAccessor != null)
             {
-                _colorPaletteAccessor[Constants.ColorPalette.Message] = theme.MessageColor;
-                _colorPaletteAccessor[Constants.ColorPalette.Entry] = theme.EntryColor;
-                _colorPaletteAccessor[Constants.ColorPalette.Warning] = theme.WarningColor;
-                _colorPaletteAccessor[Constants.ColorPalette.Error] = theme.ErrorColor;
-                _colorPaletteAccessor[Constants.ColorPalette.Assert] = theme.AssertColor;
-                _colorPaletteAccessor[Constants.ColorPalette.Exception] = theme.ExceptionColor;
-                _colorPaletteAccessor[Constants.ColorPalette.System] = theme.SystemColor;
-                _colorPaletteAccessor[Constants.ColorPalette.Cursor] = theme.CaretColor;
-                _colorPaletteAccessor[Constants.ColorPalette.Selection] = theme.SelectionColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Message] = theme.MessageColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Entry] = theme.EntryColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Warning] = theme.WarningColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Error] = theme.ErrorColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Assert] = theme.AssertColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Exception] = theme.ExceptionColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.System] = theme.SystemColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Cursor] = theme.CaretColor;
+                _colorPaletteAccessor[Constants.ThemeLabel.Selection] = theme.SelectionColor;
             }
 
-            _pixelTextureRepository?.SetColor(Constants.ColorPalette.Window, theme.BackgroundColor);
+            _pixelTextureRepository?.SetColor(Constants.ThemeLabel.Window, theme.BackgroundColor);
         }
 
         private void SyncAnimation(ITerminalAnimation animation)
@@ -337,16 +337,15 @@ namespace YukimaruGames.Terminal.Runtime
 
             _colorPaletteAccessor = new ColorPaletteAccessor(new Dictionary<string, Color>
             {
-                { Constants.ColorPalette.Message, theme.MessageColor },
-                { Constants.ColorPalette.Entry, theme.EntryColor },
-                { Constants.ColorPalette.Warning, theme.WarningColor },
-                { Constants.ColorPalette.Error, theme.ErrorColor },
-                { Constants.ColorPalette.Assert, theme.AssertColor },
-                { Constants.ColorPalette.Exception, theme.ExceptionColor },
-                { Constants.ColorPalette.System, theme.SystemColor },
-                { Constants.ColorPalette.Window, theme.BackgroundColor },
-                { Constants.ColorPalette.Cursor, theme.CaretColor },
-                { Constants.ColorPalette.Selection, theme.SelectionColor },
+                { Constants.ThemeLabel.Message, theme.MessageColor },
+                { Constants.ThemeLabel.Entry, theme.EntryColor },
+                { Constants.ThemeLabel.Warning, theme.WarningColor },
+                { Constants.ThemeLabel.Error, theme.ErrorColor },
+                { Constants.ThemeLabel.Assert, theme.AssertColor },
+                { Constants.ThemeLabel.Exception, theme.ExceptionColor },
+                { Constants.ThemeLabel.System, theme.SystemColor },
+                { Constants.ThemeLabel.Cursor, theme.CaretColor },
+                { Constants.ThemeLabel.Selection, theme.SelectionColor },
             });
 
             _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };

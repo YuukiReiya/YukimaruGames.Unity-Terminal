@@ -14,7 +14,7 @@ namespace YukimaruGames.Terminal.UI.Window
             {
                 normal = new GUIStyleState
                 {
-                    background = pixelTextureRepository.GetTexture2D(Constants.ColorPalette.Window),
+                    background = pixelTextureRepository.GetTexture2D(Constants.ThemeLabel.Window),
                 },
             });
         }
