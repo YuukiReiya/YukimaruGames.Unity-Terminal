@@ -152,8 +152,14 @@ namespace YukimaruGames.Terminal.Runtime
 
         void IInstaller.Uninstall(TerminalRuntimeScope scope)
         {
-            (scope as IDisposable)?.Dispose();
-            ClearReferences();
+            try
+            {
+                (scope as IDisposable)?.Dispose();
+            }
+            finally
+            {
+                ClearReferences();
+            }
         }
 
         void IInstaller.Resolve(TerminalRuntimeScope scope)
