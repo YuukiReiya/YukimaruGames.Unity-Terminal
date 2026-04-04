@@ -72,6 +72,8 @@ namespace YukimaruGames.Terminal.Runtime
             public IMainView View;
             /// <inheritdoc cref="IScrollMutator"/>
             public IScrollMutator ScrollMutator;
+            /// <inheritdoc cref="IAnimationDataAccessor"/>
+            public IAnimationDataAccessor AnimationDataAccessor;
             /// <inheritdoc cref="IWindowPresenter"/>
             public IWindowPresenter WindowPresenter;
             /// <inheritdoc cref="IInputPresenter"/>
@@ -369,7 +371,7 @@ namespace YukimaruGames.Terminal.Runtime
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, _launcherVisibleAccessor);
-            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, _launcherVisibleAccessor);
+            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, _launcherVisibleAccessor, _animationDataAccessor);
 
             // View
             var viewContext = new ViewContext
@@ -396,6 +398,7 @@ namespace YukimaruGames.Terminal.Runtime
             {
                 View = view,
                 ScrollMutator = scrollMutator,
+                AnimationDataAccessor = _animationDataAccessor,
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
                 LogPresenter = logPresenter,
@@ -453,6 +456,7 @@ namespace YukimaruGames.Terminal.Runtime
                 domain.Service,
                 rendering.View,
                 rendering.ScrollMutator,
+                rendering.AnimationDataAccessor,
                 rendering.WindowPresenter,
                 rendering.InputPresenter,
                 rendering.LogPresenter,

@@ -12,6 +12,7 @@ namespace YukimaruGames.Terminal.UI.Main
     public sealed class Coordinator : IDisposable
     {
         private readonly IMainView _view;
+        private readonly IAnimationDataProvider _animationDataProvider;
         private readonly IScrollMutator _scrollMutator;
         private readonly IWindowPresenter _windowPresenter;
         private readonly IInputPresenter _inputPresenter;
@@ -27,12 +28,13 @@ namespace YukimaruGames.Terminal.UI.Main
         /// 表示されているか.
         /// </summary>
         private bool IsVisible =>
-            _windowPresenter.State is WindowState.Open && !_windowPresenter.IsAnimating;
+            _animationDataProvider.State is WindowState.Open && !_windowPresenter.IsAnimating;
         
         public Coordinator(
             ITerminalService service,
             IMainView view,
             IScrollMutator scrollMutator,
+            IAnimationDataProvider animationDataProvider,
             IWindowPresenter windowPresenter,
             IInputPresenter inputPresenter,
             ILogPresenter logPresenter,
@@ -44,6 +46,7 @@ namespace YukimaruGames.Terminal.UI.Main
             _service = service;
             _view = view;
             _scrollMutator = scrollMutator;
+            _animationDataProvider = animationDataProvider;
             _windowPresenter = windowPresenter;
             _inputPresenter = inputPresenter;
             _logPresenter = logPresenter;
