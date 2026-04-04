@@ -232,7 +232,6 @@ namespace YukimaruGames.Terminal.Runtime
         {
             if (_animationDataAccessor == null) return;
             
-            _animationDataAccessor.State = animation.BootupWindowState;
             _animationDataAccessor.Anchor = animation.Anchor;
             _animationDataAccessor.Style = animation.WindowStyle;
             _animationDataAccessor.Duration = animation.Duration;
