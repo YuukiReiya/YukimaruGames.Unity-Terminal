@@ -195,7 +195,12 @@ namespace YukimaruGames.Terminal.Runtime
 
         private void SyncTheme(ITerminalTheme theme)
         {
-            if (_fontAccessor != null) _fontAccessor.Size = theme.FontSize;
+            if (_fontAccessor != null)
+            {
+                _fontAccessor.Font = theme.Font;
+                _fontAccessor.Size = theme.FontSize;
+            }
+            
             _inputStyleContext?.SetColor(theme.InputColor);
             _promptStyleContext?.SetColor(theme.PromptColor);
             _executeButtonsStyleContext?.SetColor(theme.ExecuteButtonColor);
