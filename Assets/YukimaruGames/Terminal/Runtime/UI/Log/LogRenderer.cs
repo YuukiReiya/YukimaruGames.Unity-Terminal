@@ -9,16 +9,16 @@ namespace YukimaruGames.Terminal.UI.Log
     public sealed class LogRenderer : ILogRenderer, IDisposable
     {
         private readonly IClipboardRenderer _clipboardRenderer;
-        private readonly IGUIStyleProvider _styleProvider;
+        private readonly IGUIStyleAccessor _styleAccessor;
         private readonly IColorPaletteProvider _colorPaletteProvider;
 
         public event Action<LogEntry> OnPreRender;
         public event Action<LogEntry> OnPostRender;
 
-        public LogRenderer(IClipboardRenderer clipboardRenderer, IGUIStyleProvider styleProvider, IColorPaletteProvider colorPaletteProvider)
+        public LogRenderer(IClipboardRenderer clipboardRenderer,IGUIStyleAccessor styleAccessor, IColorPaletteProvider colorPaletteProvider)
         {
             _clipboardRenderer = clipboardRenderer;
-            _styleProvider = styleProvider;
+            _styleAccessor = styleAccessor;
             _colorPaletteProvider = colorPaletteProvider;
         }
 
@@ -50,9 +50,9 @@ namespace YukimaruGames.Terminal.UI.Log
             {
                 OnPreRender?.Invoke(renderData);
 
-                _styleProvider.SetColor(GetColor(renderData.MessageType));
+                _styleAccessor.SetColor(GetColor(renderData.MessageType));
                 // TODO:コピペ可能な選択フィールドの実装が理想.
-                GUILayout.Label(renderData.Message, _styleProvider.GetStyle());
+                GUILayout.Label(renderData.Message, _styleAccessor.GetStyle());
                 if (ShouldDrawCopyButton(renderData)) _clipboardRenderer.Render(renderData.Message);
 
                 OnPostRender?.Invoke(renderData);
