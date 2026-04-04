@@ -184,6 +184,7 @@ namespace YukimaruGames.Terminal.Runtime
             _executeButtonsStyleContext = null;
             _launcherStyleContext = null;
             _logCopyButtonStyleContext = null;
+            _pixelTextureRepository = null;
         }
 
         private void SyncTheme(ITerminalTheme theme)
