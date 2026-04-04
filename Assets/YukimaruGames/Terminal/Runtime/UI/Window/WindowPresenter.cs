@@ -10,8 +10,7 @@ namespace YukimaruGames.Terminal.UI.Window
         // FIXME:
         // エラー解決のために一時的にProviderを宣言.
         // 後ほど見直しが必要
-        private readonly IAnimationDataProvider _provider;
-        private readonly IAnimationDataMutator _mutator;
+        private readonly IAnimationDataAccessor _accessor;
         private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
@@ -22,32 +21,32 @@ namespace YukimaruGames.Terminal.UI.Window
 
         public WindowState State
         {
-            get => _provider.State;
-            set => _mutator.State = value;
+            get => _accessor.State;
+            set => _accessor.State = value;
         }
 
         public WindowAnchor Anchor
         {
-            get => _provider.Anchor;
-            set => _mutator.Anchor = value;
+            get => _accessor.Anchor;
+            set => _accessor.Anchor = value;
         }
 
         public WindowStyle Style
         {
-            get => _provider.Style;
-            set => _mutator.Style = value;
+            get => _accessor.Style;
+            set => _accessor.Style = value;
         }
 
         public float Duration
         {
-            get => _provider.Duration;
-            set => _mutator.Duration = value;
+            get => _accessor.Duration;
+            set => _accessor.Duration = value;
         }
 
         public float Scale
         {
-            get => _provider.Scale;
-            set => _mutator.Scale = value;
+            get => _accessor.Scale;
+            set => _accessor.Scale = value;
         }
 
         public Rect Rect { get; private set; }
@@ -65,12 +64,10 @@ namespace YukimaruGames.Terminal.UI.Window
         }
 
         public WindowPresenter(
-            IAnimationDataProvider provider,
-            IAnimationDataMutator mutator,
+            IAnimationDataAccessor accessor,
             IWindowAnimator animator)
         {
-            _provider = provider;
-            _mutator = mutator;
+            _accessor = accessor;
             _windowAnimator = animator;
         }
 

@@ -1,6 +1,6 @@
 namespace YukimaruGames.Terminal.UI.Window
 {
-    public sealed class AnimationDataAccessor : IAnimationDataMutator, IAnimationDataProvider
+    public sealed class AnimationDataAccessor : IAnimationDataAccessor
     {
         public WindowState State { get; set; }
         public WindowAnchor Anchor { get; set; }

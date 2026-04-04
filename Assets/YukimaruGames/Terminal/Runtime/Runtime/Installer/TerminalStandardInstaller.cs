@@ -365,7 +365,7 @@ namespace YukimaruGames.Terminal.Runtime
             var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherStyleContext);
 
             // Presenters
-            var windowPresenter = new WindowPresenter(_animationDataAccessor, _animationDataAccessor, new WindowAnimator());
+            var windowPresenter = new WindowPresenter(_animationDataAccessor,  new WindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, _launcherVisibleAccessor);
