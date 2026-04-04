@@ -201,17 +201,20 @@ namespace YukimaruGames.Terminal.Runtime
                 _cursorFlashSpeedAccessor.FlashSpeed = theme.CursorFlashSpeed;
             }
 
-            _colorPaletteAccessor[Constants.ColorPalette.Message] = theme.MessageColor;
-            _colorPaletteAccessor[Constants.ColorPalette.Entry] = theme.EntryColor;
-            _colorPaletteAccessor[Constants.ColorPalette.Warning] = theme.WarningColor;
-            _colorPaletteAccessor[Constants.ColorPalette.Error] = theme.ErrorColor;
-            _colorPaletteAccessor[Constants.ColorPalette.Assert] = theme.AssertColor;
-            _colorPaletteAccessor[Constants.ColorPalette.Exception] = theme.ExceptionColor;
-            _colorPaletteAccessor[Constants.ColorPalette.System] = theme.SystemColor;
-            _colorPaletteAccessor[Constants.ColorPalette.Cursor] = theme.CaretColor;
-            _colorPaletteAccessor[Constants.ColorPalette.Selection] = theme.SelectionColor;
+            if (_colorPaletteAccessor != null)
+            {
+                _colorPaletteAccessor[Constants.ColorPalette.Message] = theme.MessageColor;
+                _colorPaletteAccessor[Constants.ColorPalette.Entry] = theme.EntryColor;
+                _colorPaletteAccessor[Constants.ColorPalette.Warning] = theme.WarningColor;
+                _colorPaletteAccessor[Constants.ColorPalette.Error] = theme.ErrorColor;
+                _colorPaletteAccessor[Constants.ColorPalette.Assert] = theme.AssertColor;
+                _colorPaletteAccessor[Constants.ColorPalette.Exception] = theme.ExceptionColor;
+                _colorPaletteAccessor[Constants.ColorPalette.System] = theme.SystemColor;
+                _colorPaletteAccessor[Constants.ColorPalette.Cursor] = theme.CaretColor;
+                _colorPaletteAccessor[Constants.ColorPalette.Selection] = theme.SelectionColor;
+            }
 
-            _pixelTextureRepository.SetColor(Constants.ColorPalette.Window, theme.BackgroundColor);
+            _pixelTextureRepository?.SetColor(Constants.ColorPalette.Window, theme.BackgroundColor);
         }
 
         private void SyncAnimation(ITerminalAnimation animation)
