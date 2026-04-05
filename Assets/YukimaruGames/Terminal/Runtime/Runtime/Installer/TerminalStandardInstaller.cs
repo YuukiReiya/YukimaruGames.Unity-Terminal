@@ -125,12 +125,12 @@ namespace YukimaruGames.Terminal.Runtime
         [NonSerialized] private IPromptRenderer _promptRenderer;
         [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
         
-        [NonSerialized] private StyleContext _logStyleContext;
-        [NonSerialized] private StyleContext _inputStyleContext;
-        [NonSerialized] private StyleContext _promptStyleContext;
-        [NonSerialized] private StyleContext _executeButtonsStyleContext;
-        [NonSerialized] private StyleContext _launcherStyleContext;
-        [NonSerialized] private StyleContext _logCopyButtonStyleContext;
+        [NonSerialized] private IGUIStyleAccessor _logGUIStyleAccessor;
+        [NonSerialized] private IGUIStyleAccessor _inputGUIStyleAccessor;
+        [NonSerialized] private IGUIStyleAccessor _promptGUIStyleAccessor;
+        [NonSerialized] private IGUIStyleAccessor _executeButtonsGUIStyleAccessor;
+        [NonSerialized] private IGUIStyleAccessor _launcherGUIStyleAccessor;
+        [NonSerialized] private IGUIStyleAccessor _logCopyButtonGUIStyleAccessor;
 
         [NonSerialized] private IPixelTextureRepository _pixelTextureRepository;
         #endregion
@@ -154,7 +154,7 @@ namespace YukimaruGames.Terminal.Runtime
                 coordinatorContext = BuildCoordinatorContext(in domainContext, in renderingContext, options);
                 return BuildScope(in domainContext, in renderingContext, in coordinatorContext);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 void CleanUp(IReadOnlyList<object> components)
                 {
@@ -215,12 +215,12 @@ namespace YukimaruGames.Terminal.Runtime
             _windowRenderer = null;
             _promptRenderer = null;
             _cursorFlashSpeedAccessor = null;
-            _logStyleContext = null;
-            _inputStyleContext = null;
-            _promptStyleContext = null;
-            _executeButtonsStyleContext = null;
-            _launcherStyleContext = null;
-            _logCopyButtonStyleContext = null;
+            _logGUIStyleAccessor = null;
+            _inputGUIStyleAccessor = null;
+            _promptGUIStyleAccessor = null;
+            _executeButtonsGUIStyleAccessor = null;
+            _launcherGUIStyleAccessor = null;
+            _logCopyButtonGUIStyleAccessor = null;
             _pixelTextureRepository = null;
         }
 
@@ -232,11 +232,11 @@ namespace YukimaruGames.Terminal.Runtime
                 _fontAccessor.Size = theme.FontSize;
             }
             
-            _inputStyleContext?.SetColor(theme.InputColor);
-            _promptStyleContext?.SetColor(theme.PromptColor);
-            _executeButtonsStyleContext?.SetColor(theme.ExecuteButtonColor);
-            _launcherStyleContext?.SetColor(theme.ButtonColor);
-            _logCopyButtonStyleContext?.SetColor(theme.CopyButtonColor);
+            _inputGUIStyleAccessor?.SetColor(theme.InputColor);
+            _promptGUIStyleAccessor?.SetColor(theme.PromptColor);
+            _executeButtonsGUIStyleAccessor?.SetColor(theme.ExecuteButtonColor);
+            _launcherGUIStyleAccessor?.SetColor(theme.ButtonColor);
+            _logCopyButtonGUIStyleAccessor?.SetColor(theme.CopyButtonColor);
 
             if (_cursorFlashSpeedAccessor != null)
             {
@@ -383,12 +383,12 @@ namespace YukimaruGames.Terminal.Runtime
             var scrollMutator = new ScrollMutator();
 
             // Style contexts
-            _logStyleContext = new StyleContext(_fontAccessor);
-            _inputStyleContext = new StyleContext(_fontAccessor);
-            _promptStyleContext = new StyleContext(_fontAccessor);
-            _executeButtonsStyleContext = new StyleContext(_fontAccessor);
-            _launcherStyleContext = new StyleContext(_fontAccessor);
-            _logCopyButtonStyleContext = new StyleContext(_fontAccessor);
+            _logGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
+            _inputGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
+            _promptGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
+            _executeButtonsGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
+            _launcherGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
+            _logCopyButtonGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
 
             // Apply Colors immediately
             SyncTheme(theme);
@@ -403,12 +403,12 @@ namespace YukimaruGames.Terminal.Runtime
             // Renderers
             _windowRenderer = new WindowRenderer(_pixelTextureRepository);
             
-            var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor, _logCopyButtonStyleContext);
-            var logRenderer = new LogRenderer(clipboardRenderer, _logStyleContext, _colorPaletteAccessor);
-            var inputRenderer = new InputRenderer(scrollMutator, _inputStyleContext, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
-            _promptRenderer = new PromptRenderer(_promptStyleContext) { Prompt = options.Prompt };
-            var executeButtonRenderer = new SubmitRenderer(_executeButtonsStyleContext);
-            var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherStyleContext);
+            var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor, _logCopyButtonGUIStyleAccessor);
+            var logRenderer = new LogRenderer(clipboardRenderer, _logGUIStyleAccessor, _colorPaletteAccessor);
+            var inputRenderer = new InputRenderer(scrollMutator, _inputGUIStyleAccessor, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+            _promptRenderer = new PromptRenderer(_promptGUIStyleAccessor) { Prompt = options.Prompt };
+            var executeButtonRenderer = new SubmitRenderer(_executeButtonsGUIStyleAccessor);
+            var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherGUIStyleAccessor);
 
             // Presenters
             var windowPresenter = new WindowPresenter(_animationDataAccessor,  new WindowAnimator());
@@ -457,12 +457,12 @@ namespace YukimaruGames.Terminal.Runtime
                     _pixelTextureRepository,
                     scrollMutator,
                     
-                    _logStyleContext,
-                    _inputStyleContext,
-                    _promptStyleContext,
-                    _executeButtonsStyleContext,
-                    _launcherStyleContext,
-                    _logCopyButtonStyleContext,
+                    _logGUIStyleAccessor,
+                    _inputGUIStyleAccessor,
+                    _promptGUIStyleAccessor,
+                    _executeButtonsGUIStyleAccessor,
+                    _launcherGUIStyleAccessor,
+                    _logCopyButtonGUIStyleAccessor,
                     
                     _cursorFlashSpeedAccessor,
                     _launcherVisibleAccessor,

@@ -4,7 +4,7 @@ using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
-    public sealed class StyleContext : IGUIStyleProvider, IDisposable
+    public sealed class GUIStyleAccessor : IGUIStyleAccessor, IDisposable
     {
         private readonly IFontProvider _provider;
         private readonly Lazy<GUIStyle> _styleLazy;
@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
 
         public event Action OnStyleChanged;
 
-        public StyleContext(IFontProvider provider)
+        public GUIStyleAccessor(IFontProvider provider)
         {
             _provider = provider;
             _styleLazy = new Lazy<GUIStyle>(() => new GUIStyle
@@ -30,9 +30,9 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
             _provider.OnSizeChanged += HandleFontSizeChanged;
         }
 
-        public GUIStyle GetStyle() => _styleLazy.Value;
+        GUIStyle IGUIStyleProvider.GetStyle() => _styleLazy.Value;
 
-        public void SetPadding(int padding)
+        void IGUIStyleMutator.SetPadding(int padding)
         {
             if (_padding.left == padding &&
                 _padding.right == padding &&
@@ -50,7 +50,7 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
             OnStyleChanged?.Invoke();
         }
 
-        public void SetColor(Color color)
+        void IGUIStyleMutator.SetColor(in Color color)
         {
             if (_styleLazy.Value.normal.textColor == color) return;
 
@@ -60,7 +60,7 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
 
         private void HandleFontSizeChanged(int size) => _styleLazy.Value.fontSize = size;
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             OnStyleChanged = null;
             if (_provider != null)
