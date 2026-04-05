@@ -380,7 +380,7 @@ namespace YukimaruGames.Terminal.Runtime
 
             _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };
             _pixelTextureRepository = new PixelTextureRepository();
-            var scrollMutator = new ScrollMutator();
+            var scrollAccessor = new ScrollAccessor();
 
             // Style contexts
             _logGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
@@ -405,7 +405,7 @@ namespace YukimaruGames.Terminal.Runtime
             
             var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor, _logCopyButtonGUIStyleAccessor);
             var logRenderer = new LogRenderer(clipboardRenderer, _logGUIStyleAccessor, _colorPaletteAccessor);
-            var inputRenderer = new InputRenderer(scrollMutator, _inputGUIStyleAccessor, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+            var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
             _promptRenderer = new PromptRenderer(_promptGUIStyleAccessor) { Prompt = options.Prompt };
             var executeButtonRenderer = new SubmitRenderer(_executeButtonsGUIStyleAccessor);
             var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherGUIStyleAccessor);
@@ -434,14 +434,14 @@ namespace YukimaruGames.Terminal.Runtime
                 SubmitRenderDataProvider = executeButtonPresenter,
                 LauncherRenderDataProvider = launcherPresenter,
 
-                ScrollMutator = scrollMutator,
+                ScrollAccessor = scrollAccessor,
             };
             var view = new MainView(viewContext);
 
             return new RenderingContext
             {
                 View = view,
-                ScrollMutator = scrollMutator,
+                ScrollMutator = scrollAccessor,
                 AnimationDataAccessor = _animationDataAccessor,
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
@@ -455,7 +455,7 @@ namespace YukimaruGames.Terminal.Runtime
                     _colorPaletteAccessor,
                     _fontAccessor,
                     _pixelTextureRepository,
-                    scrollMutator,
+                    scrollAccessor,
                     
                     _logGUIStyleAccessor,
                     _inputGUIStyleAccessor,
