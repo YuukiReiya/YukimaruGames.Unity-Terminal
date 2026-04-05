@@ -118,7 +118,7 @@ namespace YukimaruGames.Terminal.Domain.Core.Commands
         public void Send(MessageType msgType, string message) => Add(msgType, message);
 
         /// <inheritdoc/>
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _onItemAdded = null;
             _onItemRemoved = null;

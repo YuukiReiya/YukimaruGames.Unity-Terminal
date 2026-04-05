@@ -38,7 +38,7 @@ namespace YukimaruGames.Terminal.UI.Launcher
         public event Action<bool> OnVisibleChanged;
         public event Action<bool> OnReverseChanged;
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             OnVisibleChanged = null;
             OnReverseChanged = null;

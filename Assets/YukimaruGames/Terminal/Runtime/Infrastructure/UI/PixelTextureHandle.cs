@@ -15,7 +15,7 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
             Create(color);
         }
         
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             Release();
         }

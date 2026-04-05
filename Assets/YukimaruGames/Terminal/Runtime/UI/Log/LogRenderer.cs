@@ -34,7 +34,7 @@ namespace YukimaruGames.Terminal.UI.Log
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             OnPreRender = null;
             OnPostRender = null;

@@ -31,11 +31,14 @@ namespace YukimaruGames.Terminal.Infrastructure.UI
             }
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             foreach (var kvp in _dic)
             {
-                kvp.Value?.Dispose();
+                if (kvp.Value is IDisposable handle)
+                {
+                    handle.Dispose();
+                }
             }
 
             _dic.Clear();

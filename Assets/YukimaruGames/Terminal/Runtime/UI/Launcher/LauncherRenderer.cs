@@ -133,7 +133,7 @@ namespace YukimaruGames.Terminal.UI.Launcher
             _shouldRecalculation = true;
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _styleProvider.OnStyleChanged -= OnStyleChanged;
 

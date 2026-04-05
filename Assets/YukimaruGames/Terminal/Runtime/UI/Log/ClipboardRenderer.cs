@@ -30,7 +30,7 @@ namespace YukimaruGames.Terminal.UI.Log
             }
         }
         
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             OnClickButton = null;
         }

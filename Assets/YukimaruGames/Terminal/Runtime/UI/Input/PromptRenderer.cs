@@ -29,7 +29,7 @@ namespace YukimaruGames.Terminal.UI.Input
             _provider.OnStyleChanged += OnChangedStyle;
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             if (_provider != null)
             {
