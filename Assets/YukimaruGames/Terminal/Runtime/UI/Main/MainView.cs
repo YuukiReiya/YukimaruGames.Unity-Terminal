@@ -138,15 +138,18 @@ namespace YukimaruGames.Terminal.UI.Main
             OnLogCopiedTriggered?.Invoke(copiedText);
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
-            _clipboardRenderer.OnClickButton -= HandleLogCopied;
-            
+            if (_clipboardRenderer != null)
+            {
+                _clipboardRenderer.OnClickButton -= HandleLogCopied;
+            }
+
             OnPreRender -= ExecutePreRender;
             OnPostRender -= ExecutePostRender;
             
-            _preRenderers.Clear();
-            _postRenderers.Clear();
+            _preRenderers?.Clear();
+            _postRenderers?.Clear();
             
             OnScreenSizeChanged = null;
             OnLogCopiedTriggered = null;

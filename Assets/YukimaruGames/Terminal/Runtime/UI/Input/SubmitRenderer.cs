@@ -70,7 +70,7 @@ namespace YukimaruGames.Terminal.UI.Input
         private Vector2 CalcTextSize() =>
             _provider.GetStyle().CalcSize(new GUIContent(DisplayText));
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             OnClickButton = null;
             _provider.OnStyleChanged -= OnStyleChanged;

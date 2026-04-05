@@ -131,7 +131,7 @@ namespace YukimaruGames.Terminal.UI.Window
             return new WindowRenderData(GetHashCode(), Rect);
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _onCompleted = null;
             _onAborted = null;

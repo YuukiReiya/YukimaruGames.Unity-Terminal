@@ -25,7 +25,7 @@ namespace YukimaruGames.Terminal.UI.Input
 
         private void HandleClickExecuteButton() => OnExecuteTriggered?.Invoke();
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             _renderer.OnClickButton -= HandleClickExecuteButton;
 
