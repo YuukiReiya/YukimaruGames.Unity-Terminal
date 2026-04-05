@@ -23,7 +23,7 @@ namespace YukimaruGames.Terminal.UI.Main
         public ISubmitRenderDataProvider SubmitRenderDataProvider { get; set; }
         public ILauncherRenderDataProvider LauncherRenderDataProvider { get; set; }
         
-        // Mutator
+        // Accessor
         public IScrollAccessor ScrollAccessor { get; set; } 
     }
 }
