@@ -186,15 +186,18 @@ namespace YukimaruGames.Terminal.Application.Core
         string[] ITerminalService.Autocomplete(string partialWord) => _autocomplete.Complete(partialWord);
 
         /// <inheritdoc/>
-        public void Dispose()
+        void IDisposable.Dispose()
         {
-            // TODO マネージリソースをここで解放します
             if (_logger != null)
             {
                 _logger.OnItemUpdated -= OnLogItemUpdated;
                 _logger.OnItemAdded -= OnLogItemAdded;
                 _logger.OnItemRemoved -= OnLogItemRemoved;
             }
+
+            _onLogUpdated = null;
+            _onLogAdded = null;
+            _onLogRemoved = null;
         }
 
         /// <summary>
