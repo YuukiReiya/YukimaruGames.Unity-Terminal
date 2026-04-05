@@ -27,7 +27,7 @@ namespace YukimaruGames.Terminal.UI.Main
         private readonly IInputRenderDataProvider _inputRenderDataProvider;
         private readonly ISubmitRenderDataProvider _submitRenderDataProvider;
         private readonly ILauncherRenderDataProvider _buttonRenderDataProvider;
-        private readonly IScrollMutator _scrollMutator;
+        private readonly IScrollAccessor _scrollMutator;
 
         // callbacks.
         private readonly List<IPreRenderer> _preRenderers;
@@ -57,7 +57,7 @@ namespace YukimaruGames.Terminal.UI.Main
             _inputRenderDataProvider = context.InputRenderDataProvider;
             _submitRenderDataProvider = context.SubmitRenderDataProvider;
             _buttonRenderDataProvider = context.LauncherRenderDataProvider;
-            _scrollMutator = context.ScrollMutator;
+            _scrollMutator = context.ScrollAccessor;
 
             if (_clipboardRenderer != null)
             {

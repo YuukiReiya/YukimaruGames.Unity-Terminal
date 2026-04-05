@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace YukimaruGames.Terminal.UI.Log
 {
-    public sealed class ScrollMutator : IScrollMutator
+    public sealed class ScrollAccessor : IScrollAccessor
     {
         private Vector2 _scrollPosition;
 
