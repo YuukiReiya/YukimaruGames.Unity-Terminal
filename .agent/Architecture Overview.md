@@ -63,6 +63,7 @@ Split into two distinct assemblies to enforce Dependency Inversion.
   - `Renderers/`: View implementations (including MainView).
   - `Models/`: UI-specific data structures and constants.
   - `Interfaces/`: Presentation-level contracts.
+  - `Accessors/`: Concrete UI state management (Scroll, Animation etc.).
 - **Dependencies**: `Application` (for Services/UseCases), `SharedKernel`.
 - **Rule**: **Must NOT reference Infrastructure or Domain.Core directly.**
 
