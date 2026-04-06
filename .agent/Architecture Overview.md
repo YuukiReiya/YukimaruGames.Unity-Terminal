@@ -1,3 +1,13 @@
+# Architecture Overview
+
+This document outlines the high-level architecture of `YukimaruGames.Terminal`, focusing on the dependency graph and the strict separation of concerns between layers.
+
+> [!NOTE]
+> For the visual representation of the architecture, please refer to the existing PlantUML diagram at:
+> `docs/diagrams/Architecture/architecture.puml`
+>
+> The dependency rules outlined below are derived from this authoritative diagram and the actual `.asmdef` configurations.
+
 ## Architecture Evolution (設計の変遷)
 
 本プロジェクトは、機能の追加とパッケージとしての配布形態の模索に伴い、以下の変遷を経て現在の設計に至りました。
