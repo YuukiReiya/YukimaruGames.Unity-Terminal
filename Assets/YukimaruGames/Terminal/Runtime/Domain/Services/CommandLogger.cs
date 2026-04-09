@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.SharedKernel;
 
-namespace YukimaruGames.Terminal.Domain.Core.Commands
+namespace YukimaruGames.Terminal.Domain.Services
 {
     /// <summary>
     /// コマンドのログ発行クラス.

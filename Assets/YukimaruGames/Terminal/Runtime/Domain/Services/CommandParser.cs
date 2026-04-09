@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using YukimaruGames.Terminal.Domain.API.Commands;
 
-namespace YukimaruGames.Terminal.Domain.Core.Commands
+namespace YukimaruGames.Terminal.Domain.Services
 {
     /// <summary>
     /// コマンド引数のパーサー.

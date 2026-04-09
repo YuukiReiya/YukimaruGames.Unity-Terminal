@@ -15,7 +15,7 @@ using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Core;
 using YukimaruGames.Terminal.Domain.API.Commands;
-using YukimaruGames.Terminal.Domain.Core.Commands;
+using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Commands;
 using YukimaruGames.Terminal.Infrastructure.UI;
 using YukimaruGames.Terminal.SharedKernel;

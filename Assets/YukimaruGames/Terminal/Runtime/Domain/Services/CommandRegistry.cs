@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.Domain.API.Commands;
 using YukimaruGames.Terminal.Domain.API.Attributes;
 using YukimaruGames.Terminal.SharedKernel;
 
-namespace YukimaruGames.Terminal.Domain.Core.Commands
+namespace YukimaruGames.Terminal.Domain.Services
 {
     /// <summary>
     /// 登録されたコマンドの保存クラス.
