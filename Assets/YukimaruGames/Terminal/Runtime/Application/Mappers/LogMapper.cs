@@ -1,6 +1,6 @@
 using System;
 using YukimaruGames.Terminal.Application.Models;
-using YukimaruGames.Terminal.Domain.Abstractions.Models;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.Entities;
 
 namespace YukimaruGames.Terminal.Application.Mappers
 {

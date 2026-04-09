@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Repositories;
 
-namespace YukimaruGames.Terminal.Domain.Services
+namespace YukimaruGames.Terminal.Domain.Repositories
 {
     /// <summary>
     /// 入力コマンドの履歴管理クラス.

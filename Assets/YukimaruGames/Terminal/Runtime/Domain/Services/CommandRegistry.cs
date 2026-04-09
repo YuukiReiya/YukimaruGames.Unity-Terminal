@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
-using YukimaruGames.Terminal.Domain.Abstractions.Models;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Domain.Services

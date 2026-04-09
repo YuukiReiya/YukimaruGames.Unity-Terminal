@@ -1,5 +1,6 @@
 using System;
 using YukimaruGames.Terminal.Domain.Abstractions.Models;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
 namespace YukimaruGames.Terminal.Domain.Abstractions.Attributes
 {

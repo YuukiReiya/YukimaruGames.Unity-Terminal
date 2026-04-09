@@ -5,8 +5,10 @@ using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Mappers;
 using YukimaruGames.Terminal.Application.Models;
 using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
-using YukimaruGames.Terminal.Domain.Abstractions.Models;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Repositories;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.Entities;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Application.Services
