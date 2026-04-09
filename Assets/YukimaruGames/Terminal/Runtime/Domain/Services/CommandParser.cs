@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using YukimaruGames.Terminal.Domain.API.Commands;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 
 namespace YukimaruGames.Terminal.Domain.Services
 {

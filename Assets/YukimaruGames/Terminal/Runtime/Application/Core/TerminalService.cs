@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using YukimaruGames.Terminal.Application.Commands;
-using YukimaruGames.Terminal.Domain.API.Commands;
-using YukimaruGames.Terminal.Domain.API.Exceptions;
+using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Application.Core

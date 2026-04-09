@@ -1,6 +1,5 @@
 using System;
-using YukimaruGames.Terminal.Application.Commands;
-using YukimaruGames.Terminal.Domain.API.Commands;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 
 namespace YukimaruGames.Terminal.Application.Commands
 {

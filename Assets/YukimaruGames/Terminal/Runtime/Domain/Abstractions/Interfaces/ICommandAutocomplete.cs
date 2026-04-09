@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace YukimaruGames.Terminal.Domain.API.Commands
+namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces
 {
     /// <summary>
     /// コマンドの自動補完インターフェイス.

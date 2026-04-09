@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using YukimaruGames.Terminal.Domain.API.Commands;
-using YukimaruGames.Terminal.Domain.API.Attributes;
+using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Infrastructure.Commands
@@ -173,7 +174,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Commands
         /// </summary>
         private bool IsDiscoverable(MethodInfo methodInfo, TerminalCommandAttribute attribute)
         {
-            // TODO:
+            // NOTE:
             // kBindingFlagsでInstanceメソッドを取りのぞいているので基本的には通らないはず.
             if (!methodInfo.IsStatic)
             {

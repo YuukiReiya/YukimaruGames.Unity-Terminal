@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace YukimaruGames.Terminal.Domain.API.Exceptions
+namespace YukimaruGames.Terminal.Domain.Abstractions.Exceptions
 {
     /// <summary>
     /// コマンド引数の型変換失敗時に送出するカスタム例外.

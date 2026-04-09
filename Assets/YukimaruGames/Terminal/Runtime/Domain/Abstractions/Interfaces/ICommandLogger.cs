@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 using YukimaruGames.Terminal.SharedKernel;
 
-namespace YukimaruGames.Terminal.Domain.API.Commands
+namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces
 {
     /// <summary>
     /// コマンドのログ発行インターフェイス.

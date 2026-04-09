@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using YukimaruGames.Terminal.Domain.API.Commands;
-using YukimaruGames.Terminal.Domain.API.Attributes;
+using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Domain.Services
@@ -23,14 +24,6 @@ namespace YukimaruGames.Terminal.Domain.Services
         /// </summary>
         private readonly ICommandLogger _logger;
         
-        /// <summary>
-        /// メソッド登録のバインディングフラグ.
-        /// </summary>
-        private const BindingFlags BindingFlags =
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public |
-            System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.CreateInstance |
-            System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.NonPublic;
-
         /// <summary>
         /// コンストラクタ.
         /// </summary>
