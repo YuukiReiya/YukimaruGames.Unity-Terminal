@@ -1,6 +1,6 @@
 using System;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Models
+namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
 {
     /// <summary>
     /// コマンドのデリゲート.

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.Abstractions.Models;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces
+namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
 {
     /// <summary>
     /// コマンドを検出するためのインターフェイス.

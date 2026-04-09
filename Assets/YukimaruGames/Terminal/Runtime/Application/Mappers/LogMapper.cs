@@ -1,7 +1,8 @@
 using System;
-using YukimaruGames.Terminal.Domain.Abstractions.Models;
+using YukimaruGames.Terminal.Application.Models;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.Entities;
 
-namespace YukimaruGames.Terminal.Application.Commands
+namespace YukimaruGames.Terminal.Application.Mappers
 {
     public static class LogMapper
     {

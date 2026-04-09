@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
 using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
-using YukimaruGames.Terminal.Domain.Abstractions.Models;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
 namespace YukimaruGames.Terminal.Infrastructure.Commands
 {

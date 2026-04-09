@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Models
+namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
 {
     /// <summary>
     /// コマンドの設計情報.

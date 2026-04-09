@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.Application.Commands;
+using YukimaruGames.Terminal.Application.Models;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.UI.Core;
 
