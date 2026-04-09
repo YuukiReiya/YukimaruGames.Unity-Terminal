@@ -13,7 +13,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Exceptions
         /// 引数インデックス.
         /// </summary>
         /// <remarks>
-        /// <p><see cref="YukimaruGames.Terminal.Domain.API.Commands.CommandDelegate"/></p>
+        /// <p><see cref="YukimaruGames.Terminal.Domain.Abstractions.Models.CommandDelegate"/></p>
         /// 配列で受け取る引数の対象インデックス.
         /// </remarks>
         public int ArgumentIndex { get; }
