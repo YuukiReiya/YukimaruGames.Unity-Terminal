@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Application.Core;
+using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
 
 namespace YukimaruGames.Terminal.Runtime

@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using YukimaruGames.Terminal.Application.Core;
+using YukimaruGames.Terminal.Application.Services;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Runtime.Shared;
 using YukimaruGames.Terminal.SharedKernel;

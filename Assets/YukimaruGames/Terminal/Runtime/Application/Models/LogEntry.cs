@@ -8,8 +8,11 @@ using YukimaruGames.Terminal.SharedKernel;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace YukimaruGames.Terminal.Application.Commands
+namespace YukimaruGames.Terminal.Application.Models
 {
+    /// <summary>
+    /// ログ情報DTO
+    /// </summary>
     public
 #if FALLBACK
         class LogEntry : IEquatable<LogEntry>, IComparable<LogEntry>, IComparable

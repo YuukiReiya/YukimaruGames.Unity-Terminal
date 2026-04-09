@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Application.Commands;
+using YukimaruGames.Terminal.Application.Models;
 
-namespace YukimaruGames.Terminal.Application.Core
+namespace YukimaruGames.Terminal.Application.Interfaces
 {
     public interface ITerminalService
     {
