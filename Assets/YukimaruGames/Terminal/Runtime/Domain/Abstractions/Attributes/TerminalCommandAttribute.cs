@@ -1,13 +1,13 @@
 using System;
-using YukimaruGames.Terminal.Domain.API.Commands;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 
-namespace YukimaruGames.Terminal.Domain.API.Attributes
+namespace YukimaruGames.Terminal.Domain.Abstractions.Attributes
 {
     /// <summary>
     /// コマンド登録のためのカスタム属性.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class TerminalCommandAttribute : System.Attribute
+    public sealed class TerminalCommandAttribute : Attribute
     {
         /// <summary>
         /// メタ情報.

@@ -1,9 +1,8 @@
 {
-    "name": "YukimaruGames.Terminal.Domain.Core",
-    "rootNamespace": "YukimaruGames.Terminal.Domain.Core",
+    "name": "YukimaruGames.Terminal.Domain.Abstractions",
+    "rootNamespace": "YukimaruGames.Terminal.Domain.Abstractions",
     "references": [
-        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa",
-        "GUID:b91bfe61ad34c074d9f0d4e53cb288f0"
+        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

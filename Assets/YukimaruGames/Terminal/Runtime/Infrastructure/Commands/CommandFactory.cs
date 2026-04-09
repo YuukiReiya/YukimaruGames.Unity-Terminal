@@ -1,9 +1,9 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using YukimaruGames.Terminal.Domain.API.Commands;
-using YukimaruGames.Terminal.Domain.API.Attributes;
-using YukimaruGames.Terminal.Domain.API.Exceptions;
+using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
+using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
 
 namespace YukimaruGames.Terminal.Infrastructure.Commands
 {
@@ -40,11 +40,11 @@ namespace YukimaruGames.Terminal.Infrastructure.Commands
                 var validateCallExpression = BuildValidateExpression(parameter4Ex, minArgCount, maxArgCount);
                 var throwException = Expression.Throw(
                     Expression.New(
-                        typeof(CommandArgumentException).GetConstructor(new[] { typeof(int), typeof(int), typeof(int), typeof(System.Exception) })!,
+                        typeof(CommandArgumentException).GetConstructor(new[] { typeof(int), typeof(int), typeof(int), typeof(Exception) })!,
                         Expression.Property(parameter4Ex, "Length"),
                         Expression.Constant(minArgCount),
                         Expression.Constant(maxArgCount),
-                        Expression.Constant(null, typeof(System.Exception))
+                        Expression.Constant(null, typeof(Exception))
                     ), typeof(void));
 
                 bodyEx = Expression.Condition(validateCallExpression, methodCallExpression, throwException);
@@ -159,11 +159,11 @@ namespace YukimaruGames.Terminal.Infrastructure.Commands
                     typeof(FormatException),
                     Expression.Throw(
                         Expression.New(
-                            typeof(CommandFormatException).GetConstructor(new[] { typeof(int), typeof(string), typeof(Type), typeof(System.Exception) })!,
+                            typeof(CommandFormatException).GetConstructor(new[] { typeof(int), typeof(string), typeof(Type), typeof(Exception) })!,
                             Expression.Constant(i),
                             Expression.Property(index4Ex, nameof(CommandArgument.String)),
                             Expression.Constant(parameterInfo.ParameterType, typeof(Type)),
-                            Expression.Constant(null, typeof(System.Exception))
+                            Expression.Constant(null, typeof(Exception))
                         ), parameterInfo.ParameterType
                     )
                 );

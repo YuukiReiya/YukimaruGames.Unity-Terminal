@@ -1,6 +1,6 @@
 using System;
 
-namespace YukimaruGames.Terminal.Domain.API.Commands
+namespace YukimaruGames.Terminal.Domain.Abstractions.Models
 {
     /// <summary>
     /// コマンドの引数型.

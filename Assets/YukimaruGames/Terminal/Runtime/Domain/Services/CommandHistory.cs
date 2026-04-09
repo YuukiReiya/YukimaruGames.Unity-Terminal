@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.API.Commands;
+using YukimaruGames.Terminal.Domain.Abstractions.Interfaces;
 
-namespace YukimaruGames.Terminal.Domain.Core.Commands
+namespace YukimaruGames.Terminal.Domain.Services
 {
     /// <summary>
     /// 入力コマンドの履歴管理クラス.

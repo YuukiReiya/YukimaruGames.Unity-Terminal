@@ -1,4 +1,6 @@
-namespace YukimaruGames.Terminal.Domain.API.Commands
+using YukimaruGames.Terminal.Domain.Abstractions.Models;
+
+namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces
 {
     /// <summary>
     /// 登録されたコマンドの保存クラス.
