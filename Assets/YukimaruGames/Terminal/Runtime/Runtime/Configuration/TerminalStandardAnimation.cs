@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Window;
+using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Runtime
 {

@@ -5,8 +5,8 @@
 #if ENABLE_LEGACY_INPUT_MANAGER
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.Presentation.Models.Event;
+using YukimaruGames.Terminal.Presentation.Models.Input;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {

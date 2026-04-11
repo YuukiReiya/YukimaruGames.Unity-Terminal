@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.SharedKernel;
-using YukimaruGames.Terminal.UI.Main;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -13,12 +13,12 @@ namespace YukimaruGames.Terminal.Runtime
     {
         private readonly IReadOnlyList<IUpdatable> _updatables;
         private readonly InputKeyboardType _keyboardType;
-        private readonly IMainView _view;
+        private readonly ITerminalWindow _view;
 
         public TerminalEntryPoint(
             IReadOnlyList<IUpdatable> updatables, 
             InputKeyboardType keyboardType,
-            IMainView view)
+            ITerminalWindow view)
         {
             _updatables = updatables;
             _keyboardType = keyboardType;

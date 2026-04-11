@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using YukimaruGames.Terminal.UI;
-using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.Presentation.Models.Event;
+using YukimaruGames.Terminal.Presentation.Models.Input;
 
 // ReSharper disable InconsistentNaming
 

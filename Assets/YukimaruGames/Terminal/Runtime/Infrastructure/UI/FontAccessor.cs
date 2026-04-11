@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Runtime.Shared.Extensions;
-using YukimaruGames.Terminal.UI.Core;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
-    public sealed class FontAccessor : IFontProvider, IFontMutator, IDisposable
+    public sealed class FontAccessor : IFontAccessor, IDisposable
     {
         private Font _font;
         private int _size;

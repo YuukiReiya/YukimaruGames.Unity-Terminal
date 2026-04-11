@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Core;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {

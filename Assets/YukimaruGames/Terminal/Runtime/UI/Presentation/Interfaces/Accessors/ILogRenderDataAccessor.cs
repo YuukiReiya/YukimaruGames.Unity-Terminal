@@ -1,0 +1,24 @@
+using YukimaruGames.Terminal.Presentation.Models.Logs;
+
+namespace YukimaruGames.Terminal.Presentation.Interfaces.Presenters
+{
+    public interface ILogRenderDataAccessor :
+        ILogRenderDataMutator,
+        ILogRenderDataProvider
+    {
+        new LogRenderData RenderData { get; set; }
+    }
+
+    public interface ILogRenderDataMutator
+    {
+        LogRenderData RenderData { set; }
+    }
+    
+    public interface ILogRenderDataProvider
+    {
+        /// <summary>
+        /// ログ表示のための描画データの取得.
+        /// </summary>
+        LogRenderData RenderData { get; }
+    }
+}

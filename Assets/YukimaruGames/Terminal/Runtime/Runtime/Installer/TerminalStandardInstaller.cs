@@ -21,14 +21,31 @@ using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Commands;
 using YukimaruGames.Terminal.Infrastructure.UI;
+using YukimaruGames.Terminal.Presentation.Accessors;
+using YukimaruGames.Terminal.Presentation.Accessors.Launcher;
+using YukimaruGames.Terminal.Presentation.Accessors.Scroll;
+using YukimaruGames.Terminal.Presentation.Coordinators;
+using YukimaruGames.Terminal.Presentation.Events;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
+using YukimaruGames.Terminal.Presentation.Interfaces.Events;
+using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
+using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
+using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
+using YukimaruGames.Terminal.Presentation.Models;
+using YukimaruGames.Terminal.Presentation.Presenters.Input;
+using YukimaruGames.Terminal.Presentation.Presenters.Launcher;
+using YukimaruGames.Terminal.Presentation.Presenters.Log;
+using YukimaruGames.Terminal.Presentation.Presenters.Submit;
+using YukimaruGames.Terminal.Presentation.Presenters.Window;
+using YukimaruGames.Terminal.Presentation.Renderers.Clipboard;
+using YukimaruGames.Terminal.Presentation.Renderers.Input;
+using YukimaruGames.Terminal.Presentation.Renderers.Launcher;
+using YukimaruGames.Terminal.Presentation.Renderers.Log;
+using YukimaruGames.Terminal.Presentation.Renderers.Prompt;
+using YukimaruGames.Terminal.Presentation.Renderers.Submit;
+using YukimaruGames.Terminal.Presentation.Renderers.Window;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Input;
-using YukimaruGames.Terminal.UI.Launcher;
-using YukimaruGames.Terminal.UI.Log;
-using YukimaruGames.Terminal.UI.Main;
-using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -71,8 +88,8 @@ namespace YukimaruGames.Terminal.Runtime
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="IMainView"/> 
-            public IMainView View;
+            /// <inheritdoc cref="ITerminalWindow"/> 
+            public ITerminalWindow View;
             /// <inheritdoc cref="IScrollMutator"/>
             public IScrollMutator ScrollMutator;
             /// <inheritdoc cref="IAnimationDataAccessor"/>
@@ -99,8 +116,8 @@ namespace YukimaruGames.Terminal.Runtime
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="UI.Main.Coordinator"/> 
-            public Coordinator Coordinator;
+            /// <inheritdoc cref="Coordinator"/> 
+            public TerminalCoordinator Coordinator;
             /// <inheritdoc cref="IEventListener"/> 
             public IEventListener EventListener;
             /// <summary>解決済みキーボード入力種別.</summary>
@@ -439,7 +456,7 @@ namespace YukimaruGames.Terminal.Runtime
 
                 ScrollAccessor = scrollAccessor,
             };
-            var view = new MainView(viewContext);
+            var view = new TerminalView(viewContext);
 
             return new RenderingContext
             {
@@ -499,7 +516,7 @@ namespace YukimaruGames.Terminal.Runtime
             var inputHandler = CreateInputHandler(options, keyboardType);
             var eventListener = new EventListener(inputHandler);
 
-            var coordinator = new Coordinator(
+            var coordinator = new TerminalCoordinator(
                 domain.Service,
                 rendering.View,
                 rendering.ScrollMutator,

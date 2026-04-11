@@ -3,10 +3,8 @@
 #endif
 
 #if ENABLE_LEGACY_INPUT_MANAGER
-using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI;
-using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.Presentation.Interfaces.Events;
+using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {

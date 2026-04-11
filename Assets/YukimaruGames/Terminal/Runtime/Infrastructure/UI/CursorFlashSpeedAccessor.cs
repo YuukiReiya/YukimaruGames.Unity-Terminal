@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Core;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
-    public sealed class CursorFlashSpeedAccessor : ICursorFlashSpeedProvider,ICursorFlashSpeedMutator
+    public sealed class CursorFlashSpeedAccessor : ICursorFlashSpeedAccessor
     {
         private float _cursorFlashSpeed;
         public event Action<float> OnChangedFlashSpeed;

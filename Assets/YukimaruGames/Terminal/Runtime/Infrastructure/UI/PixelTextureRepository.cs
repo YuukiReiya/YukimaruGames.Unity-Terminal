@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Core;
+using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
