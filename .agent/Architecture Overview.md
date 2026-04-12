@@ -29,7 +29,7 @@ This document outlines the high-level architecture of `YukimaruGames.Terminal`, 
 | **アクセス制御** | 単純なプロパティ | **Accessor パターン** (`Provider/Mutator` 分離) の徹底 |
 | **Application 層** | 境界が曖昧 | **Service** (Facade) と **UseCase** (ワークフロー) の明確な分離 |
 | **Infrastructure** | 汎用的なフォルダ | **Discovery** (探索), **Factories** (生成) 等、目的別の専門化 |
-| **UI 定数管理** | 散在 | **Presentation.Models** への完全なカプセル化 |
+| **UI 定数管理** | 散在 | **UI.Models** への完全なカプセル化 |
 | **命名規則** | 不統一 | **セマンティック・プレフィックス規則** の適用 |
 
 ## Layer Definitions & Rules
@@ -49,7 +49,7 @@ Split into two distinct assemblies to enforce Dependency Inversion.
   - `Models/Entities/`, `Models/ValueObjects/`
   - `Attributes/`, `Exceptions/`
 - **Dependencies**: `SharedKernel`.
-- **Rule**: **Pure abstraction.** Must NOT depend on Domain Implementation, Application, or Presentation.
+- **Rule**: **Pure abstraction.** Must NOT depend on Domain Implementation, Application, or UI.
 
 #### Domain Implementation (`YukimaruGames.Terminal.Domain`)
 - **Role**: Implements the Domain Logic defined in `Domain.Abstractions`.
@@ -57,7 +57,7 @@ Split into two distinct assemblies to enforce Dependency Inversion.
   - `Services/`: Domain logic implementations (Parser, Registry etc.).
   - `Repositories/`: In-memory or domain-specific repository implementations (e.g., `CommandHistory`).
 - **Dependencies**: `Domain.Abstractions`, `SharedKernel`.
-- **Rule**: **Must NOT depend on Infrastructure or Presentation.**
+- **Rule**: **Must NOT depend on Infrastructure or UI.**
 
 ### 3. Application Layer (`YukimaruGames.Terminal.Application`)
 - **Role**: Orchestrates the Domain logic to fulfill user requests. Holds the application state.
@@ -67,25 +67,26 @@ Split into two distinct assemblies to enforce Dependency Inversion.
 - **Dependencies**: `Domain.Abstractions`, `SharedKernel`.
 - **Rule**: **Must NOT reference Infrastructure or Domain implementation directly.**
 
-### 4. Presentation Layer (`YukimaruGames.Terminal.Presentation`)
+### 4. UI Layer (`YukimaruGames.Terminal.UI`)
 - **Role**: Handles View and Presenter logic. Provides UI-framework-specific data access.
 - **Organization**: Technical Top-level + Functional Subfolders (e.g., `Log/`, `Input/`).
   - `Presenters/`, `Renderers/`, `Coordinators/`, `Accessors/`, `Models/`, `Interfaces/`, `Events/`
 - **Dependencies**: `Application` (for Services/UseCases), `SharedKernel`, `Domain.Abstractions`.
 - **Rule**: **Protects the Application Layer boundary.**
   - > [!IMPORTANT]
-  - > UnityEngine型（Color, GUIStyle等）をインターフェースに含む Accessor は、このレイヤー内で完結（Interfaceと実装を両方配置）させます。これにより、Application層の Pure C# 環境を維持します。
+  - > **特例 (UI完結)**: UnityEngine型（Color, GUIStyle等）に深く依存し、UnityのUI描画に関わる Accessor は、Infrastructure層にUIの都合を持ち込ませないための特例として**このレイヤー（UI 層）内で完結（Interfaceと実装を両方配置）**させます。これは以前確定した方針に基づきます。
 
 ### 5. Infrastructure Layer (`YukimaruGames.Terminal.Infrastructure`)
-- **Role**: Implements interfaces defined in Domain/Application layer that involve external systems (File IO, Network, Reflection).
+- **Role**: Implements interfaces defined in Domain/Application/UI layers that involve external systems or state management.
 - **Organization**:
   - `Discovery/`: Command discovery logic (Reflection).
   - `Factories/`: Implementation for handler creation.
   - `Repositories/`: External data persistence (FileSystem, PlayerPrefs).
-- **Dependencies**: `Domain.Abstractions`, `Domain` (for instantiation if needed), `SharedKernel`.
+  - `UI/`: Concrete implementations of Accessors defined in the UI layer.
+- **Dependencies**: `Domain.Abstractions`, `Domain` (for instantiation if needed), `SharedKernel`, `UI` (for Accessor implementations).
 - **Rule**: **The tech-detail layer that respects Application purity.**
   - > [!NOTE]
-  - > アプリケーション層にインターフェースを置ける（Pure C# で定義可能な）外部アクセスのみを実装します。UIフレームワークに強く密結合するものは Presentation 層の責務となります。
+  - > **原則 (DIP)**: UI層（またはApplication/Domain層）で定義されたインターフェースの実装は原則的にこの Infrastructure 層が担います。ただし、上述の通りUIフレームワークに強く密結合する一部の特別ケース（Color等）の Accessor のみ例外的に UI 層で完結させます。
 
 ### 6. Composition Root (`YukimaruGames.Terminal.Runtime`)
 - **Role**: The Entry Point (Bootstrapper). Wires up the dependency injection container.
@@ -115,7 +116,7 @@ The `.asmdef` definitions currently enforce these rules physically.
 依存方向の透明性を高め、単一サービスとしての直感性を優先するためです。
 
 ### 1. Structure
-- **Presentation/...**: `Presenters/`, `Renderers/`, `Models/`, `Interfaces/`, `Accessors/`
+- **UI/...**: `Presenters/`, `Renderers/`, `Models/`, `Interfaces/`, `Accessors/`
 - **Domain/...**: `Services/`, `Interfaces/`, `Models/`
 - **Application/...**: `Services/`, `UseCases/`, `Interfaces/`, `Mappers/`, `Models/`
 - **Infrastructure/...**: `Discovery/`, `Factories/`, `Repositories/`
