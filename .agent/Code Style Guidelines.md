@@ -64,8 +64,8 @@
   - **Concrete Class (`XXXXAccessor`)**: この実体クラス。`Provider` と `Mutator`（および定義されていれば `Accessor` インターフェース）を実装する。
   - **性質**: データの「実体」を保持し、インスペクターからの設定反映やシステム内での状態共有の基盤となる。
   - **配置に関する重要ルール (原則と特例)**: 
-    - **原則 (Infrastructure層)**: Accessorの実体（具象クラス）は原則的に **Infrastructure層** に配置し、上位層がInterfaceにのみ依存する DIP 構造を維持します。ファイルIOやネットワーク等はもちろん、UI (UI) の単純な状態管理もこれに該当します。
-    - **特例 (UI層完結)**: Unityの描画処理（`UnityEngine.Color`, `GUIStyle` 等）に深く依存し、Infrastructure層にUIの都合を持ち込ませるのが不自然な特別ケースの Accessor は、特例として**UI (UI) 層内で完結（Interfaceと実装を両方とも配置）**させます。
+    - **原則 (Infrastructure層)**: Accessorの実体（具象クラス）は原則的に **Infrastructure層** に配置し、上位層がInterfaceにのみ依存する DIP 構造を維持します。ファイルIOやネットワーク等はもちろん、UI の単純な状態管理もこれに該当します。
+    - **特例 (UI層完結)**: Unityの描画処理（`UnityEngine.Color`, `GUIStyle` 等）に深く依存し、Infrastructure層にUIの都合を持ち込ませるのが不自然な特別ケースの Accessor は、特例として**UI 層内で完結（Interfaceと実装を両方とも配置）**させます。
   - **例**: `IAnimationDataAccessor`, `AnimationDataAccessor`
 
 - **`Context` (文脈 / 状態管理 / 複合構成)**
