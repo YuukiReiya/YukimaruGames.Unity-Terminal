@@ -4,10 +4,8 @@ using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
-using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models;
-using YukimaruGames.Terminal.Presentation.Renderers.Launcher;
 
 namespace YukimaruGames.Terminal.Presentation.Coordinators
 {

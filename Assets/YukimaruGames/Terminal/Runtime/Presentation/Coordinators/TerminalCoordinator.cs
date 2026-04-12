@@ -7,7 +7,6 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
 using YukimaruGames.Terminal.Presentation.Interfaces.Events;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 using YukimaruGames.Terminal.Presentation.Models.Window;
-using YukimaruGames.Terminal.Presentation.Presenters.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Coordinators
 {

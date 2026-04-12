@@ -1,6 +1,6 @@
 using YukimaruGames.Terminal.Presentation.Models.Log;
 
-namespace YukimaruGames.Terminal.Presentation.Interfaces.Presenters
+namespace YukimaruGames.Terminal.Presentation.Interfaces.Accessors
 {
     public interface ILogRenderDataAccessor :
         ILogRenderDataMutator,

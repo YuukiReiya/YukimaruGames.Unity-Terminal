@@ -3,7 +3,7 @@ using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Presentation.Presenters.Window
+namespace YukimaruGames.Terminal.Presentation.Interfaces.Presenters
 {
     public interface IWindowPresenter : IWindowRenderDataProvider
     {
