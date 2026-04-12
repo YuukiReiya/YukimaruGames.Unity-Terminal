@@ -64,7 +64,7 @@ Split into two distinct assemblies to enforce Dependency Inversion.
 - **Organization**:
   - `Services/`: Application Services (Facade/Coordinator).
   - `UseCases/`: Specific workflow scenarios (Logic heavy processes).
-- **Dependencies**: `Domain.API`, `SharedKernel`.
+- **Dependencies**: `Domain.Abstractions`, `SharedKernel`.
 - **Rule**: **Must NOT reference Infrastructure or Domain implementation directly.**
 
 ### 4. Presentation Layer (`YukimaruGames.Terminal.Presentation`)
