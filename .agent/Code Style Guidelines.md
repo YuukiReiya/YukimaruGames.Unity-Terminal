@@ -17,10 +17,12 @@
 
 ### 3. Technical Layering (技術別フォルダ構成)
 - **原則**: 各レイヤー（Domain, Application, Presentation, Infrastructure）の内部は、機能単位ではなく**技術的な役割（Interfaces, Services, Presenters, Renderers, Models等）**で整理します。
-- **フォルダの階層化**: 各レイヤーの技術フォルダ内において、ファイル数が増大する場合や、単一の機能単位（モジュール）が複数の構成要素から成る場合は、**関心事に基づいた1段までのサブフォルダ化**を許容します。
-  - **対称性の維持**: 特定の機能において `Renderers` でサブフォルダ化を行う場合、対応する `Presenters` や `Services` でも同様のサブフォルダ構成を採ることで、プロジェクト全体の構造的対称性を維持することを推奨します。
-  - **配置例**: `Presentation/Renderers/Log/LogRenderer.cs`, `Presentation/Presenters/Log/LogPresenter.cs`
-- **理由**: UPMパッケージとしての各コンポーネントの再利用性を高めつつ、複雑なUI構成における視認性と管理のしやすさを両立させるためです。
+- **命名規則（複数形 vs 単数形）**: 
+  - **技術トップディレクトリ**: 必ず**複数形**とします（例: `Presenters`, `Interfaces`, `Models`）。
+  - **機能サブディレクトリ**: 必ず**単数形**とします（例: `Log`, `Input`, `Window`）。
+  - **名前空間**: 物理ディレクトリと1字1句一致させます（例: `YukimaruGames.Terminal.Presentation.Models.Log`）。
+- **フォルダの階層化**: 技術フォルダ内において、関連するファイル群をまとめる場合は**1段までのサブフォルダ化**を行い、プロジェクト全体の構造的対称性を維持します。
+- **理由**: UPMパッケージとしての各コンポーネントの再利用性を高めつつ、複雑なUI構成における視認性と名前空間の整合性を両立させるためです。
 
 ## Documentation (XML Comments)
 
@@ -61,6 +63,9 @@
     - **用途**: `WindowPresenter` のように、同一の対象に対して「取得」と「変更」の両方の権限を単一の依存先として必要とする場合に定義する。
   - **Concrete Class (`XXXXAccessor`)**: この実体クラス。`Provider` と `Mutator`（および定義されていれば `Accessor` インターフェース）を実装する。
   - **性質**: データの「実体」を保持し、インスペクターからの設定反映やシステム内での状態共有の基盤となる。
+  - **配置に関する重要ルール (境界保護)**: 
+    - **Presentation層**: 描画（`UnityEngine.Color`, `GUIStyle` 等）に密結合するAccessorは、**Presentation層内でInterfaceと実装を完結**させます。これは Application層（Pure C#）のインターフェースにUnity依存を流入させないための境界保護措置です。
+    - **Infrastructure層**: ファイルIO、ネットワーク、リフレクション等、外部システムとの接続を担うAccessorは、**Application/Domain層でPure C#なインターフェースを定義**し、その実装をInfrastructureに配置します（DIP）。
   - **例**: `IAnimationDataAccessor`, `AnimationDataAccessor`
 
 - **`Context` (文脈 / 状態管理 / 複合構成)**
@@ -75,7 +80,7 @@
 
 - **`Domain Service` (ドメインサービス)**:
   - **役割**: 「ターミナルとしての根本的なルール」に基づいた計算や状態変化を行う。
-  - **配置**: `Domain.Core/Services/`
+  - **配置**: `Domain/Services/`
   - **特徴**: 自己完結したロジック（パース、履歴管理等）を持つ。
 
 - **`Application Service` (アプリケーションサービス)**:

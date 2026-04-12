@@ -42,20 +42,21 @@ This document outlines the high-level architecture of `YukimaruGames.Terminal`, 
 ### 2. Domain Layer
 Split into two distinct assemblies to enforce Dependency Inversion.
 
-#### Domain.API (`YukimaruGames.Terminal.Domain.API`)
+#### Domain.Abstractions (`YukimaruGames.Terminal.Domain.Abstractions`)
 - **Role**: Defines the Interfaces (`IServices`, `IRepositories`), Domain Models, and Value Objects.
-- **Organization**: Categorized by technical roles:
-  - `Interfaces/`: Pure abstractions for domain logic.
-  - `Models/`: Data structures and Value Objects (including global constants).
-  - `Attributes/`, `Exceptions/`: Technical categories (pluralized).
+- **Organization**: Categorized by technical roles + functional subfolders:
+  - `Interfaces/Services/`, `Interfaces/Repositories/`
+  - `Models/Entities/`, `Models/ValueObjects/`
+  - `Attributes/`, `Exceptions/`
 - **Dependencies**: `SharedKernel`.
-- **Rule**: **Pure abstraction.** Must NOT depend on Core, Application, or UI.
+- **Rule**: **Pure abstraction.** Must NOT depend on Domain Implementation, Application, or Presentation.
 
-#### Domain.Core (`YukimaruGames.Terminal.Domain.Core`)
-- **Role**: Implements the Domain Logic.
-- **Organization**: Follows technical categorization:
-  - `Services/`: Domain logic implementations (Parser, History, Registry etc.).
-- **Dependencies**: `Domain.API`, `SharedKernel`.
+#### Domain Implementation (`YukimaruGames.Terminal.Domain`)
+- **Role**: Implements the Domain Logic defined in `Domain.Abstractions`.
+- **Organization**:
+  - `Services/`: Domain logic implementations (Parser, Registry etc.).
+  - `Repositories/`: In-memory or domain-specific repository implementations (e.g., `CommandHistory`).
+- **Dependencies**: `Domain.Abstractions`, `SharedKernel`.
 - **Rule**: **Must NOT depend on Infrastructure or Presentation.**
 
 ### 3. Application Layer (`YukimaruGames.Terminal.Application`)
@@ -64,28 +65,27 @@ Split into two distinct assemblies to enforce Dependency Inversion.
   - `Services/`: Application Services (Facade/Coordinator).
   - `UseCases/`: Specific workflow scenarios (Logic heavy processes).
 - **Dependencies**: `Domain.API`, `SharedKernel`.
-- **Rule**: **Should use `Domain.API` interfaces, not `Domain.Core` concrete classes.**
+- **Rule**: **Must NOT reference Infrastructure or Domain implementation directly.**
 
 ### 4. Presentation Layer (`YukimaruGames.Terminal.Presentation`)
-- **Role**: Handles View and Presenter logic.
-- **Organization**:
-  - `Presenters/`: UI Logic and Orchestration (including Coordinator).
-  - `Renderers/`: View implementations (including MainView).
-  - `Models/`: UI-specific data structures and constants.
-  - `Interfaces/`: Presentation-level contracts.
-  - `Accessors/`: Concrete UI state management (Scroll, Animation etc.).
-- **Dependencies**: `Application` (for Services/UseCases), `SharedKernel`.
-- **Rule**: **Must NOT reference Infrastructure or Domain.Core directly.**
+- **Role**: Handles View and Presenter logic. Provides UI-framework-specific data access.
+- **Organization**: Technical Top-level + Functional Subfolders (e.g., `Log/`, `Input/`).
+  - `Presenters/`, `Renderers/`, `Coordinators/`, `Accessors/`, `Models/`, `Interfaces/`, `Events/`
+- **Dependencies**: `Application` (for Services/UseCases), `SharedKernel`, `Domain.Abstractions`.
+- **Rule**: **Protects the Application Layer boundary.**
+  - > [!IMPORTANT]
+  - > UnityEngine型（Color, GUIStyle等）をインターフェースに含む Accessor は、このレイヤー内で完結（Interfaceと実装を両方配置）させます。これにより、Application層の Pure C# 環境を維持します。
 
 ### 5. Infrastructure Layer (`YukimaruGames.Terminal.Infrastructure`)
-- **Role**: Implements interfaces defined in `Domain.API` (e.g., Repositories, External Service Adapters).
+- **Role**: Implements interfaces defined in Domain/Application layer that involve external systems (File IO, Network, Reflection).
 - **Organization**:
-  - `Discovery/`: Command discovery logic (Discovery of methods).
+  - `Discovery/`: Command discovery logic (Reflection).
   - `Factories/`: Implementation for handler creation.
-  - `Accessors/`: Adapters for external dependencies (Unity GUIStyle etc.).
-  - `Repositories/`: Data persistence implementations.
-- **Dependencies**: `Domain.API`, `Domain.Core` (to instantiate logic if needed), `SharedKernel`.
-- **Rule**: **The detailed implementation detail layer.**
+  - `Repositories/`: External data persistence (FileSystem, PlayerPrefs).
+- **Dependencies**: `Domain.Abstractions`, `Domain` (for instantiation if needed), `SharedKernel`.
+- **Rule**: **The tech-detail layer that respects Application purity.**
+  - > [!NOTE]
+  - > アプリケーション層にインターフェースを置ける（Pure C# で定義可能な）外部アクセスのみを実装します。UIフレームワークに強く密結合するものは Presentation 層の責務となります。
 
 ### 6. Composition Root (`YukimaruGames.Terminal.Runtime`)
 - **Role**: The Entry Point (Bootstrapper). Wires up the dependency injection container.
@@ -117,8 +117,8 @@ The `.asmdef` definitions currently enforce these rules physically.
 ### 1. Structure
 - **Presentation/...**: `Presenters/`, `Renderers/`, `Models/`, `Interfaces/`, `Accessors/`
 - **Domain/...**: `Services/`, `Interfaces/`, `Models/`
-- **Application/...**: `Services/`, `UseCases/`, `Interfaces/`
-- **Infrastructure/...**: `Discovery/`, `Factories/`, `Accessors/`, `Repositories/`
+- **Application/...**: `Services/`, `UseCases/`, `Interfaces/`, `Mappers/`, `Models/`
+- **Infrastructure/...**: `Discovery/`, `Factories/`, `Repositories/`
 
 ### 2. Semantic Prefix Rule (Semantic Naming)
 「ライブラリ名（`Terminal`）のプリフィックス」の要否は、利用用途（公開APIか内部実装か）という「セマンティック」に基づいて決定します。
