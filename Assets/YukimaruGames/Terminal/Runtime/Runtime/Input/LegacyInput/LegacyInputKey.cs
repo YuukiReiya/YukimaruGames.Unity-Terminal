@@ -5,8 +5,8 @@
 #if ENABLE_LEGACY_INPUT_MANAGER
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.Presentation.Models.Event;
+using YukimaruGames.Terminal.Presentation.Models.Input;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {
@@ -21,16 +21,16 @@ namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
         [SerializeField] private KeyCode _autocompleteKeyCode = KeyCode.Tab;
         [SerializeField] private KeyCode _focusKeyCode = KeyCode.LeftControl;
 
-        public KeyCode GetKey(Trigger action) => action switch
+        public KeyCode GetKey(TerminalAction action) => action switch
         {
-            Trigger.None => KeyCode.None,
-            Trigger.Open => _openKeyCode,
-            Trigger.Close => _closeKeyCode,
-            Trigger.Execute => _executeKeyCode,
-            Trigger.PreviousHistory => _prevHistoryKeyCode,
-            Trigger.NextHistory => _nextHistoryKeyCode,
-            Trigger.Autocomplete => _autocompleteKeyCode,
-            Trigger.Focus => _focusKeyCode,
+            TerminalAction.None => KeyCode.None,
+            TerminalAction.Open => _openKeyCode,
+            TerminalAction.Close => _closeKeyCode,
+            TerminalAction.Execute => _executeKeyCode,
+            TerminalAction.PreviousHistory => _prevHistoryKeyCode,
+            TerminalAction.NextHistory => _nextHistoryKeyCode,
+            TerminalAction.Autocomplete => _autocompleteKeyCode,
+            TerminalAction.Focus => _focusKeyCode,
             _ => throw new ArgumentOutOfRangeException(nameof(action), action, null)
         };
     }

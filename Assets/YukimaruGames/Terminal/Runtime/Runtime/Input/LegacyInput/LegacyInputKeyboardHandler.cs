@@ -3,10 +3,8 @@
 #endif
 
 #if ENABLE_LEGACY_INPUT_MANAGER
-using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI;
-using YukimaruGames.Terminal.UI.Core;
-using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.Presentation.Interfaces.Events;
+using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
 {
@@ -19,13 +17,13 @@ namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
             _legacyInputKey = legacyInputKey;
         }
 
-        public bool WasPressedThisFrame(Trigger action)
+        public bool WasPressedThisFrame(TerminalAction action)
         {
             var keyCode = _legacyInputKey.GetKey(action);
             return keyCode is not UnityEngine.KeyCode.None && UnityEngine.Input.GetKeyDown(keyCode);
         }
 
-        public bool WasReleasedThisFrame(Trigger action)
+        public bool WasReleasedThisFrame(TerminalAction action)
         {
             var keyCode = _legacyInputKey.GetKey(action);
             return keyCode is not UnityEngine.KeyCode.None && UnityEngine.Input.GetKeyUp(keyCode);

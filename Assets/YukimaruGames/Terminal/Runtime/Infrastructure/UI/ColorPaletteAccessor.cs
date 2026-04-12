@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using YukimaruGames.Terminal.UI.Core;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
 namespace YukimaruGames.Terminal.Infrastructure.UI
 {
-    public sealed class ColorPaletteAccessor : IColorPaletteProvider,IColorPaletteMutator
+    public sealed class ColorPaletteAccessor : IColorPaletteAccessor
     {
         private readonly Dictionary<string, Color> _map = new();
 

@@ -1,8 +1,7 @@
 //#undef ENABLE_INPUT_SYSTEM
 //#undef ENABLE_LEGACY_INPUT_MANAGER
 using System;
-using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI.Input;
+using YukimaruGames.Terminal.Presentation.Interfaces.Events;
 
 #if ENABLE_INPUT_SYSTEM
 using YukimaruGames.Terminal.Runtime.Input.InputSystem;

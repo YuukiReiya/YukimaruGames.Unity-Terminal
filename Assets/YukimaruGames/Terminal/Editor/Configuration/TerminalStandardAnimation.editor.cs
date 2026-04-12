@@ -1,8 +1,8 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using YukimaruGames.Terminal.Presentation.Models.Window;
 using YukimaruGames.Terminal.Runtime;
-using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Editor
 {

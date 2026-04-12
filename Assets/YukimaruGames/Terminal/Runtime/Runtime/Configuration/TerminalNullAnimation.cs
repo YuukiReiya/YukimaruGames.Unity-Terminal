@@ -1,6 +1,6 @@
 using System;
+using YukimaruGames.Terminal.Presentation.Models.Window;
 using YukimaruGames.Terminal.Runtime.Shared;
-using YukimaruGames.Terminal.UI.Window;
 
 namespace YukimaruGames.Terminal.Runtime
 {
