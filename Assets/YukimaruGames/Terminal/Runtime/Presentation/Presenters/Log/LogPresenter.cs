@@ -4,7 +4,7 @@ using System.Linq;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Models;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
-using YukimaruGames.Terminal.Presentation.Models.Logs;
+using YukimaruGames.Terminal.Presentation.Models.Log;
 
 namespace YukimaruGames.Terminal.Presentation.Presenters.Log
 {

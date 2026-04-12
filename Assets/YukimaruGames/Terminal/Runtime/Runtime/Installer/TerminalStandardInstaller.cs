@@ -21,12 +21,15 @@ using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Commands;
 using YukimaruGames.Terminal.Infrastructure.UI;
-using YukimaruGames.Terminal.Presentation.Accessors;
 using YukimaruGames.Terminal.Presentation.Accessors.Launcher;
 using YukimaruGames.Terminal.Presentation.Accessors.Scroll;
+using YukimaruGames.Terminal.Presentation.Accessors.Window;
+using YukimaruGames.Terminal.Presentation.Constants;
 using YukimaruGames.Terminal.Presentation.Coordinators;
 using YukimaruGames.Terminal.Presentation.Events;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors.Window;
+using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
 using YukimaruGames.Terminal.Presentation.Interfaces.Events;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
@@ -88,12 +91,12 @@ namespace YukimaruGames.Terminal.Runtime
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="ITerminalWindow"/> 
-            public ITerminalWindow View;
+            /// <inheritdoc cref="ITerminalGUI"/> 
+            public ITerminalGUI GUI;
             /// <inheritdoc cref="IScrollMutator"/>
             public IScrollMutator ScrollMutator;
-            /// <inheritdoc cref="IAnimationDataAccessor"/>
-            public IAnimationDataAccessor AnimationDataAccessor;
+            /// <inheritdoc cref="IWindowAnimationAccessor"/>
+            public IWindowAnimationAccessor WindowAnimationAccessor;
             /// <inheritdoc cref="IWindowPresenter"/>
             public IWindowPresenter WindowPresenter;
             /// <inheritdoc cref="IInputPresenter"/>
@@ -139,7 +142,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         [NonSerialized] private FontAccessor _fontAccessor;
         [NonSerialized] private ColorPaletteAccessor _colorPaletteAccessor;
-        [NonSerialized] private AnimationDataAccessor _animationDataAccessor;
+        [NonSerialized] private WindowAnimationAccessor _windowAnimationAccessor;
         [NonSerialized] private LauncherVisibleAccessor _launcherVisibleAccessor;
         [NonSerialized] private IWindowRenderer _windowRenderer;
         [NonSerialized] private IPromptRenderer _promptRenderer;
@@ -230,7 +233,7 @@ namespace YukimaruGames.Terminal.Runtime
         {
             _fontAccessor = null;
             _colorPaletteAccessor = null;
-            _animationDataAccessor = null;
+            _windowAnimationAccessor = null;
             _launcherVisibleAccessor = null;
             _windowRenderer = null;
             _promptRenderer = null;
@@ -265,28 +268,28 @@ namespace YukimaruGames.Terminal.Runtime
 
             if (_colorPaletteAccessor != null)
             {
-                _colorPaletteAccessor[Constants.ThemeLabel.Message] = theme.MessageColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.Entry] = theme.EntryColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.Warning] = theme.WarningColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.Error] = theme.ErrorColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.Assert] = theme.AssertColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.Exception] = theme.ExceptionColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.System] = theme.SystemColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.Cursor] = theme.CaretColor;
-                _colorPaletteAccessor[Constants.ThemeLabel.Selection] = theme.SelectionColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Message] = theme.MessageColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Entry] = theme.EntryColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Warning] = theme.WarningColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Error] = theme.ErrorColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Assert] = theme.AssertColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Exception] = theme.ExceptionColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.System] = theme.SystemColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Cursor] = theme.CaretColor;
+                _colorPaletteAccessor[Definitions.ThemeLabel.Selection] = theme.SelectionColor;
             }
 
-            _pixelTextureRepository?.SetColor(Constants.ThemeLabel.Window, theme.BackgroundColor);
+            _pixelTextureRepository?.SetColor(Definitions.ThemeLabel.Window, theme.BackgroundColor);
         }
 
         private void SyncAnimation(ITerminalAnimation animation)
         {
-            if (_animationDataAccessor == null) return;
+            if (_windowAnimationAccessor == null) return;
             
-            _animationDataAccessor.Anchor = animation.Anchor;
-            _animationDataAccessor.Style = animation.WindowStyle;
-            _animationDataAccessor.Duration = animation.Duration;
-            _animationDataAccessor.Scale = animation.CompactScale;
+            _windowAnimationAccessor.Anchor = animation.Anchor;
+            _windowAnimationAccessor.Style = animation.WindowStyle;
+            _windowAnimationAccessor.Duration = animation.Duration;
+            _windowAnimationAccessor.Scale = animation.CompactScale;
         }
 
         private void SyncOptions(ITerminalOptions options)
@@ -376,7 +379,7 @@ namespace YukimaruGames.Terminal.Runtime
 
         private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
-            _animationDataAccessor = new AnimationDataAccessor()
+            _windowAnimationAccessor = new WindowAnimationAccessor()
             {
                 State = animation.BootupWindowState,
                 Anchor = animation.Anchor,
@@ -387,15 +390,15 @@ namespace YukimaruGames.Terminal.Runtime
 
             _colorPaletteAccessor = new ColorPaletteAccessor(new Dictionary<string, Color>
             {
-                { Constants.ThemeLabel.Message, theme.MessageColor },
-                { Constants.ThemeLabel.Entry, theme.EntryColor },
-                { Constants.ThemeLabel.Warning, theme.WarningColor },
-                { Constants.ThemeLabel.Error, theme.ErrorColor },
-                { Constants.ThemeLabel.Assert, theme.AssertColor },
-                { Constants.ThemeLabel.Exception, theme.ExceptionColor },
-                { Constants.ThemeLabel.System, theme.SystemColor },
-                { Constants.ThemeLabel.Cursor, theme.CaretColor },
-                { Constants.ThemeLabel.Selection, theme.SelectionColor },
+                { Definitions.ThemeLabel.Message, theme.MessageColor },
+                { Definitions.ThemeLabel.Entry, theme.EntryColor },
+                { Definitions.ThemeLabel.Warning, theme.WarningColor },
+                { Definitions.ThemeLabel.Error, theme.ErrorColor },
+                { Definitions.ThemeLabel.Assert, theme.AssertColor },
+                { Definitions.ThemeLabel.Exception, theme.ExceptionColor },
+                { Definitions.ThemeLabel.System, theme.SystemColor },
+                { Definitions.ThemeLabel.Cursor, theme.CaretColor },
+                { Definitions.ThemeLabel.Selection, theme.SelectionColor },
             });
 
             _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };
@@ -431,11 +434,11 @@ namespace YukimaruGames.Terminal.Runtime
             var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherGUIStyleAccessor);
 
             // Presenters
-            var windowPresenter = new WindowPresenter(_animationDataAccessor,  new WindowAnimator());
+            var windowPresenter = new WindowPresenter(_windowAnimationAccessor,  new WindowAnimator());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, _launcherVisibleAccessor);
-            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, _launcherVisibleAccessor, _animationDataAccessor);
+            var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, _launcherVisibleAccessor, _windowAnimationAccessor);
 
             // View
             var viewContext = new ViewContext
@@ -456,13 +459,13 @@ namespace YukimaruGames.Terminal.Runtime
 
                 ScrollAccessor = scrollAccessor,
             };
-            var view = new TerminalView(viewContext);
+            var view = new TerminalIMGUI(viewContext);
 
             return new RenderingContext
             {
-                View = view,
+                GUI = view,
                 ScrollMutator = scrollAccessor,
-                AnimationDataAccessor = _animationDataAccessor,
+                WindowAnimationAccessor = _windowAnimationAccessor,
                 WindowPresenter = windowPresenter,
                 InputPresenter = inputPresenter,
                 LogPresenter = logPresenter,
@@ -471,7 +474,7 @@ namespace YukimaruGames.Terminal.Runtime
                 
                 Components = new object[]
                 {
-                    _animationDataAccessor,
+                    _windowAnimationAccessor,
                     _colorPaletteAccessor,
                     _fontAccessor,
                     _pixelTextureRepository,
@@ -518,9 +521,9 @@ namespace YukimaruGames.Terminal.Runtime
 
             var coordinator = new TerminalCoordinator(
                 domain.Service,
-                rendering.View,
+                rendering.GUI,
                 rendering.ScrollMutator,
-                rendering.AnimationDataAccessor,
+                rendering.WindowAnimationAccessor,
                 rendering.WindowPresenter,
                 rendering.InputPresenter,
                 rendering.LogPresenter,
@@ -554,7 +557,7 @@ namespace YukimaruGames.Terminal.Runtime
             var updatables = instances.OfType<IUpdatable>().ToList();
             var disposables = instances.OfType<IDisposable>().ToList();
 
-            var entryPoint = new TerminalEntryPoint(updatables, coordinator.KeyboardType, rendering.View);
+            var entryPoint = new TerminalEntryPoint(updatables, coordinator.KeyboardType, rendering.GUI);
 
             return new TerminalRuntimeScope(
                 entryPoint,

@@ -14,13 +14,13 @@ namespace YukimaruGames.Terminal.Runtime
             _inputSystemKey = inputSystemKey;
         }
 
-        public bool WasPressedThisFrame(Trigger action)
+        public bool WasPressedThisFrame(TerminalAction action)
         {
             var key = _inputSystemKey.GetKey(action);
             return key is not Key.None && (Keyboard.current?[key].wasPressedThisFrame ?? false);
         }
 
-        public bool WasReleasedThisFrame(Trigger action)
+        public bool WasReleasedThisFrame(TerminalAction action)
         {
             var key = _inputSystemKey.GetKey(action);
             return key is not Key.None && (Keyboard.current?[key].wasReleasedThisFrame ?? false);

@@ -1,6 +1,6 @@
 namespace YukimaruGames.Terminal.Presentation.Models.Event
 {
-    public enum Trigger
+    public enum TerminalAction
     {
         None = 0,
         Open = 1,

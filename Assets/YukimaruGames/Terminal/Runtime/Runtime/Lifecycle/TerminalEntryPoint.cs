@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
+using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Runtime
@@ -13,16 +13,16 @@ namespace YukimaruGames.Terminal.Runtime
     {
         private readonly IReadOnlyList<IUpdatable> _updatables;
         private readonly InputKeyboardType _keyboardType;
-        private readonly ITerminalWindow _view;
+        private readonly ITerminalGUI _gui;
 
         public TerminalEntryPoint(
             IReadOnlyList<IUpdatable> updatables, 
             InputKeyboardType keyboardType,
-            ITerminalWindow view)
+            ITerminalGUI gui)
         {
             _updatables = updatables;
             _keyboardType = keyboardType;
-            _view = view;
+            _gui = gui;
         }
 
         public void Update()
@@ -41,7 +41,7 @@ namespace YukimaruGames.Terminal.Runtime
                 // ReSharper disable once ForCanBeConvertedToForeach
                 for (var i = 0; i < _updatables.Count; ++i) _updatables[i]?.Update(Time.deltaTime);
             }
-            _view?.Render();
+            _gui?.Render();
         }
     }
 }

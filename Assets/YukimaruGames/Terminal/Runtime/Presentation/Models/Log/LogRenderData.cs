@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using YukimaruGames.Terminal.Application.Models;
 
-namespace YukimaruGames.Terminal.Presentation.Models.Logs
+namespace YukimaruGames.Terminal.Presentation.Models.Log
 {
     public
 #if FALLBACK

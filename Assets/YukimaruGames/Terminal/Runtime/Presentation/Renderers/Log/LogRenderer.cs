@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Models;
+using YukimaruGames.Terminal.Presentation.Constants;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
-using YukimaruGames.Terminal.Presentation.Models;
-using YukimaruGames.Terminal.Presentation.Models.Logs;
+using YukimaruGames.Terminal.Presentation.Models.Log;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Presentation.Renderers.Log
@@ -27,13 +27,13 @@ namespace YukimaruGames.Terminal.Presentation.Renderers.Log
 
         private Color GetColor(MessageType type) => type switch
         {
-            MessageType.Error => _colorPaletteProvider[Constants.ThemeLabel.Error],
-            MessageType.Assert => _colorPaletteProvider[Constants.ThemeLabel.Assert],
-            MessageType.Warning => _colorPaletteProvider[Constants.ThemeLabel.Warning],
-            MessageType.Message => _colorPaletteProvider[Constants.ThemeLabel.Message],
-            MessageType.Exception => _colorPaletteProvider[Constants.ThemeLabel.Exception],
-            MessageType.Entry => _colorPaletteProvider[Constants.ThemeLabel.Entry],
-            MessageType.System => _colorPaletteProvider[Constants.ThemeLabel.System],
+            MessageType.Error => _colorPaletteProvider[Definitions.ThemeLabel.Error],
+            MessageType.Assert => _colorPaletteProvider[Definitions.ThemeLabel.Assert],
+            MessageType.Warning => _colorPaletteProvider[Definitions.ThemeLabel.Warning],
+            MessageType.Message => _colorPaletteProvider[Definitions.ThemeLabel.Message],
+            MessageType.Exception => _colorPaletteProvider[Definitions.ThemeLabel.Exception],
+            MessageType.Entry => _colorPaletteProvider[Definitions.ThemeLabel.Entry],
+            MessageType.System => _colorPaletteProvider[Definitions.ThemeLabel.System],
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 

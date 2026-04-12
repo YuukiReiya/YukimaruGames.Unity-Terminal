@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Presentation.Constants;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
-using YukimaruGames.Terminal.Presentation.Models;
 using YukimaruGames.Terminal.Presentation.Models.Input;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
@@ -115,8 +115,8 @@ namespace YukimaruGames.Terminal.Presentation.Renderers.Input
             var selectionColor = GUI.skin.settings.selectionColor;
             var cursorFlashSpeed = GUI.skin.settings.cursorFlashSpeed;
 
-            GUI.skin.settings.cursorColor = _colorPaletteProvider[Constants.ThemeLabel.Cursor];
-            GUI.skin.settings.selectionColor = _colorPaletteProvider[Constants.ThemeLabel.Selection];
+            GUI.skin.settings.cursorColor = _colorPaletteProvider[Definitions.ThemeLabel.Cursor];
+            GUI.skin.settings.selectionColor = _colorPaletteProvider[Definitions.ThemeLabel.Selection];
             GUI.skin.settings.cursorFlashSpeed = _cursorFlashSpeedProvider.FlashSpeed;
 
             InputText = GUILayout.TextField(data.InputText, _styleProvider.GetStyle());

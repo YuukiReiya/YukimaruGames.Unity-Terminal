@@ -19,16 +19,16 @@ namespace YukimaruGames.Terminal.Runtime.Input.InputSystem
         [SerializeField] private Key _autocompleteKey = Key.Tab;
         [SerializeField] private Key _focusKey = Key.LeftCtrl;
 
-        public Key GetKey(Trigger action) => action switch
+        public Key GetKey(TerminalAction action) => action switch
         {
-            Trigger.None => Key.None,
-            Trigger.Open => _openKey,
-            Trigger.Close => _closeKey,
-            Trigger.Execute => _executeKey,
-            Trigger.PreviousHistory => _prevHistoryKey,
-            Trigger.NextHistory => _nextHistoryKey,
-            Trigger.Autocomplete => _autocompleteKey,
-            Trigger.Focus => _focusKey,
+            TerminalAction.None => Key.None,
+            TerminalAction.Open => _openKey,
+            TerminalAction.Close => _closeKey,
+            TerminalAction.Execute => _executeKey,
+            TerminalAction.PreviousHistory => _prevHistoryKey,
+            TerminalAction.NextHistory => _nextHistoryKey,
+            TerminalAction.Autocomplete => _autocompleteKey,
+            TerminalAction.Focus => _focusKey,
             _ => throw new ArgumentOutOfRangeException(nameof(action), action, null)
         };
     }

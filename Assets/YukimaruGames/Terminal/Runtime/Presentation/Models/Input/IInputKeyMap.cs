@@ -4,6 +4,6 @@ namespace YukimaruGames.Terminal.Presentation.Models.Input
 {
     public interface IInputKeyMap<out T>
     {
-        T GetKey(Trigger action);
+        T GetKey(TerminalAction action);
     }
 }

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors.Window;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
@@ -10,7 +11,7 @@ namespace YukimaruGames.Terminal.Presentation.Presenters.Window
 {
     public sealed class WindowPresenter : IWindowPresenter, IDisposable
     {
-        private readonly IAnimationDataAccessor _accessor;
+        private readonly IWindowAnimationAccessor _accessor;
         private readonly IWindowAnimator _windowAnimator;
         private CancellationTokenSource _cts;
 
@@ -34,7 +35,7 @@ namespace YukimaruGames.Terminal.Presentation.Presenters.Window
         }
 
         public WindowPresenter(
-            IAnimationDataAccessor accessor,
+            IWindowAnimationAccessor accessor,
             IWindowAnimator animator)
         {
             _accessor = accessor;

@@ -2,9 +2,10 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors.Window;
+using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
 using YukimaruGames.Terminal.Presentation.Interfaces.Events;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
-using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 using YukimaruGames.Terminal.Presentation.Presenters.Window;
 
@@ -12,8 +13,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
 {
     public sealed class TerminalCoordinator : IDisposable
     {
-        private readonly ITerminalWindow _view;
-        private readonly IAnimationDataProvider _animationDataProvider;
+        private readonly ITerminalGUI _gui;
+        private readonly IWindowAnimationProvider _windowAnimationProvider;
         private readonly IScrollMutator _scrollMutator;
         private readonly IWindowPresenter _windowPresenter;
         private readonly IInputPresenter _inputPresenter;
@@ -29,13 +30,13 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         /// 表示されているか.
         /// </summary>
         private bool IsVisible =>
-            _animationDataProvider.State is WindowState.Open && !_windowPresenter.IsAnimating;
+            _windowAnimationProvider.State is WindowState.Open && !_windowPresenter.IsAnimating;
         
         public TerminalCoordinator(
             ITerminalService service,
-            ITerminalWindow view,
+            ITerminalGUI gui,
             IScrollMutator scrollMutator,
-            IAnimationDataProvider animationDataProvider,
+            IWindowAnimationProvider windowAnimationProvider,
             IWindowPresenter windowPresenter,
             IInputPresenter inputPresenter,
             ILogPresenter logPresenter,
@@ -45,9 +46,9 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         )
         {
             _service = service;
-            _view = view;
+            _gui = gui;
             _scrollMutator = scrollMutator;
-            _animationDataProvider = animationDataProvider;
+            _windowAnimationProvider = windowAnimationProvider;
             _windowPresenter = windowPresenter;
             _inputPresenter = inputPresenter;
             _logPresenter = logPresenter;
@@ -74,8 +75,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _eventListener.OnAutocompleteTriggered += OnAutocompleteTriggered;
             _eventListener.OnFocusTriggered += OnFocusTriggered;
 
-            _view.OnScreenSizeChanged += OnScreenSizeChanged;
-            _view.OnLogCopiedTriggered += OnLogCopiedTriggered;
+            _gui.OnScreenSizeChanged += OnScreenSizeChanged;
+            _gui.OnLogCopiedTriggered += OnLogCopiedTriggered;
         }
 
         private void UnregisterEvents()
@@ -92,8 +93,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _eventListener.OnAutocompleteTriggered -= OnAutocompleteTriggered;
             _eventListener.OnFocusTriggered -= OnFocusTriggered;
             
-            _view.OnScreenSizeChanged -= OnScreenSizeChanged;
-            _view.OnLogCopiedTriggered -= OnLogCopiedTriggered;
+            _gui.OnScreenSizeChanged -= OnScreenSizeChanged;
+            _gui.OnLogCopiedTriggered -= OnLogCopiedTriggered;
         }
         
         private void OnOpenTriggered()

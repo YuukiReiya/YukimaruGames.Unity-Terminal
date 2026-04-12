@@ -38,13 +38,13 @@ namespace YukimaruGames.Terminal.Presentation.Events
         {
             if (!IsEnabled) return;
 
-            if (_inputHandler.WasReleasedThisFrame(Trigger.Open)) OnOpenTriggered?.Invoke();
-            if (_inputHandler.WasReleasedThisFrame(Trigger.Close)) OnCloseTriggered?.Invoke();
-            if (_inputHandler.WasPressedThisFrame(Trigger.Execute)) OnExecuteTriggered?.Invoke();
-            if (_inputHandler.WasPressedThisFrame(Trigger.PreviousHistory)) OnPreviousHistoryTriggered?.Invoke();
-            if (_inputHandler.WasPressedThisFrame(Trigger.NextHistory)) OnNextHistoryTriggered?.Invoke();
-            if (_inputHandler.WasPressedThisFrame(Trigger.Autocomplete)) OnAutocompleteTriggered?.Invoke();
-            if (_inputHandler.WasPressedThisFrame(Trigger.Focus)) OnFocusTriggered?.Invoke();
+            if (_inputHandler.WasReleasedThisFrame(TerminalAction.Open)) OnOpenTriggered?.Invoke();
+            if (_inputHandler.WasReleasedThisFrame(TerminalAction.Close)) OnCloseTriggered?.Invoke();
+            if (_inputHandler.WasPressedThisFrame(TerminalAction.Execute)) OnExecuteTriggered?.Invoke();
+            if (_inputHandler.WasPressedThisFrame(TerminalAction.PreviousHistory)) OnPreviousHistoryTriggered?.Invoke();
+            if (_inputHandler.WasPressedThisFrame(TerminalAction.NextHistory)) OnNextHistoryTriggered?.Invoke();
+            if (_inputHandler.WasPressedThisFrame(TerminalAction.Autocomplete)) OnAutocompleteTriggered?.Invoke();
+            if (_inputHandler.WasPressedThisFrame(TerminalAction.Focus)) OnFocusTriggered?.Invoke();
         }
 
         public void Update(float _) => Update();

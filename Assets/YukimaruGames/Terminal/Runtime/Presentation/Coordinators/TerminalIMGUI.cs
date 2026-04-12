@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
+using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models;
 using YukimaruGames.Terminal.Presentation.Renderers.Launcher;
 
-namespace YukimaruGames.Terminal.Presentation.Renderers.Window
+namespace YukimaruGames.Terminal.Presentation.Coordinators
 {
-    public sealed class TerminalView : ITerminalWindow, IDisposable
+    public sealed class TerminalIMGUI : ITerminalGUI, IDisposable
     {
         // renderer.
         private readonly IWindowRenderer _windowRenderer;
@@ -40,7 +41,7 @@ namespace YukimaruGames.Terminal.Presentation.Renderers.Window
         public event Action OnPreRender;
         public event Action OnPostRender;
 
-        public TerminalView(ViewContext context)
+        public TerminalIMGUI(ViewContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
 
@@ -82,7 +83,7 @@ namespace YukimaruGames.Terminal.Presentation.Renderers.Window
         }
 
         /// <inheritdoc/> 
-        void ITerminalWindow.Render()
+        void ITerminalGUI.Render()
         {
             var size = new Vector2Int(Screen.width, Screen.height);
             if (_size != size)

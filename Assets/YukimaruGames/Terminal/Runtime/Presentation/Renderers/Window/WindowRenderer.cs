@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Presentation.Constants;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
-using YukimaruGames.Terminal.Presentation.Models;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Renderers.Window
@@ -17,7 +17,7 @@ namespace YukimaruGames.Terminal.Presentation.Renderers.Window
             {
                 normal = new GUIStyleState
                 {
-                    background = pixelTextureRepository.GetTexture2D(Constants.ThemeLabel.Window),
+                    background = pixelTextureRepository.GetTexture2D(Definitions.ThemeLabel.Window),
                 },
             });
         }

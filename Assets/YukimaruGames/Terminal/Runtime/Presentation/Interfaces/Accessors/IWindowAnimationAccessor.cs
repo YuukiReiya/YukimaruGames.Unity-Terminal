@@ -1,10 +1,10 @@
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Presentation.Interfaces.Accessors
+namespace YukimaruGames.Terminal.Presentation.Interfaces.Accessors.Window
 {
-    public interface IAnimationDataAccessor :
-        IAnimationDataMutator,
-        IAnimationDataProvider
+    public interface IWindowAnimationAccessor :
+        IWindowAnimationMutator,
+        IWindowAnimationProvider
     {
         new WindowState State { get; set; }
         new WindowAnchor Anchor { get; set; }
@@ -13,7 +13,7 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Accessors
         new float Scale { get; set; }
     }
 
-    public interface IAnimationDataMutator
+    public interface IWindowAnimationMutator
     {
         WindowState State { set; }
         WindowAnchor Anchor { set; }
@@ -22,7 +22,7 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Accessors
         float Scale { set; }
     }
 
-    public interface IAnimationDataProvider
+    public interface IWindowAnimationProvider
     {
         WindowState State { get; }
         WindowAnchor Anchor { get; }

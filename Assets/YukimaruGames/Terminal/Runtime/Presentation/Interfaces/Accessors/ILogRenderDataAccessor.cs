@@ -1,4 +1,4 @@
-using YukimaruGames.Terminal.Presentation.Models.Logs;
+using YukimaruGames.Terminal.Presentation.Models.Log;
 
 namespace YukimaruGames.Terminal.Presentation.Interfaces.Presenters
 {

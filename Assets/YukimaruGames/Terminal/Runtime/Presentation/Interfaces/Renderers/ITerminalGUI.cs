@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 
-namespace YukimaruGames.Terminal.Presentation.Interfaces.Renderers
+namespace YukimaruGames.Terminal.Presentation.Interfaces.Coordinators
 {
-    public interface ITerminalWindow
+    public interface ITerminalGUI
     {
         /// <summary>
         /// 画面サイズの変更イベント.

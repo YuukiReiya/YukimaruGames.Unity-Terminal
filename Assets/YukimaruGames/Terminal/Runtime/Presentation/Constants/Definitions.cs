@@ -1,7 +1,7 @@
 using YukimaruGames.Terminal.SharedKernel;
-namespace YukimaruGames.Terminal.Presentation.Models
+namespace YukimaruGames.Terminal.Presentation.Constants
 {
-    public static class Constants
+    public static class Definitions
     {
         public static class ThemeLabel
         {            
@@ -13,7 +13,7 @@ namespace YukimaruGames.Terminal.Presentation.Models
             public const string Entry = nameof(MessageType.Entry);
             public const string System = nameof(MessageType.System);
             
-            public const string Window = nameof(Presentation.Renderers.Window.WindowRenderer);
+            public const string Window = nameof(Renderers.Window.WindowRenderer);
             public const string Cursor = nameof(UnityEngine.GUI.skin.settings.cursorColor);
             public const string Selection = nameof(UnityEngine.GUI.skin.settings.selectionColor);
         }

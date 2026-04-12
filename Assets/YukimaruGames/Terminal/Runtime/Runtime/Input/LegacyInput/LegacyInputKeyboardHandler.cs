@@ -17,13 +17,13 @@ namespace YukimaruGames.Terminal.Runtime.Input.LegacyInput
             _legacyInputKey = legacyInputKey;
         }
 
-        public bool WasPressedThisFrame(Trigger action)
+        public bool WasPressedThisFrame(TerminalAction action)
         {
             var keyCode = _legacyInputKey.GetKey(action);
             return keyCode is not UnityEngine.KeyCode.None && UnityEngine.Input.GetKeyDown(keyCode);
         }
 
-        public bool WasReleasedThisFrame(Trigger action)
+        public bool WasReleasedThisFrame(TerminalAction action)
         {
             var keyCode = _legacyInputKey.GetKey(action);
             return keyCode is not UnityEngine.KeyCode.None && UnityEngine.Input.GetKeyUp(keyCode);

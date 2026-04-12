@@ -4,7 +4,7 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Events
 {
     public interface IKeyboardInputHandler
     {
-        bool WasPressedThisFrame(Trigger action);
-        bool WasReleasedThisFrame(Trigger action);
+        bool WasPressedThisFrame(TerminalAction action);
+        bool WasReleasedThisFrame(TerminalAction action);
     }
 }
