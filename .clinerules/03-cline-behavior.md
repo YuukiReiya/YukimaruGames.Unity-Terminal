@@ -4,8 +4,8 @@
 
 新しいクラスや機能を実装する前に、以下を必ず確認・提示すること:
 
-1. **配置レイヤーの提案**: どのレイヤー（Presentation / Application / Domain / Infrastructure）に配置するかを明示する
-2. **ファイルパスの提案**: `Assets/Scripts/[Layer]/[Folder]/ClassName.cs` の形式で提示する
+1. **配置レイヤーの提案**: どのレイヤー（SharedKernel / Domain.API / Domain.Core / Application / Presentation / Infrastructure / Runtime）に配置するかを明示する
+2. **ファイルパスの提案**: `Assets/YukimaruGames/Terminal/Runtime/[Layer]/[Folder]/ClassName.cs` の形式で提示する
 3. **依存関係の確認**: 新しいクラスが既存のどのクラスに依存するかを列挙する
 4. **実装範囲の確認**: 一度に複数のレイヤーにまたがる場合は、実装順序を提案してユーザーの承認を得る
 
@@ -21,7 +21,7 @@
 コードを提示するときは以下の形式を使うこと:
 
 ```
-【配置先】Assets/Scripts/Domain/Model/PlayerHp.cs
+【配置先】Assets/YukimaruGames/Terminal/Runtime/Domain/Abstractions/[Folder]/ClassName.cs
 【変更理由】〜のため
 【影響範囲】〜クラスの修正が必要
 
@@ -37,6 +37,6 @@
 ## やってはいけないこと
 
 - Unityエディタ上の操作（Inspector設定、メニュー操作など）を指示しない（コードで解決できる場合）
-- `using UnityEngine` を Domain層のファイルに追加しない
+- `using UnityEngine` を Domain層（Domain.API / Domain.Core）のファイルに追加しない
 - `public` フィールドを新たに追加しない（プロパティを使う）
 - ユーザーの承認なしに既存ファイルを削除しない

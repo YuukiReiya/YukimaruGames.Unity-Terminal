@@ -39,13 +39,13 @@
 ```
 【リファクタリング計画】
 
-現在: Assets/Scripts/PlayerHealthManager.cs（1クラス）
+現在: Assets/YukimaruGames/Terminal/Runtime/Presentation/〇〇/〇〇Manager.cs（1クラス）
 　　　└ MonoBehaviour継承 + ドメインロジック混在
 
 変更後:
-　Assets/Scripts/Domain/Model/PlayerHp.cs        （新規作成）
-　Assets/Scripts/Application/UseCase/PlayerHpUseCase.cs （新規作成）
-　Assets/Scripts/Presentation/Player/PlayerHpPresenter.cs （既存を改修）
+　Assets/YukimaruGames/Terminal/Runtime/Domain/Abstractions/〇〇/I〇〇.cs  （新規作成）
+　Assets/YukimaruGames/Terminal/Runtime/Domain/Services/〇〇/〇〇Service.cs  （新規作成）
+　Assets/YukimaruGames/Terminal/Runtime/Presentation/〇〇/〇〇Presenter.cs  （既存を改修）
 
 変更ファイル数: 3ファイル（新規2 + 改修1）
 削除ファイル: なし（既存ファイルは改修で対応）

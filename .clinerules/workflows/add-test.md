@@ -51,7 +51,7 @@ Domain層・Application層の純粋C#クラスを対象とする。
 承認されたテストケースをもとに、以下のパスにテストファイルを生成する:
 
 ```
-Assets/Tests/EditMode/[元のフォルダ構成を維持]/〇〇Tests.cs
+Assets/YukimaruGames/Terminal/Tests/EditMode/[元のフォルダ構成を維持]/〇〇Tests.cs
 ```
 
 生成するコードの形式:

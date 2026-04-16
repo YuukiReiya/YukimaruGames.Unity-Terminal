@@ -34,10 +34,10 @@
 - `#region` の使用禁止
 
 ### アーキテクチャ
-- Domain層に `using UnityEngine` を追加しない
+- Domain層（Domain.API / Domain.Core）に `using UnityEngine` を追加しない
 - Presentation層からInfrastructure層を直接参照しない
 - `FindObjectOfType()` / `GameObject.Find()` の使用禁止
-- `MonoBehaviour` をDomain・Application・Infrastructure層に配置しない
+- `MonoBehaviour` をDomain・Application・Infrastructure層に配置しない（Presentation層のみ許可）
 
 ### ファイル操作
 - ユーザーの承認なしに既存ファイルを削除・リネームしない
@@ -51,5 +51,5 @@ Clineはコード生成後に以下を確認すること:
 1. レイヤーの依存方向が守られているか
 2. 命名規則（01-coding-style.md）に従っているか
 3. `SerializeField` の使い方が正しいか
-4. Domain層にUnityの型が混入していないか
+4. Domain層（Domain.API / Domain.Core）にUnityの型が混入していないか
 5. nullチェックの方法が適切か
