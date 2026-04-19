@@ -34,6 +34,9 @@ GIT_AUTHOR_NAME="[NAME]" GIT_AUTHOR_EMAIL="[EMAIL]" GIT_COMMITTER_NAME="[NAME]" 
 - **Message:** `feat:`, `fix:`, `refactor:`, `docs:` などのプレフィックスを必須とする。
 
 ## 4. 禁止事項
-- `git push --force` の無断実行。
+- **許可なきPushの禁止:** `git push` は、コミット完了後にユーザーから「pushして」と明確な指示がない限り、**いかなる理由があっても自動で実行してはならない。**
 - `--author` フラグを省略した `git commit`。
 - `.agents/` 内の設定ファイルをリポジトリへ含めること（`.gitignore` 厳守）。
+
+## 5. 応答言語
+- **重要:** ユーザーへの返答は、`03-cline-behavior.md` の規定に従い、必ず**日本語**で行うこと。
