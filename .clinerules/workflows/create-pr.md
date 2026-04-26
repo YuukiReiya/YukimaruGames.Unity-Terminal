@@ -6,12 +6,16 @@
 
 ## Step 1: ブランチ・差分の確認
 
-以下のコマンドで現在の状態を確認する:
+**重要：固定のブランチ名（main/master）を使用せず、現在のリポジトリの状況を確認すること。**
 
-```
+以下のコマンドで現在の状態とベース（親）ブランチを特定する:
+
+```bash
 git branch --show-current
-git log main..HEAD --oneline
-gh pr list
+# リモートのデフォルトブランチを特定する
+git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'
+# 上記で特定したブランチ（例: main）との差分を確認
+git log @{u}..HEAD --oneline || git log origin/main..HEAD --oneline
 ```
 
 - 現在のブランチ名
@@ -22,19 +26,13 @@ gh pr list
 
 ## Step 2: 差分の分析
 
-以下のコマンドで変更内容を把握する:
-
-```
-gh pr diff
-```
-
-または:
-
-```
-git diff main...HEAD
-```
-
+特定したベースブランチとの差分を把握する:
 変更の目的・影響範囲を分析する。
+
+```
+git diff origin/$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@')...HEAD
+```
+
 
 ---
 
@@ -73,18 +71,15 @@ git diff main...HEAD
 
 ---
 
-## Step 4: PRの作成
+## Step 4: PRの作成 (Agentアイデンティティ適用)
 
-承認された内容でPRを作成する:
+承認された内容でPRを作成する。必ず 08-github-instruction.md に従い、環境変数を注入して実行すること。
 
-```
-gh pr create --title "タイトル" --body "本文"
-```
+1. `.agents/git-credentials.txt` から情報を取得。
+2. 以下の形式でコマンドを組み立てて実行する（ベースブランチを明示的に指定）：
 
-ドラフトPRとして作成する場合:
-
-```
-gh pr create --title "タイトル" --body "本文" --draft
+```bash
+GIT_AUTHOR_NAME="[NAME]" GIT_AUTHOR_EMAIL="[EMAIL]" GIT_COMMITTER_NAME="[NAME]" GIT_COMMITTER_EMAIL="[EMAIL]" gh pr create --title "[タイトル]" --body "[本文]" --draft --base [STEP1で特定したブランチ名]
 ```
 
 作成されたPRのURLを報告する。
