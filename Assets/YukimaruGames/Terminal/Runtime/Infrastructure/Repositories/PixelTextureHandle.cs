@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Runtime.Shared.Extensions;
 
-namespace YukimaruGames.Terminal.Infrastructure.UI
+namespace YukimaruGames.Terminal.Infrastructure.Repositories
 {
     public sealed class PixelTextureHandle : IDisposable
     {
