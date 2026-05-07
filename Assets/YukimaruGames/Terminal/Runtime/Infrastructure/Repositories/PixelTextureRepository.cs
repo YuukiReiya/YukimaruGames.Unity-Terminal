@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 
-namespace YukimaruGames.Terminal.Infrastructure.UI
+namespace YukimaruGames.Terminal.Infrastructure.Repositories
 {
     public sealed class PixelTextureRepository : IPixelTextureRepository, IDisposable
     {

@@ -7,7 +7,7 @@ using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 using YukimaruGames.Terminal.SharedKernel;
 
-namespace YukimaruGames.Terminal.Infrastructure.Commands
+namespace YukimaruGames.Terminal.Infrastructure.Discoverer
 {
     /// <summary>
     /// コマンドを検出するためのクラス.
