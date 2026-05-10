@@ -16,12 +16,12 @@
             "name": "Qwen3 14B (local)"
         },
         "gemma4:e4b": {
-          "name": "Gemma4 E4B (lcoal)"
+          "name": "Gemma4 E4B (local)"
         },
         // registry.ollama.ai/library/gemma3:4b does not support tools
         // 軽量モデルでそのままで利用できないケースもあるみたい。
         // "gemma3:4b": {
-        //   "name": "Gemma3 4B (lcoal)"
+        //   "name": "Gemma3 4B (local)"
         // },
         "qwen2.5-coder:14b": {
           "name": "Qwen2.5-Coder 14B (local)"
