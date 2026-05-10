@@ -24,6 +24,12 @@ create_link() {
     dest=$2
     dest_dir=$(dirname "$dest")
 
+    # 0. リンク元ファイルの存在確認
+    if [ ! -f "$src" ]; then
+        echo "ERROR: Source file not found: $src"
+        return 1
+    fi
+
     # 1. リンク先ディレクトリの作成
     mkdir -p "$dest_dir"
 
