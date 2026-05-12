@@ -48,8 +48,22 @@ create_link() {
     fi
 }
 
-# --- 実行 ---
+# 1. 設定ファイルのリンク形成
 create_link "$OPCODE_SRC" "$OPCODE_DEST"
 create_link "$ALIASES_SRC" "$ALIASES_DEST"
+
+# 2. mise 環境の構築
+echo "\n--- mise environment setup ---"
+
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate bash --shims)"
+    echo "Trusting mise.toml..."
+    mise trust
+    echo "Installing tools from mise.toml..."
+    mise install --yes
+else
+    echo "WARNING: mise not found. Please install mise (https://mise.jdx.dev) to manage project tools."
+fi
+
 
 echo "\nSetup completed. Please run 'source ~/.bashrc' to reflect alias changes."

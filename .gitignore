@@ -113,3 +113,6 @@ InitTestScene*.unity*
 
 # AI-agent
 .agents/git-credentials.txt
+
+# MCP-server
+.serena/
