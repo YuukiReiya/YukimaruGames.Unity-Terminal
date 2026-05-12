@@ -26,7 +26,7 @@ create_link() {
 
     # 0. リンク元ファイルの存在確認
     if [ ! -f "$src" ]; then
-        echo "ERROR: Source file not found: $src"
+        printf "ERROR: Source file not found: $src\n"
         return 1
     fi
 
@@ -37,14 +37,14 @@ create_link() {
     if [ -L "$dest" ]; then
         # すでにシンボリックリンクなら強制上書き
         ln -sf "$src" "$dest"
-        echo "Updated link: $dest -> $src"
+        printf "Updated link: %s -> %s\n" "$dest" "$src"
     elif [ -f "$dest" ]; then
         # 実体ファイルが存在する場合は安全のためスキップ
-        echo "SKIPPED: $dest already exists as a regular file."
+        printf "SKIPPED: %s already exists as a regular file.\n" "$dest"
     else
         # 何もなければ新規作成
         ln -s "$src" "$dest"
-        echo "Created link: $dest -> $src"
+        printf "Created link: %s -> %s\n" "$dest" "$src"
     fi
 }
 
@@ -53,17 +53,17 @@ create_link "$OPCODE_SRC" "$OPCODE_DEST"
 create_link "$ALIASES_SRC" "$ALIASES_DEST"
 
 # 2. mise 環境の構築
-echo "\n--- mise environment setup ---"
+printf "\n--- mise environment setup ---\n"
 
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate bash --shims)"
-    echo "Trusting mise.toml..."
+    printf "Trusting mise.toml...\n"
     mise trust
-    echo "Installing tools from mise.toml..."
+    printf "Installing tools from mise.toml...\n"
     mise install --yes
 else
-    echo "WARNING: mise not found. Please install mise (https://mise.jdx.dev) to manage project tools."
+    printf "WARNING: mise not found. Please install mise (https://mise.jdx.dev) to manage project tools.\n"
 fi
 
 
-echo "\nSetup completed. Please run 'source ~/.bashrc' to reflect alias changes."
+printf "\nSetup completed. Please run 'source ~/.bashrc' to reflect alias changes.\n"
