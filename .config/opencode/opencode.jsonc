@@ -39,6 +39,18 @@
         "-y",
         "@drawio/mcp"
       ]
+    },
+    "memory": {
+      "type": "local",
+      "enabled": true,
+      "command": [
+        "mise",
+        "x",
+        "--",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
     }
   },
   "provider": {
