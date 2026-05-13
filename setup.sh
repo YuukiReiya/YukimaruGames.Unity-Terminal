@@ -26,7 +26,7 @@ create_link() {
 
     # 0. リンク元ファイルの存在確認
     if [ ! -f "$src" ]; then
-        printf "ERROR: Source file not found: $src\n"
+        printf "ERROR: Source file not found: %s\n" "$src"
         return 1
     fi
 
@@ -49,8 +49,8 @@ create_link() {
 }
 
 # 1. 設定ファイルのリンク形成
-create_link "$OPCODE_SRC" "$OPCODE_DEST"
-create_link "$ALIASES_SRC" "$ALIASES_DEST"
+create_link "$OPCODE_SRC" "$OPCODE_DEST" || exit 1
+create_link "$ALIASES_SRC" "$ALIASES_DEST" || exit 1
 
 # 2. mise 環境の構築
 printf "\n--- mise environment setup ---\n"
