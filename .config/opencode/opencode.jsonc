@@ -44,12 +44,7 @@
       "type": "local",
       "enabled": true,
       "command": [
-        "mise",
-        "x",
-        "--",
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-memory"
+        "./run-memory.sh"
       ]
     }
   },
