@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- 設定エリア ---
-WIN_PATH="$(pwd)"
-MEM_DIR="$WIN_PATH/memories"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+MEM_DIR="$SCRIPT_DIR/memories"
 MEM_FILE="project-memory.jsonl"
 TARGET_PATH="$MEM_DIR/$MEM_FILE"
 
