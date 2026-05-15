@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # --- 設定エリア ---
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
