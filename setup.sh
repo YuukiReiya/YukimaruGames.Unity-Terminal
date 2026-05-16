@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
 # 設定ファイルはホームディレクトリ配下のファイルパスを参照する。
 # configファイルはリポジトリ別に管理できるようにしておいた方が都合良さそうなので
@@ -26,7 +27,7 @@ create_link() {
 
     # 0. リンク元ファイルの存在確認
     if [ ! -f "$src" ]; then
-        echo "ERROR: Source file not found: $src"
+        printf "ERROR: Source file not found: %s\n" "$src"
         return 1
     fi
 
@@ -37,19 +38,33 @@ create_link() {
     if [ -L "$dest" ]; then
         # すでにシンボリックリンクなら強制上書き
         ln -sf "$src" "$dest"
-        echo "Updated link: $dest -> $src"
+        printf "Updated link: %s -> %s\n" "$dest" "$src"
     elif [ -f "$dest" ]; then
         # 実体ファイルが存在する場合は安全のためスキップ
-        echo "SKIPPED: $dest already exists as a regular file."
+        printf "SKIPPED: %s already exists as a regular file.\n" "$dest"
     else
         # 何もなければ新規作成
         ln -s "$src" "$dest"
-        echo "Created link: $dest -> $src"
+        printf "Created link: %s -> %s\n" "$dest" "$src"
     fi
 }
 
-# --- 実行 ---
-create_link "$OPCODE_SRC" "$OPCODE_DEST"
-create_link "$ALIASES_SRC" "$ALIASES_DEST"
+# 1. 設定ファイルのリンク形成
+create_link "$OPCODE_SRC" "$OPCODE_DEST" || exit 1
+create_link "$ALIASES_SRC" "$ALIASES_DEST" || exit 1
 
-echo "\nSetup completed. Please run 'source ~/.bashrc' to reflect alias changes."
+# 2. mise 環境の構築
+printf "\n--- mise environment setup ---\n"
+
+if command -v mise >/dev/null 2>&1; then
+    eval "$(mise activate bash --shims)"
+    printf "Trusting mise.toml...\n"
+    mise trust || exit 1
+    printf "Installing tools from mise.toml...\n"
+    mise install --yes || exit 1
+else
+    printf "WARNING: mise not found. Please install mise (https://mise.jdx.dev) to manage project tools.\n"
+fi
+
+
+printf "\nSetup completed. Please run 'source ~/.bashrc' to reflect alias changes.\n"
