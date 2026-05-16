@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
 # 設定ファイルはホームディレクトリ配下のファイルパスを参照する。
 # configファイルはリポジトリ別に管理できるようにしておいた方が都合良さそうなので
@@ -58,9 +59,9 @@ printf "\n--- mise environment setup ---\n"
 if command -v mise >/dev/null 2>&1; then
     eval "$(mise activate bash --shims)"
     printf "Trusting mise.toml...\n"
-    mise trust
+    mise trust || exit 1
     printf "Installing tools from mise.toml...\n"
-    mise install --yes
+    mise install --yes || exit 1
 else
     printf "WARNING: mise not found. Please install mise (https://mise.jdx.dev) to manage project tools.\n"
 fi
