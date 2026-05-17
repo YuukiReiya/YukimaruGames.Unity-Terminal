@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
-namespace YukimaruGames.Terminal.Infrastructure.UI
+namespace YukimaruGames.Terminal.Infrastructure.Accessors
 {
     public sealed class ColorPaletteAccessor : IColorPaletteAccessor
     {

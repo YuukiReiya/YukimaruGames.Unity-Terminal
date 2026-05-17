@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
 using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
-namespace YukimaruGames.Terminal.Infrastructure.Commands
+namespace YukimaruGames.Terminal.Infrastructure.Factories
 {
     /// <summary>
     /// 実行コマンドのFactory.
