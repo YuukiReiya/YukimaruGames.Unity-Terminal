@@ -21,7 +21,7 @@ namespace YukimaruGames.Terminal.Domain.Models
     /// インスタンスに対して明示的な同期処理（lock文など）を行ってください。
     /// </para>
     /// </remarks>
-    [DebuggerDisplay("{ToAllocatedString}")]
+    [DebuggerDisplay("{ToAllocatedString()}")]
     public sealed class TerminalStringBuffer : IDisposable
     {
         private readonly IPool<char[]> _pool;
@@ -265,7 +265,15 @@ namespace YukimaruGames.Terminal.Domain.Models
                 _pool.Release(bufferToRelease);
             }
         }
-        
+
+        /// <summary>
+        /// このメソッドはパフォーマンス上の理由から意図的に機能が制限されています。
+        /// 文字列の内容を取得したい場合は <see cref="ToAllocatedString"/> を使用してください。
+        /// </summary>
+        /// <remarks>
+        /// Debug.Log などで暗黙的に呼び出された際に GC アロケーションが発生することを防ぐため、
+        /// バッファ内容の文字列化は行わず、警告用の定数文字列を返します。
+        /// </remarks>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override string ToString()
         {
@@ -274,10 +282,17 @@ namespace YukimaruGames.Terminal.Domain.Models
 
         /// <summary>
         /// stringに変換する（GC Allocが発生する）.
-        /// <para>
-        /// 表示目的やデバッグ用途にのみ使用すること。
-        /// </para>
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// <strong>注意:</strong> このメソッドは内部で必ずマネージヒープへのアロケーション（GC Alloc）を伴います。
+        /// 毎フレーム更新されるような UI 描画や、ホットパスとなるコード内では使用を避けてください。
+        /// </para>
+        /// <para>
+        /// 主にデバッグ出力や、アロケーションが許容される非頻繁なタイミングでの文字列変換に使用してください。
+        /// </para>
+        /// </remarks>
+        /// <returns>バッファ内容を保持する新しい文字列。</returns>
         public string ToAllocatedString()
         {
             return IsEmpty ?
