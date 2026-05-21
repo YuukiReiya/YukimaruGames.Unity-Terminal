@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -19,6 +21,7 @@ namespace YukimaruGames.Terminal.Domain.Models
     /// インスタンスに対して明示的な同期処理（lock文など）を行ってください。
     /// </para>
     /// </remarks>
+    [DebuggerDisplay("{ToAllocatedString}")]
     public sealed class TerminalStringBuffer : IDisposable
     {
         private readonly IPool<char[]> _pool;
@@ -263,13 +266,19 @@ namespace YukimaruGames.Terminal.Domain.Models
             }
         }
         
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override string ToString()
+        {
+            return "[TerminalStringBuffer: Use ToAllocatedString() for UI caching]";
+        }
+
         /// <summary>
         /// stringに変換する（GC Allocが発生する）.
         /// <para>
         /// 表示目的やデバッグ用途にのみ使用すること。
         /// </para>
         /// </summary>
-        public override string ToString()
+        public string ToAllocatedString()
         {
             return IsEmpty ?
                 string.Empty :
