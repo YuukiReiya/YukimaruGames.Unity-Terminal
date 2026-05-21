@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using YukimaruGames.Terminal.SharedKernel.Interfaces;
 
 namespace YukimaruGames.Terminal.Domain.Models
@@ -7,12 +9,30 @@ namespace YukimaruGames.Terminal.Domain.Models
     /// <summary>
     /// ターミナルシステムにおける文字データの保持・制御・置換を専門に行うドメインモデル。
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// <p><b>【注意点：スレッドセーフティについて】</b></p>
+    /// 本クラスはパフォーマンスを最優先するため、内部でのロック処理を行わず、スレッドセーフではありません。
+    /// </para>
+    /// <para>
+    /// マルチスレッド環境で本クラスを共有する場合は、利用側（呼び出し元）にて
+    /// インスタンスに対して明示的な同期処理（lock文など）を行ってください。
+    /// </para>
+    /// </remarks>
     public sealed class TerminalStringBuffer : IDisposable
     {
         private readonly IPool<char[]> _pool;
         private readonly int _initialCapacity;
         private char[] _buffer;
-        private bool _disposed = false;
+
+        /// <summary>
+        /// Dispose したかどうか
+        /// </summary>
+        /// <remarks>
+        /// <p>0 = 未Dispose</p>
+        /// <p>1 = Dispose済み</p>
+        /// </remarks>
+        private int _disposed;
 
         /// <summary>
         /// バッファの容量（確保されている配列のサイズ）.
@@ -38,10 +58,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         {
             _pool = pool ?? throw new ArgumentNullException(nameof(pool));
 
-            if (initialCapacity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(initialCapacity), "Initial capacity must be positive.");
-            }
+            if (initialCapacity <= 0) ThrowInitialCapacityOutOfRange(nameof(initialCapacity));
             
             _initialCapacity = initialCapacity;
         }
@@ -51,6 +68,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// </summary>
         public ReadOnlySpan<char> AsSpan()
         {
+            ThrowIfDisposed();
             return _buffer == null || Length <= 0 ?
                 ReadOnlySpan<char>.Empty :
                 _buffer.AsSpan(0, Length);
@@ -61,6 +79,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// </summary>
         public ReadOnlyMemory<char> AsMemory()
         {
+            ThrowIfDisposed();
             return _buffer == null || Length <= 0
                 ? ReadOnlyMemory<char>.Empty
                 : _buffer.AsMemory(0, Length);
@@ -71,6 +90,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// </summary>
         public void Append(ReadOnlySpan<char> text)
         {
+            ThrowIfDisposed();
             Replace(Length, 0, text);
         }
 
@@ -79,10 +99,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// </summary>
         public void Append(string text)
         {
-            if (text == null)
-            {
-                throw new ArgumentNullException(nameof(text));
-            }
+            if (text == null) ThrowArgumentNull(nameof(text));
             
             Append(text.AsSpan());
         }
@@ -98,11 +115,22 @@ namespace YukimaruGames.Terminal.Domain.Models
             ThrowIfDisposed();
             EnsureAllocated();
 
-            if (index < 0 || Length < index || Length < index + count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), 
-                    $"Index {index} with count {count} is out of range (Length: {Length}).");
-            }
+            // =================================================================
+            // 【セキュリティ＆パフォーマンスガード】
+            // 正常系（エラーなし）の場合、現代CPUの「分岐予測」によりこれらのif文の
+            // 評価コストは実質ゼロになります。
+            // また、例外を投げる重い処理を別メソッド（ThrowHelper）に隔離することで、
+            // C#コンパイラ（JIT/IL2CPP）にこのメソッドをインライン展開させ、
+            // 正常系の実行速度を極限まで引き上げています。
+            // =================================================================
+            if (index < 0) ThrowIndexOutOfRange(nameof(index));
+            if (count < 0) ThrowCountOutOfRange(nameof(count));
+            if (Length < index) ThrowIndexGreaterThanLength(index);
+            if (Length - index < count) ThrowCountTooLarge(index, count);
+            
+            // =================================================================
+            // メイン処理（最適化された高速ルート）
+            // =================================================================
             
             var newLength = Length - count + text.Length;
 
@@ -114,7 +142,7 @@ namespace YukimaruGames.Terminal.Domain.Models
             else
             {
                 // バッファ内安全シフト（オーバーラップ対応のCopyToを使用）
-                // コピー元と先が重なる（オーバーラップ）可能性があるため、Span.CopyToの内部最適化に任せる
+                // コピー元と先が重なる可能性があるため、Span.CopyToの内部最適化に任せる
                 var tailLength = Length - (index + count);
                 if (0 < tailLength && count != text.Length)
                 {
@@ -198,14 +226,19 @@ namespace YukimaruGames.Terminal.Domain.Models
                     .CopyTo(newBuffer.AsSpan(index + text.Length));
             }
  
-            // 古いバッファの返却
-            _pool.Release(_buffer);
- 
             // バッファ更新
+            var oldBuffer = _buffer;
             _buffer = newBuffer;
             
             // 確保してる Capacity のキャッシュを更新 
             Capacity = _buffer.Length;
+            
+            // 古いバッファの返却
+            if (oldBuffer != null)
+            {
+                // もしここで例外が出ても、このインスタンスの状態は既に新バッファで正常に保たれる
+                _pool.Release(oldBuffer);
+            }
         }
         
         /// <summary>
@@ -213,20 +246,21 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// </summary>
         void IDisposable.Dispose()
         {
-            if (_disposed)
+            if (Interlocked.CompareExchange(ref _disposed, 1, 0) != 0)
             {
                 return;
             }
 
-            if (_buffer != null)
-            {
-                _pool.Release(_buffer);
-                _buffer = null;
-            }
-
             Length = 0;
             Capacity = 0;
-            _disposed = true;
+
+            var bufferToRelease = _buffer;
+            _buffer = null;
+            
+            if (bufferToRelease != null)
+            {
+                _pool.Release(_buffer);
+            }
         }
         
         /// <summary>
@@ -248,11 +282,44 @@ namespace YukimaruGames.Terminal.Domain.Models
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ThrowIfDisposed()
         {
-            if (_disposed)
+            if (_disposed == 1)
             {
                 throw new ObjectDisposedException(nameof(TerminalStringBuffer));
             }
         }
+        
+        #region Throw Helpers (JIT インライン展開用 最適化パターン)
+        
+        // 【Throw Helper パターン】
+        // 例外スロー処理はスタックトレース生成などでコンパイル後のILコードを肥大化させます。
+        // これらを別メソッドに隔離し、[DoesNotReturn] を付与することで、
+        // 呼び出し元（Replace等）のコードサイズを極小に保ち、CPUキャッシュ効率と最適化を促進します。
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowIndexOutOfRange(string paramName) => 
+            throw new ArgumentOutOfRangeException(paramName, "Index must be non-negative.");
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowCountOutOfRange(string paramName) => 
+            throw new ArgumentOutOfRangeException(paramName, "Count must be non-negative.");
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowIndexGreaterThanLength(int index) => 
+            throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} is out of range (Length: {Length}).");
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowCountTooLarge(int index, int count) => 
+            throw new ArgumentOutOfRangeException(nameof(count), $"Count {count} is too large for index {index} (Remaining length: {Length - index}).");
+        
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowInitialCapacityOutOfRange(string paramName) => 
+            throw new ArgumentOutOfRangeException(paramName, "Initial capacity must be positive.");
+        
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowArgumentNull(string paramName) => 
+            throw new ArgumentNullException(paramName);
+        
+        #endregion
 
         /// <summary>
         /// 指定された数値以上の「最も近い2のべき乗（Power of Two）」の数を計算します。
