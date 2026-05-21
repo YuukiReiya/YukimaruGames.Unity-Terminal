@@ -259,7 +259,7 @@ namespace YukimaruGames.Terminal.Domain.Models
             
             if (bufferToRelease != null)
             {
-                _pool.Release(_buffer);
+                _pool.Release(bufferToRelease);
             }
         }
         
