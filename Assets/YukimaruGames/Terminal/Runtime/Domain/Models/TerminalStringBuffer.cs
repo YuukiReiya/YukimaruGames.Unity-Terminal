@@ -288,39 +288,6 @@ namespace YukimaruGames.Terminal.Domain.Models
             }
         }
         
-        #region Throw Helpers (JIT インライン展開用 最適化パターン)
-        
-        // 【Throw Helper パターン】
-        // 例外スロー処理はスタックトレース生成などでコンパイル後のILコードを肥大化させます。
-        // これらを別メソッドに隔離し、[DoesNotReturn] を付与することで、
-        // 呼び出し元（Replace等）のコードサイズを極小に保ち、CPUキャッシュ効率と最適化を促進します。
-
-        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ThrowIndexOutOfRange(string paramName) => 
-            throw new ArgumentOutOfRangeException(paramName, "Index must be non-negative.");
-
-        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ThrowCountOutOfRange(string paramName) => 
-            throw new ArgumentOutOfRangeException(paramName, "Count must be non-negative.");
-
-        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
-        private void ThrowIndexGreaterThanLength(int index) => 
-            throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} is out of range (Length: {Length}).");
-
-        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
-        private void ThrowCountTooLarge(int index, int count) => 
-            throw new ArgumentOutOfRangeException(nameof(count), $"Count {count} is too large for index {index} (Remaining length: {Length - index}).");
-        
-        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ThrowInitialCapacityOutOfRange(string paramName) => 
-            throw new ArgumentOutOfRangeException(paramName, "Initial capacity must be positive.");
-        
-        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ThrowArgumentNull(string paramName) => 
-            throw new ArgumentNullException(paramName);
-        
-        #endregion
-
         /// <summary>
         /// 指定された数値以上の「最も近い2のべき乗（Power of Two）」の数を計算します。
         /// </summary>
@@ -389,5 +356,36 @@ namespace YukimaruGames.Terminal.Domain.Models
 
             return value;
         }
+        
+        // =================================================================
+        // Throw Helper パターン
+        // =================================================================
+        // 例外スロー処理はスタックトレース生成などでコンパイル後のILコードを肥大化させます。
+        // これらを別メソッドに隔離し、[DoesNotReturn] を付与することで、
+        // 呼び出し元（Replace等）のコードサイズを極小に保ち、CPUキャッシュ効率と最適化を促進します。
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowIndexOutOfRange(string paramName) => 
+            throw new ArgumentOutOfRangeException(paramName, "Index must be non-negative.");
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowCountOutOfRange(string paramName) => 
+            throw new ArgumentOutOfRangeException(paramName, "Count must be non-negative.");
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowIndexGreaterThanLength(int index) => 
+            throw new ArgumentOutOfRangeException(nameof(index), $"Index {index} is out of range (Length: {Length}).");
+
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private void ThrowCountTooLarge(int index, int count) => 
+            throw new ArgumentOutOfRangeException(nameof(count), $"Count {count} is too large for index {index} (Remaining length: {Length - index}).");
+        
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowInitialCapacityOutOfRange(string paramName) => 
+            throw new ArgumentOutOfRangeException(paramName, "Initial capacity must be positive.");
+        
+        [DoesNotReturn, MethodImpl(MethodImplOptions.NoInlining)]
+        private static void ThrowArgumentNull(string paramName) => 
+            throw new ArgumentNullException(paramName);
     }
 }
