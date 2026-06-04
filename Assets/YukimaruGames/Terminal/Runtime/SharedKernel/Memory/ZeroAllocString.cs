@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using YukimaruGames.Terminal.SharedKernel.Interfaces;
 
-namespace YukimaruGames.Terminal.Domain.Models
+namespace YukimaruGames.Terminal.SharedKernel.Memory
 {
     /// <summary>
     /// ターミナルシステムにおける文字データの保持・制御・置換を専門に行うドメインモデル。
@@ -22,7 +22,7 @@ namespace YukimaruGames.Terminal.Domain.Models
     /// </para>
     /// </remarks>
     [DebuggerDisplay("{ToAllocatedString()}")]
-    public sealed class TerminalStringBuffer : IDisposable
+    public sealed class ZeroAllocString : IDisposable
     {
         private readonly IPool<char[]> _pool;
         private readonly int _initialCapacity;
@@ -57,7 +57,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// </summary>
         /// <param name="pool">文字配列のプール</param>
         /// <param name="initialCapacity">初期容量（デフォルト: 256）</param>
-        public TerminalStringBuffer(IPool<char[]> pool, int initialCapacity = 256)
+        public ZeroAllocString(IPool<char[]> pool, int initialCapacity = 256)
         {
             _pool = pool ?? throw new ArgumentNullException(nameof(pool));
 
@@ -277,7 +277,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override string ToString()
         {
-            return "[TerminalStringBuffer: Use ToAllocatedString() for UI caching]";
+            return "[ZeroAllocString: Use ToAllocatedString() for UI caching]";
         }
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace YukimaruGames.Terminal.Domain.Models
         {
             if (_disposed == 1)
             {
-                throw new ObjectDisposedException(nameof(TerminalStringBuffer));
+                throw new ObjectDisposedException(nameof(ZeroAllocString));
             }
         }
         
