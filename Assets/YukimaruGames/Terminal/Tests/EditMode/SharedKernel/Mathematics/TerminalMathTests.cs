@@ -1,0 +1,257 @@
+using NUnit.Framework;
+using YukimaruGames.Terminal.SharedKernel.Mathematics;
+
+namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
+{
+    /// <summary>
+    /// ターミナル計算クラスの単体テスト
+    /// </summary>
+    [TestFixture]
+    public sealed class TerminalMathTests
+    {
+        #region Clamp(float) Tests
+
+        [Test]
+        public void Clamp_Float_ValueWithinRange_ReturnsSameValue()
+        {
+            // Arrange
+            float value = 5f;
+            float min = 0f;
+            float max = 10f;
+
+            // Act
+            float result = TerminalMath.Clamp(value, min, max);
+
+            // Assert
+            Assert.AreEqual(5f, result);
+        }
+
+        [Test]
+        public void Clamp_Float_ValueBelowMin_ReturnsMin()
+        {
+            // Arrange
+            float value = -5f;
+            float min = 0f;
+            float max = 10f;
+
+            // Act
+            float result = TerminalMath.Clamp(value, min, max);
+
+            // Assert
+            Assert.AreEqual(0f, result);
+        }
+
+        [Test]
+        public void Clamp_Float_ValueAboveMax_ReturnsMax()
+        {
+            // Arrange
+            float value = 15f;
+            float min = 0f;
+            float max = 10f;
+
+            // Act
+            float result = TerminalMath.Clamp(value, min, max);
+
+            // Assert
+            Assert.AreEqual(10f, result);
+        }
+
+        [Test]
+        public void Clamp_Float_ValueEqualsMin_ReturnsMin()
+        {
+            // Arrange
+            float value = 0f;
+            float min = 0f;
+            float max = 10f;
+
+            // Act
+            float result = TerminalMath.Clamp(value, min, max);
+
+            // Assert
+            Assert.AreEqual(0f, result);
+        }
+
+        [Test]
+        public void Clamp_Float_ValueEqualsMax_ReturnsMax()
+        {
+            // Arrange
+            float value = 10f;
+            float min = 0f;
+            float max = 10f;
+
+            // Act
+            float result = TerminalMath.Clamp(value, min, max);
+
+            // Assert
+            Assert.AreEqual(10f, result);
+        }
+
+        #endregion
+
+        #region Clamp(int) Tests
+
+        [Test]
+        public void Clamp_Int_ValueWithinRange_ReturnsSameValue()
+        {
+            Assert.AreEqual(5, TerminalMath.Clamp(5, 0, 10));
+        }
+
+        [Test]
+        public void Clamp_Int_ValueBelowMin_ReturnsMin()
+        {
+            Assert.AreEqual(0, TerminalMath.Clamp(-5, 0, 10));
+        }
+
+        [Test]
+        public void Clamp_Int_ValueAboveMax_ReturnsMax()
+        {
+            Assert.AreEqual(10, TerminalMath.Clamp(15, 0, 10));
+        }
+
+        #endregion
+
+        #region Clamp01 Tests
+
+        [Test]
+        public void Clamp01_ValueWithinRange_ReturnsSameValue()
+        {
+            Assert.AreEqual(0.5f, TerminalMath.Clamp01(0.5f));
+        }
+
+        [Test]
+        public void Clamp01_ValueBelowZero_ReturnsZero()
+        {
+            Assert.AreEqual(0f, TerminalMath.Clamp01(-0.5f));
+        }
+
+        [Test]
+        public void Clamp01_ValueAboveOne_ReturnsOne()
+        {
+            Assert.AreEqual(1f, TerminalMath.Clamp01(1.5f));
+        }
+
+        [Test]
+        public void Clamp01_Zero_ReturnsZero()
+        {
+            Assert.AreEqual(0f, TerminalMath.Clamp01(0f));
+        }
+
+        [Test]
+        public void Clamp01_One_ReturnsOne()
+        {
+            Assert.AreEqual(1f, TerminalMath.Clamp01(1f));
+        }
+
+        #endregion
+
+        #region Lerp Tests
+
+        [Test]
+        public void Lerp_TEqualsZero_ReturnsA()
+        {
+            float result = TerminalMath.Lerp(0f, 10f, 0f);
+            Assert.AreEqual(0f, result);
+        }
+
+        [Test]
+        public void Lerp_TEqualsOne_ReturnsB()
+        {
+            float result = TerminalMath.Lerp(0f, 10f, 1f);
+            Assert.AreEqual(10f, result);
+        }
+
+        [Test]
+        public void Lerp_TEqualsHalf_ReturnsMidpoint()
+        {
+            float result = TerminalMath.Lerp(0f, 10f, 0.5f);
+            Assert.AreEqual(5f, result);
+        }
+
+        [Test]
+        public void Lerp_TAboveOne_ClampedToB()
+        {
+            float result = TerminalMath.Lerp(0f, 10f, 2f);
+            Assert.AreEqual(10f, result);
+        }
+
+        [Test]
+        public void Lerp_TBelowZero_ClampedToA()
+        {
+            float result = TerminalMath.Lerp(0f, 10f, -1f);
+            Assert.AreEqual(0f, result);
+        }
+
+        [Test]
+        public void Lerp_NegativeRange_InterpolatesCorrectly()
+        {
+            float result = TerminalMath.Lerp(-10f, 10f, 0.5f);
+            Assert.AreEqual(0f, result);
+        }
+
+        #endregion
+
+        #region LerpUnclamped Tests
+
+        [Test]
+        public void LerpUnclamped_TEqualsZero_ReturnsA()
+        {
+            float result = TerminalMath.LerpUnclamped(0f, 10f, 0f);
+            Assert.AreEqual(0f, result);
+        }
+
+        [Test]
+        public void LerpUnclamped_TEqualsOne_ReturnsB()
+        {
+            float result = TerminalMath.LerpUnclamped(0f, 10f, 1f);
+            Assert.AreEqual(10f, result);
+        }
+
+        [Test]
+        public void LerpUnclamped_TEqualsTwo_ExtrapolatesCorrectly()
+        {
+            float result = TerminalMath.LerpUnclamped(0f, 10f, 2f);
+            Assert.AreEqual(20f, result);
+        }
+
+        [Test]
+        public void LerpUnclamped_TNegative_ExtrapolatesCorrectly()
+        {
+            float result = TerminalMath.LerpUnclamped(0f, 10f, -1f);
+            Assert.AreEqual(-10f, result);
+        }
+
+        #endregion
+
+        #region Min/Max Tests
+
+        [Test]
+        public void Min_Float_ReturnsSmaller()
+        {
+            Assert.AreEqual(3f, TerminalMath.Min(5f, 3f));
+            Assert.AreEqual(3f, TerminalMath.Min(3f, 5f));
+        }
+
+        [Test]
+        public void Max_Float_ReturnsLarger()
+        {
+            Assert.AreEqual(5f, TerminalMath.Max(5f, 3f));
+            Assert.AreEqual(5f, TerminalMath.Max(3f, 5f));
+        }
+
+        [Test]
+        public void Min_Int_ReturnsSmaller()
+        {
+            Assert.AreEqual(3, TerminalMath.Min(5, 3));
+            Assert.AreEqual(3, TerminalMath.Min(3, 5));
+        }
+
+        [Test]
+        public void Max_Int_ReturnsLarger()
+        {
+            Assert.AreEqual(5, TerminalMath.Max(5, 3));
+            Assert.AreEqual(5, TerminalMath.Max(3, 5));
+        }
+
+        #endregion
+    }
+}
