@@ -9,8 +9,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
     [TestFixture]
     public sealed class TerminalMathTests
     {
-        #region Clamp(float) Tests
-
+        // ─── Clamp(float) Tests ────────────────────────────────────────────────────
+        
         [Test]
         public void Clamp_Float_ValueWithinRange_ReturnsSameValue()
         {
@@ -86,10 +86,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(10f, result);
         }
 
-        #endregion
-
-        #region Clamp(int) Tests
-
+        // ─── Clamp(int) Tests ────────────────────────────────────────────────────
         [Test]
         public void Clamp_Int_ValueWithinRange_ReturnsSameValue()
         {
@@ -108,9 +105,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(10, TerminalMath.Clamp(15, 0, 10));
         }
 
-        #endregion
-
-        #region Clamp01 Tests
+        // ─── Clamp01 Tests ────────────────────────────────────────────────────
 
         [Test]
         public void Clamp01_ValueWithinRange_ReturnsSameValue()
@@ -142,10 +137,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(1f, TerminalMath.Clamp01(1f));
         }
 
-        #endregion
-
-        #region Lerp Tests
-
+        // ─── Lerp Tests ────────────────────────────────────────────────────
+        
         [Test]
         public void Lerp_TEqualsZero_ReturnsA()
         {
@@ -188,9 +181,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(0f, result);
         }
 
-        #endregion
-
-        #region LerpUnclamped Tests
+        // ─── LerpUnclamped Tests ────────────────────────────────────────────────────
 
         [Test]
         public void LerpUnclamped_TEqualsZero_ReturnsA()
@@ -220,9 +211,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(-10f, result);
         }
 
-        #endregion
-
-        #region Min/Max Tests
+        // ─── Min/Max Tests ────────────────────────────────────────────────────
 
         [Test]
         public void Min_Float_ReturnsSmaller()
@@ -251,7 +240,5 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(5, TerminalMath.Max(5, 3));
             Assert.AreEqual(5, TerminalMath.Max(3, 5));
         }
-
-        #endregion
     }
 }
