@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using YukimaruGames.Terminal.SharedKernel.Mathematics;
 
@@ -86,6 +87,19 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(10f, result);
         }
 
+        [Test]
+        public void Clamp_Float_MinGreaterThanMax_ThrowsExpectedException()
+        {
+            float value = 5f;
+            float invalidMin = 10.0f;
+            float invalidMax = 0.0f;
+            // Math.ClampがArgumentOutOfRangeExceptionをスローすることを期待
+            Assert.Throws<ArgumentException>(() =>
+            {
+                TerminalMath.Clamp(value, invalidMin, invalidMax);
+            });
+        }
+
         // ─── Clamp(int) Tests ────────────────────────────────────────────────────
         [Test]
         public void Clamp_Int_ValueWithinRange_ReturnsSameValue()
@@ -136,7 +150,20 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
         {
             Assert.AreEqual(1f, TerminalMath.Clamp01(1f));
         }
-
+        
+        [Test]
+        public void Clamp_Int_MinGreaterThanMax_ThrowsExpectedException()
+        {
+            int value = 5;
+            int invalidMin = 10;
+            int invalidMax = 0;
+            // Math.ClampがArgumentOutOfRangeExceptionをスローすることを期待
+            Assert.Throws<ArgumentException>(() =>
+            {
+                TerminalMath.Clamp(value, invalidMin, invalidMax);
+            });
+        }
+        
         // ─── Lerp Tests ────────────────────────────────────────────────────
         
         [Test]
