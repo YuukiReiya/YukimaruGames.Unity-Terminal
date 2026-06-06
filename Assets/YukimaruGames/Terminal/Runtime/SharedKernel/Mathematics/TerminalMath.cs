@@ -114,6 +114,6 @@ namespace YukimaruGames.Terminal.SharedKernel.Mathematics
         
         /// <inheritdoc cref="Max(float,float)"/> 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Max(int a, int b) => Math.Max(a, b);
+        public static int Max(int a, int b) => Math.Max(a, b);
     }
 }
