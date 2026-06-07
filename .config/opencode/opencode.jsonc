@@ -3,6 +3,13 @@
   "instructions": [
     ".opencode/AGENTS.md"
   ],
+  "permission": {
+    "*": "ask",          // 基本は確認（安全弁）
+    "bash": "allow",     // コマンド実行は自動許可
+    "read": "allow",     // 💡 ファイルの読み込みは自動許可
+    "edit": "allow",     // 💡 ファイルの書き込み・修正も自動許可（これでAskが消える！）
+    "write": "allow"     // 💡 新規ファイル作成も自動許可
+  },
   "mcp": {
     "github": {
       "type": "local",
@@ -62,6 +69,9 @@
       "models": {
         "qwen3.6:27b": {
           "name": "Qwen3.6 27B (local)"
+        },
+        "qwen3.5:9b": {
+          "name": "Qwen3.5 9B (local)"
         },
         "qwen3:14b": {
             "name": "Qwen3 14B (local)"
