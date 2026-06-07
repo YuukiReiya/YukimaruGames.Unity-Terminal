@@ -5,6 +5,8 @@
   ],
   "permission": {
     "*": "ask",          // 基本は確認（安全弁）
+    "glob": "allow",
+    "grep": "allow",
     "bash": "allow",     // コマンド実行は自動許可
     "read": "allow",     // 💡 ファイルの読み込みは自動許可
     "edit": "allow",     // 💡 ファイルの書き込み・修正も自動許可（これでAskが消える！）
