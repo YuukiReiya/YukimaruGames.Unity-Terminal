@@ -7,22 +7,12 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
     /// </summary>
     public readonly struct CommandArgument : IEquatable<CommandArgument>
     {
-        #region Lazy
-        private readonly Lazy<sbyte> _sbyteLazy;
-        private readonly Lazy<byte> _byteLazy;
-        private readonly Lazy<short> _shortLazy;
-        private readonly Lazy<ushort> _ushortLazy;
-        private readonly Lazy<int> _intLazy;
-        private readonly Lazy<uint> _uintLazy;
-        private readonly Lazy<long> _longLazy;
-        private readonly Lazy<ulong> _ulongLazy;
-        private readonly Lazy<float> _floatLazy;
-        private readonly Lazy<double> _doubleLazy;
-        private readonly Lazy<decimal> _decimalLazy;
-        private readonly Lazy<bool> _boolLazy;
-        #endregion
+        private readonly ReadOnlyMemory<char> _value;
 
-        public string String { get; }
+        /// <summary>
+        /// 文字列としての引数.
+        /// </summary>
+        public string String => _value.ToString();
 
         #region 整数型
 
@@ -32,7 +22,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// -128 ～ 127
         /// </remarks>
-        public sbyte SByte => _sbyteLazy.Value;
+        public sbyte SByte => sbyte.Parse(_value.Span);
 
         /// <summary>
         /// 符号なし8ビット
@@ -40,7 +30,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// 0 ～ 255
         /// </remarks>
-        public byte Byte => _byteLazy.Value;
+        public byte Byte => byte.Parse(_value.Span);
 
         /// <summary>
         /// 符号付き16ビット
@@ -48,7 +38,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// -32,768 ～ 32,767
         /// </remarks>
-        public short Short => _shortLazy.Value;
+        public short Short => short.Parse(_value.Span);
 
         /// <summary>
         /// 符号なし16ビット
@@ -56,7 +46,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// 0 ～ 65,535
         /// </remarks>
-        public ushort UShort => _ushortLazy.Value;
+        public ushort UShort => ushort.Parse(_value.Span);
 
         /// <summary>
         /// 符号付き32ビット
@@ -64,7 +54,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// -2,147,483,648 ～ 2,147,483,647
         /// </remarks>
-        public int Int => _intLazy.Value;
+        public int Int => int.Parse(_value.Span);
 
         /// <summary>
         /// 符号なし32ビット
@@ -72,7 +62,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// 0 ～ 4,294,967,295
         /// </remarks>
-        public uint UInt => _uintLazy.Value;
+        public uint UInt => uint.Parse(_value.Span);
 
         /// <summary>
         /// 符号付き64ビット
@@ -80,7 +70,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// -9,223,372,036,854,775,808 ～ 9,223,372,036,854,775,807
         /// </remarks>
-        public long Long => _longLazy.Value;
+        public long Long => long.Parse(_value.Span);
 
         /// <summary>
         /// 符号なし64ビット
@@ -88,7 +78,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// 0 ～ 18,446,744,073,709,551,615
         /// </remarks>
-        public ulong ULong => _ulongLazy.Value;
+        public ulong ULong => ulong.Parse(_value.Span);
 
         #endregion
 
@@ -101,7 +91,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         ///	有効桁数　: ~6 ～9 桁
         /// ±1.5 x 10−45 から ±3.4 x 1038
         /// </remarks>
-        public float Float => _floatLazy.Value;
+        public float Float => float.Parse(_value.Span);
 
         /// <summary>
         /// 8バイト
@@ -110,7 +100,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// 有効桁数　:　~15-17 桁
         /// ±5.0 × 10−324 - ±1.7 × 10308
         /// </remarks>
-        public double Double => _doubleLazy.Value;
+        public double Double => double.Parse(_value.Span);
 
         /// <summary>
         /// 16バイト
@@ -119,7 +109,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// 有効桁数　:　28 から 29 桁の数字
         /// ±1.0 x 10-28 から ±7.9228 x 1028
         /// </remarks>>
-        public decimal Decimal => _decimalLazy.Value;
+        public decimal Decimal => decimal.Parse(_value.Span);
 
         #endregion
 
@@ -129,7 +119,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <remarks>
         /// 大文字/小文字の判定は無視.
         /// </remarks>
-        public bool Bool => _boolLazy.Value;
+        public bool Bool => bool.Parse(_value.Span);
 
         /// <summary>
         /// コンストラクタ.
@@ -137,19 +127,25 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <param name="argument">引数</param>
         public CommandArgument(string argument)
         {
-            String = argument;
-            _sbyteLazy = new Lazy<sbyte>(() => sbyte.Parse(argument));
-            _byteLazy = new Lazy<byte>(() => byte.Parse(argument));
-            _shortLazy = new Lazy<short>(() => short.Parse(argument));
-            _ushortLazy = new Lazy<ushort>(() => ushort.Parse(argument));
-            _intLazy = new Lazy<int>(() => int.Parse(argument));
-            _uintLazy = new Lazy<uint>(() => uint.Parse(argument));
-            _longLazy = new Lazy<long>(() => long.Parse(argument));
-            _ulongLazy = new Lazy<ulong>(() => ulong.Parse(argument));
-            _floatLazy = new Lazy<float>(() => float.Parse(argument));
-            _doubleLazy = new Lazy<double>(() => double.Parse(argument));
-            _decimalLazy = new Lazy<decimal>(() => decimal.Parse(argument));
-            _boolLazy = new Lazy<bool>(() => bool.Parse(argument));
+            _value = argument ?? throw new ArgumentNullException(nameof(argument));
+        }
+
+        /// <summary>
+        /// コンストラクタ.
+        /// </summary>
+        /// <param name="argument">引数</param>
+        public CommandArgument(ReadOnlyMemory<char> argument)
+        {
+            _value = argument;
+        }
+
+        /// <summary>
+        /// コンストラクタ.
+        /// </summary>
+        /// <param name="argument">引数</param>
+        public CommandArgument(ReadOnlySpan<char> argument)
+        {
+            _value = argument.ToArray();
         }
 
         public T As<T>()
@@ -178,7 +174,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
 
         public bool Equals(CommandArgument other)
         {
-            return String == other.String;
+            return _value.Span.SequenceEqual(other._value.Span);
         }
 
         public override bool Equals(object obj)
@@ -188,7 +184,16 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
 
         public override int GetHashCode()
         {
-            return (String != null ? String.GetHashCode() : 0);
+            unchecked
+            {
+                var hash = 17;
+                foreach (var c in _value.Span)
+                {
+                    hash = (hash * 31) + c;
+                }
+
+                return hash;
+            }
         }
 
         public static bool operator ==(CommandArgument left, CommandArgument right)
