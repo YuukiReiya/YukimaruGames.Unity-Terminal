@@ -3,6 +3,15 @@
   "instructions": [
     ".opencode/AGENTS.md"
   ],
+  "permission": {
+    "*": "ask",          // 基本は確認（安全弁）
+    "glob": "allow",
+    "grep": "allow",
+    "bash": "allow",     // コマンド実行は自動許可
+    "read": "allow",     // 💡 ファイルの読み込みは自動許可
+    "edit": "allow",     // 💡 ファイルの書き込み・修正も自動許可（これでAskが消える！）
+    "write": "allow"     // 💡 新規ファイル作成も自動許可
+  },
   "mcp": {
     "github": {
       "type": "local",
@@ -63,11 +72,17 @@
         "qwen3.6:27b": {
           "name": "Qwen3.6 27B (local)"
         },
+        "qwen3.5:9b": {
+          "name": "Qwen3.5 9B (local)"
+        },
         "qwen3:14b": {
             "name": "Qwen3 14B (local)"
         },
         "gemma4:e4b": {
           "name": "Gemma4 E4B (local)"
+        },
+        "gemma4:26b": {
+          "name": "Gemma4 26B A4B (local)"
         },
         // registry.ollama.ai/library/gemma3:4b does not support tools
         // 軽量モデルでそのままで利用できないケースもあるみたい。
@@ -80,7 +95,7 @@
         "qwen3-coder:30b": {
           "name": "Qwen3-Coder 30B (local)"
         },
-        "qwenqwen3-coder-next:q4_K_M": {
+        "qwen3-coder-next:q4_K_M": {
           "name": "Qwen3-Coder-Next Q4KM (local)"
         }
       }
