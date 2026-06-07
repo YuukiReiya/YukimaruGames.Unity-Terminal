@@ -79,6 +79,9 @@
         "gemma4:e4b": {
           "name": "Gemma4 E4B (local)"
         },
+        "gemma4:26b": {
+          "name": "Gemma4 26B A4B (local)"
+        },
         // registry.ollama.ai/library/gemma3:4b does not support tools
         // 軽量モデルでそのままで利用できないケースもあるみたい。
         // "gemma3:4b": {
