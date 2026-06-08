@@ -1,11 +1,17 @@
 using System;
+using System.Threading.Tasks;
 
 namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
 {
     /// <summary>
     /// コマンドのデリゲート.
     /// </summary>
-    public delegate void CommandDelegate(CommandArgument[] args);
+    public delegate void CommandDelegate(ReadOnlyMemory<CommandArgument> args);
+
+    /// <summary>
+    /// コマンドの非同期デリゲート.
+    /// </summary>
+    public delegate ValueTask CommandAsyncDelegate(ReadOnlyMemory<CommandArgument> args);
     
     /// <summary>
     /// コマンドのハンドラー.

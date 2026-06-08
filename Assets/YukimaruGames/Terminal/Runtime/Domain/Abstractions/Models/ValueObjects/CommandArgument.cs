@@ -127,7 +127,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <param name="argument">引数</param>
         public CommandArgument(string argument)
         {
-            _value = argument ?? throw new ArgumentNullException(nameof(argument));
+            _value = (argument ?? throw new ArgumentNullException(nameof(argument))).AsMemory();
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
@@ -9,7 +10,7 @@ namespace YukimaruGames.Terminal.Domain.Services
     public sealed class CommandInvoker : ICommandInvoker
     {
         /// <inheritdoc/>
-        public void Execute(CommandHandler handler, CommandArgument[] arguments)
+        public void Execute(CommandHandler handler, ReadOnlyMemory<CommandArgument> arguments)
         {
             handler.Proc(arguments);
         }

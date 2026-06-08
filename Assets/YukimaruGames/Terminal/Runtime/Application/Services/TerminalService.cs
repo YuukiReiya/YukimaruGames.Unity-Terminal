@@ -138,7 +138,8 @@ namespace YukimaruGames.Terminal.Application.Services
 
             try
             {
-                _invoker.Execute(handler, parse.Arguments);
+                var arguments = parse.Arguments?.AsMemory() ?? ReadOnlyMemory<CommandArgument>.Empty;
+                _invoker.Execute(handler, arguments);
             }
             catch (CommandArgumentException e)
             {

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
 namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
@@ -42,5 +43,23 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
         /// </param>
         /// <returns>パース結果のステータスコード</returns>
         ParseStatusCode Parse(string str, out (string Command, CommandArgument[]Arguments) tuple);
+
+        /// <summary>
+        /// 文字列メモリからコマンド引数型へパースを試行する.
+        /// </summary>
+        /// <param name="str">解析文字列</param>
+        /// <param name="tuple">ValueTuple 
+        /// <p>* Command:コマンド名</p>
+        /// <p>* Arguments:引数</p>
+        /// </param>
+        /// <returns>パース結果のステータスコード</returns>
+        ParseStatusCode Parse(ReadOnlyMemory<char> str, out (string Command, CommandArgument[] Arguments) tuple);
+
+        /// <summary>
+        /// 文字列メモリからコマンド引数型へ非同期でパースを試行する.
+        /// </summary>
+        /// <param name="str">解析文字列</param>
+        /// <returns>パース結果.</returns>
+        ValueTask<(ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str);
     }
 }
