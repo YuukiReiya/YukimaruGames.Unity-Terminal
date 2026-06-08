@@ -99,7 +99,7 @@ namespace YukimaruGames.Terminal.Domain.Services
             var result = TryExtractArguments(remainder, out var arguments);
             if (result is not ICommandParser.ParseStatusCode.Ok)
             {
-                tuple = (source.ToString(), null);
+                tuple = (command, null);
                 return result;
             }
 
@@ -142,45 +142,45 @@ namespace YukimaruGames.Terminal.Domain.Services
                 }
 
                 var argStart = pos;
+                var argEnd = pos;
                 var inQuote = false;
                 var quote = '\0';
-                var tokenStarted = false;
 
                 while (pos < len)
                 {
                     var current = span[pos];
 
-                    if (!inQuote && IsDelimiter(current))
+                    if (!inQuote)
                     {
-                        break;
-                    }
-
-                    if (current is '\'' or '"')
-                    {
-                        if (!inQuote)
+                        if (IsDelimiter(current))
                         {
-                            var hadTokenStarted = tokenStarted;
-                            tokenStarted = true;
+                            break;
+                        }
+
+                        if (current is '\'' or '"')
+                        {
                             inQuote = true;
                             quote = current;
-                            if (!hadTokenStarted)
-                            {
-                                argStart = pos + 1;
-                            }
-
+                            argStart = pos + 1;
+                            argEnd = argStart;
                             pos++;
                             continue;
                         }
 
-                        if (current == quote)
-                        {
-                            inQuote = false;
-                            pos++;
-                            continue;
-                        }
+                        argEnd = pos + 1;
+                        pos++;
+                        continue;
                     }
 
-                    tokenStarted = true;
+                    if (inQuote && current == quote)
+                    {
+                        inQuote = false;
+                        argEnd = pos;
+                        pos++;
+                        continue;
+                    }
+
+                    argEnd = pos + 1;
                     pos++;
                 }
 
@@ -190,7 +190,7 @@ namespace YukimaruGames.Terminal.Domain.Services
                     return ICommandParser.ParseStatusCode.SyntaxError;
                 }
 
-                var argLength = pos - argStart;
+                var argLength = argEnd - argStart;
                 if (argLength < 0)
                 {
                     argLength = 0;
