@@ -87,15 +87,29 @@ namespace YukimaruGames.Terminal.Domain.Services
         private static ICommandParser.ParseStatusCode ParseCore(ReadOnlyMemory<char> source, out (string Command, CommandArgument[] Arguments) tuple)
         {
             var span = source.Span;
-            var firstDelimiter = span.IndexOfAny(Delimiters);
-            if (firstDelimiter is -1 or 0)
+            var commandStart = 0;
+            while (commandStart < span.Length && IsDelimiter(span[commandStart]))
             {
-                tuple = (source.ToString(), Array.Empty<CommandArgument>());
+                commandStart++;
+            }
+
+            if (commandStart >= span.Length)
+            {
+                tuple = default;
+                return ICommandParser.ParseStatusCode.MalformedInput;
+            }
+
+            var remaining = source.Slice(commandStart);
+            var remainingSpan = remaining.Span;
+            var firstDelimiter = remainingSpan.IndexOfAny(Delimiters);
+            if (firstDelimiter is -1)
+            {
+                tuple = (remainingSpan.ToString(), Array.Empty<CommandArgument>());
                 return ICommandParser.ParseStatusCode.Ok;
             }
 
-            var command = source.Slice(0, firstDelimiter).ToString();
-            var remainder = source.Slice(firstDelimiter + 1);
+            var command = remainingSpan.Slice(0, firstDelimiter).ToString();
+            var remainder = remaining.Slice(firstDelimiter + 1);
             var result = TryExtractArguments(remainder, out var arguments);
             if (result is not ICommandParser.ParseStatusCode.Ok)
             {
