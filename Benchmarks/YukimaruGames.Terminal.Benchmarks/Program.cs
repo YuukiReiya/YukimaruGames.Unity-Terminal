@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.Benchmarks
         {
             var config = DefaultConfig.Instance.WithOption(ConfigOptions.DisableOptimizationsValidator, true);
             var outputPath = Path.Combine(Directory.GetCurrentDirectory(), "../../../../BenchmarkReports/");
-            config.WithArtifactsPath(outputPath);
+            config = config.WithArtifactsPath(outputPath);
             var summary = BenchmarkRunner.Run<TerminalColorBenchmarks>(config);
         }
     }
