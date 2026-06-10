@@ -61,6 +61,7 @@ namespace YukimaruGames.Terminal.Application.Services
                 _logger?.Send(
                     MessageType.Error,
                     $"Invalid string format: \"{input}\" is not enclosed with single (\') or double (\") quotes.");
+                return;
             }
 
             try
