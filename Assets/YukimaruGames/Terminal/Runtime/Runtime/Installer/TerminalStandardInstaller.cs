@@ -334,13 +334,18 @@ namespace YukimaruGames.Terminal.Runtime
             var history = new CommandHistory();
             var discover = new CommandDiscoverer(logger);
             var autocomplete = new CommandAutocomplete();
-            var service = new TerminalService(
+            var executeCommandUseCase = new ExecuteCommandUseCase(
                 logger,
                 registry,
                 invoker,
                 parser,
+                history);
+            var service = new TerminalService(
+                logger,
+                registry,
                 history,
-                autocomplete
+                autocomplete,
+                executeCommandUseCase
             );
 
             return new DomainContext

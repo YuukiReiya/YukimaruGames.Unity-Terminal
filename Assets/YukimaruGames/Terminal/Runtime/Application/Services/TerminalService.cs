@@ -4,7 +4,6 @@ using System.Linq;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Mappers;
 using YukimaruGames.Terminal.Application.Models;
-using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
 using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Repositories;
 using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.Entities;
@@ -24,11 +23,9 @@ namespace YukimaruGames.Terminal.Application.Services
     {
         private readonly ICommandLogger _logger;
         private readonly ICommandRegistry _registry;
-        private readonly ICommandInvoker _invoker;
-        private readonly ICommandParser _parser;
         private readonly ICommandHistory _history;
         private readonly ICommandAutocomplete _autocomplete;
-        private readonly ICommandDiscoverer _discoverer;
+        private readonly IExecuteCommandUseCase _executeCommandUseCase;
 
         private Action _onLogUpdated;
         private Action<LogEntry[]> _onLogAdded;
@@ -69,17 +66,15 @@ namespace YukimaruGames.Terminal.Application.Services
         public TerminalService(
             ICommandLogger logger,
             ICommandRegistry registry,
-            ICommandInvoker invoker,
-            ICommandParser parser,
             ICommandHistory history,
-            ICommandAutocomplete autocomplete)
+            ICommandAutocomplete autocomplete,
+            IExecuteCommandUseCase executeCommandUseCase)
         {
             _logger = logger;
             _registry = registry;
-            _invoker = invoker;
-            _parser = parser;
             _history = history;
             _autocomplete = autocomplete;
+            _executeCommandUseCase = executeCommandUseCase;
 
             if (_logger != null)
             {
@@ -87,8 +82,6 @@ namespace YukimaruGames.Terminal.Application.Services
                 _logger.OnItemAdded += OnLogItemAdded;
                 _logger.OnItemRemoved += OnLogItemRemoved;
             }
-            
-            // ロガーに登録されたログを詰め込んでからイベントを登録することで初回登録にかかるイベント呼び出しのオーバヘッドを削減.
         }
 
         /// <summary>
@@ -112,47 +105,7 @@ namespace YukimaruGames.Terminal.Application.Services
         /// <inheritdoc/>
         void ITerminalService.Execute(string str)
         {
-            _logger?.Send(MessageType.Entry, str);
-            _history.Add(str);
-
-            var result = _parser.Parse(str, out var parse);
-
-            if (string.IsNullOrEmpty(parse.Command))
-            {
-                return;
-            }
-
-            if (!_registry.TryGet(parse.Command, out var handler))
-            {
-                _logger?.Send(MessageType.Error, $"No such command: '{parse.Command}'.");
-                return;
-            }
-
-            // 構文エラー.
-            if (0 < (result & ICommandParser.ParseStatusCode.SyntaxError))
-            {
-                _logger?.Send(
-                    MessageType.Error,
-                    $"Invalid string format: \"{str}\" is not enclosed with single (\') or double (\") quotes.");
-            }
-
-            try
-            {
-                var arguments = parse.Arguments?.AsMemory() ?? ReadOnlyMemory<CommandArgument>.Empty;
-                _invoker.Execute(handler, arguments);
-            }
-            catch (CommandArgumentException e)
-            {
-                _logger?.Send(MessageType.Exception, $"Error: {e.Message}");
-            }
-            catch (CommandFormatException e)
-            {
-                _logger?.Send(MessageType.Exception, $"Error: {e.Message}");
-            }
-            catch (Exception e)
-            {
-                _logger?.Send(MessageType.Exception, $"{e.GetType().Name}: {e.Message}");
-            }
+            _executeCommandUseCase.ExecuteAsync(str).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc/>
