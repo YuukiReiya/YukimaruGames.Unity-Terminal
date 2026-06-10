@@ -89,56 +89,105 @@ namespace YukimaruGames.Terminal.Domain.Models
             return ((uint)A << 24) | ((uint)R << 16) | ((uint)G << 8) | B;
         }
 
+        public bool TryFormat(Span<char> destination, bool includeAlpha)
+        {
+            var requiredLength = includeAlpha ?
+                9 :
+                7;
+
+            if (destination.Length < requiredLength)
+            {
+                return false;
+            }
+
+            destination[0] = '#';
+
+            if (!R.TryFormat(destination.Slice(1, 2), out _, "X2") ||
+                !G.TryFormat(destination.Slice(3, 2), out _, "X2") ||
+                !B.TryFormat(destination.Slice(5, 2), out _, "X2"))
+            {
+                return false;
+            }
+
+            if (includeAlpha)
+            {
+                if (!A.TryFormat(destination.Slice(7, 2), out _, "X2"))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// HTML形式（#RRGGBB または #RRGGBBAA）からカラーをパースする.
         /// </summary>
-        /// <param name="hex">HTML形式のカラーコード（例: "#FF0000", "#FF0000FF"）</param>
+        /// <param name="hexSpan">HTML形式のカラーコードSpan表現（例: "#FF0000", "#FF0000FF"）</param>
         /// <param name="color">パース結果</param>
         /// <returns>パースの成功可否</returns>
         /// <example>
         /// <code>
+        /// // 1. 標準的な6桁形式（RGB: Alphaは自動的に255に設定されます）
         /// if (TerminalColor.TryParseHex("#FF0000", out var red))
         /// {
-        ///     // red = (255, 0, 0, 255)
+        ///     // red.R = 255, red.G = 0, red.B = 0, red.A = 255
         /// }
         /// 
+        /// // 2. アルファ値を含む8桁形式（RGBA）
         /// if (TerminalColor.TryParseHex("#FF000080", out var redTransparent))
         /// {
-        ///     // redTransparent = (255, 0, 0, 128)
+        ///     // redTransparent.R = 255, redTransparent.G = 0, redTransparent.B = 0, redTransparent.A = 128
+        /// }
+        /// 
+        /// // 3. ゼロアロケーション最適化（ReadOnlySpan&lt;char&gt; による部分文字列パース）
+        /// // 文字列の切り出し（Substring）による GC Alloc を発生させずに安全にパース可能です
+        /// ReadOnlySpan&lt;char&gt; logLine = "#00FF00[Update]".AsSpan();
+        /// if (TerminalColor.TryParseHex(logLine.Slice(0, 7), out var green))
+        /// {
+        ///     // green.R = 0, green.G = 255, green.B = 0, green.A = 255
         /// }
         /// </code>
         /// </example>
-        public static bool TryParseHex(string hex, out TerminalColor color)
+        public static bool TryParseHex(ReadOnlySpan<char> hexSpan, out TerminalColor color)
         {
             color = default;
 
-            if (string.IsNullOrEmpty(hex))
+            if (hexSpan.IsEmpty)
+            {
                 return false;
+            }
 
             // # を削除
-            if (hex.StartsWith("#"))
-                hex = hex.Substring(1);
+            if (hexSpan[0] == '#')
+            {
+                hexSpan = hexSpan.Slice(1);
+            }
 
             // 6文字（RGB）または 8文字（RGBA）
-            if (hex.Length != 6 && hex.Length != 8)
-                return false;
-
-            try
-            {
-                uint r = uint.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
-                uint g = uint.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
-                uint b = uint.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
-                uint a = hex.Length == 8
-                    ? uint.Parse(hex.Substring(6, 2), NumberStyles.HexNumber)
-                    : 255U;
-
-                color = new TerminalColor((byte)r, (byte)g, (byte)b, (byte)a);
-                return true;
-            }
-            catch
+            if (hexSpan.Length is not (6 or 8))
             {
                 return false;
             }
+
+            if (!byte.TryParse(hexSpan.Slice(0, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var r) ||
+                !byte.TryParse(hexSpan.Slice(2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var g) ||
+                !byte.TryParse(hexSpan.Slice(4, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var b))
+            {
+                return false;
+            }
+
+            byte a = 255;
+            if (hexSpan.Length == 8)
+            {
+                if (!byte.TryParse(hexSpan.Slice(6, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out a))
+                {
+                    return false;
+                }
+            }
+
+            color = new TerminalColor(r, g, b, a);
+            return true;
         }
 
         /// <summary>
