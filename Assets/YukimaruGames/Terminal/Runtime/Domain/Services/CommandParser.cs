@@ -113,7 +113,7 @@ namespace YukimaruGames.Terminal.Domain.Services
             var result = TryExtractArguments(remainder, out var arguments);
             if (result is not ICommandParser.ParseStatusCode.Ok)
             {
-                tuple = (command, null);
+                tuple = (command, Array.Empty<CommandArgument>());
                 return result;
             }
 
