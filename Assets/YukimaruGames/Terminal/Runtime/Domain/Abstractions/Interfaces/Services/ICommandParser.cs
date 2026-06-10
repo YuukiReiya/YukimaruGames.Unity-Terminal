@@ -42,7 +42,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
         /// <p>* Arguments:引数</p>
         /// </param>
         /// <returns>パース結果のステータスコード</returns>
-        ParseStatusCode Parse(string str, out (string Command, CommandArgument[]Arguments) tuple);
+        ParseStatusCode Parse(string str, out (string Command, CommandArgument[] Arguments) tuple);
 
         /// <summary>
         /// 文字列メモリからコマンド引数型へパースを試行する.
