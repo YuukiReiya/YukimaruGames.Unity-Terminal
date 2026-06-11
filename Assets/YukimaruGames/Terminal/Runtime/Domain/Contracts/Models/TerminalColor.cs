@@ -56,6 +56,26 @@ namespace YukimaruGames.Terminal.Domain.Models
         public byte A { get; }
 
         /// <summary>
+        /// バイト最大値
+        /// </summary>
+        private const float MaxByteValue = byte.MaxValue;
+
+        /// <summary>
+        /// 丸め用の誤差オフセット
+        /// </summary>
+        private const float RoundingOffset = 0.5f;
+
+        /// <summary>
+        /// ガンマ補正用指数値（標準的な sRGB ガンマ値）。
+        /// </summary>
+        private const float Gamma = 2.2f;
+        
+        /// <summary>
+        /// ガンマ補正の逆指数値（1 / 2.2）。
+        /// </summary>
+        private const float InverseGamma = 1f / Gamma;
+        
+        /// <summary>
         /// コンストラクタ.
         /// </summary>
         /// <param name="r">赤成分（0-255）</param>
@@ -241,11 +261,10 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// <returns>線形色空間のカラー（浮動小数点、0-1範囲）</returns>
         public (float r, float g, float b, float a) ToLinear()
         {
-            const float gamma = 2.2f;
-            float r = MathF.Pow(R / 255f, gamma);
-            float g = MathF.Pow(G / 255f, gamma);
-            float b = MathF.Pow(B / 255f, gamma);
-            float a = A / 255f;
+            var r = MathF.Pow(R / MaxByteValue, Gamma);
+            var g = MathF.Pow(G / MaxByteValue, Gamma);
+            var b = MathF.Pow(B / MaxByteValue, Gamma);
+            var a = A / MaxByteValue;
             return (r, g, b, a);
         }
 
@@ -261,12 +280,12 @@ namespace YukimaruGames.Terminal.Domain.Models
         /// <returns>Gamma色空間のカラー</returns>
         public static TerminalColor FromLinear(float r, float g, float b, float a = 1f)
         {
-            const float gamma = 1f / 2.2f;
+            var clampedAlpha = MathF.Min(MathF.Max(0f, a), 1f);
             return new TerminalColor(
-                ToColorByte(r, gamma),
-                ToColorByte(g, gamma),
-                ToColorByte(b, gamma),
-                ToColorByte(a, gamma));
+                ToColorByte(r, InverseGamma),
+                ToColorByte(g, InverseGamma),
+                ToColorByte(b, InverseGamma),
+                (byte)(clampedAlpha * MaxByteValue + RoundingOffset));
         }
 
         /// <summary>
@@ -290,10 +309,7 @@ namespace YukimaruGames.Terminal.Domain.Models
             var clamped = MathF.Min(MathF.Max(0f, value), 1f);
             var powered = MathF.Pow(clamped, gamma);
 
-            const float maxByteValue = byte.MaxValue;
-            const float roundingOffset = 0.5f;
-            
-            return (byte)(powered * maxByteValue + roundingOffset);
+            return (byte)(powered * MaxByteValue + RoundingOffset);
         }
 
         /// <summary>
