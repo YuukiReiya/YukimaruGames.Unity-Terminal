@@ -218,6 +218,6 @@ namespace YukimaruGames.Terminal.Domain.Services
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsDelimiter(char value) => value is ' ' or '　' or '\t';
+        private static bool IsDelimiter(char value) => 0 <= Array.IndexOf(Delimiters, value);
     }
 }
