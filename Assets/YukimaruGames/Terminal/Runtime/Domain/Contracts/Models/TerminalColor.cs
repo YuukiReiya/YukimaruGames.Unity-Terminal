@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace YukimaruGames.Terminal.Domain.Models
 {
@@ -89,6 +90,25 @@ namespace YukimaruGames.Terminal.Domain.Models
             return ((uint)A << 24) | ((uint)R << 16) | ((uint)G << 8) | B;
         }
 
+        /// <summary>
+        /// この <see cref="TerminalColor"/> を16進数文字列（#RRGGBB または #RRGGBBAA）としてフォーマットし、指定されたバッファに書き込みます。
+        /// </summary>
+        /// <param name="destination">書き込み先の文字バッファ。</param>
+        /// <param name="includeAlpha">アルファ成分を含める場合は <c>true</c>。このとき最低 9 文字の領域が必要です。</param>
+        /// <returns>
+        /// 書き込みに成功した場合は <c>true</c>。
+        /// <paramref name="destination"/> のサイズが不足していて書き込めなかった場合は <c>false</c> を返します。
+        /// </returns>
+        /// <remarks>
+        /// このメソッドは GC アロケーションを一切発生させません（Zero-Allocation）。
+        /// <para>
+        /// 必要となる最小バッファサイズは以下の通りです：
+        /// <list type="bullet">
+        /// <item><description><paramref name="includeAlpha"/> が <c>false</c> の場合: 7 文字</description></item>
+        /// <item><description><paramref name="includeAlpha"/> が <c>true</c> の場合: 9 文字</description></item>
+        /// </list>
+        /// </para>
+        /// </remarks>
         public bool TryFormat(Span<char> destination, bool includeAlpha)
         {
             var requiredLength = includeAlpha ?
@@ -231,20 +251,49 @@ namespace YukimaruGames.Terminal.Domain.Models
 
         /// <summary>
         /// 線形色空間（Linear）のカラーからGamma色空間に変換する.
+        /// </summary>
+        /// <remarks>
         /// <para>
         /// Gamma = 2.2 を使用してガンマ補正します。
         /// </para>
-        /// </summary>
-        /// <param name="linear">線形色空間のカラー（0-1範囲）</param>
+        /// 線形色空間のカラー（0-1範囲）
+        /// </remarks>
         /// <returns>Gamma色空間のカラー</returns>
         public static TerminalColor FromLinear(float r, float g, float b, float a = 1f)
         {
             const float gamma = 1f / 2.2f;
-            byte rb = (byte)(MathF.Pow(r, gamma) * 255f);
-            byte gb = (byte)(MathF.Pow(g, gamma) * 255f);
-            byte bb = (byte)(MathF.Pow(b, gamma) * 255f);
-            byte ab = (byte)(a * 255f);
-            return new TerminalColor(rb, gb, bb, ab);
+            return new TerminalColor(
+                ToColorByte(r, gamma),
+                ToColorByte(g, gamma),
+                ToColorByte(b, gamma),
+                ToColorByte(a, gamma));
+        }
+
+        /// <summary>
+        /// 正規化された浮動小数点値 (0.0 ～ 1.0) を、ガンマ補正を適用した上で 8bit 色成分 (0 ～ 255) に変換します。
+        /// </summary>
+        /// <param name="value">変換元の値 (0.0 未満または 1.0 を超える場合は内部でクランプされます)。</param>
+        /// <param name="gamma">ガンマ補正の指数値。</param>
+        /// <returns>変換後の 8bit 符号なし整数 (0 ～ 255)。</returns>
+        /// <remarks>
+        /// <para>
+        /// このメソッドは GC アロケーションを一切発生させず、非常に高速に動作するように設計されています。
+        /// </para>
+        /// <para>
+        /// 四捨五入には <see cref="MathF.Round(float)"/> 等のメソッド呼び出しを行わず、最適化されたイディオム (+ 0.5f) を
+        /// 採用しており、パフォーマンスのオーバーヘッドを極限まで排除しています。
+        /// </para>
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static byte ToColorByte(float value, float gamma)
+        {
+            var clamped = MathF.Min(MathF.Max(0f, value), 1f);
+            var powered = MathF.Pow(clamped, gamma);
+
+            const float maxByteValue = byte.MaxValue;
+            const float roundingOffset = 0.5f;
+            
+            return (byte)(powered * maxByteValue + roundingOffset);
         }
 
         /// <summary>
