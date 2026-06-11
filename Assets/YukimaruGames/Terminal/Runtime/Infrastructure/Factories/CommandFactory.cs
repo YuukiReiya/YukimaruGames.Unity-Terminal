@@ -24,30 +24,44 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         /// <returns>コマンドの実行型</returns>
         private static CommandHandler Create(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help)
         {
-            var parameter4Ex = Expression.Parameter(typeof(CommandArgument[]), "args");
+            var parameter4Ex = Expression.Parameter(typeof(ReadOnlyMemory<CommandArgument>), "args");
+            var parameter4ArrayEx = Expression.Variable(typeof(CommandArgument[]), "argsArray");
             var methodParameters = methodInfo.GetParameters();
             Expression bodyEx;
+            var toArrayMethod = typeof(ReadOnlyMemory<CommandArgument>).GetMethod(nameof(ReadOnlyMemory<CommandArgument>.ToArray))!;
+            var convertToArrayEx = Expression.Assign(parameter4ArrayEx, Expression.Call(parameter4Ex, toArrayMethod));
 
             var isTakeRawArray = methodParameters.Length == 1 && methodParameters[0].ParameterType == typeof(CommandArgument[]);
+            var isTakeRawMemory = methodParameters.Length == 1 && methodParameters[0].ParameterType == typeof(ReadOnlyMemory<CommandArgument>);
 
-            if (isTakeRawArray)
+            if (isTakeRawMemory)
             {
-                bodyEx = Expression.Call(null, methodInfo, parameter4Ex);
+                bodyEx = Expression.Call(methodInfo.IsStatic ? null : Expression.Constant(instance), methodInfo, parameter4Ex);
+            }
+            else if (isTakeRawArray)
+            {
+                bodyEx = Expression.Block(
+                    new[] { parameter4ArrayEx },
+                    convertToArrayEx,
+                    Expression.Call(methodInfo.IsStatic ? null : Expression.Constant(instance), methodInfo, parameter4ArrayEx));
             }
             else
             {
-                var methodCallExpression = BuildMethodCallExpression(instance, methodInfo, parameter4Ex, methodParameters);
-                var validateCallExpression = BuildValidateExpression(parameter4Ex, minArgCount, maxArgCount);
+                var methodCallExpression = BuildMethodCallExpression(instance, methodInfo, parameter4ArrayEx, methodParameters);
+                var validateCallExpression = BuildValidateExpression(parameter4ArrayEx, minArgCount, maxArgCount);
                 var throwException = Expression.Throw(
                     Expression.New(
                         typeof(CommandArgumentException).GetConstructor(new[] { typeof(int), typeof(int), typeof(int), typeof(Exception) })!,
-                        Expression.Property(parameter4Ex, "Length"),
+                        Expression.Property(parameter4ArrayEx, "Length"),
                         Expression.Constant(minArgCount),
                         Expression.Constant(maxArgCount),
                         Expression.Constant(null, typeof(Exception))
                     ), typeof(void));
 
-                bodyEx = Expression.Condition(validateCallExpression, methodCallExpression, throwException);
+                bodyEx = Expression.Block(
+                    new[] { parameter4ArrayEx },
+                    convertToArrayEx,
+                    Expression.Condition(validateCallExpression, methodCallExpression, throwException));
             }
 
             var lambda = Expression.Lambda<CommandDelegate>(bodyEx, parameter4Ex);

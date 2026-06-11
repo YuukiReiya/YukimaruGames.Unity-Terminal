@@ -1,3 +1,4 @@
+using System;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
 namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
@@ -12,6 +13,6 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
         /// </summary>
         /// <param name="handler">実行するコマンドハンドル</param>
         /// <param name="arguments">引数</param>
-        void Execute(CommandHandler handler, CommandArgument[] arguments);
+        void Execute(CommandHandler handler, ReadOnlyMemory<CommandArgument> arguments);
     }
 }

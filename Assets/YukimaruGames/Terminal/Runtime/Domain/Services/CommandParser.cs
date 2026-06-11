@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
@@ -12,14 +12,13 @@ namespace YukimaruGames.Terminal.Domain.Services
     /// </summary>
     public sealed class CommandParser : ICommandParser
     {
-        private char[] _delimiters;
-        private char[] Delimiters => _delimiters ??= new[]
+        private static readonly char[] Delimiters =
         {
             // 空白(半角)
             ' ',
             // 空白(全角)
             '　',
-            //  タブ
+            // タブ
             '\t'
         };
 
@@ -34,7 +33,7 @@ namespace YukimaruGames.Terminal.Domain.Services
         /// <returns>
         /// Parseの成功可否.
         /// </returns>
-        public ICommandParser.ParseStatusCode Parse(string str, out (string Command, CommandArgument[]Arguments) tuple)
+        public ICommandParser.ParseStatusCode Parse(string str, out (string Command, CommandArgument[] Arguments) tuple)
         {
             if (string.IsNullOrEmpty(str))
             {
@@ -42,27 +41,84 @@ namespace YukimaruGames.Terminal.Domain.Services
                 return ICommandParser.ParseStatusCode.MalformedInput;
             }
 
-            var builder = new StringBuilder(str);
-            var index = str.IndexOfAny(Delimiters);
-            if (index is -1 or 0)
+            return ParseCore(str.AsMemory(), out tuple);
+        }
+
+        /// <summary>
+        /// 文字列メモリからコマンド引数型へパース.
+        /// </summary>
+        /// <param name="str">解析文字列</param>
+        /// <param name="tuple">
+        /// <p>Command:コマンド名</p>
+        /// <p>Arguments:引数</p>
+        /// </param>
+        /// <returns>Parseの成功可否.</returns>
+        public ICommandParser.ParseStatusCode Parse(ReadOnlyMemory<char> str, out (string Command, CommandArgument[] Arguments) tuple)
+        {
+            if (str.IsEmpty)
             {
-                tuple = (str, Array.Empty<CommandArgument>());
+                tuple = default;
+                return ICommandParser.ParseStatusCode.MalformedInput;
+            }
+
+            return ParseCore(str, out tuple);
+        }
+
+        /// <summary>
+        /// 非同期で文字列メモリからコマンド引数型へパース.
+        /// </summary>
+        /// <param name="str">解析文字列</param>
+        /// <returns>パース結果.</returns>
+        public ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str)
+        {
+            var status = Parse(str, out var tuple);
+            return new ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)>((status, tuple.Command, tuple.Arguments));
+        }
+
+        /// <summary>
+        /// 文字列メモリからコマンド引数型へパース.
+        /// </summary>
+        /// <param name="source">解析文字列</param>
+        /// <param name="tuple">
+        /// <p>Command:コマンド名</p>
+        /// <p>Arguments:引数</p>
+        /// </param>
+        /// <returns>Parseの成功可否.</returns>
+        private static ICommandParser.ParseStatusCode ParseCore(ReadOnlyMemory<char> source, out (string Command, CommandArgument[] Arguments) tuple)
+        {
+            var span = source.Span;
+            var commandStart = 0;
+            while (commandStart < span.Length && IsDelimiter(span[commandStart]))
+            {
+                commandStart++;
+            }
+
+            if (commandStart >= span.Length)
+            {
+                tuple = default;
+                return ICommandParser.ParseStatusCode.MalformedInput;
+            }
+
+            var remaining = source.Slice(commandStart);
+            var remainingSpan = remaining.Span;
+            var firstDelimiter = remainingSpan.IndexOfAny(Delimiters);
+            if (firstDelimiter is -1)
+            {
+                tuple = (remainingSpan.ToString(), Array.Empty<CommandArgument>());
                 return ICommandParser.ParseStatusCode.Ok;
             }
 
-            var command = str[..(index)];
-            var text = builder.Remove(0, index + 1).ToString();
-
-            var result = TryExtractArguments(text, out var args);
-            if (result is ICommandParser.ParseStatusCode.Ok)
+            var command = remainingSpan.Slice(0, firstDelimiter).ToString();
+            var remainder = remaining.Slice(firstDelimiter + 1);
+            var result = TryExtractArguments(remainder, out var arguments);
+            if (result is not ICommandParser.ParseStatusCode.Ok)
             {
-                var commandArguments = Convert(args);
-                tuple = (command, commandArguments);
-                return ICommandParser.ParseStatusCode.Ok;
+                tuple = (command, Array.Empty<CommandArgument>());
+                return result;
             }
 
-            tuple = (str, null);
-            return result;
+            tuple = (command, arguments);
+            return ICommandParser.ParseStatusCode.Ok;
         }
 
         /// <summary>
@@ -74,98 +130,94 @@ namespace YukimaruGames.Terminal.Domain.Services
         /// <remarks>
         /// ""(ダブルクォート),''(シングルクォート)で括られた空白文字は考慮する.
         /// </remarks>
-        private ICommandParser.ParseStatusCode TryExtractArguments(string text,out string[]args)
+        private static ICommandParser.ParseStatusCode TryExtractArguments(ReadOnlyMemory<char> text, out CommandArgument[] args)
         {
-            if (string.IsNullOrWhiteSpace(text))
+            var span = text.Span;
+            if (span.IsEmpty)
             {
-                args = default;
+                args = Array.Empty<CommandArgument>();
                 return ICommandParser.ParseStatusCode.Ok;
             }
-            
-            const char singleQuote = '\'';
-            const char doubleQuote = '\"';
-            var quotes =
-                new (char Head, char Tail)[] { (singleQuote, singleQuote), (doubleQuote, doubleQuote) };
 
-            var sb = new StringBuilder();
-            (char Head, char Tail)? tmp = null;
-            
+            var results = new List<CommandArgument>();
             var pos = 0;
-            var len = text.Length;
-            var queue = new Queue<string>();
-            
+            var len = span.Length;
 
             while (pos < len)
             {
-                var s = text[pos];
-
-                if (tmp.HasValue)
+                while (pos < len && IsDelimiter(span[pos]))
                 {
-                    if (s.Equals(tmp.Value.Tail))
-                    {
-                        tmp = null;
-                    }
+                    pos++;
                 }
-                else
+
+                if (pos >= len)
                 {
-                    // 区切り文字.
-                    if (Delimiters.Contains(s) && 0 < sb.Length)
+                    break;
+                }
+
+                var argStart = pos;
+                var argEnd = pos;
+                var inQuote = false;
+                var quote = '\0';
+
+                while (pos < len)
+                {
+                    var current = span[pos];
+
+                    if (!inQuote)
                     {
-                        queue.Enqueue(sb.ToString());
-                        sb.Clear();
+                        if (IsDelimiter(current))
+                        {
+                            break;
+                        }
+
+                        if (current is '\'' or '"')
+                        {
+                            inQuote = true;
+                            quote = current;
+                            argStart = pos + 1;
+                            argEnd = argStart;
+                            pos++;
+                            continue;
+                        }
+
+                        argEnd = pos + 1;
                         pos++;
                         continue;
                     }
-                    else
+
+                    if (inQuote && current == quote)
                     {
-                        // 文字列リテラル.
-                        foreach (var quote in quotes)
-                        {
-                            if (s.Equals(quote.Head))
-                            {
-                                tmp = quote;
-                                break;
-                            }
-                        }
+                        inQuote = false;
+                        argEnd = pos;
+                        pos++;
+                        continue;
                     }
+
+                    argEnd = pos + 1;
+                    pos++;
                 }
 
-                sb.Append(s);
-                pos++;
+                if (inQuote)
+                {
+                    args = Array.Empty<CommandArgument>();
+                    return ICommandParser.ParseStatusCode.SyntaxError;
+                }
+
+                var argLength = argEnd - argStart;
+                if (argLength < 0)
+                {
+                    argLength = 0;
+                }
+
+                results.Add(new CommandArgument(text.Slice(argStart, argLength)));
             }
 
-            if (0 < sb.Length)
-            {
-                queue.Enqueue(sb.ToString());
-            }
-
-            args = new string[queue.Count];
-
-            for (var i = 0; i < args.Length; i++) args[i] = queue.Dequeue();
-
-            if (tmp.HasValue)
-            {
-                return ICommandParser.ParseStatusCode.SyntaxError;
-            }
-            
+            args = results.Count == 0 ? Array.Empty<CommandArgument>() : results.ToArray();
             return ICommandParser.ParseStatusCode.Ok;
         }
 
-        private CommandArgument[] Convert(string[] arguments)
-        {
-            if (arguments is null)
-            {
-                return Array.Empty<CommandArgument>();
-            }
-
-            var args = new CommandArgument[arguments.Length];
-            for (var i = 0; i < arguments.Length; i++)
-            {
-                var arg = arguments[i];
-                args[i] = new CommandArgument(arg);
-            }
-
-            return args;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsDelimiter(char value) => 0 <= Array.IndexOf(Delimiters, value);
     }
 }

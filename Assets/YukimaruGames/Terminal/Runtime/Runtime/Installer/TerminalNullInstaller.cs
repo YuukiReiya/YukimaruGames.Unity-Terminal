@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Services;
 using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
@@ -19,6 +20,12 @@ namespace YukimaruGames.Terminal.Runtime
             var parser = new CommandParser();
             var history = new CommandHistory();
             var autocomplete = new CommandAutocomplete();
+            var executeCommandUseCase = new ExecuteCommandUseCase(
+                logger,
+                registry,
+                invoker,
+                parser,
+                history);
             var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), InputKeyboardType.None, null);
             var disposables = new object[]
             {
@@ -28,15 +35,15 @@ namespace YukimaruGames.Terminal.Runtime
                 parser,
                 history,
                 autocomplete,
+                executeCommandUseCase,
                 entryPoint,
             }.OfType<IDisposable>().ToArray();
             var service = new TerminalService(
                 logger,
                 registry,
-                invoker,
-                parser,
                 history,
-                autocomplete);
+                autocomplete,
+                executeCommandUseCase);
             return new TerminalRuntimeScope(
                 entryPoint,
                 service,
