@@ -83,7 +83,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
 
             Assert.AreEqual(ICommandParser.ParseStatusCode.SyntaxError, result);
             Assert.AreEqual(expectedCommand, tuple.Command);
-            Assert.IsNull(tuple.Arguments);
+            Assert.IsEmpty(tuple.Arguments);
         }
 
         [Test]
