@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using NUnit.Framework;
 using YukimaruGames.Terminal.SharedKernel.Interfaces;
 using YukimaruGames.Terminal.SharedKernel;
@@ -263,11 +264,20 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Models
             using var buffer = new ZeroAllocString(_pool);
             buffer.Append("Secret");
 
+            // リフレクションを利用した private フィールド (_buffer) の参照取得
+            var fi2Buffer = typeof(ZeroAllocString).GetField("_buffer", BindingFlags.NonPublic | BindingFlags.Instance);
+            
             // Act
             buffer.Clear(clearBuffer: true);
 
             // Assert
             Assert.AreEqual(0, buffer.Length);
+
+            var internalBuffer = (char[])fi2Buffer!.GetValue(buffer);
+            for (var i = 0; i < internalBuffer.Length; i++)
+            {
+                Assert.AreEqual('\0', internalBuffer[i], $"Index {i} should be zero-cleared.");
+            }
         }
 
         #endregion
