@@ -40,6 +40,7 @@ namespace YukimaruGames.Terminal.Application.Services
         /// <inheritdoc/>
         public async ValueTask ExecuteAsync(ReadOnlyMemory<char> str)
         {
+            // history は string API のため ToString() で変換（Adapters境界）
             var input = str.ToString();
             _logger?.Send(MessageType.Entry, input);
             _history.Add(input);

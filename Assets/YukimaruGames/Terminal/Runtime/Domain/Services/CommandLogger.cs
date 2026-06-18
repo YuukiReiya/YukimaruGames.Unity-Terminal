@@ -94,7 +94,7 @@ namespace YukimaruGames.Terminal.Domain.Services
             }
 
             {
-                var item = new CommandLog(id, type, DateTimeOffset.Now, message);
+                var item = new CommandLog(id, type, DateTimeOffset.UtcNow, message);
                 _buffer.Enqueue(item);
                 _onItemAdded?.Invoke(new[] { item });
             }

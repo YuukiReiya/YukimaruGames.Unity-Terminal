@@ -10,6 +10,24 @@ using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Domain.Abstractions.Models.Entities
 {
+    /// <summary>
+    /// コマンド実行ログエンティティ.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>サイズ分析 (x64)</b></para>
+    /// <para>
+    /// フィールド合計: 36 bytes（値型部分）<br/>
+    ///   int Id                        =  4 bytes<br/>
+    ///   MessageType (byte)            =  1 byte<br/>
+    ///   padding                       =  3 bytes<br/>
+    ///   DateTimeOffset                = 12 bytes（ticks 8 + offset 4）<br/>
+    ///   string Message ref   =  8 bytes（参照ポインタ / heap実体: 16+2N bytes）<br/>
+    /// <br/>
+    /// string を直接保持（char[] コピーとコスト同等、リテラル利用で string に軍配が上がることを踏まえ string型を採用）<br/>
+    /// <br/>
+    /// 判定: sealed class（36 bytes &gt; 16 bytes 基準）
+    /// </para>
+    /// </remarks>
     public
 #if FALLBACK
         class CommandLog : IEquatable<CommandLog>, IComparable<CommandLog>, IComparable
@@ -45,6 +63,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.Entities
         /// <summary>
         /// 一意性を指し示すID.
         /// </summary>
+        /// <remarks>size: 4 bytes (int)</remarks>
         public int Id
         {
             get;
@@ -59,6 +78,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.Entities
         /// <summary>
         /// ログ出力タイプ.
         /// </summary>
+        /// <remarks>size: 1 byte (byte enum) + padding 3 bytes</remarks>
         public MessageType MessageType
         {
             get;
@@ -73,6 +93,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.Entities
         /// <summary>
         /// タイムスタンプ.
         /// </summary>
+        /// <remarks>size: 12 bytes (ticks 8 + offset 4)</remarks>
         public DateTimeOffset Timestamp
         {
             get;
@@ -87,6 +108,10 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.Entities
         /// <summary>
         /// 出力文字列.
         /// </summary>
+        /// <remarks>
+        /// size: 8 bytes（参照ポインタ / heap実体: 16+2N bytes）<br/>
+        /// string を直接保持（char[] コピーとコスト同等、リテラル利用で string に軍配が上がることを踏まえ string型を採用）<br/>
+        /// </remarks>
         public string Message
         {
             get;
