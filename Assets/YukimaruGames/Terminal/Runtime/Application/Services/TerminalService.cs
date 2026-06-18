@@ -105,7 +105,7 @@ namespace YukimaruGames.Terminal.Application.Services
         /// <inheritdoc/>
         void ITerminalService.Execute(string str)
         {
-            _executeCommandUseCase.ExecuteAsync(str).GetAwaiter().GetResult();
+            _executeCommandUseCase.ExecuteAsync(str, default).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace YukimaruGames.Terminal.Application.Interfaces
@@ -9,15 +10,29 @@ namespace YukimaruGames.Terminal.Application.Interfaces
     public interface IExecuteCommandUseCase
     {
         /// <summary>
+        /// コマンドを同期実行する.
+        /// </summary>
+        /// <param name="str">入力文字列</param>
+        void Execute(ReadOnlyMemory<char> str);
+        
+        /// <summary>
+        /// コマンドを同期実行する.
+        /// </summary>
+        /// <param name="str">入力文字列</param>
+        void Execute(string str);
+        
+        /// <summary>
         /// コマンドを非同期で実行する.
         /// </summary>
         /// <param name="str">入力文字列</param>
-        ValueTask ExecuteAsync(ReadOnlyMemory<char> str);
+        /// <param name="cancellationToken">キャンセルトークン</param>
+        ValueTask ExecuteAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken);
 
         /// <summary>
         /// コマンドを非同期で実行する.
         /// </summary>
         /// <param name="str">入力文字列</param>
-        ValueTask ExecuteAsync(string str);
+        /// <param name="cancellationToken">キャンセルトークン</param>
+        ValueTask ExecuteAsync(string str, CancellationToken cancellationToken);
     }
 }

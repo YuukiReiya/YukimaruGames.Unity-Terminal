@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 
@@ -59,7 +60,9 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
         /// 文字列メモリからコマンド引数型へ非同期でパースを試行する.
         /// </summary>
         /// <param name="str">解析文字列</param>
+        /// <param name="cancellationToken">キャンセルトークン</param>
         /// <returns>パース結果.</returns>
-        ValueTask<(ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str);
+        [Obsolete("パフォーマンス向上のため、原則同期メソッドである 'Parse' を使用してください。"), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        ValueTask<(ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken);
     }
 }
