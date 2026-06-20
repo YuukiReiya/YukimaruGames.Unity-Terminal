@@ -21,6 +21,11 @@ namespace YukimaruGames.Terminal.Application.Services
         private readonly ICommandParser _parser;
         private readonly ICommandHistory _history;
 
+        private CancellationTokenSource _currentCommandCts;
+
+        /// <inheritdoc/> 
+        public bool IsExecuting => _currentCommandCts != null;
+        
         public ExecuteCommandUseCase(
             ICommandLogger logger,
             ICommandRegistry registry,
@@ -46,6 +51,12 @@ namespace YukimaruGames.Terminal.Application.Services
                 return;
             }
 
+            if (handler.IsAsync)
+            {
+                _logger?.Send(MessageType.Error,$"The command '{command}' requires asynchronous execution. Please use ExecuteAsync.");
+                return;
+            }
+
             try
             {
                 _invoker.Execute(handler, arguments);
@@ -60,21 +71,43 @@ namespace YukimaruGames.Terminal.Application.Services
         ValueTask IExecuteCommandUseCase.ExecuteAsync(string str, CancellationToken cancellationToken) => ((IExecuteCommandUseCase)this).ExecuteAsync(str.AsMemory(), cancellationToken);
 
         /// <inheritdoc/>
+        void IExecuteCommandUseCase.CancelCommandIfNeeded() => _currentCommandCts?.Cancel();
+
+        /// <inheritdoc/>
         async ValueTask IExecuteCommandUseCase.ExecuteAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
         {
-            if (!TryPrepareExecute(str, cancellationToken, out var command, out var handler, out var arguments))
+            if (IsExecuting)
+            {
+                return;
+            }
+            
+            if (!TryPrepareExecute(str, cancellationToken, out _, out var handler, out var arguments))
             {
                 return;
             }
 
             try
             {
-                // TODO: 非同期メソッドへの対応
-                _invoker.Execute(handler, arguments);
+                // 登録プロシージャに応じて同期メソッド非同期メソッドを呼び出しわける
+                if (handler.IsAsync)
+                {
+                    _currentCommandCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                    await _invoker.ExecuteAsync(handler, arguments, _currentCommandCts.Token);
+                }
+                else
+                {
+                    // ReSharper disable once MethodHasAsyncOverloadWithCancellation
+                    _invoker.Execute(handler, arguments);
+                }
             }
             catch (Exception e)
             {
                 HandleException(e);
+            }
+            finally
+            {
+                _currentCommandCts?.Dispose();
+                _currentCommandCts = null;
             }
         }
         

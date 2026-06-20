@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
@@ -11,7 +12,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
     /// <summary>
     /// コマンドの非同期デリゲート.
     /// </summary>
-    public delegate ValueTask CommandAsyncDelegate(ReadOnlyMemory<CommandArgument> args);
+    public delegate ValueTask CommandAsyncDelegate(ReadOnlyMemory<CommandArgument> args, CancellationToken cancellationToken);
     
     /// <summary>
     /// コマンドのハンドラー.

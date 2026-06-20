@@ -6,9 +6,10 @@ namespace YukimaruGames.Terminal.Presentation.Models.Event
         Open = 1,
         Close = 2,
         Execute = 3,
-        PreviousHistory = 4,
-        NextHistory = 5,
-        Autocomplete = 6,
-        Focus = 7,
+        Cancel = 4,
+        PreviousHistory = 5,
+        NextHistory = 6,
+        Autocomplete = 7,
+        Focus = 8,
     }
 }

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Models;
 
 namespace YukimaruGames.Terminal.Application.Interfaces
@@ -26,12 +28,23 @@ namespace YukimaruGames.Terminal.Application.Interfaces
         event System.Action<LogEntry[]> OnLogRemoved;
         
         #endregion
+
+        /// <summary>
+        /// コマンド実行中有無
+        /// </summary>
+        bool IsExecuting { get; }
         
         /// <summary>
         /// コマンドの実行.
         /// </summary>
         /// <param name="str">入力文字列</param>
-        void Execute(string str);
+        /// <param name="cancellationToken">キャンセルトークン</param>
+        ValueTask ExecuteAsync(string str, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// コマンドのキャンセル.
+        /// </summary>
+        void Cancel();
 
         #region Autocomplete
 

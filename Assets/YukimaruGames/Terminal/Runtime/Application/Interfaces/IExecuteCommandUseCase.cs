@@ -10,6 +10,11 @@ namespace YukimaruGames.Terminal.Application.Interfaces
     public interface IExecuteCommandUseCase
     {
         /// <summary>
+        /// 実行中フラグ
+        /// </summary>
+        bool IsExecuting { get; }
+        
+        /// <summary>
         /// コマンドを同期実行する.
         /// </summary>
         /// <param name="str">入力文字列</param>
@@ -34,5 +39,10 @@ namespace YukimaruGames.Terminal.Application.Interfaces
         /// <param name="str">入力文字列</param>
         /// <param name="cancellationToken">キャンセルトークン</param>
         ValueTask ExecuteAsync(string str, CancellationToken cancellationToken);
+        
+        /// <summary>
+        /// 実行中コマンドのキャンセル.
+        /// </summary>
+        void CancelCommandIfNeeded();
     }
 }

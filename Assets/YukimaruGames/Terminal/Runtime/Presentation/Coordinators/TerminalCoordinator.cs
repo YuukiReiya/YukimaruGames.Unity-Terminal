@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
@@ -25,6 +26,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         private readonly ITerminalService _service;
         private const string BootUpMessage = "Welcome to Runtime YukimaruGames.CLI!\n(c) Independent Developer. All rights reserved.\nType your command below.";
 
+        private readonly CancellationTokenSource _destroyCancellationToken = new();
+        
         /// <summary>
         /// 表示されているか.
         /// </summary>
@@ -69,6 +72,7 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _eventListener.OnOpenTriggered += OnOpenTriggered;
             _eventListener.OnCloseTriggered += OnCloseTriggered;
             _eventListener.OnExecuteTriggered += OnExecuteTriggered;
+            _eventListener.OnCancelTriggered += OnCancelTriggered;
             _eventListener.OnPreviousHistoryTriggered += OnPreviousHistoryTriggered;
             _eventListener.OnNextHistoryTriggered += OnNextHistoryTriggered;
             _eventListener.OnAutocompleteTriggered += OnAutocompleteTriggered;
@@ -87,6 +91,7 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _eventListener.OnOpenTriggered -= OnOpenTriggered;
             _eventListener.OnCloseTriggered -= OnCloseTriggered;
             _eventListener.OnExecuteTriggered -= OnExecuteTriggered;
+            _eventListener.OnCancelTriggered -= OnCancelTriggered;
             _eventListener.OnPreviousHistoryTriggered -= OnPreviousHistoryTriggered;
             _eventListener.OnNextHistoryTriggered -= OnNextHistoryTriggered;
             _eventListener.OnAutocompleteTriggered -= OnAutocompleteTriggered;
@@ -119,13 +124,24 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             
             // IMEの文字列入力における変換中であれば早期リターン.
             if (_inputPresenter.IsImeComposing) return;
-            
-            _service.Execute(_inputPresenter.InputText);
+
+            _service.ExecuteAsync(_inputPresenter.InputText, _destroyCancellationToken.Token);
 
             _inputPresenter.SetInputField(string.Empty);
             _inputPresenter.SetFocus(true);
             _inputPresenter.SetMoveCursorToEnd();
             _scrollMutator.ScrollToEnd();
+        }
+
+        private void OnCancelTriggered()
+        {
+            if (!IsVisible) return;
+
+            if (_service.IsExecuting)
+            {
+                _service.Cancel();
+                _scrollMutator.ScrollToEnd();
+            }
         }
 
         private void OnPreviousHistoryTriggered()
