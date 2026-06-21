@@ -169,13 +169,23 @@ namespace YukimaruGames.Terminal.Application.Services
         /// </summary>
         private void HandleException(Exception e)
         {
-            if (e is CommandArgumentException or CommandFormatException)
+            if (e is OperationCanceledException)
             {
-                _logger?.Send(MessageType.Exception, $"Error: {e.Message}");
+                // キャンセル
+                return;
             }
-            else
+
+            switch (e)
             {
-                _logger?.Send(MessageType.Exception, $"{e.GetType().Name}: {e.Message}");
+                // カスタム例外.
+                case CommandArgumentException or CommandFormatException:
+                    _logger?.Send(MessageType.Exception, $"Error: {e.Message}");    
+                    break;
+                
+                // 一般例外.
+                default:
+                    _logger?.Send(MessageType.Exception, $"{e.GetType().Name}: {e.Message}");
+                    break;
             }
         }
     }
