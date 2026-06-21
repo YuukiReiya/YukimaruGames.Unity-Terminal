@@ -18,11 +18,11 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         // ─── テスト用ハンドラファクトリ ───────────────────────────────────────
 
         private static CommandHandler MakeSyncHandler(Action<ReadOnlyMemory<CommandArgument>> proc)
-            => new CommandHandler((CommandDelegate)(args => proc(args)), "cmd", 0, 0, "");
+            => new(args => proc(args), "cmd", 0, 0, "");
 
         private static CommandHandler MakeAsyncHandler(
             Func<ReadOnlyMemory<CommandArgument>, CancellationToken, ValueTask> proc)
-            => new CommandHandler((CommandAsyncDelegate)((args, ct) => proc(args, ct)), "cmd", 0, 0, "");
+            => new((args, ct) => proc(args, ct), "cmd", 0, 0, "");
 
         [SetUp]
         public void SetUp() => _sut = new CommandInvoker();
@@ -104,7 +104,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         public void Execute_HandlerWithNullProc_DoesNotThrow()
         {
             // Proc が null の場合（AsyncHandler）は Invoke されない
-            var handler = MakeAsyncHandler((_, __) => default);
+            var handler = MakeAsyncHandler((_, _) => default);
 
             Assert.Throws<ArgumentException>(() =>
                 _sut.Execute(handler, ReadOnlyMemory<CommandArgument>.Empty));
@@ -122,7 +122,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         public async Task ExecuteAsync_AsyncHandler_InvokesAsyncProc()
         {
             var called = false;
-            var handler = MakeAsyncHandler(async (_, __) => { called = true; await Task.CompletedTask; });
+            var handler = MakeAsyncHandler(async (_, _) => { called = true; await Task.CompletedTask; });
 
             await _sut.ExecuteAsync(handler, ReadOnlyMemory<CommandArgument>.Empty, CancellationToken.None);
 
@@ -174,7 +174,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         [Test]
         public void ExecuteAsync_AsyncProcThrows_ExceptionPropagates()
         {
-            var handler = MakeAsyncHandler((_, __) => throw new InvalidOperationException("async error"));
+            var handler = MakeAsyncHandler((_, _) => throw new InvalidOperationException("async error"));
 
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _sut.ExecuteAsync(handler, ReadOnlyMemory<CommandArgument>.Empty, CancellationToken.None));
@@ -208,9 +208,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         /// 正常系ルートにおいて、トークンの状態チェックが誤作動を起こさず無傷で処理を終えられることを確認します。
         /// </remarks>
         [Test]
-        public async Task ExecuteAsync_ActiveToken_CompletesNormally()
+        public void ExecuteAsync_ActiveToken_CompletesNormally()
         {
-            var handler = MakeAsyncHandler((_, ct) => default);
+            var handler = MakeAsyncHandler((_, _) => default);
 
             Assert.DoesNotThrowAsync(async () =>
                 await _sut.ExecuteAsync(handler, ReadOnlyMemory<CommandArgument>.Empty, CancellationToken.None));
