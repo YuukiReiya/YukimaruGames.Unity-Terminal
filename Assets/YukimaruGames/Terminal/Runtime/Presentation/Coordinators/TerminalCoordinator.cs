@@ -122,8 +122,11 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         {
             if (!IsVisible) return;
             
-            // IMEの文字列入力における変換中であれば早期リターン.
+            // IMEの文字列入力における変換中であればスキップ.
             if (_inputPresenter.IsImeComposing) return;
+
+            // 処理の実行中であればスキップ.
+            if (_service.IsExecuting) return;
 
             _service.ExecuteAsync(_inputPresenter.InputText, _destroyCancellationToken.Token);
 

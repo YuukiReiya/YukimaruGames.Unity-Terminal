@@ -23,8 +23,34 @@ namespace YukimaruGames.Terminal.Application.Services
 
         private CancellationTokenSource _currentCommandCts;
 
-        /// <inheritdoc/> 
-        public bool IsExecuting => _currentCommandCts != null;
+        /// <summary>
+        /// 非ロック(コマンド実行可能)状態
+        /// </summary>
+        /// <remarks>
+        /// 原子性・レースコンディションの回避用
+        /// </remarks>
+        private const int Idle = 0;
+        
+        /// <summary>
+        /// ロック(コマンド実行不可)状態
+        /// </summary>
+        /// <remarks>
+        /// 原子性・レースコンディションの回避用
+        /// </remarks>
+        private const int Executing = 1;
+        
+        /// <remarks>
+        /// ロック用のフラグ
+        /// <p>0 : Idle</p>
+        /// <p>1 : Executing</p>
+        /// </remarks> 
+        private int _isExecutingState = Idle;
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// 値を変えずに最新の状態を確認(キャッシュ無視)
+        /// </remarks>
+        public bool IsExecuting => Volatile.Read(ref _isExecutingState) == Executing;
         
         public ExecuteCommandUseCase(
             ICommandLogger logger,
@@ -46,24 +72,33 @@ namespace YukimaruGames.Terminal.Application.Services
         /// <inheritdoc/>
         void IExecuteCommandUseCase.Execute(ReadOnlyMemory<char> str)
         {
-            if (!TryPrepareExecute(str, default, out var command, out var handler, out var arguments))
+            if (Interlocked.CompareExchange(ref _isExecutingState, Executing, Idle) == Executing)
             {
                 return;
             }
-
-            if (handler.IsAsync)
-            {
-                _logger?.Send(MessageType.Error,$"The command '{command}' requires asynchronous execution. Please use ExecuteAsync.");
-                return;
-            }
-
+            
             try
             {
+                if (!TryPrepareExecute(str, default, out var command, out var handler, out var arguments))
+                {
+                    return;
+                }
+
+                if (handler.IsAsync)
+                {
+                    _logger?.Send(MessageType.Error, $"The command '{command}' requires asynchronous execution. Please use ExecuteAsync.");
+                    return;
+                }
+
                 _invoker.Execute(handler, arguments);
             }
             catch (Exception e)
             {
                 HandleException(e);
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _isExecutingState, Idle);
             }
         }
 
@@ -75,19 +110,20 @@ namespace YukimaruGames.Terminal.Application.Services
 
         /// <inheritdoc/>
         async ValueTask IExecuteCommandUseCase.ExecuteAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
-        {
-            if (IsExecuting)
-            {
-                return;
-            }
-            
-            if (!TryPrepareExecute(str, cancellationToken, out _, out var handler, out var arguments))
+        { 
+            // 確認 + 書き換え
+            if (Interlocked.CompareExchange(ref _isExecutingState, Executing, Idle) == Executing)
             {
                 return;
             }
 
             try
             {
+                if (!TryPrepareExecute(str, cancellationToken, out _, out var handler, out var arguments))
+                {
+                    return;
+                }
+                
                 // 登録プロシージャに応じて同期メソッド非同期メソッドを呼び出しわける
                 if (handler.IsAsync)
                 {
@@ -108,6 +144,8 @@ namespace YukimaruGames.Terminal.Application.Services
             {
                 _currentCommandCts?.Dispose();
                 _currentCommandCts = null;
+
+                Interlocked.Exchange(ref _isExecutingState, Idle);
             }
         }
         
@@ -119,7 +157,7 @@ namespace YukimaruGames.Terminal.Application.Services
             ReadOnlyMemory<char> str, 
             CancellationToken cancellationToken,
             out string command,
-            out CommandHandler handler, // ★プロジェクトの実際のハンドラー型に変えてください
+            out CommandHandler handler,
             out ReadOnlyMemory<CommandArgument> arguments)
         {
             command = default;
