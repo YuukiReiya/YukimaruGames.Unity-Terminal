@@ -67,33 +67,8 @@ namespace YukimaruGames.Terminal.Application.Services
         }
 
         /// <inheritdoc/>
-        void IExecuteCommandUseCase.Execute(string str) => ((IExecuteCommandUseCase)this).Execute(str.AsMemory());
-        
-        /// <inheritdoc/>
-        void IExecuteCommandUseCase.Execute(ReadOnlyMemory<char> str)
+        async ValueTask IExecuteCommandUseCase.ExecutePipelineAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
         {
-            var task = ((IExecuteCommandUseCase)this).ExecuteAsync(str, default);
-
-            if (!task.IsCompleted)
-            {
-                // 非同期処理として走ってしまった.
-                _logger?.Send(MessageType.Error, $"The requested command requires asynchronous execution. Please use ExecuteAsync.");
-                return;
-            }
-            
-            // 同期メソッドであるはずなので実行完了待ち.
-            task.GetAwaiter().GetResult();
-        }
-
-        /// <inheritdoc/>
-        ValueTask IExecuteCommandUseCase.ExecuteAsync(string str, CancellationToken cancellationToken) => ((IExecuteCommandUseCase)this).ExecuteAsync(str.AsMemory(), cancellationToken);
-
-        /// <inheritdoc/>
-        void IExecuteCommandUseCase.CancelCommandIfNeeded() => _currentCommandCts?.Cancel();
-
-        /// <inheritdoc/>
-        async ValueTask IExecuteCommandUseCase.ExecuteAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
-        { 
             // 確認 + 書き換え
             if (Interlocked.CompareExchange(ref _isExecutingState, Executing, Idle) == Executing)
             {
@@ -125,20 +100,35 @@ namespace YukimaruGames.Terminal.Application.Services
             }
             finally
             {
-                _currentCommandCts?.Dispose();
+                // Dispose が呼び出されるまでの一瞬の間に Cancel が呼び出されてもいいように先に null を入れておく.
+                var cts = _currentCommandCts;
                 _currentCommandCts = null;
+                cts?.Dispose();
 
                 Interlocked.Exchange(ref _isExecutingState, Idle);
             }
         }
-        
-        
+
+        /// <inheritdoc/>
+        void IExecuteCommandUseCase.CancelCommandIfNeeded()
+        {
+            try
+            {
+                _currentCommandCts?.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Dispose後の呼び出しは考慮しなくていいので握りつぶす.
+            }   
+        }
+
         /// <summary>
-        /// 【共通前処理】パース、ログ記録、バリデーションをまとめて行います（アロケーションフリー）。
+        /// 【共通前処理】パース、ログ記録、バリデーションをまとめて行います。
         /// </summary>
         private bool TryPrepareExecute(
             ReadOnlyMemory<char> str, 
             CancellationToken cancellationToken,
+            // ReSharper disable once OutParameterValueIsAlwaysDiscarded.Local
             out string command,
             out CommandHandler handler,
             out ReadOnlyMemory<CommandArgument> arguments)

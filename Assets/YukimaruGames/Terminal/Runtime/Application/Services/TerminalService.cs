@@ -108,7 +108,7 @@ namespace YukimaruGames.Terminal.Application.Services
         public bool IsExecuting => _executeCommandUseCase.IsExecuting;
 
         /// <inheritdoc/>
-        ValueTask ITerminalService.ExecuteAsync(string str, CancellationToken cancellationToken) => _executeCommandUseCase.ExecuteAsync(str, cancellationToken);
+        ValueTask ITerminalService.ExecuteAsync(string str, CancellationToken cancellationToken) => _executeCommandUseCase.ExecutePipelineAsync(str.AsMemory(), cancellationToken);
 
         /// <inheritdoc/>
         public void Cancel() => _executeCommandUseCase.CancelCommandIfNeeded();
