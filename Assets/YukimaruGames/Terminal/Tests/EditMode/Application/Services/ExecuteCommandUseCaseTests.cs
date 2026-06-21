@@ -224,10 +224,14 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             _parser.CommandName = "cmd";
             _registry.Add("cmd", AsyncHandler);
 
+            _invoker.UseGate();
+            
             ((YukimaruGames.Terminal.Application.Interfaces.IExecuteCommandUseCase)_sut).Execute("cmd");
 
             Assert.IsFalse(_invoker.ExecuteCalled);
             Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Error));
+            
+            _invoker.OpenGate();
         }
 
         /// <summary>

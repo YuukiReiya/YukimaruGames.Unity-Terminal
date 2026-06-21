@@ -106,7 +106,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
             // Proc が null の場合（AsyncHandler）は Invoke されない
             var handler = MakeAsyncHandler((_, __) => default);
 
-            Assert.DoesNotThrow(() =>
+            Assert.Throws<ArgumentException>(() =>
                 _sut.Execute(handler, ReadOnlyMemory<CommandArgument>.Empty));
         }
 
@@ -213,6 +213,20 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
             var handler = MakeAsyncHandler((_, ct) => default);
 
             Assert.DoesNotThrowAsync(async () =>
+                await _sut.ExecuteAsync(handler, ReadOnlyMemory<CommandArgument>.Empty, CancellationToken.None));
+        }
+        
+        /// <summary>
+        /// 非同期実行メソッドに、同期デリゲートとして登録されているハンドラーが渡された場合、
+        /// <see cref="ArgumentException"/> が正しくスローされることを検証します。
+        /// </summary>
+        [Test]
+        public void ExecuteAsync_SyncHandlerPassedToAsyncExecute_ThrowsArgumentException()
+        {
+            // 同期ハンドラー（AsyncProc が null）を生成
+            var handler = MakeSyncHandler(_ => { });
+
+            Assert.ThrowsAsync<ArgumentException>(async () =>
                 await _sut.ExecuteAsync(handler, ReadOnlyMemory<CommandArgument>.Empty, CancellationToken.None));
         }
     }
