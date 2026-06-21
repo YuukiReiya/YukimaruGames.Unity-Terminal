@@ -26,7 +26,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
         {
             public int MaxLogs => 100;
             public IReadOnlyCollection<CommandLog> Logs => _logs;
-            private readonly List<CommandLog> _logs = new();
+            // ReSharper disable once CollectionNeverUpdated.Local
+            private readonly List<CommandLog> _logs = new ();
             public List<(MessageType type, string message)> Sent { get; } = new();
 
             public event Action OnItemUpdated;
@@ -44,7 +45,6 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             public bool Add(string command, CommandHandler handle) { _handlers[command] = handle; return true; }
             public bool Remove(string command) => _handlers.Remove(command);
             public bool TryGet(string command, out CommandHandler handler) => _handlers.TryGetValue(command, out handler);
-            public IReadOnlyCollection<CommandHandler> GetAll() => _handlers.Values;
         }
 
         private sealed class MockCommandInvoker : ICommandInvoker
@@ -78,7 +78,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
         private sealed class MockCommandParser : ICommandParser
         {
             public string CommandName { get; set; }
-            public CommandArgument[] Arguments { get; set; }
+            private CommandArgument[] Arguments { get; } = Array.Empty<CommandArgument>();
             public ICommandParser.ParseStatusCode StatusCode { get; set; } = ICommandParser.ParseStatusCode.Ok;
 
             public ICommandParser.ParseStatusCode Parse(string str, out (string Command, CommandArgument[] Arguments) tuple)
@@ -87,19 +87,17 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
                 return StatusCode;
             }
 
-            public ICommandParser.ParseStatusCode Parse(ReadOnlyMemory<char> str, out (string Command, CommandArgument[] Arguments) tuple)
+            ICommandParser.ParseStatusCode ICommandParser.Parse(ReadOnlyMemory<char> str, out (string Command, CommandArgument[] Arguments) tuple)
             {
                 tuple = (CommandName, Arguments);
                 return StatusCode;
             }
 
-            public ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
+            ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ICommandParser.ParseAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
             {
-                throw new NotImplementedException();
+                cancellationToken.ThrowIfCancellationRequested();
+                return new((StatusCode, CommandName, Arguments));
             }
-
-            public ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str)
-                => new((StatusCode, CommandName, Arguments));
         }
 
         private sealed class MockCommandHistory : ICommandHistory
@@ -122,10 +120,10 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
         private ExecuteCommandUseCase _sut;
 
         private static readonly CommandHandler SyncHandler =
-            new CommandHandler((args) => { }, "cmd", 0, 0, "");
+            new((_) => { }, "cmd", 0, 0, "");
 
         private static readonly CommandHandler AsyncHandler =
-            new CommandHandler((CommandAsyncDelegate)((args, ct) => default), "cmd", 0, 0, "");
+            new ((_, _) => default, "cmd", 0, 0, "");
 
         [SetUp]
         public void SetUp()
@@ -261,8 +259,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             _registry.Add("cmd", AsyncHandler);
             _invoker.UseGate();
 
-            var iuse = (IExecuteCommandUseCase)_sut;
-            var task = iuse.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
+            var use = (IExecuteCommandUseCase)_sut;
+            var task = use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
 
             await Task.Yield();
             Assert.IsTrue(_sut.IsExecuting);
@@ -292,13 +290,13 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             _registry.Add("cmd", AsyncHandler);
             _invoker.UseGate();
 
-            var iuse = (IExecuteCommandUseCase)_sut;
-            var first = iuse.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
+            var use = (IExecuteCommandUseCase)_sut;
+            var first = use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
 
             await Task.Yield();
 
             // 実行中に2回目を呼ぶ → 無視される
-            await iuse.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
+            await use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
 
             _invoker.OpenGate();
             await first;
@@ -311,8 +309,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
         [Test]
         public void CancelCommandIfNeeded_WhenNotExecuting_DoesNotThrow()
         {
-            var iuse = (IExecuteCommandUseCase)_sut;
-            Assert.DoesNotThrow(() => iuse.CancelCommandIfNeeded());
+            var use = (IExecuteCommandUseCase)_sut;
+            Assert.DoesNotThrow(() => use.CancelCommandIfNeeded());
         }
 
         /// <summary>
@@ -325,12 +323,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             _registry.Add("cmd", AsyncHandler);
             _invoker.UseGate();
 
-            var iuse = (IExecuteCommandUseCase)_sut;
-            var task = iuse.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
+            var use = (IExecuteCommandUseCase)_sut;
+            var task = use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
 
             await Task.Yield();
 
-            iuse.CancelCommandIfNeeded();
+            use.CancelCommandIfNeeded();
             _invoker.OpenGate();
 
             await task; 
