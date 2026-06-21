@@ -13,6 +13,9 @@ using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 {
+    /// <summary>
+    /// <see cref="ExecuteCommandUseCase"/> の複合的なビジネスロジックおよびパイプラインを検証するテストクラス。
+    /// </summary>
     [TestFixture]
     public sealed class ExecuteCommandUseCaseTests
     {
@@ -139,6 +142,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── Execute（同期）: 正常系 ─────────────────────────────────────────
 
+        /// <summary>
+        /// 文字列形式の有効な同期コマンドが入力された際、対応する同期ハンドラーが正しく呼び出されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 文字列のパース、レジストリからのハンドラー取得、そして Invoker への委譲が正常に結合されているか確認します。
+        /// </remarks>
         [Test]
         public void Execute_String_ValidSyncCommand_InvokesHandler()
         {
@@ -150,6 +159,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsTrue(_invoker.ExecuteCalled);
         }
 
+        /// <summary>
+        /// メモリバッファ形式（<see cref="ReadOnlyMemory{Char}"/>）の有効な同期コマンドが入力された際、ハンドラーが呼び出されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// UI層（入力フィールド等）からGCを抑制するためにメモリバッファのままデータが流れてきた場合のパスを保証します。
+        /// </remarks>
         [Test]
         public void Execute_Memory_ValidSyncCommand_InvokesHandler()
         {
@@ -161,6 +176,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsTrue(_invoker.ExecuteCalled);
         }
 
+        /// <summary>
+        /// 有効なコマンドが正常に実行された際、そのコマンド文字列が履歴（History）レポジトリに保存されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// ユーザーがコンソールで「上矢印キー」等を押した際に入力履歴を辿れるようにするための重要なフックです。
+        /// </remarks>
         [Test]
         public void Execute_ValidCommand_AddsToHistory()
         {
@@ -172,6 +193,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             CollectionAssert.Contains(_history.Histories, "cmd");
         }
 
+        /// <summary>
+        /// コマンドの実行開始時、コンソール画面に出力するためのエントリログ（入力エコー等）が送信されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// ユーザーが入力したコマンドが画面上に反映され、実行状態が可視化される状態を保証します。
+        /// </remarks>
         [Test]
         public void Execute_ValidCommand_LogsEntry()
         {
@@ -185,6 +212,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── Execute（同期）: 異常系 ─────────────────────────────────────────
 
+        /// <summary>
+        /// 同期実行メソッドに対し、非同期ハンドラーを持つコマンドが渡された場合、実行を拒否してエラーログを出すことを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 同期コンテキストで重い非同期タスクをブロッキング実行（.Resultなど）させないための防衛設計を検証します。
+        /// </remarks>
         [Test]
         public void Execute_AsyncHandler_LogsError_DoesNotInvoke()
         {
@@ -197,6 +230,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Error));
         }
 
+        /// <summary>
+        /// レジストリに登録されていない未知のコマンド名が入力された場合、実行されずにエラーログが出力されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// タイポや存在しないコマンドに対し、システムがヌルポ等でクラッシュせず、ユーザーに「未定義」を通知できるか確認します。
+        /// </remarks>
         [Test]
         public void Execute_UnknownCommand_DoesNotInvoke()
         {
@@ -208,6 +247,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Error));
         }
 
+        /// <summary>
+        /// 空文字やスペースのみの、コマンド名が抽出されなかった入力に対しては、何も処理を行わずに早期リターンすることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// ユーザーがコンソールで何も入力せずにエンターキーを連打した際など、無駄なエラーログを出さずにスルーすべき挙動です。
+        /// </remarks>
         [Test]
         public void Execute_EmptyCommand_DoesNotInvoke()
         {
@@ -218,6 +263,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsFalse(_invoker.ExecuteCalled);
         }
 
+        /// <summary>
+        /// クォーテーションの閉じ忘れなど、パース段階で構文エラー（SyntaxError）が発生した場合は実行を拒否し、エラーログを出力することを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 不正な形式の引数がハンドラーに渡ってドメイン層が汚染されるのを、ユースケースの入り口で遮断できているか確認します。
+        /// </remarks>
         [Test]
         public void Execute_SyntaxError_DoesNotInvoke()
         {
@@ -233,6 +284,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── ExecuteAsync（非同期）: 正常系 ──────────────────────────────────
 
+        /// <summary>
+        /// 非同期実行メソッドに対し「同期コマンド」が指定された場合、内部で同期用の実行ライン（Execute）へ正しくハンドリングが流れることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 利用側がコマンドの種類（同期・非同期）を意識せず、一律で `ExecuteAsync` を呼んでも安全に処理される相互互換性を保証します。
+        /// </remarks>
         [Test]
         public async Task ExecuteAsync_ValidSyncCommand_InvokesExecute()
         {
@@ -245,6 +302,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsFalse(_invoker.ExecuteAsyncCalled);
         }
 
+        /// <summary>
+        /// 非同期実行メソッドに対し「非同期コマンド」が指定された場合、期待通り非同期用の実行ライン（ExecuteAsync）が走ることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 重い処理や通信を伴うコマンドが、非同期パイプラインに乗って正しくスケジュールされる本流のパスです。
+        /// </remarks>
         [Test]
         public async Task ExecuteAsync_ValidAsyncCommand_InvokesExecuteAsync()
         {
@@ -257,6 +320,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsFalse(_invoker.ExecuteCalled);
         }
 
+        /// <summary>
+        /// 非同期実行メソッド経由であっても、有効なコマンドであれば正常に履歴（History）へ保存されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 同期・非同期に関わらず、ユーザーの入力体験が一貫していることを確認します。
+        /// </remarks>
         [Test]
         public async Task ExecuteAsync_ValidCommand_AddsToHistory()
         {
@@ -268,6 +337,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             CollectionAssert.Contains(_history.Histories, "cmd");
         }
 
+        /// <summary>
+        /// 非同期実行メソッドにメモリバッファ形式でコマンドが渡された際、途中でデータが途切れることなくハンドラーまで到達することを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 非同期（await）の前後で、構造体である <see cref="ReadOnlyMemory{Char}"/> のライフサイクルが安全に維持されているかを保証します。
+        /// </remarks>
         [Test]
         public async Task ExecuteAsync_Memory_ValidCommand_InvokesHandler()
         {
@@ -281,12 +356,21 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── ExecuteAsync（非同期）: IsExecuting ──────────────────────────────
 
+        /// <summary>
+        /// 何もコマンドを実行していない初期状態において、実行中フラグ（<see cref="ExecuteCommandUseCase.IsExecuting"/>）が False であることを検証します。
+        /// </summary>
         [Test]
         public void IsExecuting_BeforeExecution_IsFalse()
         {
             Assert.IsFalse(_sut.IsExecuting);
         }
 
+        /// <summary>
+        /// 非同期コマンドの処理がバックグラウンドで走っている「最中」は、実行中フラグが確実に True になることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// テスト用の疑似ゲート（TaskCompletionSource）を使って処理を途中で静止させ、その間のステートを確認しています。
+        /// </remarks>
         [Test]
         public async Task IsExecuting_DuringAsyncExecution_IsTrue()
         {
@@ -305,6 +389,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             await task;
         }
 
+        /// <summary>
+        /// 非同期コマンドの処理が完全に終了（完了）した後は、実行中フラグが自動的に False に戻ることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 正常系における、ライフサイクル終了時のフラグクリーンアップ（finallyブロック等の挙動）を保証します。
+        /// </remarks>
         [Test]
         public async Task IsExecuting_AfterExecution_IsFalse()
         {
@@ -316,6 +406,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsFalse(_sut.IsExecuting);
         }
 
+        /// <summary>
+        /// すでに非同期コマンドが実行されている最中に、上書きで2回目の実行要求が走った場合、その2回目は完全に無視（多重実行防止）されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 連打による多重通信や、同じ重い処理が複数立ち上がってUIメインスレッドやドメインデータを破壊するのを防ぐ重要なガードロックテストです。
+        /// </remarks>
         [Test]
         public async Task ExecuteAsync_WhileExecuting_SecondCallIsIgnored()
         {
@@ -340,6 +436,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── CancelCommandIfNeeded ────────────────────────────────────────────
 
+        /// <summary>
+        /// 何も実行していない状態で強制キャンセルメソッド（<see cref="CancelCommandIfNeeded"/>）が叩かれても、例外を投げず安全にスルーされることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 画面が閉じる際や初期化時に、現在の状態に関わらず安全にクリーンアップメソッドを呼べる堅牢性を確保します。
+        /// </remarks>
         [Test]
         public void CancelCommandIfNeeded_WhenNotExecuting_DoesNotThrow()
         {
@@ -348,6 +450,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.DoesNotThrow(() => iuse.CancelCommandIfNeeded());
         }
 
+        /// <summary>
+        /// 非同期コマンドを実行中に外部からキャンセルが要求された場合、実行中の内部トークンが連動してキャンセルされ、処理が安全に中断することを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 内部の `HandleException` がキャンセル例外（<see cref="OperationCanceledException"/>）を適切にキャッチ・吸収し、呼び出し元（UI側）へ致命的なクラッシュを伝播させずに静かに終了することを確認します。
+        /// </remarks>
         [Test]
         public async Task CancelCommandIfNeeded_DuringAsyncExecution_CancelsCommand()
         {
@@ -368,6 +476,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsFalse(_sut.IsExecuting);
         }
 
+        /// <summary>
+        /// キャンセル処理を通過したあとであっても、最終的に実行中フラグが False で美しく着地していることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 中断によって内部状態が「実行中」のままフリーズし、以降すべてのコマンドが受け付けられなくなるという最悪のバグを防止します。
+        /// </remarks>
         [Test]
         public async Task CancelCommandIfNeeded_AfterExecution_IsExecutingIsFalse()
         {
@@ -383,6 +497,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── CancellationToken ────────────────────────────────────────────────
 
+        /// <summary>
+        /// 実行を始める段階で「すでにキャンセル状態にあるトークン」が渡された場合、ハンドラーの起動そのものを手前で拒否（早期終了）することを検証します。
+        /// </summary>
+        /// <remarks>
+        /// すでに寿命が尽きている要求に対して、無駄なパースやインボーク処理のコストを払わないための最適化の検証です。
+        /// </remarks>
         [Test]
         public async Task ExecuteAsync_CancelledToken_DoesNotInvoke()
         {
@@ -396,6 +516,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsFalse(_invoker.ExecuteCalled);
         }
 
+        /// <summary>
+        /// キャンセルされていない通常の有効なトークンを渡した場合、チェックをすり抜けて正常系ルートが何事もなく動くことを検証します。
+        /// </summary>
         [Test]
         public async Task ExecuteAsync_ActiveToken_ExecutesNormally()
         {
@@ -409,6 +532,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── 例外ハンドリング ─────────────────────────────────────────────────
 
+        /// <summary>
+        /// 引数の数や種類が合わないことによるドメイン例外（<see cref="CommandArgumentException"/>）が発生した際、外に漏らさずロガー経由で「エラーメッセージ」としてきれいに捕捉・出力されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// ユーザーの入力ミスはシステムエラー（クラッシュ）ではなく、画面への親切な警告ログに変換すべきであるというドメイン仕様の検証です。
+        /// </remarks>
         [Test]
         public void Execute_CommandArgumentException_LogsException()
         {
@@ -421,6 +550,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Exception));
         }
 
+        /// <summary>
+        /// 数値型へのパース失敗などによるドメイン例外（<see cref="CommandFormatException"/>）が発生した際、ロガーを介して画面に例外通知が飛ぶことを検証します。
+        /// </summary>
         [Test]
         public void Execute_CommandFormatException_LogsException()
         {
@@ -433,6 +565,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Exception));
         }
 
+        /// <summary>
+        /// 開発者の想定外の一般例外（<see cref="InvalidOperationException"/>等）が同期実行中に発生した場合、安全に回収され、かつログに「例外の型名」が含まれる形で原因究明しやすく出力されるかを検証します。
+        /// </summary>
+        /// <remarks>
+        /// バグが発生してもコンソール画面を即死させず、スタックトレース等の手がかりを残すための堅牢な `HandleException.switch(default)` パスをテストしています。
+        /// </remarks>
         [Test]
         public void Execute_UnexpectedException_LogsExceptionWithTypeName()
         {
@@ -447,6 +585,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
                 s.message.Contains(nameof(InvalidOperationException))));
         }
 
+        /// <summary>
+        /// 非同期実行中（`await` の最中）に開発者の想定外の一般例外が発生した場合でも、非同期パイプラインが壊れず、安全にロガーへ例外が転送されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// 非同期の `catch (Exception)` が同期側と同じ `HandleException` を正しく通過できているかを保証します。
+        /// </remarks>
         [Test]
         public async Task ExecuteAsync_UnexpectedException_LogsException()
         {
@@ -461,6 +605,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
         // ─── null logger 許容 ────────────────────────────────────────────────
 
+        /// <summary>
+        /// 依存関係としてロガー（<see cref="ICommandLogger"/>）に `null` が注入されたスタンドアロンな状態でも、同期実行がヌルポ（<see cref="NullReferenceException"/>）を起こさずに安全に動作することを検証します。
+        /// </summary>
+        /// <remarks>
+        /// ログ出力を必要としないバッチ処理や、極限のテスト環境、ロガー初期化前のタイミングにおける安全性のための設計（Null条件演算子 `?.` の漏れ防止）です。
+        /// </remarks>
         [Test]
         public void Execute_NullLogger_DoesNotThrow()
         {
@@ -471,6 +621,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.DoesNotThrow(() => ((YukimaruGames.Terminal.Application.Interfaces.IExecuteCommandUseCase)sut).Execute("cmd"));
         }
 
+        /// <summary>
+        /// ロガーに `null` が注入された状態でも、非同期実行がヌルポを起こさずに安全に動作・完了することを検証します。
+        /// </summary>
         [Test]
         public async Task ExecuteAsync_NullLogger_DoesNotThrow()
         {
