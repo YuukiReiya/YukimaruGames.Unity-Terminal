@@ -73,6 +73,7 @@ namespace YukimaruGames.Terminal.Domain.Services
         /// <returns>パース結果.</returns>
         public ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var status = Parse(str, out var tuple);
             return new ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)>((status, tuple.Command, tuple.Arguments));
         }

@@ -210,6 +210,9 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         void IDisposable.Dispose()
         {
             UnregisterEvents();
+            
+            _destroyCancellationToken.Cancel();
+            _destroyCancellationToken.Dispose();
         }
     }
 }
