@@ -22,12 +22,12 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         /// <summary>
         /// プロシージャ.
         /// </summary>
-        public readonly CommandDelegate Proc;
+        public CommandDelegate Proc { get; }
 
         /// <summary>
         /// 非同期プロシージャ.
         /// </summary>
-        public readonly CommandAsyncDelegate AsyncProc;
+        public CommandAsyncDelegate AsyncProc { get; }
         
         /// <summary>
         /// メタ情報.
@@ -116,26 +116,62 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
         {
         }
 
+        /// <summary>
+        /// 現在のインスタンスと、指定された別のハンドラーが等価であるかどうかを判定します。
+        /// </summary>
+        /// <param name="other">比較対象のハンドラー</param>
+        /// <returns>
+        /// <p>二つのハンドラーが持つプロシージャ、非同期プロシージャ、およびメタ情報がすべて等しい場合は true。それ以外の場合は false。</p>
+        /// </returns>
         public bool Equals(CommandHandler other)
         {
             return Equals(Proc, other.Proc) && Equals(AsyncProc, other.AsyncProc) && Meta.Equals(other.Meta);
         }
 
+        /// <summary>
+        /// 指定されたオブジェクトが現在のハンドラーと等価であるかどうかを判定します。
+        /// </summary>
+        /// <param name="obj">比較対象のオブジェクト</param>
+        /// <returns>
+        /// <p>対象が CommandHandler 構造体であり、かつ現在のインスタンスと等価である場合は true。それ以外の場合は false。</p>
+        /// </returns>
         public override bool Equals(object obj)
         {
             return obj is CommandHandler other && Equals(other);
         }
 
+        /// <summary>
+        /// このインスタンスのハッシュコードを返します。
+        /// </summary>
+        /// <returns>
+        /// <p>プロシージャ、非同期プロシージャ、およびメタ情報から計算された一意のハッシュ値。</p>
+        /// </returns>
         public override int GetHashCode()
         {
             return HashCode.Combine(Proc, AsyncProc, Meta);
         }
 
+        /// <summary>
+        /// 二つのハンドラーが等しいかどうかを判定します。
+        /// </summary>
+        /// <param name="left">左辺のハンドラー</param>
+        /// <param name="right">右辺のハンドラー</param>
+        /// <returns>
+        /// <p>等しい場合は true。それ以外の場合は false。</p>
+        /// </returns>
         public static bool operator ==(CommandHandler left, CommandHandler right)
         {
             return left.Equals(right);
         }
 
+        /// <summary>
+        /// 二つのハンドラーが等しくないかどうかを判定します。
+        /// </summary>
+        /// <param name="left">左辺のハンドラー</param>
+        /// <param name="right">右辺のハンドラー</param>
+        /// <returns>
+        /// <p>等しくない場合は true。等しい場合は false。</p>
+        /// </returns>
         public static bool operator !=(CommandHandler left, CommandHandler right)
         {
             return !left.Equals(right);
