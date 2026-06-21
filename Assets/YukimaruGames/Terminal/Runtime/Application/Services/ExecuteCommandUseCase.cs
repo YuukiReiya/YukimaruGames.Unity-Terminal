@@ -72,34 +72,17 @@ namespace YukimaruGames.Terminal.Application.Services
         /// <inheritdoc/>
         void IExecuteCommandUseCase.Execute(ReadOnlyMemory<char> str)
         {
-            if (Interlocked.CompareExchange(ref _isExecutingState, Executing, Idle) == Executing)
+            var task = ((IExecuteCommandUseCase)this).ExecuteAsync(str, default);
+
+            if (!task.IsCompleted)
             {
+                // 非同期処理として走ってしまった.
+                _logger?.Send(MessageType.Error, $"The requested command requires asynchronous execution. Please use ExecuteAsync.");
                 return;
             }
             
-            try
-            {
-                if (!TryPrepareExecute(str, default, out var command, out var handler, out var arguments))
-                {
-                    return;
-                }
-
-                if (handler.IsAsync)
-                {
-                    _logger?.Send(MessageType.Error, $"The command '{command}' requires asynchronous execution. Please use ExecuteAsync.");
-                    return;
-                }
-
-                _invoker.Execute(handler, arguments);
-            }
-            catch (Exception e)
-            {
-                HandleException(e);
-            }
-            finally
-            {
-                Interlocked.Exchange(ref _isExecutingState, Idle);
-            }
+            // 同期メソッドであるはずなので実行完了待ち.
+            task.GetAwaiter().GetResult();
         }
 
         /// <inheritdoc/>
