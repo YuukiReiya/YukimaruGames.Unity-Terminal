@@ -51,6 +51,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
         {
             public bool ExecuteCalled { get; private set; }
             public bool ExecuteAsyncCalled { get; private set; }
+            public int ExecuteAsyncCallCount { get; private set; }
+            public bool CancellationObserved { get; private set; }
             public Exception ThrowException { get; set; }
 
             private TaskCompletionSource<bool> _executeAsyncGate;
@@ -66,9 +68,14 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             public async ValueTask ExecuteAsync(CommandHandler handler, ReadOnlyMemory<CommandArgument> arguments, CancellationToken cancellationToken)
             {
                 ExecuteAsyncCalled = true;
+                ExecuteAsyncCallCount++;
                 if (_executeAsyncGate != null)
                 {
                     await _executeAsyncGate.Task;
+                }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    CancellationObserved = true;
                 }
                 cancellationToken.ThrowIfCancellationRequested();
                 if (ThrowException != null) throw ThrowException;
@@ -301,7 +308,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             _invoker.OpenGate();
             await first;
 
-            Assert.IsTrue(_invoker.ExecuteAsyncCalled);
+            Assert.AreEqual(1, _invoker.ExecuteAsyncCallCount);
         }
 
         // ─── CancelCommandIfNeeded ────────────────────────────────────────────
@@ -333,6 +340,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 
             await task; 
 
+            Assert.IsTrue(_invoker.CancellationObserved);
             Assert.IsFalse(_sut.IsExecuting);
         }
 

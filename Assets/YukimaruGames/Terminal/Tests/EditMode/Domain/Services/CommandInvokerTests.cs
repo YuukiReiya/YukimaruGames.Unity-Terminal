@@ -17,12 +17,16 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
 
         // ─── テスト用ハンドラファクトリ ───────────────────────────────────────
 
+        private const int MIN_ARGUMENT_COUNT = 0;
+        private const int MAX_ARGUMENT_COUNT = 0;
+        private const string COMMAND_DESCRIPTION = "";
+
         private static CommandHandler MakeSyncHandler(Action<ReadOnlyMemory<CommandArgument>> proc)
-            => new(args => proc(args), "cmd", 0, 0, "");
+            => new(args => proc(args), "cmd", MIN_ARGUMENT_COUNT, MAX_ARGUMENT_COUNT, COMMAND_DESCRIPTION);
 
         private static CommandHandler MakeAsyncHandler(
             Func<ReadOnlyMemory<CommandArgument>, CancellationToken, ValueTask> proc)
-            => new((args, ct) => proc(args, ct), "cmd", 0, 0, "");
+            => new((args, ct) => proc(args, ct), "cmd", MIN_ARGUMENT_COUNT, MAX_ARGUMENT_COUNT, COMMAND_DESCRIPTION);
 
         [SetUp]
         public void SetUp() => _sut = new CommandInvoker();
@@ -95,15 +99,14 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         }
 
         /// <summary>
-        /// 同期実行メソッドに、非同期デリゲートしか持たないハンドラーが渡された場合、例外を投げずに安全に処理をスルーできることを検証します。
+        /// 同期実行メソッドに、非同期デリゲートしか持たないハンドラーが渡された場合、例外がスローされることを検証します。
         /// </summary>
         /// <remarks>
-        /// ユーザーの呼び出しミス（非同期コマンドを同期メソッドで動かそうとした場合など）に対し、システムがクラッシュしない堅牢性を持ち合わせているか確認します。
+        /// ユーザーの呼び出しミス（非同期コマンドを同期メソッドで動かそうとした場合など）を明示的に失敗させ、呼び出し側が誤用に気づけるようにします。
         /// </remarks>
         [Test]
-        public void Execute_HandlerWithNullProc_DoesNotThrow()
+        public void Execute_HandlerWithAsyncHandler_ThrowsArgumentException()
         {
-            // Proc が null の場合（AsyncHandler）は Invoke されない
             var handler = MakeAsyncHandler((_, _) => default);
 
             Assert.Throws<ArgumentException>(() =>
