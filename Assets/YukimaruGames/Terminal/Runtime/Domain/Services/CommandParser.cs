@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
@@ -68,9 +69,11 @@ namespace YukimaruGames.Terminal.Domain.Services
         /// 非同期で文字列メモリからコマンド引数型へパース.
         /// </summary>
         /// <param name="str">解析文字列</param>
+        /// <param name="cancellationToken">キャンセルトークン</param>
         /// <returns>パース結果.</returns>
-        public ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str)
+        public ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ParseAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var status = Parse(str, out var tuple);
             return new ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)>((status, tuple.Command, tuple.Arguments));
         }

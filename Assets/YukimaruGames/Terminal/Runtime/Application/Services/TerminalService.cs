@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Mappers;
 using YukimaruGames.Terminal.Application.Models;
@@ -103,10 +105,13 @@ namespace YukimaruGames.Terminal.Application.Services
         }
 
         /// <inheritdoc/>
-        void ITerminalService.Execute(string str)
-        {
-            _executeCommandUseCase.ExecuteAsync(str).GetAwaiter().GetResult();
-        }
+        public bool IsExecuting => _executeCommandUseCase.IsExecuting;
+
+        /// <inheritdoc/>
+        ValueTask ITerminalService.ExecuteAsync(string str, CancellationToken cancellationToken) => _executeCommandUseCase.ExecutePipelineAsync(str.AsMemory(), cancellationToken);
+
+        /// <inheritdoc/>
+        public void Cancel() => _executeCommandUseCase.CancelCommandIfNeeded();
 
         /// <inheritdoc/>
         int ITerminalService.LogBufferSize => _logger?.MaxLogs ?? 0;

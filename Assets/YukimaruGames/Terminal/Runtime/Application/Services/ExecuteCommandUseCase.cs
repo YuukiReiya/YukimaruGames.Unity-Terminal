@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
@@ -20,6 +21,37 @@ namespace YukimaruGames.Terminal.Application.Services
         private readonly ICommandParser _parser;
         private readonly ICommandHistory _history;
 
+        private CancellationTokenSource _currentCommandCts;
+
+        /// <summary>
+        /// 非ロック(コマンド実行可能)状態
+        /// </summary>
+        /// <remarks>
+        /// 原子性・レースコンディションの回避用
+        /// </remarks>
+        private const int Idle = 0;
+        
+        /// <summary>
+        /// ロック(コマンド実行不可)状態
+        /// </summary>
+        /// <remarks>
+        /// 原子性・レースコンディションの回避用
+        /// </remarks>
+        private const int Executing = 1;
+        
+        /// <remarks>
+        /// ロック用のフラグ
+        /// <p>0 : Idle</p>
+        /// <p>1 : Executing</p>
+        /// </remarks> 
+        private int _isExecutingState = Idle;
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// 値を変えずに最新の状態を確認(キャッシュ無視)
+        /// </remarks>
+        public bool IsExecuting => Volatile.Read(ref _isExecutingState) == Executing;
+        
         public ExecuteCommandUseCase(
             ICommandLogger logger,
             ICommandRegistry registry,
@@ -35,51 +67,136 @@ namespace YukimaruGames.Terminal.Application.Services
         }
 
         /// <inheritdoc/>
-        public ValueTask ExecuteAsync(string str) => ExecuteAsync(str.AsMemory());
-
-        /// <inheritdoc/>
-        public async ValueTask ExecuteAsync(ReadOnlyMemory<char> str)
+        async ValueTask IExecuteCommandUseCase.ExecutePipelineAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
         {
-            var input = str.ToString();
-            _logger?.Send(MessageType.Entry, input);
-            _history.Add(input);
-
-            var result = await _parser.ParseAsync(str);
-            if (string.IsNullOrEmpty(result.Command))
+            // 確認 + 書き換え
+            if (Interlocked.CompareExchange(ref _isExecutingState, Executing, Idle) == Executing)
             {
-                return;
-            }
-
-            if (!_registry.TryGet(result.Command, out var handler))
-            {
-                _logger?.Send(MessageType.Error, $"No such command: '{result.Command}'.");
-                return;
-            }
-
-            if (0 < (result.Status & ICommandParser.ParseStatusCode.SyntaxError))
-            {
-                _logger?.Send(
-                    MessageType.Error,
-                    $"Invalid string format: \"{input}\" is not enclosed with single (\') or double (\") quotes.");
                 return;
             }
 
             try
             {
-                var arguments = result.Arguments?.AsMemory() ?? ReadOnlyMemory<CommandArgument>.Empty;
-                _invoker.Execute(handler, arguments);
-            }
-            catch (CommandArgumentException e)
-            {
-                _logger?.Send(MessageType.Exception, $"Error: {e.Message}");
-            }
-            catch (CommandFormatException e)
-            {
-                _logger?.Send(MessageType.Exception, $"Error: {e.Message}");
+                if (!TryPrepareExecute(str, cancellationToken, out _, out var handler, out var arguments))
+                {
+                    return;
+                }
+                
+                // 登録プロシージャに応じて同期メソッド非同期メソッドを呼び出しわける
+                if (handler.IsAsync)
+                {
+                    _currentCommandCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                    await _invoker.ExecuteAsync(handler, arguments, _currentCommandCts.Token);
+                }
+                else
+                {
+                    // ReSharper disable once MethodHasAsyncOverloadWithCancellation
+                    _invoker.Execute(handler, arguments);
+                }
             }
             catch (Exception e)
             {
-                _logger?.Send(MessageType.Exception, $"{e.GetType().Name}: {e.Message}");
+                HandleException(e);
+            }
+            finally
+            {
+                // Dispose が呼び出されるまでの一瞬の間に Cancel が呼び出されてもいいように先に null を入れておく.
+                var cts = _currentCommandCts;
+                _currentCommandCts = null;
+                cts?.Dispose();
+
+                Interlocked.Exchange(ref _isExecutingState, Idle);
+            }
+        }
+
+        /// <inheritdoc/>
+        void IExecuteCommandUseCase.CancelCommandIfNeeded()
+        {
+            try
+            {
+                _currentCommandCts?.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Dispose後の呼び出しは考慮しなくていいので握りつぶす.
+            }   
+        }
+
+        /// <summary>
+        /// 【共通前処理】パース、ログ記録、バリデーションをまとめて行います。
+        /// </summary>
+        private bool TryPrepareExecute(
+            ReadOnlyMemory<char> str, 
+            CancellationToken cancellationToken,
+            // ReSharper disable once OutParameterValueIsAlwaysDiscarded.Local
+            out string command,
+            out CommandHandler handler,
+            out ReadOnlyMemory<CommandArgument> arguments)
+        {
+            command = default;
+            handler = default;
+            arguments = default;
+
+            // 事前キャンセルチェック
+            if (cancellationToken.IsCancellationRequested) return false;
+
+            // パース実行（高速な同期処理）
+            var resultCode = _parser.Parse(str, out var tuple);
+            command = tuple.Command;
+
+            if (string.IsNullOrEmpty(command))
+            {
+                return false;
+            }
+
+            // ログと履歴への追加
+            var input = str.ToString();
+            _logger?.Send(MessageType.Entry, input);
+            _history?.Add(input);
+
+            // レジストリからハンドラーの取得チェック
+            if (!_registry.TryGet(command, out handler))
+            {
+                _logger?.Send(MessageType.Error, $"No such command: '{command}'.");
+                return false;
+            }
+
+            // 構文エラーチェック
+            if (0 < (resultCode & ICommandParser.ParseStatusCode.SyntaxError))
+            {
+                _logger?.Send(
+                    MessageType.Error,
+                    $"Invalid string format: \"{input}\" is not enclosed with single (\') or double (\") quotes.");
+                return false;
+            }
+
+            // 引数の確定
+            arguments = tuple.Arguments?.AsMemory() ?? ReadOnlyMemory<CommandArgument>.Empty;
+            return true;
+        }
+        
+        /// <summary>
+        /// 【共通後処理】発生した例外のログ出力を一括ハンドリングします。
+        /// </summary>
+        private void HandleException(Exception e)
+        {
+            if (e is OperationCanceledException)
+            {
+                // キャンセル
+                return;
+            }
+
+            switch (e)
+            {
+                // カスタム例外.
+                case CommandArgumentException or CommandFormatException:
+                    _logger?.Send(MessageType.Exception, $"Error: {e.Message}");    
+                    break;
+                
+                // 一般例外.
+                default:
+                    _logger?.Send(MessageType.Exception, $"{e.GetType().Name}: {e.Message}");
+                    break;
             }
         }
     }

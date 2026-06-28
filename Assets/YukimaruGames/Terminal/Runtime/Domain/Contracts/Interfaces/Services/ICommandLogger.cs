@@ -46,7 +46,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
         /// <param name="msgType">ログ出力種別</param>
         /// <param name="message">出力文字列</param>
         /// <remarks>
-        /// 継承先で適切に出力先の処理をルーティングする.
+        /// 継承先で適切に出力先の処理をルーティングする.<br/>
         /// </remarks>
         public void Send(MessageType msgType, string message);
     }

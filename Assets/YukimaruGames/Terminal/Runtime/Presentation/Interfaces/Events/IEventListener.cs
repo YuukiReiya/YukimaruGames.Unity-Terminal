@@ -8,6 +8,7 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Events
         event Action OnOpenTriggered;
         event Action OnCloseTriggered;
         event Action OnExecuteTriggered;
+        event Action OnCancelTriggered;
         event Action OnPreviousHistoryTriggered;
         event Action OnNextHistoryTriggered;
         event Action OnAutocompleteTriggered;

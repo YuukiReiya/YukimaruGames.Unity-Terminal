@@ -13,6 +13,7 @@ namespace YukimaruGames.Terminal.Presentation.Events
         public event Action OnOpenTriggered;
         public event Action OnCloseTriggered;
         public event Action OnExecuteTriggered;
+        public event Action OnCancelTriggered;
         public event Action OnPreviousHistoryTriggered;
         public event Action OnNextHistoryTriggered;
         public event Action OnAutocompleteTriggered;
@@ -41,6 +42,7 @@ namespace YukimaruGames.Terminal.Presentation.Events
             if (_inputHandler.WasReleasedThisFrame(TerminalAction.Open)) OnOpenTriggered?.Invoke();
             if (_inputHandler.WasReleasedThisFrame(TerminalAction.Close)) OnCloseTriggered?.Invoke();
             if (_inputHandler.WasPressedThisFrame(TerminalAction.Execute)) OnExecuteTriggered?.Invoke();
+            if (_inputHandler.WasPressedThisFrame(TerminalAction.Cancel)) OnCancelTriggered?.Invoke();
             if (_inputHandler.WasPressedThisFrame(TerminalAction.PreviousHistory)) OnPreviousHistoryTriggered?.Invoke();
             if (_inputHandler.WasPressedThisFrame(TerminalAction.NextHistory)) OnNextHistoryTriggered?.Invoke();
             if (_inputHandler.WasPressedThisFrame(TerminalAction.Autocomplete)) OnAutocompleteTriggered?.Invoke();

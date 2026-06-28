@@ -1,8 +1,12 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using UnityEditor;
 using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Services;
+using CommandHandler = YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects.CommandHandler;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
 {
@@ -89,7 +93,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         [Test]
         public async Task ParseAsync_ReadOnlyMemory_Works()
         {
-            var result = await _parser.ParseAsync("move 1 2".AsMemory());
+            using var cts = new CancellationTokenSource();
+            var result = await _parser.ParseAsync("move 1 2".AsMemory(), cts.Token);
 
             Assert.AreEqual(ICommandParser.ParseStatusCode.Ok, result.Status);
             Assert.AreEqual("move", result.Command);
