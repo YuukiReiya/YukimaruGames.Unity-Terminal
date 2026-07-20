@@ -1,6 +1,9 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
 using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
 using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
@@ -24,26 +27,49 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         /// <returns>コマンドの実行型</returns>
         private static CommandHandler Create(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help)
         {
+            var returnKind = GetReturnKind(methodInfo);
+
+            return returnKind switch
+            {
+                CommandReturnKind.Sync => CreateSync(instance, methodInfo, command, minArgCount, maxArgCount, help),
+                CommandReturnKind.AsyncTask => CreateAsync(instance, methodInfo, command, minArgCount, maxArgCount, help, wrapTask: true),
+                CommandReturnKind.AsyncValueTask => CreateAsync(instance, methodInfo, command, minArgCount, maxArgCount, help, wrapTask: false),
+                _ => throw new NotSupportedException($"Method '{methodInfo.DeclaringType?.FullName}.{methodInfo.Name}' uses an unsupported return type.")
+            };
+        }
+
+        /// <summary>
+        /// 同期コマンドのハンドラーを生成する.
+        /// </summary>
+        private static CommandHandler CreateSync(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help)
+        {
+            if (HasTrailingCancellationToken(methodInfo.GetParameters()))
+            {
+                throw new NotSupportedException(
+                    $"Method '{methodInfo.DeclaringType?.FullName}.{methodInfo.Name}' uses CancellationToken. This factory path supports only sync commands without CancellationToken.");
+            }
+
             var parameter4Ex = Expression.Parameter(typeof(ReadOnlyMemory<CommandArgument>), "args");
             var parameter4ArrayEx = Expression.Variable(typeof(CommandArgument[]), "argsArray");
             var methodParameters = methodInfo.GetParameters();
             Expression bodyEx;
             var toArrayMethod = typeof(ReadOnlyMemory<CommandArgument>).GetMethod(nameof(ReadOnlyMemory<CommandArgument>.ToArray))!;
             var convertToArrayEx = Expression.Assign(parameter4ArrayEx, Expression.Call(parameter4Ex, toArrayMethod));
+            var instanceEx = methodInfo.IsStatic ? null : Expression.Constant(instance);
 
             var isTakeRawArray = methodParameters.Length == 1 && methodParameters[0].ParameterType == typeof(CommandArgument[]);
             var isTakeRawMemory = methodParameters.Length == 1 && methodParameters[0].ParameterType == typeof(ReadOnlyMemory<CommandArgument>);
 
             if (isTakeRawMemory)
             {
-                bodyEx = Expression.Call(methodInfo.IsStatic ? null : Expression.Constant(instance), methodInfo, parameter4Ex);
+                bodyEx = Expression.Call(instanceEx, methodInfo, parameter4Ex);
             }
             else if (isTakeRawArray)
             {
                 bodyEx = Expression.Block(
                     new[] { parameter4ArrayEx },
                     convertToArrayEx,
-                    Expression.Call(methodInfo.IsStatic ? null : Expression.Constant(instance), methodInfo, parameter4ArrayEx));
+                    Expression.Call(instanceEx, methodInfo, parameter4ArrayEx));
             }
             else
             {
@@ -71,6 +97,124 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         }
 
         /// <summary>
+        /// 非同期コマンドのハンドラーを生成する.
+        /// </summary>
+        private static CommandHandler CreateAsync(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help, bool wrapTask)
+        {
+            var parameter4Ex = Expression.Parameter(typeof(ReadOnlyMemory<CommandArgument>), "args");
+            var cancellationTokenEx = Expression.Parameter(typeof(CancellationToken), "cancellationToken");
+            var parameter4ArrayEx = Expression.Variable(typeof(CommandArgument[]), "argsArray");
+            var methodParameters = methodInfo.GetParameters();
+            var instanceEx = methodInfo.IsStatic ? null : Expression.Constant(instance);
+            var toArrayMethod = typeof(ReadOnlyMemory<CommandArgument>).GetMethod(nameof(ReadOnlyMemory<CommandArgument>.ToArray))!;
+            var convertToArrayEx = Expression.Assign(parameter4ArrayEx, Expression.Call(parameter4Ex, toArrayMethod));
+            var useCancellationToken = HasTrailingCancellationToken(methodParameters);
+            var expectedLength = useCancellationToken ? 2 : 1;
+            var useArrayPath = methodParameters.Length == expectedLength
+                && methodParameters[0].ParameterType == typeof(CommandArgument[])
+                && (!useCancellationToken || methodParameters[1].ParameterType == typeof(CancellationToken));
+            var useMemoryPath = methodParameters.Length == expectedLength
+                && methodParameters[0].ParameterType == typeof(ReadOnlyMemory<CommandArgument>)
+                && (!useCancellationToken || methodParameters[1].ParameterType == typeof(CancellationToken));
+            Expression bodyEx;
+
+            if (useMemoryPath)
+            {
+                bodyEx = BuildAsyncReturnExpression(
+                    Expression.Call(instanceEx, methodInfo, BuildAsyncCallArguments(parameter4Ex, cancellationTokenEx, useCancellationToken)),
+                    wrapTask);
+            }
+            else if (useArrayPath)
+            {
+                bodyEx = Expression.Block(
+                    new[] { parameter4ArrayEx },
+                    convertToArrayEx,
+                    BuildAsyncReturnExpression(
+                        Expression.Call(instanceEx, methodInfo, BuildAsyncCallArguments(parameter4ArrayEx, cancellationTokenEx, useCancellationToken)),
+                        wrapTask));
+            }
+            else
+            {
+                var methodCallExpression = BuildMethodCallExpression(instance, methodInfo, parameter4ArrayEx, methodParameters, useCancellationToken, cancellationTokenEx);
+                if (wrapTask)
+                {
+                    methodCallExpression = BuildAsyncReturnExpression(methodCallExpression, wrapTask);
+                }
+
+                var validateCallExpression = BuildValidateExpression(parameter4ArrayEx, minArgCount, maxArgCount);
+                var throwException = Expression.Throw(
+                    Expression.New(
+                        typeof(CommandArgumentException).GetConstructor(new[] { typeof(int), typeof(int), typeof(int), typeof(Exception) })!,
+                        Expression.Property(parameter4ArrayEx, "Length"),
+                        Expression.Constant(minArgCount),
+                        Expression.Constant(maxArgCount),
+                        Expression.Constant(null, typeof(Exception))
+                    ), typeof(ValueTask));
+
+                bodyEx = Expression.Block(
+                    new[] { parameter4ArrayEx },
+                    convertToArrayEx,
+                    Expression.Condition(validateCallExpression, methodCallExpression, throwException));
+            }
+
+            var lambda = Expression.Lambda<CommandAsyncDelegate>(bodyEx, parameter4Ex, cancellationTokenEx);
+            var compiled = lambda.Compile();
+            var meta = new CommandMeta(command, maxArgCount, minArgCount, help);
+            return new CommandHandler(compiled, meta);
+        }
+
+        /// <summary>
+        /// コマンドの戻り値種別.
+        /// </summary>
+        private enum CommandReturnKind
+        {
+            Sync,
+            AsyncTask,
+            AsyncValueTask
+        }
+
+        /// <summary>
+        /// メソッドの戻り値から処理系を判定する.
+        /// </summary>
+        private static CommandReturnKind GetReturnKind(MethodInfo methodInfo)
+        {
+            var returnType = methodInfo.ReturnType;
+            if (returnType == typeof(void))
+            {
+                if (methodInfo.GetCustomAttribute<AsyncStateMachineAttribute>() != null)
+                {
+                    throw new NotSupportedException(
+                        $"Method '{methodInfo.DeclaringType?.FullName}.{methodInfo.Name}' is async-void. Use the async factory path for async commands.");
+                }
+
+                return CommandReturnKind.Sync;
+            }
+
+            if (returnType == typeof(Task))
+            {
+                return CommandReturnKind.AsyncTask;
+            }
+
+            if (returnType == typeof(ValueTask))
+            {
+                return CommandReturnKind.AsyncValueTask;
+            }
+
+            if (returnType.IsGenericType)
+            {
+                var genericType = returnType.GetGenericTypeDefinition();
+                if (genericType == typeof(Task<>) || genericType == typeof(ValueTask<>))
+                {
+                    throw new NotSupportedException(
+                        $"Method '{methodInfo.DeclaringType?.FullName}.{methodInfo.Name}' returns '{returnType.Name}'. Generic task return types are not supported.");
+                }
+            }
+
+            throw new NotSupportedException(
+                $"Method '{methodInfo.DeclaringType?.FullName}.{methodInfo.Name}' returns '{returnType.Name}'. Only void, Task, and ValueTask are supported.");
+        }
+
+        /// <summary>
         /// コマンドハンドラーの生成.
         /// </summary>
         /// <param name="methodInfo">呼び出しメソッド情報</param>
@@ -78,7 +222,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         public static CommandHandler Create(MethodInfo methodInfo)
         {
             var attribute = methodInfo.GetCustomAttribute<TerminalCommandAttribute>();
-            var length = methodInfo.GetParameters().Length;
+            var length = GetCommandArgumentCount(methodInfo);
             return Create(
                 null,
                 methodInfo,
@@ -102,7 +246,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         /// </remarks>
         public static CommandHandler Create<T>(T instance, string command, MethodInfo methodInfo) where T : class
         {
-            var length = methodInfo.GetParameters().Length;
+            var length = GetCommandArgumentCount(methodInfo);
             return Create(
                 instance,
                 methodInfo,
@@ -134,7 +278,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         {
             var methodInfo = @delegate.Method;
             var instance = @delegate.Target;
-            var length = methodInfo.GetParameters().Length;
+            var length = GetCommandArgumentCount(methodInfo);
             return Create(
                 instance,
                 methodInfo,
@@ -156,14 +300,17 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
             object instance,
             MethodInfo methodInfo,
             ParameterExpression parameterExpression,
-            ParameterInfo[] methodParameters)
+            ParameterInfo[] methodParameters,
+            bool useCancellationToken = false,
+            ParameterExpression cancellationTokenExpression = null)
         {
             var instanceEx = methodInfo.IsStatic ? null : Expression.Constant(instance);
-            var convertedArgEx = new Expression[methodParameters.Length];
+            var effectiveMethodParameters = GetEffectiveMethodParameters(methodParameters, useCancellationToken);
+            var convertedArgEx = new Expression[effectiveMethodParameters.Length + (useCancellationToken ? 1 : 0)];
             var mi2AsMethod = typeof(CommandArgument).GetMethod(nameof(CommandArgument.As));
-            for (var i = 0; i < methodParameters.Length; i++)
+            for (var i = 0; i < effectiveMethodParameters.Length; i++)
             {
-                var parameterInfo = methodParameters[i];
+                var parameterInfo = effectiveMethodParameters[i];
                 var index4Ex = Expression.ArrayIndex(parameterExpression, Expression.Constant(i));
                 var mi2AsGenericMethod = mi2AsMethod!.MakeGenericMethod(parameterInfo.ParameterType);
                 var asGeneric4MethodEx = Expression.Call(index4Ex, mi2AsGenericMethod);
@@ -185,7 +332,69 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
                 convertedArgEx[i] = Expression.TryCatch(asGeneric4MethodEx, catchBlock);
             }
 
+            if (useCancellationToken)
+            {
+                convertedArgEx[convertedArgEx.Length - 1] = cancellationTokenExpression;
+            }
+
             return Expression.Call(instanceEx, methodInfo, convertedArgEx);
+        }
+
+        /// <summary>
+        /// 非同期コマンドの呼び出し引数を構築する.
+        /// </summary>
+        private static Expression[] BuildAsyncCallArguments(ParameterExpression argsExpression, ParameterExpression cancellationTokenExpression, bool useCancellationToken)
+        {
+            return useCancellationToken
+                ? new Expression[] { argsExpression, cancellationTokenExpression }
+                : new Expression[] { argsExpression };
+        }
+
+        /// <summary>
+        /// Task 系の戻り値を ValueTask に正規化する.
+        /// </summary>
+        private static Expression BuildAsyncReturnExpression(Expression expression, bool wrapTask)
+        {
+            if (!wrapTask)
+            {
+                return expression;
+            }
+
+            var valueTaskCtor = typeof(ValueTask).GetConstructor(new[] { typeof(Task) })!;
+            return Expression.New(valueTaskCtor, expression);
+        }
+
+        /// <summary>
+        /// メソッド末尾の CancellationToken がコマンド引数ではないかを判定する.
+        /// </summary>
+        private static bool HasTrailingCancellationToken(ParameterInfo[] methodParameters)
+        {
+            return methodParameters.Length > 0 && methodParameters[^1].ParameterType == typeof(CancellationToken);
+        }
+
+        /// <summary>
+        /// コマンド引数に該当するパラメータ群を取得する.
+        /// </summary>
+        private static ParameterInfo[] GetEffectiveMethodParameters(ParameterInfo[] methodParameters, bool useCancellationToken)
+        {
+            if (!useCancellationToken)
+            {
+                return methodParameters;
+            }
+
+            var size = methodParameters.Length - 1;
+            var effectiveParameters = new ParameterInfo[size];
+            Array.Copy(methodParameters, effectiveParameters, size);
+            return effectiveParameters;
+        }
+
+        /// <summary>
+        /// デフォルト引数数の算出.
+        /// </summary>
+        private static int GetCommandArgumentCount(MethodInfo methodInfo)
+        {
+            var parameters = methodInfo.GetParameters();
+            return HasTrailingCancellationToken(parameters) ? parameters.Length - 1 : parameters.Length;
         }
 
         /// <summary>
