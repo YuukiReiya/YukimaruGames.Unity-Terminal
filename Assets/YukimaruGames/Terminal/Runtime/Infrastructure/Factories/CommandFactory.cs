@@ -16,6 +16,22 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
     public static class CommandFactory
     {
         /// <summary>
+        /// 非同期コマンドメソッドの戻り値型の補正種別.
+        /// </summary>
+        internal enum AsyncReturnKind
+        {
+            /// <summary>
+            /// ValueTaskを返すためラップ不要.
+            /// </summary>
+            None = 0,
+
+            /// <summary>
+            /// Taskを返すためValueTaskにラップが必要.
+            /// </summary>
+            TaskToValueTask = 1,
+        }
+        
+        /// <summary>
         /// コマンドハンドラーの生成.
         /// </summary>
         /// <param name="instance">インスタンス</param>
@@ -32,8 +48,8 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
             return returnKind switch
             {
                 CommandReturnKind.Sync => CreateSync(instance, methodInfo, command, minArgCount, maxArgCount, help),
-                CommandReturnKind.AsyncTask => CreateAsync(instance, methodInfo, command, minArgCount, maxArgCount, help, wrapTask: true),
-                CommandReturnKind.AsyncValueTask => CreateAsync(instance, methodInfo, command, minArgCount, maxArgCount, help, wrapTask: false),
+                CommandReturnKind.AsyncTask => CreateAsync(instance, methodInfo, command, minArgCount, maxArgCount, help, returnKind: AsyncReturnKind.TaskToValueTask),
+                CommandReturnKind.AsyncValueTask => CreateAsync(instance, methodInfo, command, minArgCount, maxArgCount, help, returnKind: AsyncReturnKind.None),
                 _ => throw new NotSupportedException($"Method '{methodInfo.DeclaringType?.FullName}.{methodInfo.Name}' uses an unsupported return type.")
             };
         }
@@ -99,7 +115,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         /// <summary>
         /// 非同期コマンドのハンドラーを生成する.
         /// </summary>
-        private static CommandHandler CreateAsync(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help, bool wrapTask)
+        private static CommandHandler CreateAsync(object instance, MethodInfo methodInfo, string command, int minArgCount, int maxArgCount, string help, AsyncReturnKind returnKind)
         {
             var parameter4Ex = Expression.Parameter(typeof(ReadOnlyMemory<CommandArgument>), "args");
             var cancellationTokenEx = Expression.Parameter(typeof(CancellationToken), "cancellationToken");
@@ -122,7 +138,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
             {
                 bodyEx = BuildAsyncReturnExpression(
                     Expression.Call(instanceEx, methodInfo, BuildAsyncCallArguments(parameter4Ex, cancellationTokenEx, useCancellationToken)),
-                    wrapTask);
+                    returnKind);
             }
             else if (useArrayPath)
             {
@@ -131,14 +147,14 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
                     convertToArrayEx,
                     BuildAsyncReturnExpression(
                         Expression.Call(instanceEx, methodInfo, BuildAsyncCallArguments(parameter4ArrayEx, cancellationTokenEx, useCancellationToken)),
-                        wrapTask));
+                        returnKind));
             }
             else
             {
                 var methodCallExpression = BuildMethodCallExpression(instance, methodInfo, parameter4ArrayEx, methodParameters, useCancellationToken, cancellationTokenEx);
-                if (wrapTask)
+                if (returnKind is AsyncReturnKind.TaskToValueTask)
                 {
-                    methodCallExpression = BuildAsyncReturnExpression(methodCallExpression, wrapTask);
+                    methodCallExpression = BuildAsyncReturnExpression(methodCallExpression, returnKind);
                 }
 
                 var validateCallExpression = BuildValidateExpression(parameter4ArrayEx, minArgCount, maxArgCount);
@@ -353,9 +369,9 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
         /// <summary>
         /// Task 系の戻り値を ValueTask に正規化する.
         /// </summary>
-        private static Expression BuildAsyncReturnExpression(Expression expression, bool wrapTask)
+        private static Expression BuildAsyncReturnExpression(Expression expression, AsyncReturnKind returnKind)
         {
-            if (!wrapTask)
+            if (returnKind is AsyncReturnKind.None)
             {
                 return expression;
             }
