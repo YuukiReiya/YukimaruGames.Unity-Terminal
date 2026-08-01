@@ -125,17 +125,22 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
                 nextCursorColor.a = 0f;
             }
 
-            UnityEngine.GUI.skin.settings.cursorColor = nextCursorColor;
-            UnityEngine.GUI.skin.settings.selectionColor = _colorPaletteProvider[Definitions.ThemeLabel.Selection];
-            // カーソルの点滅はCursorPresenter/CursorViewが管理するため、ネイティブの点滅は無効化する.
-            UnityEngine.GUI.skin.settings.cursorFlashSpeed = 0f;
+            try
+            {
+                UnityEngine.GUI.skin.settings.cursorColor = nextCursorColor;
+                UnityEngine.GUI.skin.settings.selectionColor = _colorPaletteProvider[Definitions.ThemeLabel.Selection];
+                // カーソルの点滅はCursorPresenter/CursorViewが管理するため、ネイティブの点滅は無効化する.
+                UnityEngine.GUI.skin.settings.cursorFlashSpeed = 0f;
 
-            InputText = GUILayout.TextField(data.InputText, _styleProvider.GetStyle());
-            SendImeComposingState();
-
-            UnityEngine.GUI.skin.settings.cursorColor = cursorColor;
-            UnityEngine.GUI.skin.settings.selectionColor = selectionColor;
-            UnityEngine.GUI.skin.settings.cursorFlashSpeed = cursorFlashSpeed;
+                InputText = GUILayout.TextField(data.InputText, _styleProvider.GetStyle());
+                SendImeComposingState();
+            }
+            finally
+            {
+                UnityEngine.GUI.skin.settings.cursorColor = cursorColor;
+                UnityEngine.GUI.skin.settings.selectionColor = selectionColor;
+                UnityEngine.GUI.skin.settings.cursorFlashSpeed = cursorFlashSpeed;
+            }
 
             _focus = data.Focus;
             _isMoveCursorToEnd = data.IsMoveCursorToEnd;

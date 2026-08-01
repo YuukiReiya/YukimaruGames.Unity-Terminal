@@ -57,27 +57,33 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
         {
             GUILayout.FlexibleSpace();
             var cursorColor = UnityEngine.GUI.skin.settings.cursorColor;
-            UnityEngine.GUI.skin.settings.cursorColor = Color.clear;
 
-            SyncLineViews(data.LogRenderDataCollection.Count);
-
-            var index = 0;
-            foreach (var renderData in data.LogRenderDataCollection)
+            try
             {
-                OnPreRender?.Invoke(renderData);
+                UnityEngine.GUI.skin.settings.cursorColor = Color.clear;
 
-                _styleAccessor.SetColor(GetColor(renderData.MessageType));
-                // TODO:コピペ可能な選択フィールドの実装が理想.
-                var lineView = _lineViews[index];
-                lineView.SetMessage(renderData.Message);
-                lineView.Render(_styleAccessor.GetStyle());
-                if (ShouldDrawCopyButton(renderData)) _clipboardRenderer.Render(renderData.Message);
+                SyncLineViews(data.LogRenderDataCollection.Count);
 
-                OnPostRender?.Invoke(renderData);
-                ++index;
+                var index = 0;
+                foreach (var renderData in data.LogRenderDataCollection)
+                {
+                    OnPreRender?.Invoke(renderData);
+
+                    _styleAccessor.SetColor(GetColor(renderData.MessageType));
+                    // TODO:コピペ可能な選択フィールドの実装が理想. (#102)
+                    var lineView = _lineViews[index];
+                    lineView.SetMessage(renderData.Message);
+                    lineView.Render(_styleAccessor.GetStyle());
+                    if (ShouldDrawCopyButton(renderData)) _clipboardRenderer.Render(renderData.Message);
+
+                    OnPostRender?.Invoke(renderData);
+                    ++index;
+                }
             }
-
-            UnityEngine.GUI.skin.settings.cursorColor = cursorColor;
+            finally
+            {
+                UnityEngine.GUI.skin.settings.cursorColor = cursorColor;
+            }
         }
 
         /// <summary>
