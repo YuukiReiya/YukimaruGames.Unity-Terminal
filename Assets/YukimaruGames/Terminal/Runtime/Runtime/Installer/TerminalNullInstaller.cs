@@ -49,7 +49,7 @@ namespace YukimaruGames.Terminal.Runtime
                 service,
                 registry,
                 autocomplete,
-                null,
+                new NullTerminalView(),
                 disposables);
         }
 

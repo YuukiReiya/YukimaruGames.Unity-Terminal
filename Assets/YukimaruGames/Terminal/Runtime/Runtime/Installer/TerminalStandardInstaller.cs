@@ -103,7 +103,7 @@ namespace YukimaruGames.Terminal.Runtime
             /// <inheritdoc cref="ILauncherPresenter"/>
             public ILauncherPresenter LauncherPresenter;
             /// <inheritdoc cref="ITerminalView"/>
-            public ITerminalView View;
+            public ITerminalView View { get; set; }
         }
         
         /// <summary>

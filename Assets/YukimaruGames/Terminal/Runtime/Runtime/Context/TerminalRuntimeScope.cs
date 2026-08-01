@@ -16,6 +16,11 @@ namespace YukimaruGames.Terminal.Runtime
         public ITerminalService Service { get; }
         public ICommandRegistry Registry { get; }
         public ICommandAutocomplete Autocomplete { get; }
+        /// <summary>
+        /// ウィンドウ全体の表示制御用View.
+        /// <see cref="TerminalNullInstaller"/>ではNull Objectパターンの実装
+        /// （<see cref="NullTerminalView"/>）が設定されるため、常に非null.
+        /// </summary>
         public ITerminalView View { get; }
 
         private readonly IReadOnlyList<IDisposable> _disposables;
