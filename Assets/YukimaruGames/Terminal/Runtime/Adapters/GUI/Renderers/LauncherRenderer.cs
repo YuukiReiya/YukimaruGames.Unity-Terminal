@@ -6,7 +6,7 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 using YukimaruGames.Terminal.Presentation.Models.Launcher;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Presentation.Renderers
+namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
 {
     public sealed class LauncherRenderer : ILauncherRenderer, IDisposable
     {
@@ -101,7 +101,7 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
 
             using (new GUILayout.AreaScope(rect))
             {
-                using (GUI.Scope _ = anchor is WindowAnchor.Left or WindowAnchor.Right ? new GUILayout.VerticalScope() : new GUILayout.HorizontalScope())
+                using (UnityEngine.GUI.Scope _ = anchor is WindowAnchor.Left or WindowAnchor.Right ? new GUILayout.VerticalScope() : new GUILayout.HorizontalScope())
                 {
                     DrawButtons();
                 }

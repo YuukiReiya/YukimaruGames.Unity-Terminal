@@ -2,8 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
-namespace YukimaruGames.Terminal.Infrastructure.Accessors
+namespace YukimaruGames.Terminal.Adapters.GUI.Accessors
 {
+    /// <summary>
+    /// テーマラベルとカラーの対応表を保持するアクセサ.
+    /// </summary>
     public sealed class ColorPaletteAccessor : IColorPaletteAccessor
     {
         private readonly Dictionary<string, Color> _map = new();

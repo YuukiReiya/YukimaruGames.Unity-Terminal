@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
-using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Attributes;
+using YukimaruGames.Terminal.Domain.Contracts.Exceptions;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 
 namespace YukimaruGames.Terminal.Infrastructure.Factories
 {

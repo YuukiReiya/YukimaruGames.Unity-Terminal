@@ -3,10 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEditor;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Services;
-using CommandHandler = YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects.CommandHandler;
+using CommandHandler = YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects.CommandHandler;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
 {

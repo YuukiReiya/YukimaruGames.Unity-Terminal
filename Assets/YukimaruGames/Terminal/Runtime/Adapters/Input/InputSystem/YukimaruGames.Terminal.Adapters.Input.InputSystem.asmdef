@@ -1,0 +1,20 @@
+{
+    "name": "YukimaruGames.Terminal.Adapters.Input.InputSystem",
+    "rootNamespace": "YukimaruGames.Terminal.Adapters.Input.InputSystem",
+    "references": [
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa",
+        "GUID:e219bb3678c74bd4bab8e224eb77b2ad"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "ENABLE_INPUT_SYSTEM"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

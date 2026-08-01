@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using YukimaruGames.Terminal.Application.Interfaces;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
+using YukimaruGames.Terminal.Presentation.Contracts;
 
 namespace YukimaruGames.Terminal.Runtime
 {
@@ -15,6 +16,12 @@ namespace YukimaruGames.Terminal.Runtime
         public ITerminalService Service { get; }
         public ICommandRegistry Registry { get; }
         public ICommandAutocomplete Autocomplete { get; }
+        /// <summary>
+        /// ウィンドウ全体の表示制御用View.
+        /// <see cref="TerminalNullInstaller"/>ではNull Objectパターンの実装
+        /// （<see cref="NullTerminalView"/>）が設定されるため、常に非null.
+        /// </summary>
+        public ITerminalView View { get; }
 
         private readonly IReadOnlyList<IDisposable> _disposables;
 
@@ -23,12 +30,14 @@ namespace YukimaruGames.Terminal.Runtime
             ITerminalService service,
             ICommandRegistry registry,
             ICommandAutocomplete autocomplete,
+            ITerminalView view,
             IReadOnlyList<IDisposable> disposables)
         {
             EntryPoint = entryPoint;
             Service = service;
             Registry = registry;
             Autocomplete = autocomplete;
+            View = view;
             _disposables = disposables ?? new List<IDisposable>(0);
         }
 

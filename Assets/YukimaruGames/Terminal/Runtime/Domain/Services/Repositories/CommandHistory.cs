@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Repositories;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
 
 namespace YukimaruGames.Terminal.Domain.Repositories
 {

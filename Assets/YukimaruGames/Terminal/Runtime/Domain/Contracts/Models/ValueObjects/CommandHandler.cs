@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
+namespace YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects
 {
     /// <summary>
     /// コマンドのデリゲート.

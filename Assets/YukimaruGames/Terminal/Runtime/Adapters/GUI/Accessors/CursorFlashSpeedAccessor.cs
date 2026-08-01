@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
-namespace YukimaruGames.Terminal.Infrastructure.Accessors
+namespace YukimaruGames.Terminal.Adapters.GUI.Accessors
 {
     public sealed class CursorFlashSpeedAccessor : ICursorFlashSpeedAccessor
     {

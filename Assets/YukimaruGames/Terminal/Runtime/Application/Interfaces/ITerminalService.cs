@@ -48,7 +48,7 @@ namespace YukimaruGames.Terminal.Application.Interfaces
 
         #region Autocomplete
 
-        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Abstractions.Interfaces.ICommandAutocomplete"/>
+        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.ICommandAutocomplete"/>
         string[] Autocomplete(string partialWord);
         
         #endregion
@@ -130,10 +130,10 @@ namespace YukimaruGames.Terminal.Application.Interfaces
 
         #region History
 
-        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Abstractions.Interfaces.ICommandHistory.Next"/>
+        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.ICommandHistory.Next"/>
         string NextHistory();
 
-        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Abstractions.Interfaces.ICommandHistory.Previous"/>
+        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.ICommandHistory.Previous"/>
         string PrevHistory();
 
         #endregion

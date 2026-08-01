@@ -1,6 +1,6 @@
 using System;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects
+namespace YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects
 {
     /// <summary>
     /// コマンドの引数型.

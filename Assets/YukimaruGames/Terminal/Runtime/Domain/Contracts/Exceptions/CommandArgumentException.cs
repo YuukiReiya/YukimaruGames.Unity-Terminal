@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Exceptions
+namespace YukimaruGames.Terminal.Domain.Contracts.Exceptions
 {
     /// <summary>
     /// コマンド引数の引数の数が違う場合に送出するカスタム例外.

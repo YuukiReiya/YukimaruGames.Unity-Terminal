@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Repositories
+namespace YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories
 {
     /// <summary>
     /// 入力コマンドの履歴管理インターフェイス.
