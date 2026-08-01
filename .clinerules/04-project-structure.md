@@ -63,13 +63,11 @@ Assets/YukimaruGames/Terminal/
 
 ## 使用パッケージ・ライブラリ
 
-<!-- TODO(USER): バージョンを実態に合わせて記入してください -->
+外部の非同期・DI・Reactiveライブラリ（UniTask, VContainer, UniRx/R3等）には**依存していない**。
+`manifest.json` にはUnity公式パッケージ以外の依存はない。
 
-| パッケージ | 用途 | バージョン |
-|-----------|------|-----------|
-| UniTask | 非同期処理 | <!-- TODO(USER): 要記入 --> |
-| VContainer | DI（依存性注入）※未導入の場合はServiceLocator | <!-- TODO(USER): 要記入 --> |
-| UniRx または R3 | Reactiveプログラミング | <!-- TODO(USER): 要記入 --> |
+- DI: `IInstaller` / `TerminalRuntimeScope` による自前実装（Composition Rootが配線を担う。VContainer等のDIコンテナは未使用）
+- 非同期処理: 標準の `System.Threading.Tasks` を使用
 
 ## 命名の対応表（ドメイン用語）
 

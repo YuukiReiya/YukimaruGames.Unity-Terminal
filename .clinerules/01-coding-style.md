@@ -8,86 +8,96 @@
 
 | 対象 | 規則 | 例 |
 |------|------|-----|
-| クラス・構造体 | PascalCase | `PlayerHealth`, `EnemyController` |
-| インターフェース | `I` + PascalCase | `IAttackable`, `IDamageable` |
-| メソッド | PascalCase | `TakeDamage()`, `ResetPosition()` |
-| プロパティ | PascalCase | `CurrentHp`, `MaxSpeed` |
-| privateフィールド | _camelCase | `_currentHp`, `_moveSpeed` |
-| 定数 | UPPER_SNAKE_CASE | `MAX_HEALTH`, `BASE_DAMAGE` |
-| ローカル変数・引数 | camelCase | `damageAmount`, `targetPosition` |
-| イベント | PascalCase + `On` prefix | `OnDied`, `OnHealthChanged` |
+| 名前空間・クラス・構造体・enum | PascalCase | `CommandRegistry`, `MessageType` |
+| インターフェース | `I` + PascalCase | `ICommandRegistry`, `ICommandLogger` |
+| メソッド | PascalCase | `TryGet()`, `Add()` |
+| プロパティ | PascalCase | `EntryPoint`, `IsInstalled` |
+| privateフィールド | _camelCase | `_commands`, `_logger` |
+| 定数（const） | PascalCase | `BootUpMessage`, `Window` |
+| ローカル変数・引数 | camelCase | `command`, `methodInfo` |
 
-## MonoBehaviour の記述順序
+命名にはライブラリ名（`Terminal`）のプリフィックスを付けない。名前空間がコンテキストを表すため、`TerminalCommandRegistry` ではなく `CommandRegistry` のように簡潔にする。
+ただし `TerminalCommandAttribute`（公開API）、`TerminalStandardInstaller` / `TerminalStandardAnimation`（標準実装のバリエーションを表す型）、`TerminalBootstrapper` / `TerminalRuntimeScope`（Composition Root）は既存の命名として `Terminal` プレフィックスを維持する。
 
-以下の順序で記述すること:
+## クラス内の記述順序
 
-```csharp
-// 1. Unityイベント関連フィールド
-[SerializeField] private int _maxHp = 100;
-
-// 2. privateフィールド
-private int _currentHp;
-
-// 3. プロパティ
-public int CurrentHp => _currentHp;
-
-// 4. Unityライフサイクルメソッド（実行順に並べる）
-private void Awake() { }
-private void Start() { }
-private void Update() { }
-private void OnDestroy() { }
-
-// 5. publicメソッド
-public void TakeDamage(int amount) { }
-
-// 6. privateメソッド
-private void Die() { }
-```
-
-## SerializeField の使い方
-- Inspectorに公開したいフィールドは `public` ではなく `[SerializeField] private` を使う
-- `public` フィールドは原則禁止（プロパティ経由でアクセスする）
+1. `[SerializeField]` フィールド／Unityイベント関連フィールド
+2. privateフィールド（`readonly` を優先する）
+3. コンストラクタ
+4. プロパティ
+5. Unityライフサイクルメソッド（`MonoBehaviour` を継承する場合のみ、実行順に並べる: `Awake` → `Update` → `OnGUI` → `OnDestroy` 等）
+   - `OnValidate` はInspectorでの変更やスクリプト検証時に呼ばれるエディター専用コールバックであり、上記の実行順には含まれない。別項目として最後にまとめて記述する
+6. publicメソッド
+7. privateメソッド
 
 ```csharp
-// Good
-[SerializeField] private float _moveSpeed = 5f;
-public float MoveSpeed => _moveSpeed;
-
-// Bad
-public float moveSpeed = 5f;
-```
-
-## null チェック
-- Unity オブジェクトの null チェックは `== null` を使う（`?.` 演算子は Unity の疑似 null に対応していないため）
-
-```csharp
-// Good
-if (_rigidbody == null) return;
-
-// Bad（Unityオブジェクトには使わない）
-_rigidbody?.AddForce(direction);
-```
-
-## コメント方針
-- クラスと public メソッドには必ず XML ドキュメントコメントを書く
-- 処理の「何をするか」ではなく「なぜそうするか」をコメントする
-- TODO コメントは `// TODO(担当者名): 内容` の形式で書く
-
-```csharp
-/// <summary>
-/// プレイヤーにダメージを与える。
-/// ダメージ計算後にHPが0以下になった場合は死亡処理を呼び出す。
-/// </summary>
-/// <param name="amount">与えるダメージ量（正の値）</param>
-public void TakeDamage(int amount)
+public sealed class CommandRegistry : ICommandRegistry
 {
-    // 防御力計算はBalanceManagerに委譲するため、ここでは生の値を渡す
-    _currentHp -= amount;
-    if (_currentHp <= 0) Die();
+    private readonly Dictionary<string, CommandHandler> _commands = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ICommandLogger _logger;
+
+    public CommandRegistry(ICommandLogger logger) => _logger = logger;
+
+    public bool Add(string command, CommandHandler handle) { /* ... */ }
+
+    private void Add(string command, MethodInfo methodInfo, TerminalCommandAttribute attribute) { /* ... */ }
 }
 ```
 
+`MonoBehaviour` を使うのは Composition Root（`Runtime/Bootstrapper`）や入力アダプター（`Adapters/Input`）などごく一部に限られる。それ以外のレイヤー（SharedKernel / Domain / Application / Presentation の大半 / Infrastructure）はプレーンなC#クラスであり、Unityライフサイクルメソッドの並びは適用対象外。
+
+## SerializeField の使い方
+- Inspectorに公開したいフィールドは `public` ではなく `[SerializeField] private` を使う
+- `public` フィールドは原則禁止（プロパティまたはpublicメソッド経由でアクセスする）
+
+```csharp
+// Good
+[SerializeField, SerializeInterface] private IInstaller _installer = new TerminalStandardInstaller();
+
+// Bad
+public IInstaller installer;
+```
+
+## null チェック
+- `UnityEngine.Object` を継承する型（`MonoBehaviour`, `Component`, `GameObject` 等）のnullチェックは `== null` / `!= null` を使う（Unityの`==`オーバーロードは破棄済みオブジェクトを検出するが、`?.` / `??` はこれをバイパスし通常のC# nullチェックになるため、いずれも避ける）
+- それ以外のプレーンなC#型（インターフェース実装、POCO、ドメインモデル等）では `?.` や `??` を通常どおり使ってよい
+
+```csharp
+// Unityオブジェクト（Good）
+if (_scope != null)
+{
+    _installer?.Uninstall(_scope);
+}
+
+// プレーンなC#型（Good）
+_logger?.Send(MessageType.Error, $"Command '{command}' is already defined.");
+```
+
+## コメント方針
+- クラスと public メソッド・プロパティには XML ドキュメントコメント（`<summary>`）を書く。文末は句点で終える
+- インターフェースの実装メソッドで説明が重複する場合は `<inheritdoc/>` を使う
+- 処理の「何をするか」ではなく「なぜそうするか」をコメントする
+- TODO コメントは `// TODO: 内容` の形式で書く（担当者名は載せない）
+
+```csharp
+/// <summary>
+/// コマンドの追加.
+/// </summary>
+/// <param name="command">コマンド名</param>
+/// <param name="handle">コマンドのハンドル</param>
+public bool Add(string command, CommandHandler handle)
+{
+    if (_commands.TryAdd(command, handle)) return true;
+    _logger?.Send(MessageType.Error, $"Command '{command}' is already defined.");
+    return false;
+}
+
+/// <inheritdoc/>
+public bool TryGet(string command, out CommandHandler handler) => _commands.TryGetValue(command, out handler);
+```
+
 ## その他
-- マジックナンバーは定数または `[SerializeField]` フィールドに抽出する
-- `#region` は使用禁止（クラスが大きくなっているサインであるため、分割を検討する）
+- マジックナンバー・マジックストリングは `const` または `[SerializeField]` フィールドに抽出する
 - 1クラス1ファイル。ファイル名はクラス名と一致させる
+  - 例外: DTOや軽量なValueObject等、関連性の高い小さな型は1ファイルに集約してよい（この場合ファイル名は集約単位を表す名前にする）
+- レイヤー構成・依存方向のルールは [02-architecture-ddd.md](02-architecture-ddd.md) を参照する
