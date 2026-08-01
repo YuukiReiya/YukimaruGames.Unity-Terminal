@@ -10,6 +10,9 @@ using YukimaruGames.Terminal.Infrastructure.Factories;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
 {
+    /// <summary>
+    /// <see cref="CommandFactory"/> によるコマンドハンドラー生成を検証するテストクラス。
+    /// </summary>
     [TestFixture]
     public sealed class CommandFactoryTests
     {
@@ -26,6 +29,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             AsyncCommands.Reset();
         }
 
+        /// <summary>
+        /// 引数なしの同期voidメソッドからハンドラーが生成され、呼び出しでメソッドが実行されることを検証します。
+        /// </summary>
         [Test]
         public void Create_MethodInfo_SyncVoidMethod_BuildsHandler()
         {
@@ -39,6 +45,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(SyncCommands.NoArgsCalled, Is.True);
         }
 
+        /// <summary>
+        /// <see cref="ReadOnlyMemory{T}"/> を受け取るメソッドに引数がそのまま渡されることを検証します。
+        /// </summary>
         [Test]
         public void Create_MethodInfo_ReadOnlyMemoryArgumentMethod_PassesArguments()
         {
@@ -52,6 +61,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(SyncCommands.ReceivedMemory.Span.SequenceEqual(Arguments), Is.True);
         }
 
+        /// <summary>
+        /// <see cref="CommandArgument"/> 配列を受け取るメソッドに引数が変換されて渡されることを検証します。
+        /// </summary>
         [Test]
         public void Create_MethodInfo_ArrayArgumentMethod_PassesArguments()
         {
@@ -66,6 +78,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(SyncCommands.ReceivedArray.SequenceEqual(Arguments), Is.True);
         }
 
+        /// <summary>
+        /// 個別引数型のメソッドに対し、文字列引数が期待の型へ変換されて呼び出されることを検証します。
+        /// </summary>
         [Test]
         public void Create_MethodInfo_ConvertibleArguments_ConvertsAndInvokesMethod()
         {
@@ -79,6 +94,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(SyncCommands.ReceivedBool, Is.True);
         }
 
+        /// <summary>
+        /// インスタンスメソッドからハンドラーが生成され、対象インスタンスに対して呼び出されることを検証します。
+        /// </summary>
         [Test]
         public void Create_InstanceMethod_BuildsHandler()
         {
@@ -92,6 +110,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(SyncCommands.ReceivedMemory.Length, Is.EqualTo(Arguments.Length));
         }
 
+        /// <summary>
+        /// 同期デリゲートからハンドラーが生成され、呼び出しで委譲先が実行されることを検証します。
+        /// </summary>
         [Test]
         public void Create_Delegate_SyncMemoryDelegate_BuildsHandler()
         {
@@ -105,6 +126,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(received.Span.SequenceEqual(Arguments), Is.True);
         }
 
+        /// <summary>
+        /// <see cref="ValueTask"/> を返す非同期メソッドから非同期ハンドラーが生成されることを検証します。
+        /// </summary>
         [Test]
         public async Task Create_MethodInfo_ValueTaskAsyncMethod_BuildsAsyncHandler()
         {
@@ -119,6 +143,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(AsyncCommands.ReceivedMemory.Span.SequenceEqual(Arguments), Is.True);
         }
 
+        /// <summary>
+        /// 配列引数を受け取る非同期メソッドに引数が正しく渡されることを検証します。
+        /// </summary>
         [Test]
         public async Task Create_MethodInfo_ArrayValueTaskAsyncMethod_PassesArguments()
         {
@@ -134,6 +161,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(AsyncCommands.ReceivedArray.SequenceEqual(Arguments), Is.True);
         }
 
+        /// <summary>
+        /// <see cref="Task"/> を返す非同期メソッドに <see cref="CancellationToken"/> と引数が正しく渡されることを検証します。
+        /// </summary>
         [Test]
         public async Task Create_MethodInfo_TaskAsyncMethod_PassesCancellationToken()
         {
@@ -150,6 +180,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(AsyncCommands.ReceivedInt, Is.EqualTo(42));
         }
 
+        /// <summary>
+        /// 非同期デリゲートからハンドラーが生成され、呼び出しで委譲先が実行されることを検証します。
+        /// </summary>
         [Test]
         public async Task Create_Delegate_AsyncDelegate_BuildsHandler()
         {
@@ -168,6 +201,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories
             Assert.That(received.Span.SequenceEqual(Arguments), Is.True);
         }
 
+        /// <summary>
+        /// <c>async void</c> メソッドを指定した場合に <see cref="NotSupportedException"/> が送出されることを検証します。
+        /// </summary>
         [Test]
         public void Create_AsyncVoidMethod_ThrowsNotSupportedException()
         {
