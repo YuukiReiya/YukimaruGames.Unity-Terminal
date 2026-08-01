@@ -1,27 +1,32 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using UnityEngine;
+using YukimaruGames.Terminal.Domain.Models;
+using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors.Window;
 using YukimaruGames.Terminal.Presentation.Interfaces.Animators;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 using YukimaruGames.Terminal.Presentation.Models.Window;
+using YukimaruGames.Terminal.SharedKernel;
+using YukimaruGames.Terminal.SharedKernel.Mathematics;
 
 namespace YukimaruGames.Terminal.Presentation.Presenters
 {
-    public sealed class WindowPresenter : IWindowPresenter, IDisposable
+    public sealed class WindowPresenter : IWindowPresenter, IUpdatable, IDisposable
     {
         private readonly IWindowAnimationAccessor _accessor;
         private readonly IWindowAnimator _windowAnimator;
-        private CancellationTokenSource _cts;
+        private readonly IScreenSizeProvider _screenSizeProvider;
+        private readonly IExceptionLogger _exceptionLogger;
 
         private Action<WindowState> _onCompleted;
         private Action<WindowState> _onAborted;
 
+        private float _elapsed;
+        private float _duration;
+
         public bool IsAnimating { get; private set; }
 
-        public Rect Rect { get; private set; }
+        public TerminalRect Rect { get; private set; }
 
         public event Action<WindowState> OnCompleted
         {
@@ -37,10 +42,14 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
 
         public WindowPresenter(
             IWindowAnimationAccessor accessor,
-            IWindowAnimator animator)
+            IWindowAnimator animator,
+            IScreenSizeProvider screenSizeProvider,
+            IExceptionLogger exceptionLogger)
         {
             _accessor = accessor;
             _windowAnimator = animator;
+            _screenSizeProvider = screenSizeProvider;
+            _exceptionLogger = exceptionLogger;
         }
 
         public void Open()
@@ -65,58 +74,38 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
             Evaluate(0f, 0f);
         }
 
-        private void Play()
+        void IUpdatable.Update(float deltaTime)
         {
-            _ = PlayAsync();
+            if (!IsAnimating) return;
+
+            _elapsed += deltaTime;
+
+            if (_elapsed >= _duration)
+            {
+                Evaluate(_duration, _duration);
+                IsAnimating = false;
+                Invoke(_onCompleted, _accessor.State);
+                return;
+            }
+
+            Evaluate(_duration, _elapsed);
         }
 
-        private async Task PlayAsync()
+        private void Play()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
+            _duration = _accessor.Duration * _accessor.Scale;
+            _elapsed = 0f;
 
-            if (Mathf.Approximately(0f, _accessor.Duration))
+            if (TerminalMath.Approximately(0f, _accessor.Duration))
             {
-                _cts = null;
                 IsAnimating = false;
                 Evaluate(0f, 0f);
                 Invoke(_onCompleted, _accessor.State);
                 return;
             }
 
-            _cts = new CancellationTokenSource();
             IsAnimating = true;
-
-            try
-            {
-                var duration = _accessor.Duration * _accessor.Scale;
-                var token = _cts.Token;
-                var elapsedTime = 0f;
-                while (elapsedTime < duration)
-                {
-                    token.ThrowIfCancellationRequested();
-                    Evaluate(duration, elapsedTime);
-                    await Task.Yield();
-                    elapsedTime += Time.deltaTime;
-                }
-
-                Evaluate(duration, duration);
-                Invoke(_onCompleted, _accessor.State);
-            }
-            catch (OperationCanceledException)
-            {
-                Invoke(_onAborted, _accessor.State);
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
-            finally
-            {
-                IsAnimating = false;
-                _cts?.Dispose();
-                _cts = null;
-            }
+            Evaluate(_duration, 0f);
         }
 
         private void Evaluate(float duration, float elapsed)
@@ -127,7 +116,7 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
         private WindowAnimatorData GetAnimatorData(float duration, float elapsed)
         {
             return new WindowAnimatorData(
-                (Screen.width, Screen.height),
+                _screenSizeProvider.Size,
                 _accessor.State, _accessor.Anchor, _accessor.Style, duration, _accessor.Scale, elapsed);
         }
 
@@ -138,9 +127,6 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
         {
             _onCompleted = null;
             _onAborted = null;
-
-            _cts?.Dispose();
-            _cts = null;
         }
 
         private void Invoke(Action<WindowState> action, WindowState arg)
@@ -151,7 +137,7 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                _exceptionLogger.Log(e);
             }
         }
     }

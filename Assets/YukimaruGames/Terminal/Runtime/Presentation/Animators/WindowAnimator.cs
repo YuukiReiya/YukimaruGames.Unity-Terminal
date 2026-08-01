@@ -1,67 +1,68 @@
 using System;
-using UnityEngine;
+using YukimaruGames.Terminal.Domain.Models;
 using YukimaruGames.Terminal.Presentation.Interfaces.Animators;
 using YukimaruGames.Terminal.Presentation.Models.Window;
+using YukimaruGames.Terminal.SharedKernel.Mathematics;
 
 namespace YukimaruGames.Terminal.Presentation.Animators
 {
     public sealed class WindowAnimator : IWindowAnimator
     {
-        public Rect Evaluate(WindowAnimatorData data)
+        public TerminalRect Evaluate(WindowAnimatorData data)
         {
-            if (Mathf.Approximately(0f, data.Duration))
+            if (TerminalMath.Approximately(0f, data.Duration))
             {
                 return Calculate(data, 1f);
             }
-            
-            var t = Mathf.Clamp01(data.Elapsed / data.Duration);
-            var step = Mathf.SmoothStep(0f, 1f, t);
+
+            var t = TerminalMath.Clamp01(data.Elapsed / data.Duration);
+            var step = TerminalMath.SmoothStep(0f, 1f, t);
 
             return Calculate(data, step);
         }
 
-        private Rect Calculate(in WindowAnimatorData data, float step)
+        private TerminalRect Calculate(in WindowAnimatorData data, float step)
         {
             step = data.State switch
             {
                 WindowState.Open => step,
-                WindowState.Close => Mathf.Clamp01(1f - step),
+                WindowState.Close => TerminalMath.Clamp01(1f - step),
                 _ => throw new ArgumentOutOfRangeException()
             };
             var scale = data.Style switch
             {
-                WindowStyle.Compact => Mathf.Clamp01(data.Scale),
+                WindowStyle.Compact => TerminalMath.Clamp01(data.Scale),
                 WindowStyle.Full => 1f,
                 _ => throw new ArgumentOutOfRangeException()
             };
-            
-            var rect = new Rect();
+
+            float x = 0f, y = 0f, width = 0f, height = 0f;
 
             var screen = data.Size;
-            
+
 #pragma warning disable CS8509
             switch (data.Anchor)
             {
                 case WindowAnchor.Left:
                 case WindowAnchor.Right:
-                    rect.height = screen.height;
-                    rect.width = screen.width * Mathf.Clamp01(scale);
+                    height = screen.height;
+                    width = screen.width * TerminalMath.Clamp01(scale);
 
-                    rect.x = data.Anchor switch
+                    x = data.Anchor switch
                     {
-                        WindowAnchor.Left => -rect.width + rect.width * Mathf.Clamp01(step),
-                        WindowAnchor.Right => screen.width - rect.width * Mathf.Clamp01(step),
+                        WindowAnchor.Left => -width + width * TerminalMath.Clamp01(step),
+                        WindowAnchor.Right => screen.width - width * TerminalMath.Clamp01(step),
                     };
                     break;
                 case WindowAnchor.Top:
                 case WindowAnchor.Bottom:
-                    rect.height = screen.height * Mathf.Clamp01(scale);
-                    rect.width = screen.width;
+                    height = screen.height * TerminalMath.Clamp01(scale);
+                    width = screen.width;
 
-                    rect.y = data.Anchor switch
+                    y = data.Anchor switch
                     {
-                        WindowAnchor.Top => -rect.height + rect.height * Mathf.Clamp01(step),
-                        WindowAnchor.Bottom => screen.height - rect.height * Mathf.Clamp01(step),
+                        WindowAnchor.Top => -height + height * TerminalMath.Clamp01(step),
+                        WindowAnchor.Bottom => screen.height - height * TerminalMath.Clamp01(step),
                     };
                     break;
                 default:
@@ -69,7 +70,7 @@ namespace YukimaruGames.Terminal.Presentation.Animators
             }
 #pragma warning restore CS8509
 
-            return rect;
+            return new TerminalRect(x, y, width, height);
         }
     }
 }

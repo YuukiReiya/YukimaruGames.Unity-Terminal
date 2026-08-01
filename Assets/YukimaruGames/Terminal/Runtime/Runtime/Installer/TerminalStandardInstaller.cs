@@ -20,6 +20,7 @@ using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Accessors;
+using YukimaruGames.Terminal.Infrastructure.Diagnostics;
 using YukimaruGames.Terminal.Infrastructure.Discoverer;
 using YukimaruGames.Terminal.Infrastructure.Factories;
 using YukimaruGames.Terminal.Infrastructure.Repositories;
@@ -430,7 +431,11 @@ namespace YukimaruGames.Terminal.Runtime
             var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherGUIStyleAccessor);
 
             // Presenters
-            var windowPresenter = new WindowPresenter(_windowAnimationAccessor,  new WindowAnimator());
+            var windowPresenter = new WindowPresenter(
+                _windowAnimationAccessor,
+                new WindowAnimator(),
+                new ScreenSizeAccessor(),
+                new UnityExceptionLogger());
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, _launcherVisibleAccessor);

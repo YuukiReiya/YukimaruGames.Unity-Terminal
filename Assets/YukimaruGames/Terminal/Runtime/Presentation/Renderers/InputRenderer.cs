@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Constants;
+using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Input;
@@ -8,7 +9,7 @@ using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Renderers
 {
-    public sealed class InputRenderer : IInputRenderer, IPreRenderer
+    public sealed class InputRenderer : IInputRenderer, IInputProvider, IPreRenderer
     {
         private readonly IScrollMutator _scrollMutator;
         private readonly IGUIStyleProvider _styleProvider;

@@ -267,5 +267,72 @@ namespace YukimaruGames.Terminal.Tests.EditMode.SharedKernel.Mathematics
             Assert.AreEqual(5, TerminalMath.Max(5, 3));
             Assert.AreEqual(5, TerminalMath.Max(3, 5));
         }
+
+        // ─── Approximately Tests ────────────────────────────────────────────────────
+
+        [Test]
+        public void Approximately_EqualValues_ReturnsTrue()
+        {
+            Assert.IsTrue(TerminalMath.Approximately(1f, 1f));
+        }
+
+        [Test]
+        public void Approximately_ZeroAndTinyEpsilonValue_ReturnsTrue()
+        {
+            // float.Epsilon * 8 未満の絶対差はゼロ近傍として等しいとみなされる
+            Assert.IsTrue(TerminalMath.Approximately(0f, float.Epsilon * 4f));
+        }
+
+        [Test]
+        public void Approximately_LargeValuesWithSmallRelativeDifference_ReturnsTrue()
+        {
+            // 相対誤差判定のため、大きな値では許容差も比例して大きくなる
+            Assert.IsTrue(TerminalMath.Approximately(1000000f, 1000000.05f));
+        }
+
+        [Test]
+        public void Approximately_ClearlyDifferentValues_ReturnsFalse()
+        {
+            Assert.IsFalse(TerminalMath.Approximately(0f, 1f));
+        }
+
+        [Test]
+        public void Approximately_SmallAbsoluteButLargeRelativeDifference_ReturnsFalse()
+        {
+            // 0付近では相対誤差がほぼ0になるため、1e-8程度の差でも等しいとはみなされない
+            Assert.IsFalse(TerminalMath.Approximately(0f, 1e-8f));
+        }
+
+        // ─── SmoothStep Tests ────────────────────────────────────────────────────
+
+        [Test]
+        public void SmoothStep_TEqualsZero_ReturnsFrom()
+        {
+            Assert.AreEqual(0f, TerminalMath.SmoothStep(0f, 10f, 0f));
+        }
+
+        [Test]
+        public void SmoothStep_TEqualsOne_ReturnsTo()
+        {
+            Assert.AreEqual(10f, TerminalMath.SmoothStep(0f, 10f, 1f));
+        }
+
+        [Test]
+        public void SmoothStep_TEqualsHalf_ReturnsMidpoint()
+        {
+            Assert.AreEqual(5f, TerminalMath.SmoothStep(0f, 10f, 0.5f));
+        }
+
+        [Test]
+        public void SmoothStep_TAboveOne_ClampedToTo()
+        {
+            Assert.AreEqual(10f, TerminalMath.SmoothStep(0f, 10f, 2f));
+        }
+
+        [Test]
+        public void SmoothStep_TBelowZero_ClampedToFrom()
+        {
+            Assert.AreEqual(0f, TerminalMath.SmoothStep(0f, 10f, -1f));
+        }
     }
 }

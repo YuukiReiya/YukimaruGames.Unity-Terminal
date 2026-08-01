@@ -1,5 +1,5 @@
 using System;
-using UnityEngine;
+using YukimaruGames.Terminal.Domain.Models;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
@@ -8,7 +8,7 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Presenters
     public interface IWindowPresenter : IWindowRenderDataProvider
     {
         bool IsAnimating { get; }
-        Rect Rect { get; }
+        TerminalRect Rect { get; }
 
         event Action<WindowState> OnCompleted;
         event Action<WindowState> OnAborted;
