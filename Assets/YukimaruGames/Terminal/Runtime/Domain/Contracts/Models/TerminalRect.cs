@@ -68,6 +68,6 @@ namespace YukimaruGames.Terminal.Domain.Models
         public static bool operator !=(TerminalRect a, TerminalRect b) => !a.Equals(b);
 
         /// <summary>サイズ0の矩形.</summary>
-        public static readonly TerminalRect Zero = new(0f, 0f, 0f, 0f);
+        public static TerminalRect Zero { get; } = new(0f, 0f, 0f, 0f);
     }
 }

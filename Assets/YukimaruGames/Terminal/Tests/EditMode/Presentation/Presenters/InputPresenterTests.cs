@@ -7,6 +7,9 @@ using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Presenters
 {
+    /// <summary>
+    /// <see cref="InputPresenter"/>の入力状態管理を検証する.
+    /// </summary>
     [TestFixture]
     public sealed class InputPresenterTests
     {
@@ -23,6 +26,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Presenters
             public void RaiseImeComposingStateChanged(bool isComposing) => OnImeComposingStateChanged?.Invoke(isComposing);
         }
 
+        /// <summary>コンストラクタに渡した起動コマンドが初期入力テキストに設定されることを検証する.</summary>
         [Test]
         public void Constructor_SetsBootupCommand()
         {
@@ -33,6 +37,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Presenters
             Assert.AreEqual("help", presenter.InputText);
         }
 
+        /// <summary>編集可能な状態で入力変更通知を受けるとInputTextが更新されることを検証する.</summary>
         [Test]
         public void OnInputTextChanged_UpdatesInputText()
         {
@@ -47,6 +52,25 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Presenters
             Assert.AreEqual("echo hello", presenter.InputText);
         }
 
+        /// <summary>編集不可の状態で入力変更通知を受けるとInputTextが空文字列になることを検証する.</summary>
+        [Test]
+        public void OnInputTextChanged_ClearsInputText_WhenNotEditable()
+        {
+            // Arrange
+            var provider = new StubInputProvider();
+            var presenter = new InputPresenter(provider, string.Empty)
+            {
+                IsEditable = false,
+            };
+
+            // Act
+            provider.RaiseInputTextChanged("echo hello");
+
+            // Assert
+            Assert.AreEqual(string.Empty, presenter.InputText);
+        }
+
+        /// <summary>IME変換中フラグの変更通知を受けるとIsImeComposingが更新されることを検証する.</summary>
         [Test]
         public void OnImeComposingStateChanged_UpdatesIsImeComposing()
         {
@@ -61,6 +85,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Presenters
             Assert.IsTrue(presenter.IsImeComposing);
         }
 
+        /// <summary>カーソル終端移動トリガーの変更通知を受けるとRenderDataに反映されることを検証する.</summary>
         [Test]
         public void OnMoveCursorToEndTriggerChanged_UpdatesRenderData()
         {
@@ -76,6 +101,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Presenters
             Assert.IsTrue(renderDataProvider.RenderData.IsMoveCursorToEnd);
         }
 
+        /// <summary>Dispose後はInputProviderのイベント購読が解除され、通知を受けても状態が変化しないことを検証する.</summary>
         [Test]
         public void Dispose_UnsubscribesFromInputProvider()
         {

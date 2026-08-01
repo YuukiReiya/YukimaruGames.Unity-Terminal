@@ -9,6 +9,9 @@ using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Renderers
 {
+    /// <summary>
+    /// IMGUIによる入力欄の描画と、入力イベントの通知を行う.
+    /// </summary>
     public sealed class InputRenderer : IInputRenderer, IInputProvider, IPreRenderer
     {
         private readonly IScrollMutator _scrollMutator;

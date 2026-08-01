@@ -9,6 +9,8 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
     /// </summary>
     public sealed class CursorPresenter : ICursorPresenter, IUpdatable
     {
+        private const float HalfPeriodsPerCycle = 2f;
+
         private readonly ICursorFlashSpeedProvider _flashSpeedProvider;
 
         private float _elapsed;
@@ -30,13 +32,17 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
                 return;
             }
 
-            var halfPeriod = 1f / (flashSpeed * 2f);
+            var halfPeriod = 1f / (flashSpeed * HalfPeriodsPerCycle);
 
             _elapsed += deltaTime;
-            if (_elapsed < halfPeriod) return;
+            var elapsedHalfPeriods = (int)(_elapsed / halfPeriod);
+            if (elapsedHalfPeriods == 0) return;
 
-            _elapsed -= halfPeriod;
-            IsVisible = !IsVisible;
+            _elapsed -= elapsedHalfPeriods * halfPeriod;
+            if (elapsedHalfPeriods % 2 != 0)
+            {
+                IsVisible = !IsVisible;
+            }
         }
     }
 }

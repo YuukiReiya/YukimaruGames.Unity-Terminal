@@ -1,6 +1,6 @@
 using System;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Providers;
 using YukimaruGames.Terminal.Domain.Models;
-using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors.Window;
 using YukimaruGames.Terminal.Presentation.Interfaces.Animators;
@@ -93,7 +93,7 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
 
         private void Play()
         {
-            _duration = _accessor.Duration * _accessor.Scale;
+            _duration = _accessor.Duration;
             _elapsed = 0f;
 
             if (TerminalMath.Approximately(0f, _accessor.Duration))

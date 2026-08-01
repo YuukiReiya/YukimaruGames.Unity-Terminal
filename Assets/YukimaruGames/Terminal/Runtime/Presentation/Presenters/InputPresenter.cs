@@ -7,6 +7,9 @@ using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Presenters
 {
+    /// <summary>
+    /// 入力欄の状態を管理し、<see cref="IInputProvider"/>から通知される入力イベントを反映するPresenter.
+    /// </summary>
     public sealed class InputPresenter : IInputPresenter, IDisposable
     {
         private readonly IInputProvider _inputProvider;

@@ -1,9 +1,9 @@
-namespace YukimaruGames.Terminal.Presentation.Contracts
+namespace YukimaruGames.Terminal.Domain.Contracts.Interfaces.Providers
 {
     /// <summary>
     /// 画面サイズの提供者.
     /// <para>
-    /// Presentation層はUnityEngine.Screenに直接依存しないため、この抽象を介して画面サイズを取得する。
+    /// 上位層はUnityEngine.Screenに直接依存しないため、この抽象を介して画面サイズを取得する。
     /// </para>
     /// </summary>
     public interface IScreenSizeProvider
