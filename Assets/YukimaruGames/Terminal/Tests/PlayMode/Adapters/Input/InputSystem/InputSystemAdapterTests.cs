@@ -116,5 +116,22 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.InputSystem
             Assert.IsTrue(notified);
             Assert.IsFalse(lastValue);
         }
+
+        /// <summary>フォーカス解除後にIME変換コールバックが来ても無視されることを検証する.</summary>
+        [UnityTest]
+        public IEnumerator HandleCompositionChanged_AfterFocusLost_IsIgnored()
+        {
+            yield return null;
+
+            _adapter.SetFocus(true);
+            _adapter.SetFocus(false);
+
+            var notified = false;
+            _adapter.OnImeComposingStateChanged += _ => notified = true;
+
+            _adapter.HandleCompositionChanged(new IMECompositionString("あ"));
+
+            Assert.IsFalse(notified);
+        }
     }
 }

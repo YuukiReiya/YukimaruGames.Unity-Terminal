@@ -98,6 +98,8 @@ namespace YukimaruGames.Terminal.Adapters.Input.InputSystem
         /// <remarks>テストから直接呼び出せるようinternalにしている.</remarks>
         internal void HandleCompositionChanged(IMECompositionString composition)
         {
+            if (!_isFocused) return;
+
             SetComposingState(composition.Count > 0);
         }
 
