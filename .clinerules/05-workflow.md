@@ -18,7 +18,7 @@
 
 コミットメッセージは `type: 変更内容` の形式を使う（Conventional Commits風、括弧は使わない）:
 
-```
+```text
 feat: Adapters/Input層(Legacy/InputSystem)を新設
 fix: TerminalRuntimeScope.Viewのnull契約を明確化しViewをプロパティ化
 refactor: Domain.ContractsフォルダのnamespaceをDomain.Abstractionsから統一

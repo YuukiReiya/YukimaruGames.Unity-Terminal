@@ -17,6 +17,7 @@
 | ローカル変数・引数 | camelCase | `command`, `methodInfo` |
 
 命名にはライブラリ名（`Terminal`）のプリフィックスを付けない。名前空間がコンテキストを表すため、`TerminalCommandRegistry` ではなく `CommandRegistry` のように簡潔にする。
+ただし `TerminalCommandAttribute`（公開API）、`TerminalStandardInstaller` / `TerminalStandardAnimation`（標準実装のバリエーションを表す型）、`TerminalBootstrapper` / `TerminalRuntimeScope`（Composition Root）は既存の命名として `Terminal` プレフィックスを維持する。
 
 ## クラス内の記述順序
 
@@ -24,7 +25,8 @@
 2. privateフィールド（`readonly` を優先する）
 3. コンストラクタ
 4. プロパティ
-5. Unityライフサイクルメソッド（`MonoBehaviour` を継承する場合のみ、実行順に並べる: `Awake` → `OnValidate` → `Update` → `OnGUI` → `OnDestroy` 等）
+5. Unityライフサイクルメソッド（`MonoBehaviour` を継承する場合のみ、実行順に並べる: `Awake` → `Update` → `OnGUI` → `OnDestroy` 等）
+   - `OnValidate` はInspectorでの変更やスクリプト検証時に呼ばれるエディター専用コールバックであり、上記の実行順には含まれない。別項目として最後にまとめて記述する
 6. publicメソッド
 7. privateメソッド
 
@@ -42,7 +44,7 @@ public sealed class CommandRegistry : ICommandRegistry
 }
 ```
 
-`MonoBehaviour` を使うのは Composition Root（`Runtime/Bootstrapper`）や入力アダプター（`Adapters/Input`）などごく一部に限られる。それ以外のレイヤー（Domain / Application / Presentation の大半 / Infrastructure）はプレーンなC#クラスであり、Unityライフサイクルメソッドの並びは適用対象外。
+`MonoBehaviour` を使うのは Composition Root（`Runtime/Bootstrapper`）や入力アダプター（`Adapters/Input`）などごく一部に限られる。それ以外のレイヤー（SharedKernel / Domain / Application / Presentation の大半 / Infrastructure）はプレーンなC#クラスであり、Unityライフサイクルメソッドの並びは適用対象外。
 
 ## SerializeField の使い方
 - Inspectorに公開したいフィールドは `public` ではなく `[SerializeField] private` を使う
@@ -57,7 +59,7 @@ public IInstaller installer;
 ```
 
 ## null チェック
-- `UnityEngine.Object` を継承する型（`MonoBehaviour`, `Component`, `GameObject` 等）のnullチェックは `== null` / `!= null` を使う（Unityの疑似nullに対応していないため `?.` は避ける）
+- `UnityEngine.Object` を継承する型（`MonoBehaviour`, `Component`, `GameObject` 等）のnullチェックは `== null` / `!= null` を使う（Unityの`==`オーバーロードは破棄済みオブジェクトを検出するが、`?.` / `??` はこれをバイパスし通常のC# nullチェックになるため、いずれも避ける）
 - それ以外のプレーンなC#型（インターフェース実装、POCO、ドメインモデル等）では `?.` や `??` を通常どおり使ってよい
 
 ```csharp
