@@ -13,10 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using YukimaruGames.Terminal.Adapters.GUI;
+using YukimaruGames.Terminal.Adapters.GUI.Accessors;
+using YukimaruGames.Terminal.Adapters.GUI.Renderers;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Services;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Repositories;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Accessors;
@@ -27,6 +30,7 @@ using YukimaruGames.Terminal.Infrastructure.Repositories;
 using YukimaruGames.Terminal.Presentation.Accessors;
 using YukimaruGames.Terminal.Presentation.Animators;
 using YukimaruGames.Terminal.Presentation.Constants;
+using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Coordinators;
 using YukimaruGames.Terminal.Presentation.Events;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
@@ -38,7 +42,6 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 using YukimaruGames.Terminal.Presentation.Models;
 using YukimaruGames.Terminal.Presentation.Presenters;
-using YukimaruGames.Terminal.Presentation.Renderers;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Runtime.Shared;
 
@@ -99,6 +102,8 @@ namespace YukimaruGames.Terminal.Runtime
             public ISubmitPresenter SubmitPresenter;
             /// <inheritdoc cref="ILauncherPresenter"/>
             public ILauncherPresenter LauncherPresenter;
+            /// <inheritdoc cref="ITerminalView"/>
+            public ITerminalView View;
         }
         
         /// <summary>
@@ -422,10 +427,12 @@ namespace YukimaruGames.Terminal.Runtime
 
             // Renderers
             _windowRenderer = new WindowRenderer(_pixelTextureRepository);
-            
+
+            var cursorView = new CursorView();
+            var logLinePool = new LogLinePool();
             var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor, _logCopyButtonGUIStyleAccessor);
-            var logRenderer = new LogRenderer(clipboardRenderer, _logGUIStyleAccessor, _colorPaletteAccessor);
-            var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+            var logRenderer = new LogRenderer(clipboardRenderer, _logGUIStyleAccessor, _colorPaletteAccessor, logLinePool);
+            var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, _colorPaletteAccessor, cursorView);
             _promptRenderer = new PromptRenderer(_promptGUIStyleAccessor) { Prompt = options.Prompt };
             var executeButtonRenderer = new SubmitRenderer(_executeButtonsGUIStyleAccessor);
             var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherGUIStyleAccessor);
@@ -436,6 +443,7 @@ namespace YukimaruGames.Terminal.Runtime
                 new WindowAnimator(),
                 new ScreenSizeAccessor(),
                 new UnityExceptionLogger());
+            var cursorPresenter = new CursorPresenter(_cursorFlashSpeedAccessor, cursorView);
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, _launcherVisibleAccessor);
@@ -461,6 +469,7 @@ namespace YukimaruGames.Terminal.Runtime
                 ScrollAccessor = scrollAccessor,
             };
             var view = new TerminalIMGUI(viewContext);
+            var terminalView = new TerminalView(windowPresenter);
 
             return new RenderingContext
             {
@@ -472,7 +481,8 @@ namespace YukimaruGames.Terminal.Runtime
                 LogPresenter = logPresenter,
                 SubmitPresenter = executeButtonPresenter,
                 LauncherPresenter = launcherPresenter,
-                
+                View = terminalView,
+
                 Components = new object[]
                 {
                     _windowAnimationAccessor,
@@ -480,18 +490,20 @@ namespace YukimaruGames.Terminal.Runtime
                     _fontAccessor,
                     _pixelTextureRepository,
                     scrollAccessor,
-                    
+
                     _logGUIStyleAccessor,
                     _inputGUIStyleAccessor,
                     _promptGUIStyleAccessor,
                     _executeButtonsGUIStyleAccessor,
                     _launcherGUIStyleAccessor,
                     _logCopyButtonGUIStyleAccessor,
-                    
+
                     _cursorFlashSpeedAccessor,
                     _launcherVisibleAccessor,
-                    
+
                     _windowRenderer,
+                    cursorView,
+                    logLinePool,
                     clipboardRenderer,
                     logRenderer,
                     inputRenderer,
@@ -500,13 +512,15 @@ namespace YukimaruGames.Terminal.Runtime
                     launcherRenderer,
 
                     windowPresenter,
+                    cursorPresenter,
                     logPresenter,
                     inputPresenter,
                     executeButtonPresenter,
                     launcherPresenter,
-                    
+
                     viewContext,
-                    view
+                    view,
+                    terminalView,
                 },
             };
         }
@@ -565,6 +579,7 @@ namespace YukimaruGames.Terminal.Runtime
                 domain.Service,
                 domain.Registry,
                 domain.Autocomplete,
+                rendering.View,
                 disposables);
         }
     }
