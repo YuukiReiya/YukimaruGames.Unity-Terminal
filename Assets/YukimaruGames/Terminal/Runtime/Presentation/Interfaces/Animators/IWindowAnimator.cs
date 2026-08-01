@@ -1,10 +1,10 @@
-using UnityEngine;
+using YukimaruGames.Terminal.Domain.Models;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Interfaces.Animators
 {
     public interface IWindowAnimator
     {
-        Rect Evaluate(WindowAnimatorData data);
+        TerminalRect Evaluate(WindowAnimatorData data);
     }
 }

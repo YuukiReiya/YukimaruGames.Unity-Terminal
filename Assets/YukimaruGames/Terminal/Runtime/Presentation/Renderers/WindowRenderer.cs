@@ -24,7 +24,9 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
 
         public void Render(WindowRenderData viewModel, GUI.WindowFunction func)
         {
-            GUI.Window(viewModel.Id, viewModel.Rect, func, string.Empty, _styleLazy.Value);
+            var rect = viewModel.Rect;
+            var unityRect = new Rect(rect.X, rect.Y, rect.Width, rect.Height);
+            GUI.Window(viewModel.Id, unityRect, func, string.Empty, _styleLazy.Value);
         }
     }
 }

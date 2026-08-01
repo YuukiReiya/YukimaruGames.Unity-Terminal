@@ -1,24 +1,27 @@
 using System;
+using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
-using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Input;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Presenters
 {
+    /// <summary>
+    /// 入力欄の状態を管理し、<see cref="IInputProvider"/>から通知される入力イベントを反映するPresenter.
+    /// </summary>
     public sealed class InputPresenter : IInputPresenter, IDisposable
     {
-        private readonly IInputRenderer _renderer;
+        private readonly IInputProvider _inputProvider;
 
-        public InputPresenter(IInputRenderer renderer,string bootupCommand)
+        public InputPresenter(IInputProvider inputProvider, string bootupCommand)
         {
-            _renderer = renderer;
-            _renderer.OnInputTextChanged += HandleTextChanged;
-            _renderer.OnFocusControlChanged += HandleFocusChanged;
-            _renderer.OnMoveCursorToEndTriggerChanged += HandleMoveCursorToEndTriggerChanged;
-            _renderer.OnImeComposingStateChanged += HandleImeComposingStateChanged;
-            
+            _inputProvider = inputProvider;
+            _inputProvider.OnInputTextChanged += HandleTextChanged;
+            _inputProvider.OnFocusControlChanged += HandleFocusChanged;
+            _inputProvider.OnMoveCursorToEndTriggerChanged += HandleMoveCursorToEndTriggerChanged;
+            _inputProvider.OnImeComposingStateChanged += HandleImeComposingStateChanged;
+
             SetInputField(bootupCommand);
         }
 
@@ -66,12 +69,12 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
         
         void IDisposable.Dispose()
         {
-            if (_renderer != null)
+            if (_inputProvider != null)
             {
-                _renderer.OnInputTextChanged -= HandleTextChanged;
-                _renderer.OnFocusControlChanged -= HandleFocusChanged;
-                _renderer.OnMoveCursorToEndTriggerChanged -= HandleMoveCursorToEndTriggerChanged;
-                _renderer.OnImeComposingStateChanged -= HandleImeComposingStateChanged;
+                _inputProvider.OnInputTextChanged -= HandleTextChanged;
+                _inputProvider.OnFocusControlChanged -= HandleFocusChanged;
+                _inputProvider.OnMoveCursorToEndTriggerChanged -= HandleMoveCursorToEndTriggerChanged;
+                _inputProvider.OnImeComposingStateChanged -= HandleImeComposingStateChanged;
             }
         }
     }

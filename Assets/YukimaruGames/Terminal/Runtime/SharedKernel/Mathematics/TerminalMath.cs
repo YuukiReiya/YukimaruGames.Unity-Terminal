@@ -112,8 +112,39 @@ namespace YukimaruGames.Terminal.SharedKernel.Mathematics
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Max(float a, float b) => Math.Max(a, b);
         
-        /// <inheritdoc cref="Max(float,float)"/> 
+        /// <inheritdoc cref="Max(float,float)"/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Max(int a, int b) => Math.Max(a, b);
+
+        /// <summary>
+        /// 2つの浮動小数点値がほぼ等しいかどうかを判定する.
+        /// </summary>
+        /// <param name="a">比較値1</param>
+        /// <param name="b">比較値2</param>
+        /// <returns>ほぼ等しい場合true</returns>
+        /// <remarks>
+        /// UnityEngine.Mathf.Approximatelyと同等の許容誤差判定（相対誤差 + 最小絶対誤差）。
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Approximately(float a, float b) =>
+            Math.Abs(b - a) < Math.Max(1E-06f * Math.Max(Math.Abs(a), Math.Abs(b)), float.Epsilon * 8f);
+
+        /// <summary>
+        /// エルミート補間による滑らかな補間値を計算する.
+        /// </summary>
+        /// <param name="from">開始値</param>
+        /// <param name="to">終了値</param>
+        /// <param name="t">補間パラメータ（0〜1にクランプされる）</param>
+        /// <returns>fromとtoの間の滑らかな補間値</returns>
+        /// <remarks>
+        /// UnityEngine.Mathf.SmoothStepと同等の計算式を用いる。
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float SmoothStep(float from, float to, float t)
+        {
+            t = Clamp01(t);
+            t = -2f * t * t * t + 3f * t * t;
+            return to * t + from * (1f - t);
+        }
     }
 }

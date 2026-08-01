@@ -1,4 +1,4 @@
-using UnityEngine;
+using YukimaruGames.Terminal.Domain.Models;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Presentation.Models.Launcher
@@ -7,10 +7,10 @@ namespace YukimaruGames.Terminal.Presentation.Models.Launcher
     {
         public bool IsVisible { get; }
         public bool IsReverse { get; }
-        public Rect WindowRect { get; }
+        public TerminalRect WindowRect { get; }
         public WindowAnchor Anchor { get; }
 
-        public LauncherRenderData(bool isVisible,bool isReverse,Rect windowRect,WindowAnchor anchor)
+        public LauncherRenderData(bool isVisible,bool isReverse,TerminalRect windowRect,WindowAnchor anchor)
         {
             IsVisible = isVisible;
             IsReverse = isReverse;

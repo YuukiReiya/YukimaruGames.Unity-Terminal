@@ -54,7 +54,8 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
             }
 
             var anchor = renderData.Anchor;
-            var rect = renderData.WindowRect;
+            var windowRect = renderData.WindowRect;
+            var rect = new Rect(windowRect.X, windowRect.Y, windowRect.Width, windowRect.Height);
 
             switch (anchor)
             {
