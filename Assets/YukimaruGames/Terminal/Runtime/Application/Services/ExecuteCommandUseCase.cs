@@ -2,10 +2,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
-using YukimaruGames.Terminal.Domain.Abstractions.Exceptions;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Repositories;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Exceptions;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Application.Services

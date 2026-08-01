@@ -1,8 +1,8 @@
 using System;
-using YukimaruGames.Terminal.Domain.Abstractions.Models;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Models;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Attributes
+namespace YukimaruGames.Terminal.Domain.Contracts.Attributes
 {
     /// <summary>
     /// コマンド登録のためのカスタム属性.

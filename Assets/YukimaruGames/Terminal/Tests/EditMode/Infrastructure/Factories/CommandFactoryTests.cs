@@ -4,8 +4,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Attributes;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Infrastructure.Factories;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Factories

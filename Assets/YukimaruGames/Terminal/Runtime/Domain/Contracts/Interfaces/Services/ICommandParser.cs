@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services
+namespace YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services
 {
     /// <summary>
     /// コマンド引数のパーサーインターフェイス.

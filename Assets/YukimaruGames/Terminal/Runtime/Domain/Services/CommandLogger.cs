@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.Entities;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Models.Entities;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Domain.Services

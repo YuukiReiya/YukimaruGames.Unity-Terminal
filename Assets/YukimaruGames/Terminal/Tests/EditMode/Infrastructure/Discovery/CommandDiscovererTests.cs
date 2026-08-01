@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using YukimaruGames.Terminal.Domain.Abstractions.Attributes;
-using YukimaruGames.Terminal.Domain.Abstractions.Interfaces.Services;
-using YukimaruGames.Terminal.Domain.Abstractions.Models.Entities;
+using YukimaruGames.Terminal.Domain.Contracts.Attributes;
+using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Models.Entities;
 using YukimaruGames.Terminal.Infrastructure.Discoverer;
 using YukimaruGames.Terminal.SharedKernel;
 

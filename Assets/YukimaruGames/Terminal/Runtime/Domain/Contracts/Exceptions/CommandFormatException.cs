@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace YukimaruGames.Terminal.Domain.Abstractions.Exceptions
+namespace YukimaruGames.Terminal.Domain.Contracts.Exceptions
 {
     /// <summary>
     /// コマンド引数の型変換失敗時に送出するカスタム例外.
@@ -13,7 +13,7 @@ namespace YukimaruGames.Terminal.Domain.Abstractions.Exceptions
         /// 引数インデックス.
         /// </summary>
         /// <remarks>
-        /// <p><see cref="YukimaruGames.Terminal.Domain.Abstractions.Models.CommandDelegate"/></p>
+        /// <p><see cref="YukimaruGames.Terminal.Domain.Contracts.Models.CommandDelegate"/></p>
         /// 配列で受け取る引数の対象インデックス.
         /// </remarks>
         public int ArgumentIndex { get; }
