@@ -30,9 +30,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             private readonly List<CommandLog> _logs = new ();
             public List<(MessageType type, string message)> Sent { get; } = new();
 
-            public event Action OnItemUpdated;
-            public event Action<CommandLog[]> OnItemAdded;
-            public event Action<CommandLog[]> OnItemRemoved;
+            // ReSharper disable once EventNeverSubscribedTo.Local
+            public event Action OnItemUpdated { add { } remove { } }
+            // ReSharper disable once EventNeverSubscribedTo.Local
+            public event Action<CommandLog[]> OnItemAdded { add { } remove { } }
+            // ReSharper disable once EventNeverSubscribedTo.Local
+            public event Action<CommandLog[]> OnItemRemoved { add { } remove { } }
 
             public void Clear() => _logs.Clear();
             public void Send(MessageType msgType, string message) => Sent.Add((msgType, message));
