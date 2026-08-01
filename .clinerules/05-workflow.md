@@ -4,7 +4,7 @@
 
 新しい作業を始める前に以下を確認すること:
 
-- [ ] 作業ブランチが作成されているか（`feature/`, `fix/`, `refactor/` のいずれかのprefixを使う）
+- [ ] 作業ブランチが作成されているか（`feat/`, `fix/`, `refactor/`, `docs/`, `chore/` 等、変更内容を表すprefixを使う）
 - [ ] 作業対象のレイヤーが明確か
 - [ ] 既存の関連クラスを把握しているか
 
@@ -16,13 +16,13 @@
 - テストがパスしたとき
 - リファクタリングが完了したとき
 
-コミットメッセージは以下の形式を使う:
+コミットメッセージは `type: 変更内容` の形式を使う（Conventional Commits風、括弧は使わない）:
 
 ```
-[feat] PlayerHpにダメージ計算ロジックを追加
-[fix] PlayerControllerのnull参照例外を修正
-[refactor] EnemyAIをDomainServiceに移動
-[test] PlayerHpのユニットテストを追加
+feat: Adapters/Input層(Legacy/InputSystem)を新設
+fix: TerminalRuntimeScope.Viewのnull契約を明確化しViewをプロパティ化
+refactor: Domain.ContractsフォルダのnamespaceをDomain.Abstractionsから統一
+docs: CommandFactoryTestsにXMLドキュメントコメントを追加
 ```
 
 ## 禁止事項
@@ -31,7 +31,6 @@
 - `// TODO` を残したまま作業完了としない
 - マジックナンバーをハードコードしない
 - `Debug.Log` を本番コードに残さない（`#if UNITY_EDITOR` で囲む）
-- `#region` の使用禁止
 
 ### アーキテクチャ
 - Domain層（Domain.API / Domain.Core）に `using UnityEngine` を追加しない
