@@ -110,6 +110,7 @@ InitTestScene*.unity*
 # Compilation Test
 .bat/compile-test/temp/
 .bat/compile-test/*.log
+.bat/compile-test/*.xml
 
 # AI-agent
 .agents/git-credentials.txt
