@@ -10,6 +10,9 @@ using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
 {
+    /// <summary>
+    /// <see cref="CommandDiscoverer"/> のコマンド検出動作を検証するテストクラス。
+    /// </summary>
     [TestFixture]
     public sealed class CommandDiscovererTests
     {
@@ -28,10 +31,16 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
             // ReSharper disable once EventNeverSubscribedTo.Local
             public event Action<CommandLog[]> OnItemRemoved { add { } remove { } }
 
+            /// <summary>
+            /// このモックではログを保持しないため何も行いません。
+            /// </summary>
             public void Clear()
             {
             }
 
+            /// <summary>
+            /// 送信されたメッセージを <see cref="Sent"/> に記録します。
+            /// </summary>
             public void Send(MessageType msgType, string message) => Sent.Add((msgType, message));
         }
 
@@ -52,6 +61,10 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         {
         }
 
+        /// <summary>
+        /// 静的メソッドに付与された <see cref="TerminalCommandAttribute"/> が検出され、
+        /// メタ情報とメソッド情報が正しく取得できることを検証します。
+        /// </summary>
         [Test]
         public void Discover_FindsStaticMethodWithAttribute()
         {
@@ -60,11 +73,16 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
 
             var specs = discoverer.Discover().ToArray();
 
-            var found = specs.FirstOrDefault(s => s.Meta.Command == "discoverertest.sample");
+            Assert.That(specs.Any(s => s.Meta.Command == "discoverertest.sample"), Is.True);
+
+            var found = specs.First(s => s.Meta.Command == "discoverertest.sample");
             Assert.That(found.Meta.Command, Is.EqualTo("discoverertest.sample"));
             Assert.That(found.Method.Name, Is.EqualTo(nameof(SampleCommand)));
         }
 
+        /// <summary>
+        /// コマンド名が空のメソッドは検出結果から除外されることを検証します。
+        /// </summary>
         [Test]
         public void Discover_SkipsMethodWithEmptyCommandName()
         {
@@ -76,6 +94,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
             Assert.That(specs.Any(s => s.Method.Name == nameof(EmptyCommandName)), Is.False);
         }
 
+        /// <summary>
+        /// インスタンスメソッドは検出結果から除外されることを検証します。
+        /// </summary>
         [Test]
         public void Discover_SkipsInstanceMethod()
         {
@@ -87,6 +108,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
             Assert.That(specs.Any(s => s.Method.Name == nameof(InstanceCommand)), Is.False);
         }
 
+        /// <summary>
+        /// 存在しないアセンブリを指定した場合、例外がログ出力された上で再送出されることを検証します。
+        /// </summary>
         [Test]
         public void Discover_UnknownAssembly_LogsExceptionAndRethrows()
         {
@@ -97,6 +121,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
             Assert.That(logger.Sent.Any(s => s.type == MessageType.Exception), Is.True);
         }
 
+        /// <summary>
+        /// デフォルトコンストラクタが "Assembly-CSharp" を対象として例外なく動作することを検証します。
+        /// </summary>
         [Test]
         public void DefaultConstructor_UsesAssemblyCSharp()
         {
