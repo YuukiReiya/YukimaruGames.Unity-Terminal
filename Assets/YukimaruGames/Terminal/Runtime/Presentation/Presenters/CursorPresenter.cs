@@ -1,3 +1,4 @@
+using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 using YukimaruGames.Terminal.SharedKernel;
@@ -12,14 +13,21 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
         private const float HalfPeriodsPerCycle = 2f;
 
         private readonly ICursorFlashSpeedProvider _flashSpeedProvider;
+        private readonly ICursorView _cursorView;
 
         private float _elapsed;
 
         public bool IsVisible { get; private set; } = true;
 
-        public CursorPresenter(ICursorFlashSpeedProvider flashSpeedProvider)
+        /// <param name="flashSpeedProvider">点滅速度の提供者.</param>
+        /// <param name="cursorView">
+        /// 表示状態の変化を通知するView（省略可）。
+        /// 指定した場合、<see cref="IsVisible"/>が変化するたびに<see cref="ICursorView.SetVisible"/>を呼び出す。
+        /// </param>
+        public CursorPresenter(ICursorFlashSpeedProvider flashSpeedProvider, ICursorView cursorView = null)
         {
             _flashSpeedProvider = flashSpeedProvider;
+            _cursorView = cursorView;
         }
 
         void IUpdatable.Update(float deltaTime)
@@ -27,7 +35,7 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
             var flashSpeed = _flashSpeedProvider.FlashSpeed;
             if (flashSpeed <= 0f)
             {
-                IsVisible = true;
+                SetVisible(true);
                 _elapsed = 0f;
                 return;
             }
@@ -41,8 +49,16 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
             _elapsed -= elapsedHalfPeriods * halfPeriod;
             if (elapsedHalfPeriods % 2 != 0)
             {
-                IsVisible = !IsVisible;
+                SetVisible(!IsVisible);
             }
+        }
+
+        private void SetVisible(bool visible)
+        {
+            if (IsVisible == visible) return;
+
+            IsVisible = visible;
+            _cursorView?.SetVisible(visible);
         }
     }
 }

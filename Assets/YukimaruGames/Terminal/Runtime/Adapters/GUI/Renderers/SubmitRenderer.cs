@@ -4,7 +4,7 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Submit;
 
-namespace YukimaruGames.Terminal.Presentation.Renderers
+namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
 {
     public sealed class SubmitRenderer : ISubmitRenderer, IDisposable
     {

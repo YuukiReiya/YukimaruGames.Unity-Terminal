@@ -3,7 +3,7 @@ using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 
-namespace YukimaruGames.Terminal.Presentation.Renderers
+namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
 {
     public sealed class ClipboardRenderer : IClipboardRenderer, IDisposable
     {

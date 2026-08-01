@@ -7,7 +7,7 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Input;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Presentation.Renderers
+namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
 {
     /// <summary>
     /// IMGUIによる入力欄の描画と、入力イベントの通知を行う.
@@ -17,7 +17,7 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
         private readonly IScrollMutator _scrollMutator;
         private readonly IGUIStyleProvider _styleProvider;
         private readonly IColorPaletteProvider _colorPaletteProvider;
-        private readonly ICursorFlashSpeedProvider _cursorFlashSpeedProvider;
+        private readonly CursorView _cursorView;
 
         private bool _isCurrentlyFocused;
         private bool _isMoveCursorToEnd;
@@ -84,12 +84,12 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
             IScrollMutator scrollMutator,
             IGUIStyleProvider styleProvider,
             IColorPaletteProvider colorPaletteProvider,
-            ICursorFlashSpeedProvider cursorFlashSpeedProvider)
+            CursorView cursorView)
         {
             _scrollMutator = scrollMutator;
             _styleProvider = styleProvider;
             _colorPaletteProvider = colorPaletteProvider;
-            _cursorFlashSpeedProvider = cursorFlashSpeedProvider;
+            _cursorView = cursorView;
         }
 
         void IPreRenderer.PreRender()
@@ -98,10 +98,10 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
             if (UsedInputEvent(evt.type))
             {
                 // Tabキー入力されると他のTextFieldにフォーカスが移ってしまうためフォーカスをコントロールする.
-                if (evt.keyCode is KeyCode.Tab) GUI.FocusControl(ControlName);
+                if (evt.keyCode is KeyCode.Tab) UnityEngine.GUI.FocusControl(ControlName);
 
                 // Enterキーが入力されSubmitされると履歴のTextFieldにフォーカスが移ってしまうためフォーカスを補正する.
-                if (evt.keyCode is KeyCode.Return) GUI.FocusControl(ControlName);
+                if (evt.keyCode is KeyCode.Return) UnityEngine.GUI.FocusControl(ControlName);
 
                 // 入力テキストの折り返しを考慮しキー入力がされたらスクロール位置を終端へ補正する.
                 _scrollMutator.ScrollToEnd();
@@ -112,23 +112,30 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
         {
             _id = GUIUtility.GetControlID(FocusType.Keyboard);
             _evt = Event.current.GetTypeForControl(_id);
-            GUI.SetNextControlName(ControlName);
-            _isCurrentlyFocused = GUI.GetNameOfFocusedControl() == ControlName;
+            UnityEngine.GUI.SetNextControlName(ControlName);
+            _isCurrentlyFocused = UnityEngine.GUI.GetNameOfFocusedControl() == ControlName;
 
-            var cursorColor = GUI.skin.settings.cursorColor;
-            var selectionColor = GUI.skin.settings.selectionColor;
-            var cursorFlashSpeed = GUI.skin.settings.cursorFlashSpeed;
+            var cursorColor = UnityEngine.GUI.skin.settings.cursorColor;
+            var selectionColor = UnityEngine.GUI.skin.settings.selectionColor;
+            var cursorFlashSpeed = UnityEngine.GUI.skin.settings.cursorFlashSpeed;
 
-            GUI.skin.settings.cursorColor = _colorPaletteProvider[Definitions.ThemeLabel.Cursor];
-            GUI.skin.settings.selectionColor = _colorPaletteProvider[Definitions.ThemeLabel.Selection];
-            GUI.skin.settings.cursorFlashSpeed = _cursorFlashSpeedProvider.FlashSpeed;
+            var nextCursorColor = _colorPaletteProvider[Definitions.ThemeLabel.Cursor];
+            if (_cursorView is { IsVisible: false })
+            {
+                nextCursorColor.a = 0f;
+            }
+
+            UnityEngine.GUI.skin.settings.cursorColor = nextCursorColor;
+            UnityEngine.GUI.skin.settings.selectionColor = _colorPaletteProvider[Definitions.ThemeLabel.Selection];
+            // カーソルの点滅はCursorPresenter/CursorViewが管理するため、ネイティブの点滅は無効化する.
+            UnityEngine.GUI.skin.settings.cursorFlashSpeed = 0f;
 
             InputText = GUILayout.TextField(data.InputText, _styleProvider.GetStyle());
             SendImeComposingState();
 
-            GUI.skin.settings.cursorColor = cursorColor;
-            GUI.skin.settings.selectionColor = selectionColor;
-            GUI.skin.settings.cursorFlashSpeed = cursorFlashSpeed;
+            UnityEngine.GUI.skin.settings.cursorColor = cursorColor;
+            UnityEngine.GUI.skin.settings.selectionColor = selectionColor;
+            UnityEngine.GUI.skin.settings.cursorFlashSpeed = cursorFlashSpeed;
 
             _focus = data.Focus;
             _isMoveCursorToEnd = data.IsMoveCursorToEnd;
@@ -148,20 +155,20 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
                 case WindowFocus.Apply:
                     if (!_isCurrentlyFocused)
                     {
-                        GUI.FocusControl(ControlName);
+                        UnityEngine.GUI.FocusControl(ControlName);
                     }
 
                     break;
                 case WindowFocus.Release:
                     if (_isCurrentlyFocused)
                     {
-                        GUI.FocusControl(null);
+                        UnityEngine.GUI.FocusControl(null);
                     }
 
                     break;
             }
 
-            GUI.changed = true;
+            UnityEngine.GUI.changed = true;
             Focus = WindowFocus.None;
         }
 
@@ -173,13 +180,13 @@ namespace YukimaruGames.Terminal.Presentation.Renderers
 
             var textEditor = GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl) as TextEditor;
             textEditor!.MoveTextEnd();
-            GUI.changed = true;
+            UnityEngine.GUI.changed = true;
             IsMoveCursorToEndTrigger = false;
         }
 
         private void SendImeComposingState()
         {
-            IsImeComposing = !string.IsNullOrEmpty(Input.compositionString);
+            IsImeComposing = !string.IsNullOrEmpty(UnityEngine.Input.compositionString);
         }
 
         private static bool UsedInputEvent(EventType type) => type switch
