@@ -21,9 +21,12 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
             public IReadOnlyCollection<CommandLog> Logs => Array.Empty<CommandLog>();
             public List<(MessageType type, string message)> Sent { get; } = new();
 
-            public event Action OnItemUpdated;
-            public event Action<CommandLog[]> OnItemAdded;
-            public event Action<CommandLog[]> OnItemRemoved;
+            // ReSharper disable once EventNeverSubscribedTo.Local
+            public event Action OnItemUpdated { add { } remove { } }
+            // ReSharper disable once EventNeverSubscribedTo.Local
+            public event Action<CommandLog[]> OnItemAdded { add { } remove { } }
+            // ReSharper disable once EventNeverSubscribedTo.Local
+            public event Action<CommandLog[]> OnItemRemoved { add { } remove { } }
 
             public void Clear()
             {
