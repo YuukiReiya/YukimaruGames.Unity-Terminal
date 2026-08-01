@@ -45,6 +45,11 @@ namespace YukimaruGames.Terminal.Adapters.Input
 
             _isFocused = focused;
             OnFocusControlChanged?.Invoke(focused ? WindowFocus.Apply : WindowFocus.Release);
+
+            if (!focused)
+            {
+                SetComposingState(false);
+            }
         }
 
         /// <summary>保持している入力文字列を設定する（外部からの初期化・クリア用）.</summary>
@@ -56,6 +61,11 @@ namespace YukimaruGames.Terminal.Adapters.Input
         private void DetectComposingStateChanged()
         {
             var isComposing = !string.IsNullOrEmpty(UnityEngine.Input.compositionString);
+            SetComposingState(isComposing);
+        }
+
+        private void SetComposingState(bool isComposing)
+        {
             if (_isImeComposing == isComposing) return;
 
             _isImeComposing = isComposing;

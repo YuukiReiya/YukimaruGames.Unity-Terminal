@@ -1,0 +1,24 @@
+{
+    "name": "YukimaruGames.Terminal.Tests.PlayMode",
+    "rootNamespace": "YukimaruGames.Terminal.Tests.PlayMode",
+    "references": [
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:85d2ea5f176e4d8bb262fb4bcc857e50",
+        "GUID:e219bb3678c74bd4bab8e224eb77b2ad"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "ENABLE_INPUT_SYSTEM"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
