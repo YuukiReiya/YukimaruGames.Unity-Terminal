@@ -23,41 +23,46 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
         };
 
         private readonly LegacyInputKey _legacyInputKey;
+        private readonly TerminalActionTriggerTiming _triggerTiming;
+        private readonly TerminalActionPriority _priority;
         private readonly List<TerminalAction> _satisfiedBuffer = new(AllActions.Length);
 
-        public LegacyInputKeyboardHandler(LegacyInputKey legacyInputKey)
+        public LegacyInputKeyboardHandler(
+            LegacyInputKey legacyInputKey,
+            TerminalActionTriggerTiming triggerTiming,
+            TerminalActionPriority priority)
         {
             _legacyInputKey = legacyInputKey;
+            _triggerTiming = triggerTiming;
+            _priority = priority;
         }
 
         /// <inheritdoc/>
-        public bool WasPressedThisFrame(TerminalAction action) => IsTriggered(action, isPressed: true);
-
-        /// <inheritdoc/>
-        public bool WasReleasedThisFrame(TerminalAction action) => IsTriggered(action, isPressed: false);
-
-        private bool IsTriggered(TerminalAction action, bool isPressed)
+        public bool WasTriggered(TerminalAction action)
         {
-            if (!IsBaseSatisfied(action, isPressed)) return false;
+            if (!IsBaseSatisfied(action)) return false;
 
             // 同フレームで他に成立しているアクションを集め、優先度が最も高い場合のみ発火する.
+            // 各候補は自分自身のTimingで判定する(Timingはアクションごとに異なりうるため).
             _satisfiedBuffer.Clear();
             for (var i = 0; i < AllActions.Length; ++i)
             {
                 var candidate = AllActions[i];
-                if (IsBaseSatisfied(candidate, isPressed)) _satisfiedBuffer.Add(candidate);
+                if (IsBaseSatisfied(candidate)) _satisfiedBuffer.Add(candidate);
             }
 
-            return TerminalActionPriority.IsHighestPriority(action, _satisfiedBuffer);
+            return _priority.IsHighestPriority(action, _satisfiedBuffer);
         }
 
-        private bool IsBaseSatisfied(TerminalAction action, bool isPressed)
+        private bool IsBaseSatisfied(TerminalAction action)
         {
             var keyCode = _legacyInputKey.GetKey(action);
             if (keyCode is UnityEngine.KeyCode.None) return false;
             if (!AreModifiersHeld(action)) return false;
 
-            return isPressed ? UnityEngine.Input.GetKeyDown(keyCode) : UnityEngine.Input.GetKeyUp(keyCode);
+            return _triggerTiming.GetTiming(action) == TerminalActionTriggerTiming.Timing.Pressed
+                ? UnityEngine.Input.GetKeyDown(keyCode)
+                : UnityEngine.Input.GetKeyUp(keyCode);
         }
 
         private bool AreModifiersHeld(TerminalAction action)

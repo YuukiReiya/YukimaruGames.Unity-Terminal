@@ -13,7 +13,6 @@ namespace YukimaruGames.Terminal.Editor
 
         // スタイル類（PropertyDrawerは静的に持つのが一般的）
         private static GUIStyle _toolbarStyle;
-        private static GUIStyle _typeStyle;
         private static readonly GUIContent _visibleContent = new GUIContent("Visible");
         private static readonly GUIContent _reverseContent = new GUIContent("Reverse");
 
@@ -54,53 +53,11 @@ namespace YukimaruGames.Terminal.Editor
 
         private void RenderInputCategory(SerializedProperty property)
         {
-            var keyboardTypeProp = property.FindPropertyRelative("_inputKeyboardType");
-            var keyboardType = (InputKeyboardType)keyboardTypeProp.intValue;
-
-            EditorGUILayout.LabelField("Keyboard Type", EditorStyles.boldLabel);
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                using (new EditorGUILayout.HorizontalScope())
-                {
-                    foreach (InputKeyboardType type in Enum.GetValues(typeof(InputKeyboardType)))
-                    {
-                        // リフレクション的な処理は省き、元のロジックを準用
-                        bool isSelected = GUILayout.Toggle(keyboardType == type, type.ToString(), _typeStyle);
-                        if (isSelected && keyboardType != type)
-                        {
-                            keyboardTypeProp.intValue = (int)type;
-                        }
-                    }
-                }
-            }
-
-            EditorGUILayout.Space(5f);
-
-            // キー設定の表示
-            if (keyboardType == InputKeyboardType.InputSystem)
-            {
-                DrawKeyFields(property.FindPropertyRelative("_inputSystemKey"), "Input System Keys");
-            }
-            else if (keyboardType == InputKeyboardType.Legacy)
-            {
-                DrawKeyFields(property.FindPropertyRelative("_legacyInputKey"), "Legacy Keys");
-            }
-        }
-
-        private void DrawKeyFields(SerializedProperty keyProp, string label)
-        {
-            if (keyProp == null) return;
-            EditorGUILayout.LabelField(label, EditorStyles.miniBoldLabel);
-            
-            // 子プロパティ（_openKeyなど）を全て回して表示
-            var endProp = keyProp.GetEndProperty();
-            if (!keyProp.NextVisible(true)) return;
-            do
-            {
-                if (SerializedProperty.EqualContents(keyProp, endProp)) break;
-                EditorGUILayout.PropertyField(keyProp, true);
-            }
-            while (keyProp.NextVisible(false)) ;
+            // Key/Modifiers/Trigger Timing/Priorityのアクション別グルーピング表示は
+            // TerminalStandardInputDrawer(_inputフィールドの[SerializeInterface]経由で自動的に使用される)に委譲する.
+            var inputProp = property.FindPropertyRelative("_input");
+            if (inputProp == null) return;
+            EditorGUILayout.PropertyField(inputProp, new GUIContent("Input"), true);
         }
 
         private void RenderSystemCategory(SerializedProperty property)
@@ -127,7 +84,6 @@ namespace YukimaruGames.Terminal.Editor
         {
             if (_toolbarStyle != null) return;
             _toolbarStyle = new GUIStyle(GUI.skin.button) { fixedHeight = 25 };
-            _typeStyle = new GUIStyle(EditorStyles.radioButton) { alignment = TextAnchor.MiddleCenter };
         }
 
         // PropertyDrawerでGUILayoutを使う場合、この高さ計算が「0」でも

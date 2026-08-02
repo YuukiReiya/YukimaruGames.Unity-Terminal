@@ -22,8 +22,8 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
         [SerializeField] private KeyCode[] _executeModifierKeyCodes = Array.Empty<KeyCode>();
         [SerializeField] private KeyCode _cancelKeyCode = KeyCode.C;
         [SerializeField] private KeyCode[] _cancelModifierKeyCodes = { KeyCode.LeftControl };
-        [SerializeField] private KeyCode _prevHistoryKeyCode = KeyCode.UpArrow;
-        [SerializeField] private KeyCode[] _prevHistoryModifierKeyCodes = Array.Empty<KeyCode>();
+        [SerializeField] private KeyCode _previousHistoryKeyCode = KeyCode.UpArrow;
+        [SerializeField] private KeyCode[] _previousHistoryModifierKeyCodes = Array.Empty<KeyCode>();
         [SerializeField] private KeyCode _nextHistoryKeyCode = KeyCode.DownArrow;
         [SerializeField] private KeyCode[] _nextHistoryModifierKeyCodes = Array.Empty<KeyCode>();
         [SerializeField] private KeyCode _autocompleteKeyCode = KeyCode.Tab;
@@ -39,7 +39,7 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
             TerminalAction.Close => _closeKeyCode,
             TerminalAction.Execute => _executeKeyCode,
             TerminalAction.Cancel => _cancelKeyCode,
-            TerminalAction.PreviousHistory => _prevHistoryKeyCode,
+            TerminalAction.PreviousHistory => _previousHistoryKeyCode,
             TerminalAction.NextHistory => _nextHistoryKeyCode,
             TerminalAction.Autocomplete => _autocompleteKeyCode,
             TerminalAction.Focus => _focusKeyCode,
@@ -55,7 +55,7 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
             TerminalAction.Close => _closeModifierKeyCodes,
             TerminalAction.Execute => _executeModifierKeyCodes,
             TerminalAction.Cancel => _cancelModifierKeyCodes,
-            TerminalAction.PreviousHistory => _prevHistoryModifierKeyCodes,
+            TerminalAction.PreviousHistory => _previousHistoryModifierKeyCodes,
             TerminalAction.NextHistory => _nextHistoryModifierKeyCodes,
             TerminalAction.Autocomplete => _autocompleteModifierKeyCodes,
             TerminalAction.Focus => _focusModifierKeyCodes,

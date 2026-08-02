@@ -7,9 +7,9 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Events
     /// </summary>
     public interface IKeyboardInputHandler
     {
-        /// <summary>指定アクションがこのフレームで押下判定されたか.</summary>
-        bool WasPressedThisFrame(TerminalAction action);
-        /// <summary>指定アクションがこのフレームで解放判定されたか.</summary>
-        bool WasReleasedThisFrame(TerminalAction action);
+        /// <summary>
+        /// 指定アクションが、そのアクションに設定された発火タイミング(押下/解放)でこのフレームに成立したか.
+        /// </summary>
+        bool WasTriggered(TerminalAction action);
     }
 }

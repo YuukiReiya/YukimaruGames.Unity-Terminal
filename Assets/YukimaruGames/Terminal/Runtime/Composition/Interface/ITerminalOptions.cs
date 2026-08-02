@@ -1,27 +1,8 @@
-#if !UNITY_2019_2_OR_NEWER
-#define ENABLE_LEGACY_INPUT_MANAGER
-#endif
-
-#if ENABLE_INPUT_SYSTEM
-using YukimaruGames.Terminal.Composition.Input.InputSystem;
-#endif
-#if ENABLE_LEGACY_INPUT_MANAGER
-using YukimaruGames.Terminal.Composition.Input.LegacyInput;
-#endif
-
 namespace YukimaruGames.Terminal.Composition
 {
     public interface ITerminalOptions
     {
-        InputKeyboardType InputKeyboardType { get; }
-        
-#if ENABLE_LEGACY_INPUT_MANAGER
-        LegacyInputKey LegacyInputKey { get; }
-#endif
-        
-#if ENABLE_INPUT_SYSTEM
-        InputSystemKey InputSystemKey { get; }
-#endif
+        ITerminalInput Input { get; }
 
         int BufferSize { get; }
         string Prompt { get; }

@@ -20,8 +20,8 @@ namespace YukimaruGames.Terminal.Composition.Input.InputSystem
         [SerializeField] private Key[] _executeModifierKeys = Array.Empty<Key>();
         [SerializeField] private Key _cancelKey = Key.C;
         [SerializeField] private Key[] _cancelModifierKeys = { Key.LeftCtrl };
-        [SerializeField] private Key _prevHistoryKey = Key.UpArrow;
-        [SerializeField] private Key[] _prevHistoryModifierKeys = Array.Empty<Key>();
+        [SerializeField] private Key _previousHistoryKey = Key.UpArrow;
+        [SerializeField] private Key[] _previousHistoryModifierKeys = Array.Empty<Key>();
         [SerializeField] private Key _nextHistoryKey = Key.DownArrow;
         [SerializeField] private Key[] _nextHistoryModifierKeys = Array.Empty<Key>();
         [SerializeField] private Key _autocompleteKey = Key.Tab;
@@ -37,7 +37,7 @@ namespace YukimaruGames.Terminal.Composition.Input.InputSystem
             TerminalAction.Close => _closeKey,
             TerminalAction.Execute => _executeKey,
             TerminalAction.Cancel => _cancelKey,
-            TerminalAction.PreviousHistory => _prevHistoryKey,
+            TerminalAction.PreviousHistory => _previousHistoryKey,
             TerminalAction.NextHistory => _nextHistoryKey,
             TerminalAction.Autocomplete => _autocompleteKey,
             TerminalAction.Focus => _focusKey,
@@ -53,7 +53,7 @@ namespace YukimaruGames.Terminal.Composition.Input.InputSystem
             TerminalAction.Close => _closeModifierKeys,
             TerminalAction.Execute => _executeModifierKeys,
             TerminalAction.Cancel => _cancelModifierKeys,
-            TerminalAction.PreviousHistory => _prevHistoryModifierKeys,
+            TerminalAction.PreviousHistory => _previousHistoryModifierKeys,
             TerminalAction.NextHistory => _nextHistoryModifierKeys,
             TerminalAction.Autocomplete => _autocompleteModifierKeys,
             TerminalAction.Focus => _focusModifierKeys,
