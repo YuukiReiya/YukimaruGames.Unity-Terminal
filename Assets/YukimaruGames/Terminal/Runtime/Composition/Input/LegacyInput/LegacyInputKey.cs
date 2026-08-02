@@ -14,14 +14,21 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
     public sealed class LegacyInputKey : IInputKeyMap<KeyCode>
     {
         [SerializeField] private KeyCode _openKeyCode = KeyCode.LeftBracket;
+        [SerializeField] private KeyCode _openModifierKeyCode = KeyCode.None;
         [SerializeField] private KeyCode _closeKeyCode = KeyCode.Escape;
+        [SerializeField] private KeyCode _closeModifierKeyCode = KeyCode.None;
         [SerializeField] private KeyCode _executeKeyCode = KeyCode.Return;
+        [SerializeField] private KeyCode _executeModifierKeyCode = KeyCode.None;
         [SerializeField] private KeyCode _cancelKeyCode = KeyCode.C;
         [SerializeField] private KeyCode _cancelModifierKeyCode = KeyCode.LeftControl;
         [SerializeField] private KeyCode _prevHistoryKeyCode = KeyCode.UpArrow;
+        [SerializeField] private KeyCode _prevHistoryModifierKeyCode = KeyCode.None;
         [SerializeField] private KeyCode _nextHistoryKeyCode = KeyCode.DownArrow;
+        [SerializeField] private KeyCode _nextHistoryModifierKeyCode = KeyCode.None;
         [SerializeField] private KeyCode _autocompleteKeyCode = KeyCode.Tab;
+        [SerializeField] private KeyCode _autocompleteModifierKeyCode = KeyCode.None;
         [SerializeField] private KeyCode _focusKeyCode = KeyCode.LeftControl;
+        [SerializeField] private KeyCode _focusModifierKeyCode = KeyCode.None;
 
         public KeyCode GetKey(TerminalAction action) => action switch
         {
@@ -38,10 +45,19 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
         };
 
         /// <inheritdoc/>
+        /// <remarks>アクションごとに任意の修飾キーを設定できる(既定は<see cref="KeyCode.None"/> = 修飾キー不要).</remarks>
         public KeyCode GetModifier(TerminalAction action) => action switch
         {
+            TerminalAction.None => KeyCode.None,
+            TerminalAction.Open => _openModifierKeyCode,
+            TerminalAction.Close => _closeModifierKeyCode,
+            TerminalAction.Execute => _executeModifierKeyCode,
             TerminalAction.Cancel => _cancelModifierKeyCode,
-            _ => KeyCode.None
+            TerminalAction.PreviousHistory => _prevHistoryModifierKeyCode,
+            TerminalAction.NextHistory => _nextHistoryModifierKeyCode,
+            TerminalAction.Autocomplete => _autocompleteModifierKeyCode,
+            TerminalAction.Focus => _focusModifierKeyCode,
+            _ => throw new ArgumentOutOfRangeException(nameof(action), action, null)
         };
     }
 }
