@@ -116,12 +116,10 @@ namespace YukimaruGames.Terminal.Composition
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="Coordinator"/> 
+            /// <inheritdoc cref="Coordinator"/>
             public TerminalCoordinator Coordinator;
-            /// <inheritdoc cref="IEventListener"/> 
+            /// <inheritdoc cref="IEventListener"/>
             public IEventListener EventListener;
-            /// <summary>解決済みキーボード入力種別.</summary>
-            public InputKeyboardType KeyboardType;
         }
 
         #endregion
@@ -550,7 +548,6 @@ namespace YukimaruGames.Terminal.Composition
             {
                 Coordinator = coordinator,
                 EventListener = eventListener,
-                KeyboardType = keyboardType,
                 Components = new object[]
                 {
                     coordinator,
@@ -572,7 +569,7 @@ namespace YukimaruGames.Terminal.Composition
             var updatables = instances.OfType<IUpdatable>().ToList();
             var disposables = instances.OfType<IDisposable>().ToList();
 
-            var entryPoint = new TerminalEntryPoint(updatables, coordinator.KeyboardType, rendering.GUI);
+            var entryPoint = new TerminalEntryPoint(updatables, rendering.GUI);
 
             return new TerminalRuntimeScope(
                 entryPoint,
