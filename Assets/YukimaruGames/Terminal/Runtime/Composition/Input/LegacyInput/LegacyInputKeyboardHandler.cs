@@ -20,13 +20,19 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
         public bool WasPressedThisFrame(TerminalAction action)
         {
             var keyCode = _legacyInputKey.GetKey(action);
-            return keyCode is not UnityEngine.KeyCode.None && UnityEngine.Input.GetKeyDown(keyCode);
+            return keyCode is not UnityEngine.KeyCode.None && IsModifierSatisfied(action) && UnityEngine.Input.GetKeyDown(keyCode);
         }
 
         public bool WasReleasedThisFrame(TerminalAction action)
         {
             var keyCode = _legacyInputKey.GetKey(action);
-            return keyCode is not UnityEngine.KeyCode.None && UnityEngine.Input.GetKeyUp(keyCode);
+            return keyCode is not UnityEngine.KeyCode.None && IsModifierSatisfied(action) && UnityEngine.Input.GetKeyUp(keyCode);
+        }
+
+        private bool IsModifierSatisfied(TerminalAction action)
+        {
+            var modifier = _legacyInputKey.GetModifier(action);
+            return modifier is UnityEngine.KeyCode.None || UnityEngine.Input.GetKey(modifier);
         }
     }
 }

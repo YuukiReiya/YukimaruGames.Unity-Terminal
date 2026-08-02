@@ -16,6 +16,8 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
         [SerializeField] private KeyCode _openKeyCode = KeyCode.LeftBracket;
         [SerializeField] private KeyCode _closeKeyCode = KeyCode.Escape;
         [SerializeField] private KeyCode _executeKeyCode = KeyCode.Return;
+        [SerializeField] private KeyCode _cancelKeyCode = KeyCode.C;
+        [SerializeField] private KeyCode _cancelModifierKeyCode = KeyCode.LeftControl;
         [SerializeField] private KeyCode _prevHistoryKeyCode = KeyCode.UpArrow;
         [SerializeField] private KeyCode _nextHistoryKeyCode = KeyCode.DownArrow;
         [SerializeField] private KeyCode _autocompleteKeyCode = KeyCode.Tab;
@@ -27,11 +29,19 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
             TerminalAction.Open => _openKeyCode,
             TerminalAction.Close => _closeKeyCode,
             TerminalAction.Execute => _executeKeyCode,
+            TerminalAction.Cancel => _cancelKeyCode,
             TerminalAction.PreviousHistory => _prevHistoryKeyCode,
             TerminalAction.NextHistory => _nextHistoryKeyCode,
             TerminalAction.Autocomplete => _autocompleteKeyCode,
             TerminalAction.Focus => _focusKeyCode,
             _ => throw new ArgumentOutOfRangeException(nameof(action), action, null)
+        };
+
+        /// <inheritdoc/>
+        public KeyCode GetModifier(TerminalAction action) => action switch
+        {
+            TerminalAction.Cancel => _cancelModifierKeyCode,
+            _ => KeyCode.None
         };
     }
 }

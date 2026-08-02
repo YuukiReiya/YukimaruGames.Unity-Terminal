@@ -21,11 +21,11 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
         
 #if ENABLE_LEGACY_INPUT_MANAGER
-        [SerializeField] private LegacyInputKey _legacyInputKey;
+        [SerializeField] private LegacyInputKey _legacyInputKey = new();
 #endif
-        
+
 #if ENABLE_INPUT_SYSTEM
-        [SerializeField] private InputSystemKey _inputSystemKey;
+        [SerializeField] private InputSystemKey _inputSystemKey = new();
 #endif
 
         [Header("Command Settings")]

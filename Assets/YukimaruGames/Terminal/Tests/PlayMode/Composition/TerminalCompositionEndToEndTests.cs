@@ -137,5 +137,25 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
 
             Assert.IsEmpty(_scope.Service.Logs);
         }
+
+        /// <summary>
+        /// EntryPoint.Update()を複数フレーム駆動しても例外が発生しないことを検証する.
+        /// </summary>
+        /// <remarks>
+        /// TerminalAction.Cancelがキーマップ(InputSystemKey/LegacyInputKey)に未実装だったため、
+        /// EventListener.Updateが全アクションを巡回する毎フレームでArgumentOutOfRangeExceptionが
+        /// 発生し続けていたリグレッション(実機Play mode検証で発覚)の再発防止用.
+        /// </remarks>
+        [UnityTest]
+        public IEnumerator EntryPointUpdate_MultipleFrames_DoesNotThrow()
+        {
+            yield return null;
+
+            for (var i = 0; i < 10; ++i)
+            {
+                Assert.DoesNotThrow(() => _scope.EntryPoint.Update());
+                yield return null;
+            }
+        }
     }
 }
