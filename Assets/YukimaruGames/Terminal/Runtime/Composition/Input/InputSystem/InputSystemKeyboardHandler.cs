@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using YukimaruGames.Terminal.Presentation.Interfaces.Events;
 using YukimaruGames.Terminal.Presentation.Models.Event;
-using YukimaruGames.Terminal.Composition.Input.InputSystem;
 
-namespace YukimaruGames.Terminal.Composition
+namespace YukimaruGames.Terminal.Composition.Input.InputSystem
 {
     public sealed class InputSystemKeyboardHandler : IKeyboardInputHandler
     {
@@ -56,9 +55,14 @@ namespace YukimaruGames.Terminal.Composition
         private bool AreModifiersHeld(TerminalAction action)
         {
             var modifiers = _inputSystemKey.GetModifiers(action);
+            var keyboard = Keyboard.current;
+            if (keyboard == null) return modifiers.Count == 0;
+
             for (var i = 0; i < modifiers.Count; ++i)
             {
-                if (!(Keyboard.current?[modifiers[i]].isPressed ?? false)) return false;
+                var modifier = modifiers[i];
+                if (modifier is Key.None) continue;
+                if (!keyboard[modifier].isPressed) return false;
             }
             return true;
         }

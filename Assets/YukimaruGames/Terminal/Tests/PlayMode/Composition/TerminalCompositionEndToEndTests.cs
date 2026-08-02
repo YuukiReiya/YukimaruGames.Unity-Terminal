@@ -195,11 +195,12 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
             windowPresenter.Open();
 
             // Openアニメーションが完了するまで待つ(完了しないとClose()がIsAnimatingガードで無視される).
-            const int maxWaitFrames = 120;
-            var waitedFrames = 0;
+            // バッチモードではフレームごとのdeltaTimeが極small/不安定なため、フレーム数ではなく
+            // 実時間で上限を設ける(アニメーションが完了しない不具合発生時に無限ハングしないための保険).
+            var deadline = Time.realtimeSinceStartup + 10f;
             while (windowPresenter.IsAnimating)
             {
-                Assert.Less(waitedFrames++, maxWaitFrames, "Openアニメーションが規定フレーム内に完了しませんでした");
+                Assert.Less(Time.realtimeSinceStartup, deadline, "Openアニメーションが規定時間内に完了しませんでした");
                 _scope.EntryPoint.Update();
                 yield return null;
             }
