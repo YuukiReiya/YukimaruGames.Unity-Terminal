@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using UnityEditor;
-using YukimaruGames.Terminal.Runtime;
+using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {

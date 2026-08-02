@@ -18,7 +18,7 @@ using System.Reflection;
 #endif
 
 using UnityEditor;
-using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Editor
 {

@@ -412,7 +412,7 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 3231918332055126074
-      type: {class: TerminalStandardInstaller, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      type: {class: TerminalStandardInstaller, ns: YukimaruGames.Terminal.Composition, asm: YukimaruGames.Terminal.Composition}
       data:
         _theme:
           rid: 3231918332055126075
@@ -421,7 +421,7 @@ MonoBehaviour:
         _options:
           rid: 3231918332055126077
     - rid: 3231918332055126075
-      type: {class: TerminalStandardTheme, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      type: {class: TerminalStandardTheme, ns: YukimaruGames.Terminal.Composition, asm: YukimaruGames.Terminal.Composition}
       data:
         _font: {fileID: 0}
         _fontSize: 55
@@ -442,7 +442,7 @@ MonoBehaviour:
         _copyButtonColor: {r: 0, g: 0.7, b: 0.8, a: 1}
         _cursorFlashSpeed: 1.886792
     - rid: 3231918332055126076
-      type: {class: TerminalStandardAnimation, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      type: {class: TerminalStandardAnimation, ns: YukimaruGames.Terminal.Composition, asm: YukimaruGames.Terminal.Composition}
       data:
         _bootupWindowState: 2
         _anchor: 3
@@ -450,7 +450,7 @@ MonoBehaviour:
         _duration: 1
         _compactScale: 0.35
     - rid: 3231918332055126077
-      type: {class: TerminalStandardOptions, ns: YukimaruGames.Terminal.Runtime, asm: YukimaruGames.Terminal.Runtime}
+      type: {class: TerminalStandardOptions, ns: YukimaruGames.Terminal.Composition, asm: YukimaruGames.Terminal.Composition}
       data:
         _inputKeyboardType: 1
         _legacyInputKey:

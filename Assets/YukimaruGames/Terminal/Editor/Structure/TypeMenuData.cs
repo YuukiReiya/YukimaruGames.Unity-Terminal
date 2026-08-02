@@ -1,5 +1,5 @@
 using System;
-using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Editor
 {

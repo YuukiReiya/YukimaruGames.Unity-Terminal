@@ -1,7 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using YukimaruGames.Terminal.Runtime;
+using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {

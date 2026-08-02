@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.Runtime.Shared.Extensions;
+using YukimaruGames.Terminal.Composition.Shared.Extensions;
 
 namespace YukimaruGames.Terminal.Infrastructure.Repositories
 {
