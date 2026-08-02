@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using YukimaruGames.Terminal.Composition;
 using YukimaruGames.Terminal.Infrastructure.Factories;
+using YukimaruGames.Terminal.Presentation.Coordinators;
+using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
+using YukimaruGames.Terminal.Presentation.Models.Window;
+using YukimaruGames.Terminal.Presentation.Presenters;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
@@ -156,6 +161,57 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
                 Assert.DoesNotThrow(() => _scope.EntryPoint.Update());
                 yield return null;
             }
+        }
+
+        /// <summary>
+        /// IME変換中(IsImeComposing=true)のままでも、Closeアクションでウィンドウが閉じられることを検証する.
+        /// </summary>
+        /// <remarks>
+        /// compositionStringが何らかの理由でクリアされないまま残るケース(実機のCGEventPost経由の
+        /// 合成キー入力で確認)で、IsImeComposingガードによりウィンドウが永久に閉じられなくなる
+        /// リグレッションの再発防止用。Open/Executeは誤発火の実害が大きいためガードを維持するが、
+        /// Closeは常に許可する設計としている.
+        /// </remarks>
+        [UnityTest]
+        public IEnumerator OnCloseTriggered_WhileImeComposing_StillClosesWindow()
+        {
+            yield return null;
+
+            var disposablesField = typeof(TerminalRuntimeScope).GetField("_disposables", BindingFlags.NonPublic | BindingFlags.Instance);
+            var disposables = (System.Collections.IEnumerable)disposablesField!.GetValue(_scope);
+            TerminalCoordinator coordinator = null;
+            InputPresenter inputPresenter = null;
+            foreach (var d in disposables)
+            {
+                if (d is TerminalCoordinator c) coordinator = c;
+                if (d is InputPresenter ip) inputPresenter = ip;
+            }
+
+            Assert.IsNotNull(coordinator);
+            Assert.IsNotNull(inputPresenter);
+
+            var windowPresenterField = typeof(TerminalCoordinator).GetField("_windowPresenter", BindingFlags.NonPublic | BindingFlags.Instance);
+            var windowPresenter = (IWindowPresenter)windowPresenterField!.GetValue(coordinator);
+            windowPresenter.Open();
+
+            // Openアニメーションが完了するまで待つ(完了しないとClose()がIsAnimatingガードで無視される).
+            while (windowPresenter.IsAnimating)
+            {
+                _scope.EntryPoint.Update();
+                yield return null;
+            }
+
+            var isImeComposingProp = typeof(InputPresenter).GetProperty(nameof(IInputPresenter.IsImeComposing));
+            isImeComposingProp!.SetValue(inputPresenter, true);
+
+            var onCloseMethod = typeof(TerminalCoordinator).GetMethod("OnCloseTriggered", BindingFlags.NonPublic | BindingFlags.Instance);
+            onCloseMethod!.Invoke(coordinator, null);
+
+            var windowAnimProviderField = typeof(TerminalCoordinator).GetField("_windowAnimationProvider", BindingFlags.NonPublic | BindingFlags.Instance);
+            var windowAnimProvider = windowAnimProviderField!.GetValue(coordinator);
+            var state = windowAnimProvider.GetType().GetProperty("State")!.GetValue(windowAnimProvider);
+
+            Assert.AreEqual(WindowState.Close, state);
         }
     }
 }
