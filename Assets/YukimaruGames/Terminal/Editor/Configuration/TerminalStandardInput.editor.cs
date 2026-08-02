@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using YukimaruGames.Terminal.Composition;
+using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Editor
 {
@@ -15,8 +17,8 @@ namespace YukimaruGames.Terminal.Editor
             public string Label;
         }
 
-        // TerminalAction(None除く)と、InputSystemKey/LegacyInputKey/TerminalActionTriggerTiming/
-        // TerminalActionPriorityが共通で使用しているフィールド名サフィックス.
+        // TerminalAction(None除く)と、InputSystemKey/LegacyInputKey/TerminalActionTriggerTimingが
+        // 共通で使用しているフィールド名サフィックス.
         private static readonly ActionField[] Actions =
         {
             new() { Suffix = "open", Label = "Open" },
@@ -29,8 +31,17 @@ namespace YukimaruGames.Terminal.Editor
             new() { Suffix = "focus", Label = "Focus" },
         };
 
+        private const string TriggerTimingHelp =
+            "Pressed: キーを押した瞬間に発火します。Released: キーを離した瞬間に発火します。\n" +
+            "Open/Closeは既定でReleasedです(Pressedにすると、開閉に同じキーを割り当てた場合に" +
+            "押した瞬間へ即座に反応してしまい、意図しない連続発火につながりやすいため)。";
+
+        private const string PriorityHelp =
+            "ドラッグして順序を入れ替えると、その順序がそのまま優先度になります(上ほど優先度が高い)。\n" +
+            "複数のアクションの条件が同一フレームで同時に成立した場合、リストの上にあるアクションだけが発火します。";
+
         private static GUIStyle _typeStyle;
-        private readonly Dictionary<string, bool> _foldouts = new();
+        private readonly Dictionary<string, ReorderableList> _priorityLists = new();
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -56,7 +67,7 @@ namespace YukimaruGames.Terminal.Editor
                 }
             }
 
-            EditorGUILayout.Space(5f);
+            EditorGUILayout.Space(6f);
 
             var keyProp = keyboardType switch
             {
@@ -64,46 +75,104 @@ namespace YukimaruGames.Terminal.Editor
                 InputKeyboardType.Legacy => property.FindPropertyRelative("_legacyInputKey"),
                 _ => null,
             };
-            var timingProp = property.FindPropertyRelative("_triggerTiming");
-            var priorityProp = property.FindPropertyRelative("_priority");
             var keySuffix = keyboardType == InputKeyboardType.Legacy ? "KeyCode" : "Key";
             var modifierSuffix = keyboardType == InputKeyboardType.Legacy ? "ModifierKeyCodes" : "ModifierKeys";
 
-            EditorGUILayout.LabelField("Actions", EditorStyles.boldLabel);
-            foreach (var action in Actions)
+            if (keyProp != null)
             {
-                var foldoutKey = property.propertyPath + "." + action.Suffix;
-                _foldouts.TryGetValue(foldoutKey, out var expanded);
-
+                EditorGUILayout.LabelField("Keys", EditorStyles.boldLabel);
                 using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
                 {
-                    expanded = EditorGUILayout.Foldout(expanded, action.Label, true);
-                    _foldouts[foldoutKey] = expanded;
-
-                    if (!expanded) continue;
-
-                    using (new EditorGUI.IndentLevelScope())
+                    foreach (var action in Actions)
                     {
-                        if (keyProp != null)
-                        {
-                            DrawRelative(keyProp, "_" + action.Suffix + keySuffix, "Key");
-                            DrawRelative(keyProp, "_" + action.Suffix + modifierSuffix, "Modifiers");
-                        }
-
-                        DrawRelative(timingProp, "_" + action.Suffix, "Trigger Timing");
-                        DrawRelative(priorityProp, "_" + action.Suffix, "Priority");
+                        DrawKeyRow(keyProp, action, keySuffix, modifierSuffix);
                     }
                 }
+                EditorGUILayout.Space(6f);
+            }
+
+            var timingProp = property.FindPropertyRelative("_triggerTiming");
+            EditorGUILayout.LabelField("Trigger Timing", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(TriggerTimingHelp, MessageType.Info);
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                foreach (var action in Actions)
+                {
+                    DrawTimingRow(timingProp, action);
+                }
+            }
+
+            EditorGUILayout.Space(6f);
+
+            var priorityProp = property.FindPropertyRelative("_priority");
+            EditorGUILayout.LabelField("Priority", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(PriorityHelp, MessageType.Info);
+            var orderProp = priorityProp?.FindPropertyRelative("_order");
+            if (orderProp != null)
+            {
+                GetOrCreatePriorityList(orderProp).DoLayoutList();
             }
 
             EditorGUI.EndProperty();
         }
 
-        private static void DrawRelative(SerializedProperty parent, string relativeName, string label)
+        private static void DrawKeyRow(SerializedProperty keyProp, ActionField action, string keySuffix, string modifierSuffix)
         {
-            var prop = parent?.FindPropertyRelative(relativeName);
+            var key = keyProp.FindPropertyRelative("_" + action.Suffix + keySuffix);
+            var modifiers = keyProp.FindPropertyRelative("_" + action.Suffix + modifierSuffix);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField(action.Label, GUILayout.Width(110));
+                if (key != null) EditorGUILayout.PropertyField(key, GUIContent.none);
+            }
+            if (modifiers != null)
+            {
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    EditorGUILayout.PropertyField(modifiers, new GUIContent("Modifiers"), true);
+                }
+            }
+        }
+
+        private static void DrawTimingRow(SerializedProperty timingProp, ActionField action)
+        {
+            var prop = timingProp?.FindPropertyRelative("_" + action.Suffix);
             if (prop == null) return;
-            EditorGUILayout.PropertyField(prop, new GUIContent(label), true);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.LabelField(action.Label, GUILayout.Width(110));
+                EditorGUILayout.PropertyField(prop, GUIContent.none);
+            }
+        }
+
+        private ReorderableList GetOrCreatePriorityList(SerializedProperty orderProp)
+        {
+            if (_priorityLists.TryGetValue(orderProp.propertyPath, out var cached))
+            {
+                cached.serializedProperty = orderProp;
+                return cached;
+            }
+
+            var list = new ReorderableList(orderProp.serializedObject, orderProp, true, false, false, false)
+            {
+                elementHeight = EditorGUIUtility.singleLineHeight + 2f,
+            };
+            // NOTE: クロージャで直接orderPropを参照すると、次回OnGUI時にSerializedObjectが
+            // Disposedになった古いプロパティを参照し続けてしまう。必ずlist.serializedPropertyの
+            // (毎回最新に更新される)方を経由して参照すること.
+            list.drawElementCallback = (rect, index, _, _) =>
+            {
+                var element = list.serializedProperty.GetArrayElementAtIndex(index);
+                var action = (TerminalAction)element.intValue;
+                rect.y += 1f;
+                rect.height = EditorGUIUtility.singleLineHeight;
+                EditorGUI.LabelField(rect, $"{index + 1}. {ObjectNames.NicifyVariableName(action.ToString())}");
+            };
+
+            _priorityLists[orderProp.propertyPath] = list;
+            return list;
         }
 
         private static void InitStyles()

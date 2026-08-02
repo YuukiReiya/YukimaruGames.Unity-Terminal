@@ -83,14 +83,15 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Models.Event
         }
 
         /// <summary>
-        /// Inspector編集によりOpenとCloseに同じ優先度が設定されても、enum宣言順によるタイブレークで
-        /// 常にちょうど1つの勝者(宣言順で先に来るOpen)が決まることを検証する.
+        /// 優先順位の並び替え(ReorderableList相当)を反映して、順序の先頭にあるアクションが
+        /// 優先されることを検証する.
         /// </summary>
         [Test]
-        public void IsHighestPriority_TiedPriority_TieBreaksByDeclarationOrder()
+        public void IsHighestPriority_ReorderedOpenBeforeClose_OpenWins()
         {
-            SetPriority(_priority, "_open", 5);
-            SetPriority(_priority, "_close", 5);
+            SetOrder(_priority, TerminalAction.Open, TerminalAction.Close, TerminalAction.Execute,
+                TerminalAction.Cancel, TerminalAction.PreviousHistory, TerminalAction.NextHistory,
+                TerminalAction.Autocomplete, TerminalAction.Focus);
 
             var satisfied = new List<TerminalAction> { TerminalAction.Open, TerminalAction.Close };
 
@@ -98,10 +99,26 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Models.Event
             Assert.IsFalse(_priority.IsHighestPriority(TerminalAction.Close, satisfied));
         }
 
-        private static void SetPriority(TerminalActionPriority priority, string fieldName, int value)
+        /// <summary>
+        /// 優先順位配列に対象アクションが含まれていない(不正な構成)場合は拒否されることを検証する.
+        /// </summary>
+        [Test]
+        public void IsHighestPriority_ActionMissingFromOrder_ThrowsArgumentOutOfRangeException()
         {
-            var field = typeof(TerminalActionPriority).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-            field!.SetValue(priority, value);
+            SetOrder(_priority, TerminalAction.Cancel, TerminalAction.Close, TerminalAction.Open,
+                TerminalAction.Execute, TerminalAction.PreviousHistory, TerminalAction.NextHistory,
+                TerminalAction.Autocomplete);
+
+            var satisfied = new List<TerminalAction> { TerminalAction.Focus };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                _priority.IsHighestPriority(TerminalAction.Focus, satisfied));
+        }
+
+        private static void SetOrder(TerminalActionPriority priority, params TerminalAction[] order)
+        {
+            var field = typeof(TerminalActionPriority).GetField("_order", BindingFlags.NonPublic | BindingFlags.Instance);
+            field!.SetValue(priority, order);
         }
     }
 }
