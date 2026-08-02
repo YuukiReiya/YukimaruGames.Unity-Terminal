@@ -195,8 +195,11 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
             windowPresenter.Open();
 
             // Openアニメーションが完了するまで待つ(完了しないとClose()がIsAnimatingガードで無視される).
+            const int maxWaitFrames = 120;
+            var waitedFrames = 0;
             while (windowPresenter.IsAnimating)
             {
+                Assert.Less(waitedFrames++, maxWaitFrames, "Openアニメーションが規定フレーム内に完了しませんでした");
                 _scope.EntryPoint.Update();
                 yield return null;
             }
