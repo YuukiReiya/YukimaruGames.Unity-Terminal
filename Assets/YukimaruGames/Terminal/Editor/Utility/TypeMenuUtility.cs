@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.Composition.Shared;
 namespace YukimaruGames.Terminal.Editor
 {
     internal static class TypeMenuUtility

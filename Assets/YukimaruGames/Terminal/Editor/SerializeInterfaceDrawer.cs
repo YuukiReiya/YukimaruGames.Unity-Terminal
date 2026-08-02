@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
-using YukimaruGames.Terminal.Runtime.Shared;
+using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Editor
 {
