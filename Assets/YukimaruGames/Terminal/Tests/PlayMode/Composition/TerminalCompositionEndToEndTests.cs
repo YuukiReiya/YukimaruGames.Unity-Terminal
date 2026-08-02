@@ -29,6 +29,10 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
         private IInstaller _installer;
         private TerminalRuntimeScope _scope;
 
+        /// <summary>
+        /// 各テスト実行前に<see cref="TerminalStandardInstaller"/>でDI配線を構築し、
+        /// <see cref="TerminalRuntimeScope"/>を取得する(<see cref="TerminalBootstrapper"/>のAwake相当).
+        /// </summary>
         [SetUp]
         public void SetUp()
         {
@@ -36,6 +40,9 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
             _scope = _installer.Install();
         }
 
+        /// <summary>
+        /// 各テスト実行後に<see cref="TerminalRuntimeScope"/>を破棄する(<see cref="TerminalBootstrapper"/>のOnDestroy相当).
+        /// </summary>
         [TearDown]
         public void TearDown()
         {
@@ -112,6 +119,8 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
             yield return new WaitUntil(() => secondTask.IsCompleted);
 
             Assert.AreEqual(1, callCount, "登録解除後はハンドラーが呼ばれてはならない");
+            Assert.IsTrue(_scope.Service.Logs.Any(
+                l => l.MessageType == MessageType.Error && l.Message == "No such command: 'inc'."));
         }
 
         /// <summary>登録済みコマンド名が自動補完候補に反映されることを検証する.</summary>

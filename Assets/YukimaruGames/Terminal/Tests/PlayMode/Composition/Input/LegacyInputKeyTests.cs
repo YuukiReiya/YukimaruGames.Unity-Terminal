@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using UnityEngine;
 using YukimaruGames.Terminal.Composition.Input.LegacyInput;
@@ -5,11 +6,15 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Tests.PlayMode.Composition.Input
 {
+    /// <summary>
+    /// <see cref="LegacyInputKey"/>の既定キー設定と異常入力に対する契約を検証する.
+    /// </summary>
     [TestFixture]
     public sealed class LegacyInputKeyTests
     {
         private LegacyInputKey _key;
 
+        /// <summary>各テスト実行前に既定設定の<see cref="LegacyInputKey"/>を生成する.</summary>
         [SetUp]
         public void SetUp()
         {
@@ -38,6 +43,22 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition.Input
         public void GetModifiers_OtherActions_DefaultsToEmpty(TerminalAction action)
         {
             Assert.IsEmpty(_key.GetModifiers(action));
+        }
+
+        /// <summary>未定義の<see cref="TerminalAction"/>を渡すと<see cref="GetKey"/>が拒否することを検証する.</summary>
+        [Test]
+        public void GetKey_UndefinedAction_ThrowsArgumentOutOfRangeException()
+        {
+            var undefined = (TerminalAction)(-1);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _key.GetKey(undefined));
+        }
+
+        /// <summary>未定義の<see cref="TerminalAction"/>を渡すと<see cref="GetModifiers"/>が拒否することを検証する.</summary>
+        [Test]
+        public void GetModifiers_UndefinedAction_ThrowsArgumentOutOfRangeException()
+        {
+            var undefined = (TerminalAction)(-1);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _key.GetModifiers(undefined));
         }
     }
 }

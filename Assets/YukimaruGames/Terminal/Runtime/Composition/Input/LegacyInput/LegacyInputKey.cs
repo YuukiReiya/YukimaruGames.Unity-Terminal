@@ -31,6 +31,7 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
         [SerializeField] private KeyCode _focusKeyCode = KeyCode.LeftControl;
         [SerializeField] private KeyCode[] _focusModifierKeyCodes = Array.Empty<KeyCode>();
 
+        /// <inheritdoc/>
         public KeyCode GetKey(TerminalAction action) => action switch
         {
             TerminalAction.None => KeyCode.None,

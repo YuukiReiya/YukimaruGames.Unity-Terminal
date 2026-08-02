@@ -20,6 +20,11 @@ namespace YukimaruGames.Terminal.Composition
         private readonly IReadOnlyList<IUpdatable> _updatables;
         private readonly ITerminalGUI _gui;
 
+        /// <summary>
+        /// <see cref="TerminalEntryPoint"/>を構築する.
+        /// </summary>
+        /// <param name="updatables">毎フレーム<see cref="Update"/>から駆動する更新対象一覧.</param>
+        /// <param name="gui"><see cref="OnGUI"/>から描画するGUI実装(未使用時はnull許容).</param>
         public TerminalEntryPoint(
             IReadOnlyList<IUpdatable> updatables,
             ITerminalGUI gui)
@@ -28,12 +33,18 @@ namespace YukimaruGames.Terminal.Composition
             _gui = gui;
         }
 
+        /// <summary>
+        /// 毎フレーム1回呼び出し、登録済みの<see cref="IUpdatable"/>全てを<see cref="Time.deltaTime"/>で更新する.
+        /// </summary>
         public void Update()
         {
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < _updatables.Count; ++i) _updatables[i]?.Update(Time.deltaTime);
         }
 
+        /// <summary>
+        /// UnityのOnGUIコールバックから呼び出し、GUIの描画のみを行う(入力判定は<see cref="Update"/>側が担う).
+        /// </summary>
         public void OnGUI()
         {
             _gui?.Render();

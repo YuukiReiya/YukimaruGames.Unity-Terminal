@@ -9,6 +9,11 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
 {
+    /// <summary>
+    /// Legacy Input Managerを用いて<see cref="TerminalAction"/>の入力判定を行う<see cref="IKeyboardInputHandler"/>実装.
+    /// 同フレームで複数アクションが成立した場合は<see cref="TerminalActionPriority"/>に基づき最高優先度の
+    /// アクションのみを発火する.
+    /// </summary>
     public sealed class LegacyInputKeyboardHandler : IKeyboardInputHandler
     {
         private static readonly TerminalAction[] AllActions =
@@ -25,8 +30,10 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
             _legacyInputKey = legacyInputKey;
         }
 
+        /// <inheritdoc/>
         public bool WasPressedThisFrame(TerminalAction action) => IsTriggered(action, isPressed: true);
 
+        /// <inheritdoc/>
         public bool WasReleasedThisFrame(TerminalAction action) => IsTriggered(action, isPressed: false);
 
         private bool IsTriggered(TerminalAction action, bool isPressed)

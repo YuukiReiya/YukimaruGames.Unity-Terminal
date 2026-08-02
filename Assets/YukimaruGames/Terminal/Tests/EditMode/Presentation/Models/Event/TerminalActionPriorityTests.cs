@@ -4,6 +4,9 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Models.Event
 {
+    /// <summary>
+    /// <see cref="TerminalActionPriority"/>の優先度判定ロジックを検証する.
+    /// </summary>
     [TestFixture]
     public sealed class TerminalActionPriorityTests
     {
@@ -54,6 +57,18 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Models.Event
 
             Assert.AreEqual(1, winnerCount);
             Assert.IsTrue(TerminalActionPriority.IsHighestPriority(TerminalAction.Cancel, satisfied));
+        }
+
+        /// <summary>
+        /// <see cref="TerminalAction.None"/>は優先度テーブルに存在しないため拒否される(契約違反)ことを検証する.
+        /// </summary>
+        [Test]
+        public void IsHighestPriority_ActionIsNone_ThrowsKeyNotFoundException()
+        {
+            var satisfied = new List<TerminalAction> { TerminalAction.None };
+
+            Assert.Throws<KeyNotFoundException>(() =>
+                TerminalActionPriority.IsHighestPriority(TerminalAction.None, satisfied));
         }
     }
 }

@@ -29,6 +29,7 @@ namespace YukimaruGames.Terminal.Composition.Input.InputSystem
         [SerializeField] private Key _focusKey = Key.LeftCtrl;
         [SerializeField] private Key[] _focusModifierKeys = Array.Empty<Key>();
 
+        /// <inheritdoc/>
         public Key GetKey(TerminalAction action) => action switch
         {
             TerminalAction.None => Key.None,
