@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Presentation.Models.Input
@@ -7,9 +8,9 @@ namespace YukimaruGames.Terminal.Presentation.Models.Input
         T GetKey(TerminalAction action);
 
         /// <summary>
-        /// 指定アクションの判定に必要な修飾キー.
+        /// 指定アクションの判定に必要な修飾キー群.
         /// </summary>
-        /// <remarks>修飾キーが不要なアクションは実装側の「なし」を表す値(例: Key.None)を返す.</remarks>
-        T GetModifier(TerminalAction action);
+        /// <remarks>修飾キーが不要なアクションは空を返す。順不同・重複なしを想定する.</remarks>
+        IReadOnlyList<T> GetModifiers(TerminalAction action);
     }
 }
