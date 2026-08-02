@@ -26,7 +26,7 @@ namespace YukimaruGames.Terminal.Composition
                 invoker,
                 parser,
                 history);
-            var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), InputKeyboardType.None, null);
+            var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), null);
             var disposables = new object[]
             {
                 logger,
