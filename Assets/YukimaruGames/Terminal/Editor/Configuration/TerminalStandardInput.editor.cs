@@ -37,6 +37,8 @@ namespace YukimaruGames.Terminal.Editor
 
         private static GUIStyle _typeStyle;
         private static GUIStyle _stepNumberStyle;
+        private static GUIStyle _modifierValueStyle;
+        private static GUIStyle _modifierRemoveStyle;
         private readonly Dictionary<string, ReorderableList> _actionLists = new();
 
         // ReorderableListのコールバックはlist生成時に一度だけ作られキャッシュされるため、
@@ -135,7 +137,14 @@ namespace YukimaruGames.Terminal.Editor
             var modifiersProp = _activeKeyProp?.FindPropertyRelative("_" + field.Suffix + _activeModifierSuffix);
             if (modifiersProp != null)
             {
-                height += EditorGUI.GetPropertyHeight(modifiersProp, true) + 2f;
+                height += EditorGUIUtility.singleLineHeight + 2f; // 要約テキスト行
+                height += GetKeyTableHeight(modifiersProp) + 2f;
+
+                var error = GetModifierValidationError(modifiersProp);
+                if (error != null)
+                {
+                    height += GetHelpBoxHeight(error, ModifierValueWidth + ModifierRemoveWidth) + 2f;
+                }
             }
 
             return height;
@@ -157,24 +166,267 @@ namespace YukimaruGames.Terminal.Editor
             var contentWidth = rect.width - StepperWidth;
             var lineRect = new Rect(contentX, rect.y + 3f, contentWidth, EditorGUIUtility.singleLineHeight);
 
-            const float labelWidth = 110f;
+            const float labelWidth = 100f;
             const float spacing = 4f;
             const float segmentWidth = 150f;
-            var keyWidth = Mathf.Max(lineRect.width - labelWidth - segmentWidth - spacing * 2f, 40f);
-
-            var labelRect = new Rect(lineRect.x, lineRect.y, labelWidth, lineRect.height);
-            var keyRect = new Rect(labelRect.xMax + spacing, lineRect.y, keyWidth, lineRect.height);
             var segmentRect = new Rect(lineRect.xMax - segmentWidth, lineRect.y, segmentWidth, lineRect.height);
+            var labelRect = new Rect(lineRect.x, lineRect.y, labelWidth, lineRect.height);
 
             EditorGUI.LabelField(labelRect, field.Label);
-            if (keyProp != null) EditorGUI.PropertyField(keyRect, keyProp, GUIContent.none);
             if (timingProp != null) DrawTimingSegment(segmentRect, timingProp);
 
             if (modifiersProp != null)
             {
-                var modifiersHeight = EditorGUI.GetPropertyHeight(modifiersProp, true);
-                var modifiersRect = new Rect(contentX, lineRect.yMax + 2f, contentWidth, modifiersHeight);
-                EditorGUI.PropertyField(modifiersRect, modifiersProp, new GUIContent("Modifiers"), true);
+                var summaryRect = new Rect(contentX, lineRect.yMax + 2f, contentWidth, EditorGUIUtility.singleLineHeight);
+                var summary = GetCombinedKeySummary(keyProp, modifiersProp);
+                EditorGUI.LabelField(summaryRect, summary, EditorStyles.miniLabel);
+
+                var tableRect = new Rect(contentX, summaryRect.yMax + 2f, contentWidth, 0f);
+                var tableBottomY = DrawKeyTable(tableRect, keyProp, modifiersProp);
+
+                var error = GetModifierValidationError(modifiersProp);
+                if (error != null)
+                {
+                    var tableWidth = ModifierValueWidth + ModifierRemoveWidth;
+                    var errorHeight = GetHelpBoxHeight(error, tableWidth);
+                    var errorRect = new Rect(contentX, tableBottomY + 2f, tableWidth, errorHeight);
+                    EditorGUI.HelpBox(errorRect, error, MessageType.Error);
+                }
+            }
+        }
+
+        // Modifiers配列内に同じキーが重複していないか検証する(意味のない設定を検知する).
+        private static string GetModifierValidationError(SerializedProperty arrayProp)
+        {
+            for (var i = 0; i < arrayProp.arraySize; ++i)
+            {
+                var a = arrayProp.GetArrayElementAtIndex(i).enumValueIndex;
+                for (var j = i + 1; j < arrayProp.arraySize; ++j)
+                {
+                    if (arrayProp.GetArrayElementAtIndex(j).enumValueIndex == a)
+                    {
+                        var name = GetEnumDisplayName(arrayProp.GetArrayElementAtIndex(i));
+                        return $"「{name}」が重複して設定されています。同じキーは1つだけ設定してください。";
+                    }
+                }
+            }
+            return null;
+        }
+
+        private static float GetHelpBoxHeight(string text, float width)
+        {
+            var style = GUI.skin.GetStyle("helpbox");
+            return Mathf.Max(style.CalcHeight(new GUIContent(text), width), EditorGUIUtility.singleLineHeight * 2f);
+        }
+
+        private static string GetCombinedKeySummary(SerializedProperty keyProp, SerializedProperty modifiersProp)
+        {
+            var keyName = keyProp != null ? GetEnumDisplayName(keyProp) : "?";
+
+            if (modifiersProp == null || modifiersProp.arraySize == 0) return keyName;
+
+            var parts = new List<string>(modifiersProp.arraySize + 1);
+            for (var i = 0; i < modifiersProp.arraySize; ++i)
+            {
+                parts.Add(GetEnumDisplayName(modifiersProp.GetArrayElementAtIndex(i)));
+            }
+            parts.Add(keyName);
+            return string.Join(" + ", parts);
+        }
+
+        // よく使う修飾キー候補(バックエンドのenum宣言名と文字列一致で照合するため、型に依存しない).
+        // 修飾キーの選択肢をこれに絞ることで、数百件あるフルのキー一覧から探す手間をなくす.
+        private static readonly string[] CommonModifierNames =
+        {
+            "Left Shift", "Right Shift", "Left Ctrl", "Right Ctrl", "Left Control", "Right Control",
+            "Left Alt", "Right Alt", "Left Command", "Right Command", "Left Windows", "Right Windows",
+            "Left Meta", "Right Meta", "Left Apple", "Right Apple",
+        };
+
+        private const float ModifierRowHeight = 18f;
+        private const float ModifierHeaderHeight = 18f;
+        private const float ModifierValueWidth = 200f;
+        private const float ModifierRemoveWidth = 32f;
+
+        // プライマリKey(専用キー) + Modifiers(修飾キー)をまとめて1つの罫線付きの表
+        // (ヘッダー行 + Key行(削除不可) + 修飾キー行(削除可) + 追加行)として描画する。
+        // 専用キーもテーブルの行として扱うことで、上の要約行のような固定幅の窮屈さを回避できる。
+        // 列の折り返し計算が不要になり、計測(GetElementHeight)と描画(DrawElement)が
+        // 常に同じ行数になることを幅に依存せず保証できる.
+        private static float GetKeyTableHeight(SerializedProperty modifiersProp)
+        {
+            var dataRows = 1 + modifiersProp.arraySize + 1; // Key行 + 各修飾キー行 + 追加行
+            return ModifierHeaderHeight + dataRows * ModifierRowHeight;
+        }
+
+        private static float DrawKeyTable(Rect rect, SerializedProperty keyProp, SerializedProperty modifiersProp)
+        {
+            var tableWidth = ModifierValueWidth + ModifierRemoveWidth;
+            var dataRowCount = 1 + modifiersProp.arraySize + 1; // Key行 + 各修飾キー行 + 追加行
+            var tableHeight = ModifierHeaderHeight + dataRowCount * ModifierRowHeight;
+            var tableRect = new Rect(rect.x, rect.y, tableWidth, tableHeight);
+
+            if (Event.current.type == EventType.Repaint)
+            {
+                DrawTableChrome(tableRect, dataRowCount);
+            }
+
+            var headerRect = new Rect(tableRect.x, tableRect.y, tableWidth, ModifierHeaderHeight);
+            EditorGUI.LabelField(
+                new Rect(headerRect.x + 4f, headerRect.y, ModifierValueWidth - 4f, headerRect.height),
+                "Key", EditorStyles.boldLabel);
+            EditorGUI.LabelField(
+                new Rect(headerRect.x + ModifierValueWidth, headerRect.y, ModifierRemoveWidth, headerRect.height),
+                "Del", EditorStyles.boldLabel);
+
+            var y = tableRect.y + ModifierHeaderHeight;
+
+            // Key行(専用キー。削除不可・候補を絞らないUnity標準のドロップダウン).
+            if (keyProp != null)
+            {
+                var keyValueRect = new Rect(tableRect.x + 2f, y + 1f, ModifierValueWidth - 4f, ModifierRowHeight - 2f);
+                EditorGUI.PropertyField(keyValueRect, keyProp, GUIContent.none);
+            }
+            y += ModifierRowHeight;
+
+            // 修飾キー行(削除可).
+            for (var i = 0; i < modifiersProp.arraySize; ++i)
+            {
+                var elementProp = modifiersProp.GetArrayElementAtIndex(i);
+                var valueRect = new Rect(tableRect.x + 2f, y + 1f, ModifierValueWidth - 4f, ModifierRowHeight - 2f);
+                var removeRect = new Rect(tableRect.x + ModifierValueWidth + 1f, y + 1f, ModifierRemoveWidth - 3f, ModifierRowHeight - 2f);
+                var rowIndex = i;
+
+                if (GUI.Button(valueRect, GetEnumDisplayName(elementProp), _modifierValueStyle))
+                {
+                    PopupWindow.Show(valueRect, new ModifierChoicePopup(modifiersProp, rowIndex));
+                }
+                if (GUI.Button(removeRect, "×", _modifierRemoveStyle))
+                {
+                    // NOTE: 配列サイズの変更(行数が変わる=要素の高さが変わる)を伴う操作の直後は、
+                    // ExitGUI()でこのフレームのGUI処理を即座に中断し、次フレームで必ず新しい
+                    // Layoutパスからやり直させる。そうしないと、既にLayoutパスで確定していた
+                    // ReorderableListの後続要素の描画位置と、Repaintパスで実際に変化した高さが
+                    // 食い違い、次の要素のデザインに重なって見える不具合が発生する
+                    // (実際に発生した不具合)。ここは(ポップアップ内と異なり)通常のInspector描画
+                    // コンテキストなのでExitGUIは安全.
+                    modifiersProp.DeleteArrayElementAtIndex(i);
+                    modifiersProp.serializedObject.ApplyModifiedProperties();
+                    GUIUtility.ExitGUI();
+                }
+
+                y += ModifierRowHeight;
+            }
+
+            var addRect = new Rect(tableRect.x + 2f, y + 1f, tableWidth - 4f, ModifierRowHeight - 2f);
+            if (GUI.Button(addRect, "+ Add", EditorStyles.label))
+            {
+                var newIndex = modifiersProp.arraySize;
+                modifiersProp.InsertArrayElementAtIndex(newIndex);
+                modifiersProp.serializedObject.ApplyModifiedProperties();
+                GUIUtility.ExitGUI();
+            }
+
+            return tableRect.yMax;
+        }
+
+        private static void DrawTableChrome(Rect tableRect, int dataRowCount)
+        {
+            var borderColor = EditorGUIUtility.isProSkin ? new Color(0.12f, 0.12f, 0.12f) : new Color(0.55f, 0.55f, 0.55f);
+            var headerColor = EditorGUIUtility.isProSkin ? new Color(0.24f, 0.24f, 0.24f) : new Color(0.72f, 0.72f, 0.72f);
+            var rowColorA = EditorGUIUtility.isProSkin ? new Color(0.22f, 0.22f, 0.22f) : new Color(0.82f, 0.82f, 0.82f);
+            var rowColorB = EditorGUIUtility.isProSkin ? new Color(0.2f, 0.2f, 0.2f) : new Color(0.78f, 0.78f, 0.78f);
+            var addRowColor = EditorGUIUtility.isProSkin ? new Color(0.18f, 0.18f, 0.18f) : new Color(0.85f, 0.85f, 0.85f);
+
+            // ヘッダー行の背景
+            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.y, tableRect.width, ModifierHeaderHeight), headerColor);
+
+            // データ行の背景(交互。最後の1行(追加行)だけ専用の色にする).
+            var y = tableRect.y + ModifierHeaderHeight;
+            for (var i = 0; i < dataRowCount; ++i)
+            {
+                var isAddRow = i == dataRowCount - 1;
+                var rowColor = isAddRow ? addRowColor : (i % 2 == 0 ? rowColorA : rowColorB);
+                EditorGUI.DrawRect(new Rect(tableRect.x, y, tableRect.width, ModifierRowHeight), rowColor);
+                y += ModifierRowHeight;
+            }
+
+            // 横罫線(ヘッダー下 + 各行の下 + 外枠上下)
+            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.y, tableRect.width, 1f), borderColor);
+            var lineY = tableRect.y + ModifierHeaderHeight;
+            for (var i = 0; i <= dataRowCount; ++i)
+            {
+                EditorGUI.DrawRect(new Rect(tableRect.x, lineY, tableRect.width, 1f), borderColor);
+                lineY += ModifierRowHeight;
+            }
+            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.yMax - 1f, tableRect.width, 1f), borderColor);
+
+            // 縦罫線(外枠左右 + Modifier/削除列の間)
+            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.y, 1f, tableRect.height), borderColor);
+            EditorGUI.DrawRect(new Rect(tableRect.x + ModifierValueWidth, tableRect.y, 1f, tableRect.height), borderColor);
+            EditorGUI.DrawRect(new Rect(tableRect.xMax - 1f, tableRect.y, 1f, tableRect.height), borderColor);
+        }
+
+        private static string GetEnumDisplayName(SerializedProperty enumProp)
+        {
+            var names = enumProp.enumDisplayNames;
+            var index = enumProp.enumValueIndex;
+            return index >= 0 && index < names.Length ? names[index] : "?";
+        }
+
+        // 修飾キー1個分の選択肢を、よく使う候補だけに絞って表示するポップアップ.
+        // 候補を1つクリックするとその場で確定して閉じる単一選択方式のため、
+        // 複数のチェックボックスを同一ポップアップ内でトグルし続けることによる
+        // (過去に実際に発生した)配列構造変更とIMGUIコントロールIDのズレの問題が起きない.
+        private sealed class ModifierChoicePopup : PopupWindowContent
+        {
+            private readonly SerializedProperty _arrayProp;
+            private readonly int _elementIndex;
+            private readonly List<int> _optionEnumValueIndices = new();
+            private readonly List<string> _optionNames = new();
+
+            public ModifierChoicePopup(SerializedProperty arrayProp, int elementIndex)
+            {
+                _arrayProp = arrayProp;
+                _elementIndex = elementIndex;
+
+                var displayNames = arrayProp.GetArrayElementAtIndex(elementIndex).enumDisplayNames;
+                for (var i = 0; i < displayNames.Length; ++i)
+                {
+                    foreach (var common in CommonModifierNames)
+                    {
+                        if (displayNames[i] == common)
+                        {
+                            _optionEnumValueIndices.Add(i);
+                            _optionNames.Add(displayNames[i]);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            public override Vector2 GetWindowSize() => new(140f, _optionNames.Count * 18f + 8f);
+
+            public override void OnGUI(Rect rect)
+            {
+                var y = rect.y + 4f;
+                for (var i = 0; i < _optionNames.Count; ++i)
+                {
+                    var itemRect = new Rect(rect.x + 4f, y, rect.width - 8f, 16f);
+                    if (GUI.Button(itemRect, _optionNames[i], EditorStyles.label))
+                    {
+                        // NOTE: EditorApplication.delayCallで反映を遅延させると、実行時には
+                        // このクロージャがキャプチャしたSerializedPropertyが無効になっており
+                        // NullReferenceException(Retrieving array element that was out of bounds)を
+                        // 起こすことが実機検証で確認された。そのため同期的に即時反映する
+                        // (この操作は配列サイズを変えない値変更のみなので、ExitGUIによる
+                        // Layout/Repaint再同期は不要).
+                        _arrayProp.GetArrayElementAtIndex(_elementIndex).enumValueIndex = _optionEnumValueIndices[i];
+                        _arrayProp.serializedObject.ApplyModifiedProperties();
+                        editorWindow.Close();
+                    }
+                    y += 18f;
+                }
             }
         }
 
@@ -232,6 +484,18 @@ namespace YukimaruGames.Terminal.Editor
                 {
                     alignment = TextAnchor.MiddleCenter,
                     normal = { textColor = Color.white },
+                };
+            }
+            if (_modifierValueStyle == null)
+            {
+                _modifierValueStyle = new GUIStyle(EditorStyles.label) { fontSize = 10 };
+            }
+            if (_modifierRemoveStyle == null)
+            {
+                _modifierRemoveStyle = new GUIStyle(EditorStyles.label)
+                {
+                    fontSize = 14,
+                    alignment = TextAnchor.MiddleCenter,
                 };
             }
         }
