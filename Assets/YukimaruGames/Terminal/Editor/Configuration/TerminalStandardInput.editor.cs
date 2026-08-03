@@ -13,6 +13,7 @@ namespace YukimaruGames.Terminal.Editor
     {
         private struct ActionField
         {
+            public TerminalAction Action;
             public string Suffix;
             public string Label;
         }
@@ -21,27 +22,32 @@ namespace YukimaruGames.Terminal.Editor
         // 共通で使用しているフィールド名サフィックス.
         private static readonly ActionField[] Actions =
         {
-            new() { Suffix = "open", Label = "Open" },
-            new() { Suffix = "close", Label = "Close" },
-            new() { Suffix = "execute", Label = "Execute" },
-            new() { Suffix = "cancel", Label = "Cancel" },
-            new() { Suffix = "previousHistory", Label = "Previous History" },
-            new() { Suffix = "nextHistory", Label = "Next History" },
-            new() { Suffix = "autocomplete", Label = "Autocomplete" },
-            new() { Suffix = "focus", Label = "Focus" },
+            new() { Action = TerminalAction.Open, Suffix = "open", Label = "Open" },
+            new() { Action = TerminalAction.Close, Suffix = "close", Label = "Close" },
+            new() { Action = TerminalAction.Execute, Suffix = "execute", Label = "Execute" },
+            new() { Action = TerminalAction.Cancel, Suffix = "cancel", Label = "Cancel" },
+            new() { Action = TerminalAction.PreviousHistory, Suffix = "previousHistory", Label = "Previous History" },
+            new() { Action = TerminalAction.NextHistory, Suffix = "nextHistory", Label = "Next History" },
+            new() { Action = TerminalAction.Autocomplete, Suffix = "autocomplete", Label = "Autocomplete" },
+            new() { Action = TerminalAction.Focus, Suffix = "focus", Label = "Focus" },
         };
 
-        private const string TriggerTimingHelp =
-            "Pressed: キーを押した瞬間に発火します。Released: キーを離した瞬間に発火します。\n" +
-            "Open/Closeは既定でReleasedです(Pressedにすると、開閉に同じキーを割り当てた場合に" +
-            "押した瞬間へ即座に反応してしまい、意図しない連続発火につながりやすいため)。";
-
-        private const string PriorityHelp =
-            "ドラッグして順序を入れ替えると、その順序がそのまま優先度になります(上ほど優先度が高い)。\n" +
-            "複数のアクションの条件が同一フレームで同時に成立した場合、リストの上にあるアクションだけが発火します。";
+        private const float StepperWidth = 24f;
+        private const float CircleSize = 16f;
 
         private static GUIStyle _typeStyle;
-        private readonly Dictionary<string, ReorderableList> _priorityLists = new();
+        private static GUIStyle _stepNumberStyle;
+        private readonly Dictionary<string, ReorderableList> _actionLists = new();
+
+        // ReorderableListのコールバックはlist生成時に一度だけ作られキャッシュされるため、
+        // 描画対象のSerializedPropertyをローカル変数としてクロージャに直接キャプチャしてはならない
+        // (次回OnGUI時にSerializedObjectがDisposedになった古い参照を握り続けてしまう)。
+        // 代わりにOnGUIの先頭でこれらのインスタンスフィールドを都度更新し、コールバック内では
+        // 常に最新の値を読むフィールド経由でアクセスする.
+        private SerializedProperty _activeKeyProp;
+        private SerializedProperty _activeTimingProp;
+        private string _activeKeySuffix;
+        private string _activeModifierSuffix;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -69,116 +75,165 @@ namespace YukimaruGames.Terminal.Editor
 
             EditorGUILayout.Space(6f);
 
-            var keyProp = keyboardType switch
+            _activeKeyProp = keyboardType switch
             {
                 InputKeyboardType.InputSystem => property.FindPropertyRelative("_inputSystemKey"),
                 InputKeyboardType.Legacy => property.FindPropertyRelative("_legacyInputKey"),
                 _ => null,
             };
-            var keySuffix = keyboardType == InputKeyboardType.Legacy ? "KeyCode" : "Key";
-            var modifierSuffix = keyboardType == InputKeyboardType.Legacy ? "ModifierKeyCodes" : "ModifierKeys";
-
-            if (keyProp != null)
-            {
-                EditorGUILayout.LabelField("Keys", EditorStyles.boldLabel);
-                using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-                {
-                    foreach (var action in Actions)
-                    {
-                        DrawKeyRow(keyProp, action, keySuffix, modifierSuffix);
-                    }
-                }
-                EditorGUILayout.Space(6f);
-            }
-
-            var timingProp = property.FindPropertyRelative("_triggerTiming");
-            EditorGUILayout.LabelField("Trigger Timing", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox(TriggerTimingHelp, MessageType.Info);
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                foreach (var action in Actions)
-                {
-                    DrawTimingRow(timingProp, action);
-                }
-            }
-
-            EditorGUILayout.Space(6f);
+            _activeTimingProp = property.FindPropertyRelative("_triggerTiming");
+            _activeKeySuffix = keyboardType == InputKeyboardType.Legacy ? "KeyCode" : "Key";
+            _activeModifierSuffix = keyboardType == InputKeyboardType.Legacy ? "ModifierKeyCodes" : "ModifierKeys";
 
             var priorityProp = property.FindPropertyRelative("_priority");
-            EditorGUILayout.LabelField("Priority", EditorStyles.boldLabel);
-            EditorGUILayout.HelpBox(PriorityHelp, MessageType.Info);
             var orderProp = priorityProp?.FindPropertyRelative("_order");
+
+            EditorGUILayout.LabelField("Actions", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("優先度: 上ほど高い(ドラッグで並び替え)", EditorStyles.miniLabel);
+
             if (orderProp != null)
             {
-                GetOrCreatePriorityList(orderProp).DoLayoutList();
+                GetOrCreateActionList(orderProp).DoLayoutList();
             }
 
             EditorGUI.EndProperty();
         }
 
-        private static void DrawKeyRow(SerializedProperty keyProp, ActionField action, string keySuffix, string modifierSuffix)
+        private ActionField GetActionField(TerminalAction action)
         {
-            var key = keyProp.FindPropertyRelative("_" + action.Suffix + keySuffix);
-            var modifiers = keyProp.FindPropertyRelative("_" + action.Suffix + modifierSuffix);
-
-            using (new EditorGUILayout.HorizontalScope())
+            foreach (var field in Actions)
             {
-                EditorGUILayout.LabelField(action.Label, GUILayout.Width(110));
-                if (key != null) EditorGUILayout.PropertyField(key, GUIContent.none);
+                if (field.Action == action) return field;
             }
-            if (modifiers != null)
-            {
-                using (new EditorGUI.IndentLevelScope())
-                {
-                    EditorGUILayout.PropertyField(modifiers, new GUIContent("Modifiers"), true);
-                }
-            }
+            return default;
         }
 
-        private static void DrawTimingRow(SerializedProperty timingProp, ActionField action)
+        private ReorderableList GetOrCreateActionList(SerializedProperty orderProp)
         {
-            var prop = timingProp?.FindPropertyRelative("_" + action.Suffix);
-            if (prop == null) return;
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                EditorGUILayout.LabelField(action.Label, GUILayout.Width(110));
-                EditorGUILayout.PropertyField(prop, GUIContent.none);
-            }
-        }
-
-        private ReorderableList GetOrCreatePriorityList(SerializedProperty orderProp)
-        {
-            if (_priorityLists.TryGetValue(orderProp.propertyPath, out var cached))
+            if (_actionLists.TryGetValue(orderProp.propertyPath, out var cached))
             {
                 cached.serializedProperty = orderProp;
                 return cached;
             }
 
-            var list = new ReorderableList(orderProp.serializedObject, orderProp, true, false, false, false)
-            {
-                elementHeight = EditorGUIUtility.singleLineHeight + 2f,
-            };
-            // NOTE: クロージャで直接orderPropを参照すると、次回OnGUI時にSerializedObjectが
-            // Disposedになった古いプロパティを参照し続けてしまう。必ずlist.serializedPropertyの
-            // (毎回最新に更新される)方を経由して参照すること.
-            list.drawElementCallback = (rect, index, _, _) =>
-            {
-                var element = list.serializedProperty.GetArrayElementAtIndex(index);
-                var action = (TerminalAction)element.intValue;
-                rect.y += 1f;
-                rect.height = EditorGUIUtility.singleLineHeight;
-                EditorGUI.LabelField(rect, $"{index + 1}. {ObjectNames.NicifyVariableName(action.ToString())}");
-            };
+            var list = new ReorderableList(orderProp.serializedObject, orderProp, true, false, false, false);
+            list.elementHeightCallback = index => GetElementHeight(list, index);
+            list.drawElementCallback = (rect, index, _, _) => DrawElement(list, rect, index);
 
-            _priorityLists[orderProp.propertyPath] = list;
+            _actionLists[orderProp.propertyPath] = list;
             return list;
+        }
+
+        private float GetElementHeight(ReorderableList list, int index)
+        {
+            var element = list.serializedProperty.GetArrayElementAtIndex(index);
+            var action = (TerminalAction)element.intValue;
+            var field = GetActionField(action);
+
+            var height = EditorGUIUtility.singleLineHeight + 6f;
+
+            var modifiersProp = _activeKeyProp?.FindPropertyRelative("_" + field.Suffix + _activeModifierSuffix);
+            if (modifiersProp != null)
+            {
+                height += EditorGUI.GetPropertyHeight(modifiersProp, true) + 2f;
+            }
+
+            return height;
+        }
+
+        private void DrawElement(ReorderableList list, Rect rect, int index)
+        {
+            var element = list.serializedProperty.GetArrayElementAtIndex(index);
+            var action = (TerminalAction)element.intValue;
+            var field = GetActionField(action);
+
+            var keyProp = _activeKeyProp?.FindPropertyRelative("_" + field.Suffix + _activeKeySuffix);
+            var modifiersProp = _activeKeyProp?.FindPropertyRelative("_" + field.Suffix + _activeModifierSuffix);
+            var timingProp = _activeTimingProp?.FindPropertyRelative("_" + field.Suffix);
+
+            DrawStepper(rect, index, list.count);
+
+            var contentX = rect.x + StepperWidth;
+            var contentWidth = rect.width - StepperWidth;
+            var lineRect = new Rect(contentX, rect.y + 3f, contentWidth, EditorGUIUtility.singleLineHeight);
+
+            const float labelWidth = 110f;
+            const float spacing = 4f;
+            const float segmentWidth = 150f;
+            var keyWidth = Mathf.Max(lineRect.width - labelWidth - segmentWidth - spacing * 2f, 40f);
+
+            var labelRect = new Rect(lineRect.x, lineRect.y, labelWidth, lineRect.height);
+            var keyRect = new Rect(labelRect.xMax + spacing, lineRect.y, keyWidth, lineRect.height);
+            var segmentRect = new Rect(lineRect.xMax - segmentWidth, lineRect.y, segmentWidth, lineRect.height);
+
+            EditorGUI.LabelField(labelRect, field.Label);
+            if (keyProp != null) EditorGUI.PropertyField(keyRect, keyProp, GUIContent.none);
+            if (timingProp != null) DrawTimingSegment(segmentRect, timingProp);
+
+            if (modifiersProp != null)
+            {
+                var modifiersHeight = EditorGUI.GetPropertyHeight(modifiersProp, true);
+                var modifiersRect = new Rect(contentX, lineRect.yMax + 2f, contentWidth, modifiersHeight);
+                EditorGUI.PropertyField(modifiersRect, modifiersProp, new GUIContent("Modifiers"), true);
+            }
+        }
+
+        private static void DrawStepper(Rect rect, int index, int count)
+        {
+            if (Event.current.type != EventType.Repaint) return;
+
+            var lineX = rect.x + StepperWidth * 0.5f;
+            var lineColor = EditorGUIUtility.isProSkin ? new Color(0.45f, 0.45f, 0.45f) : new Color(0.6f, 0.6f, 0.6f);
+
+            if (index > 0)
+            {
+                EditorGUI.DrawRect(new Rect(lineX - 1f, rect.y, 2f, CircleSize * 0.5f + 4f), lineColor);
+            }
+            if (index < count - 1)
+            {
+                var bottomStart = rect.y + CircleSize * 0.5f + 4f;
+                EditorGUI.DrawRect(new Rect(lineX - 1f, bottomStart, 2f, rect.height - (bottomStart - rect.y)), lineColor);
+            }
+
+            var circleRect = new Rect(rect.x + (StepperWidth - CircleSize) * 0.5f, rect.y + 4f, CircleSize, CircleSize);
+            var circleColor = EditorGUIUtility.isProSkin ? new Color(0.29f, 0.56f, 0.76f) : new Color(0.20f, 0.45f, 0.65f);
+            EditorGUI.DrawRect(circleRect, circleColor);
+            GUI.Label(circleRect, (index + 1).ToString(), _stepNumberStyle);
+        }
+
+        private static void DrawTimingSegment(Rect rect, SerializedProperty timingProp)
+        {
+            var current = (TerminalActionTriggerTiming.Timing)timingProp.intValue;
+            var pressedRect = new Rect(rect.x, rect.y, rect.width * 0.5f, rect.height);
+            var releasedRect = new Rect(pressedRect.xMax, rect.y, rect.width - pressedRect.width, rect.height);
+
+            var pressedOn = GUI.Toggle(pressedRect, current == TerminalActionTriggerTiming.Timing.Pressed, "Pressed", EditorStyles.miniButtonLeft);
+            var releasedOn = GUI.Toggle(releasedRect, current == TerminalActionTriggerTiming.Timing.Released, "Released", EditorStyles.miniButtonRight);
+
+            if (pressedOn && current != TerminalActionTriggerTiming.Timing.Pressed)
+            {
+                timingProp.intValue = (int)TerminalActionTriggerTiming.Timing.Pressed;
+            }
+            else if (releasedOn && current != TerminalActionTriggerTiming.Timing.Released)
+            {
+                timingProp.intValue = (int)TerminalActionTriggerTiming.Timing.Released;
+            }
         }
 
         private static void InitStyles()
         {
-            if (_typeStyle != null) return;
-            _typeStyle = new GUIStyle(EditorStyles.radioButton) { alignment = TextAnchor.MiddleCenter };
+            if (_typeStyle == null)
+            {
+                _typeStyle = new GUIStyle(EditorStyles.radioButton) { alignment = TextAnchor.MiddleCenter };
+            }
+            if (_stepNumberStyle == null)
+            {
+                _stepNumberStyle = new GUIStyle(EditorStyles.miniLabel)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    normal = { textColor = Color.white },
+                };
+            }
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
