@@ -55,6 +55,18 @@ namespace YukimaruGames.Terminal.Editor
             { "Print", "Print Screen" },
         };
 
+        // Unityの物理修飾キー単体の押下(NSEventのflagsChanged相当)は、KeyDown/KeyUpイベントとして
+        // 届かないことがある(実機で確認済み)。そのためEvent.current.modifiersを毎フレーム比較して
+        // 立ち上がりエッジを検出する方式で補う。ただしEventModifiersはLeft/Rightを区別できないため、
+        // 両方の候補が存在するキー種別は選択肢を提示してユーザーに選んでもらう.
+        private static readonly (EventModifiers Flag, string Generic)[] ModifierFlags =
+        {
+            (EventModifiers.Shift, "Shift"),
+            (EventModifiers.Control, "Ctrl"),
+            (EventModifiers.Alt, "Alt"),
+            (EventModifiers.Command, "Command"),
+        };
+
         private const string SearchFieldControlName = "KeyPickerSearchField";
 
         private readonly SerializedProperty _targetProp;
@@ -62,6 +74,8 @@ namespace YukimaruGames.Terminal.Editor
         private string _search = "";
         private Vector2 _scroll;
         private string _captureStatus = "";
+        private EventModifiers _prevModifiers = EventModifiers.None;
+        private List<int> _ambiguousCandidates;
 
         public KeyPickerPopupContent(SerializedProperty targetProp)
         {
@@ -70,6 +84,23 @@ namespace YukimaruGames.Terminal.Editor
         }
 
         public override Vector2 GetWindowSize() => new(260f, 320f);
+
+        public override void OnOpen()
+        {
+            // 修飾キー単体の押下はマウス移動等のイベントを伴わないと検知できないため、
+            // ウィンドウが開いている間は強制的に再描画し続けてポーリングする.
+            EditorApplication.update += RequestContinuousRepaint;
+        }
+
+        public override void OnClose()
+        {
+            EditorApplication.update -= RequestContinuousRepaint;
+        }
+
+        private void RequestContinuousRepaint()
+        {
+            editorWindow?.Repaint();
+        }
 
         public override void OnGUI(Rect rect)
         {
@@ -85,6 +116,21 @@ namespace YukimaruGames.Terminal.Editor
                 if (GUILayout.Button(content, EditorStyles.helpBox, GUILayout.Height(24)))
                 {
                     GUI.FocusControl(null);
+                    _ambiguousCandidates = null;
+                }
+
+                if (_ambiguousCandidates is { Count: > 0 })
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    foreach (var candidate in _ambiguousCandidates)
+                    {
+                        if (GUILayout.Button(_displayNames[candidate]))
+                        {
+                            Apply(candidate);
+                            return;
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
                 }
 
                 EditorGUILayout.Space(4f);
@@ -107,7 +153,10 @@ namespace YukimaruGames.Terminal.Editor
                 EditorGUILayout.EndScrollView();
             }
 
-            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)
+            // Escapeはキー検出モードでは通常のキーとして選択できるようにしたいため、
+            // 「Escapeでウィンドウを閉じる」動作は検索フィールドにフォーカスがある間だけに限定する.
+            if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape
+                && GUI.GetNameOfFocusedControl() == SearchFieldControlName)
             {
                 editorWindow.Close();
                 Event.current.Use();
@@ -116,30 +165,82 @@ namespace YukimaruGames.Terminal.Editor
 
         private void HandleKeyCapture()
         {
+            var e = Event.current;
+
+            // 修飾キー単体の押下エッジ検出は、検索フィールドでのCtrl+A等のテキスト編集ショートカットと
+            // 衝突しないよう、フォーカス判定より先に「今回新たに立った修飾ビット」を記録しておく
+            // (フォーカス中でも_prevModifiersの更新自体は継続しないと、フォーカスを外した直後に
+            // 実際には押されていないキーが誤検出されてしまう).
+            var justPressedModifiers = e.modifiers & ~_prevModifiers;
+            _prevModifiers = e.modifiers;
+
             // 検索フィールドが入力フォーカスを持っている間は、通常のテキスト入力を優先し
             // キー押下検出を無効化する(そうしないと検索文字を打つたびにキーとして確定されてしまう).
             if (GUI.GetNameOfFocusedControl() == SearchFieldControlName) return;
 
-            var e = Event.current;
-            if (e.type != EventType.KeyDown || e.keyCode == KeyCode.None || e.keyCode == KeyCode.Escape) return;
-
-            var codeName = e.keyCode.ToString();
-            var targetName = KeyCodeNameToKeyDisplayName.TryGetValue(codeName, out var mapped)
-                ? mapped
-                : ObjectNames.NicifyVariableName(codeName);
-
-            for (var i = 0; i < _displayNames.Length; ++i)
+            // NOTE: 修飾キー単体(Shift/Ctrl/Alt/Cmdなど)は、macOSのCocoaキーイベント処理の都合で
+            // KeyDown/KeyUpイベントとして届かないことがある(実機で確認済み)ため、通常のキーコード方式
+            // に加えて、Event.current.modifiersの立ち上がりエッジでも検出する.
+            if ((e.type == EventType.KeyDown || e.type == EventType.KeyUp) && e.keyCode != KeyCode.None)
             {
-                if (_displayNames[i] == targetName || _displayNames[i] == codeName)
+                var codeName = e.keyCode.ToString();
+                var targetName = KeyCodeNameToKeyDisplayName.TryGetValue(codeName, out var mapped)
+                    ? mapped
+                    : ObjectNames.NicifyVariableName(codeName);
+
+                for (var i = 0; i < _displayNames.Length; ++i)
                 {
-                    e.Use();
-                    Apply(i);
+                    if (_displayNames[i] == targetName || _displayNames[i] == codeName)
+                    {
+                        e.Use();
+                        Apply(i);
+                        return;
+                    }
+                }
+
+                _captureStatus = $"「{targetName}」は未対応のキーです";
+                editorWindow.Repaint();
+                return;
+            }
+
+            if (justPressedModifiers != EventModifiers.None)
+            {
+                TryCaptureModifier(justPressedModifiers);
+            }
+        }
+
+        private void TryCaptureModifier(EventModifiers justPressed)
+        {
+            foreach (var (flag, generic) in ModifierFlags)
+            {
+                if ((justPressed & flag) == 0) continue;
+
+                var candidates = new List<int>();
+                for (var i = 0; i < _displayNames.Length; ++i)
+                {
+                    var name = _displayNames[i];
+                    if (name == "Left " + generic || name == "Right " + generic || name == generic)
+                    {
+                        candidates.Add(i);
+                    }
+                }
+
+                if (candidates.Count == 1)
+                {
+                    Apply(candidates[0]);
+                    return;
+                }
+
+                if (candidates.Count > 1)
+                {
+                    // Left/Right両方の候補があり、EventModifiersだけではどちらが押されたか判別できない.
+                    // ユーザーに選んでもらう.
+                    _ambiguousCandidates = candidates;
+                    _captureStatus = $"{generic}: Left/Rightのどちらか選んでください";
+                    editorWindow.Repaint();
                     return;
                 }
             }
-
-            _captureStatus = $"「{targetName}」は未対応のキーです";
-            editorWindow.Repaint();
         }
 
         private void Apply(int enumValueIndex)
