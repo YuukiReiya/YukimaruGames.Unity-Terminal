@@ -234,15 +234,6 @@ namespace YukimaruGames.Terminal.Editor
             return string.Join(" + ", parts);
         }
 
-        // よく使う修飾キー候補(バックエンドのenum宣言名と文字列一致で照合するため、型に依存しない).
-        // 修飾キーの選択肢をこれに絞ることで、数百件あるフルのキー一覧から探す手間をなくす.
-        private static readonly string[] CommonModifierNames =
-        {
-            "Left Shift", "Right Shift", "Left Ctrl", "Right Ctrl", "Left Control", "Right Control",
-            "Left Alt", "Right Alt", "Left Command", "Right Command", "Left Windows", "Right Windows",
-            "Left Meta", "Right Meta", "Left Apple", "Right Apple",
-        };
-
         private const float ModifierRowHeight = 18f;
         private const float ModifierHeaderHeight = 18f;
         private const float ModifierValueWidth = 200f;
@@ -281,11 +272,14 @@ namespace YukimaruGames.Terminal.Editor
 
             var y = tableRect.y + ModifierHeaderHeight;
 
-            // Key行(専用キー。削除不可・候補を絞らないUnity標準のドロップダウン).
+            // Key行(専用キー。削除不可。KeyPickerPopupContentで検索/実キー押下のどちらでも選べる).
             if (keyProp != null)
             {
                 var keyValueRect = new Rect(tableRect.x + 2f, y + 1f, ModifierValueWidth - 4f, ModifierRowHeight - 2f);
-                EditorGUI.PropertyField(keyValueRect, keyProp, GUIContent.none);
+                if (GUI.Button(keyValueRect, GetEnumDisplayName(keyProp), _modifierValueStyle))
+                {
+                    PopupWindow.Show(keyValueRect, new KeyPickerPopupContent(keyProp));
+                }
             }
             y += ModifierRowHeight;
 
@@ -299,7 +293,7 @@ namespace YukimaruGames.Terminal.Editor
 
                 if (GUI.Button(valueRect, GetEnumDisplayName(elementProp), _modifierValueStyle))
                 {
-                    PopupWindow.Show(valueRect, new ModifierChoicePopup(modifiersProp, rowIndex));
+                    PopupWindow.Show(valueRect, new KeyPickerPopupContent(modifiersProp.GetArrayElementAtIndex(rowIndex)));
                 }
                 if (GUI.Button(removeRect, "×", _modifierRemoveStyle))
                 {
@@ -372,62 +366,6 @@ namespace YukimaruGames.Terminal.Editor
             var names = enumProp.enumDisplayNames;
             var index = enumProp.enumValueIndex;
             return index >= 0 && index < names.Length ? names[index] : "?";
-        }
-
-        // 修飾キー1個分の選択肢を、よく使う候補だけに絞って表示するポップアップ.
-        // 候補を1つクリックするとその場で確定して閉じる単一選択方式のため、
-        // 複数のチェックボックスを同一ポップアップ内でトグルし続けることによる
-        // (過去に実際に発生した)配列構造変更とIMGUIコントロールIDのズレの問題が起きない.
-        private sealed class ModifierChoicePopup : PopupWindowContent
-        {
-            private readonly SerializedProperty _arrayProp;
-            private readonly int _elementIndex;
-            private readonly List<int> _optionEnumValueIndices = new();
-            private readonly List<string> _optionNames = new();
-
-            public ModifierChoicePopup(SerializedProperty arrayProp, int elementIndex)
-            {
-                _arrayProp = arrayProp;
-                _elementIndex = elementIndex;
-
-                var displayNames = arrayProp.GetArrayElementAtIndex(elementIndex).enumDisplayNames;
-                for (var i = 0; i < displayNames.Length; ++i)
-                {
-                    foreach (var common in CommonModifierNames)
-                    {
-                        if (displayNames[i] == common)
-                        {
-                            _optionEnumValueIndices.Add(i);
-                            _optionNames.Add(displayNames[i]);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            public override Vector2 GetWindowSize() => new(140f, _optionNames.Count * 18f + 8f);
-
-            public override void OnGUI(Rect rect)
-            {
-                var y = rect.y + 4f;
-                for (var i = 0; i < _optionNames.Count; ++i)
-                {
-                    var itemRect = new Rect(rect.x + 4f, y, rect.width - 8f, 16f);
-                    if (GUI.Button(itemRect, _optionNames[i], EditorStyles.label))
-                    {
-                        // NOTE: EditorApplication.delayCallで反映を遅延させると、実行時には
-                        // このクロージャがキャプチャしたSerializedPropertyが無効になっており
-                        // NullReferenceException(Retrieving array element that was out of bounds)を
-                        // 起こすことが実機検証で確認された。そのため同期的に即時反映する
-                        // (この操作は配列サイズを変えない値変更のみなので、ExitGUIによる
-                        // Layout/Repaint再同期は不要).
-                        _arrayProp.GetArrayElementAtIndex(_elementIndex).enumValueIndex = _optionEnumValueIndices[i];
-                        _arrayProp.serializedObject.ApplyModifiedProperties();
-                        editorWindow.Close();
-                    }
-                    y += 18f;
-                }
-            }
         }
 
         private static void DrawStepper(Rect rect, int index, int count)
