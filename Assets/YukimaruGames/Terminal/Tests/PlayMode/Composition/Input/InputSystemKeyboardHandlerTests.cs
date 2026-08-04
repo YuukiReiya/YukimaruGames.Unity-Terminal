@@ -20,6 +20,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition.Input
         private Keyboard _keyboard;
         private InputSystemKeyboardHandler _handler;
 
+        /// <summary>仮想キーボードデバイスと検証対象のハンドラーを初期化する。</summary>
         public override void Setup()
         {
             base.Setup();
