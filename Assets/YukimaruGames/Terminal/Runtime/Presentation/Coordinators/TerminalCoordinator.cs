@@ -112,8 +112,11 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
 
         private void OnCloseTriggered()
         {
-            if (_inputPresenter.IsImeComposing) return;
-            
+            // IME変換中でも常に閉じられるようにする.
+            // IsImeComposingガードで閉じる操作までブロックすると、compositionStringが
+            // 何らかの理由でクリアされないまま残った場合にウィンドウが永久に閉じられなく
+            // なってしまうため(Open/Executeとは異なりCloseは誤発火の実害が小さい一方、
+            // 閉じられなくなるスタック状態の方がUXとして深刻).
             _windowPresenter.Close();
             _inputPresenter.SetFocus(false);
         }

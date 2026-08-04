@@ -116,12 +116,10 @@ namespace YukimaruGames.Terminal.Composition
             /// </summary>
             public IReadOnlyList<object> Components;
             
-            /// <inheritdoc cref="Coordinator"/> 
+            /// <inheritdoc cref="Coordinator"/>
             public TerminalCoordinator Coordinator;
-            /// <inheritdoc cref="IEventListener"/> 
+            /// <inheritdoc cref="IEventListener"/>
             public IEventListener EventListener;
-            /// <summary>解決済みキーボード入力種別.</summary>
-            public InputKeyboardType KeyboardType;
         }
 
         #endregion
@@ -306,7 +304,7 @@ namespace YukimaruGames.Terminal.Composition
         private InputKeyboardType ResolveKeyboardType(ITerminalOptions options)
         {
 #if ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
-            return options.InputKeyboardType;
+            return options.Input.InputKeyboardType;
 #elif ENABLE_INPUT_SYSTEM
             return InputKeyboardType.InputSystem;
 #elif ENABLE_LEGACY_INPUT_MANAGER
@@ -318,13 +316,14 @@ namespace YukimaruGames.Terminal.Composition
 
         private IKeyboardInputHandler CreateInputHandler(ITerminalOptions options, InputKeyboardType resultType)
         {
+            var input = options.Input;
             var factory =
 #if ENABLE_INPUT_SYSTEM && ENABLE_LEGACY_INPUT_MANAGER
-                new TerminalKeyboardFactory(options.InputSystemKey, options.LegacyInputKey);
+                new TerminalKeyboardFactory(input.InputSystemKey, input.LegacyInputKey, input.TriggerTiming, input.Priority);
 #elif ENABLE_INPUT_SYSTEM
-                new TerminalKeyboardFactory(options.InputSystemKey);
+                new TerminalKeyboardFactory(input.InputSystemKey, input.TriggerTiming, input.Priority);
 #elif ENABLE_LEGACY_INPUT_MANAGER
-                new TerminalKeyboardFactory(options.LegacyInputKey);
+                new TerminalKeyboardFactory(input.LegacyInputKey, input.TriggerTiming, input.Priority);
             #else
                 new TerminalKeyboardFactory();
             #endif
@@ -550,7 +549,6 @@ namespace YukimaruGames.Terminal.Composition
             {
                 Coordinator = coordinator,
                 EventListener = eventListener,
-                KeyboardType = keyboardType,
                 Components = new object[]
                 {
                     coordinator,
@@ -572,7 +570,7 @@ namespace YukimaruGames.Terminal.Composition
             var updatables = instances.OfType<IUpdatable>().ToList();
             var disposables = instances.OfType<IDisposable>().ToList();
 
-            var entryPoint = new TerminalEntryPoint(updatables, coordinator.KeyboardType, rendering.GUI);
+            var entryPoint = new TerminalEntryPoint(updatables, rendering.GUI);
 
             return new TerminalRuntimeScope(
                 entryPoint,

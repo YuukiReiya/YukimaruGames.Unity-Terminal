@@ -1,14 +1,3 @@
-#if !UNITY_2019_2_OR_NEWER
-#define ENABLE_LEGACY_INPUT_MANAGER
-#endif
-
-#if ENABLE_INPUT_SYSTEM
-using YukimaruGames.Terminal.Composition.Input.InputSystem;
-#endif
-#if ENABLE_LEGACY_INPUT_MANAGER
-using YukimaruGames.Terminal.Composition.Input.LegacyInput;
-#endif
-
 using System;
 using YukimaruGames.Terminal.Composition.Shared;
 
@@ -22,17 +11,7 @@ namespace YukimaruGames.Terminal.Composition
         public sealed class TerminalNullOptions : ITerminalOptions
         {
                 // 入力を無効化
-                public InputKeyboardType InputKeyboardType => InputKeyboardType.None;
-
-#if ENABLE_LEGACY_INPUT_MANAGER
-                // デフォルトキー設定
-                public LegacyInputKey LegacyInputKey => new LegacyInputKey();
-#endif
-
-#if ENABLE_INPUT_SYSTEM
-                // デフォルトキー設定
-                public InputSystemKey InputSystemKey => new InputSystemKey();
-#endif
+                public ITerminalInput Input => new TerminalNullInput();
 
                 // 最小限のバッファ
                 public int BufferSize => 0;
