@@ -11,11 +11,13 @@ namespace YukimaruGames.Terminal.Editor
     [CustomPropertyDrawer(typeof(TerminalStandardInput))]
     public sealed class TerminalStandardInputDrawer : PropertyDrawer
     {
+        // NOTE: このプロジェクトの言語バージョン/ターゲットではinitアクセサ(IsExternalInit)が
+        // 使用できないため、setで代替する.
         private struct ActionField
         {
-            public TerminalAction Action;
-            public string Suffix;
-            public string Label;
+            public TerminalAction Action { get; set; }
+            public string Suffix { get; set; }
+            public string Label { get; set; }
         }
 
         // TerminalAction(None除く)と、InputSystemKey/LegacyInputKey/TerminalActionTriggerTimingが
@@ -34,6 +36,20 @@ namespace YukimaruGames.Terminal.Editor
 
         private const float StepperWidth = 24f;
         private const float CircleSize = 16f;
+        private const float KeyboardTypeSpacing = 6f;
+        private const float ElementRowPadding = 6f;
+        private const float ElementRowTopOffset = 3f;
+        private const float SummaryLineSpacing = 2f;
+        private const float TableTopSpacing = 2f;
+        private const float ErrorBoxSpacing = 2f;
+        private const float ActionLabelWidth = 100f;
+        private const float TimingSegmentWidth = 150f;
+        private const float KeyCellPadding = 2f;
+        private const float RemoveCellRightPadding = 1f;
+        private const float RemoveCellHorizontalPadding = 3f;
+        private const float HeaderLabelLeftPadding = 4f;
+        private const float BorderLineThickness = 1f;
+        private const int ModifierValueFontSize = 10;
 
         private static GUIStyle _typeStyle;
         private static GUIStyle _stepNumberStyle;
@@ -75,7 +91,7 @@ namespace YukimaruGames.Terminal.Editor
                 }
             }
 
-            EditorGUILayout.Space(6f);
+            EditorGUILayout.Space(KeyboardTypeSpacing);
 
             _activeKeyProp = keyboardType switch
             {
@@ -132,18 +148,18 @@ namespace YukimaruGames.Terminal.Editor
             var action = (TerminalAction)element.intValue;
             var field = GetActionField(action);
 
-            var height = EditorGUIUtility.singleLineHeight + 6f;
+            var height = EditorGUIUtility.singleLineHeight + ElementRowPadding;
 
             var modifiersProp = _activeKeyProp?.FindPropertyRelative("_" + field.Suffix + _activeModifierSuffix);
             if (modifiersProp != null)
             {
-                height += EditorGUIUtility.singleLineHeight + 2f; // 要約テキスト行
-                height += GetKeyTableHeight(modifiersProp) + 2f;
+                height += EditorGUIUtility.singleLineHeight + SummaryLineSpacing; // 要約テキスト行
+                height += GetKeyTableHeight(modifiersProp) + TableTopSpacing;
 
                 var error = GetModifierValidationError(modifiersProp);
                 if (error != null)
                 {
-                    height += GetHelpBoxHeight(error, ModifierValueWidth + ModifierRemoveWidth) + 2f;
+                    height += GetHelpBoxHeight(error, ModifierValueWidth + ModifierRemoveWidth) + ErrorBoxSpacing;
                 }
             }
 
@@ -164,24 +180,21 @@ namespace YukimaruGames.Terminal.Editor
 
             var contentX = rect.x + StepperWidth;
             var contentWidth = rect.width - StepperWidth;
-            var lineRect = new Rect(contentX, rect.y + 3f, contentWidth, EditorGUIUtility.singleLineHeight);
+            var lineRect = new Rect(contentX, rect.y + ElementRowTopOffset, contentWidth, EditorGUIUtility.singleLineHeight);
 
-            const float labelWidth = 100f;
-            const float spacing = 4f;
-            const float segmentWidth = 150f;
-            var segmentRect = new Rect(lineRect.xMax - segmentWidth, lineRect.y, segmentWidth, lineRect.height);
-            var labelRect = new Rect(lineRect.x, lineRect.y, labelWidth, lineRect.height);
+            var segmentRect = new Rect(lineRect.xMax - TimingSegmentWidth, lineRect.y, TimingSegmentWidth, lineRect.height);
+            var labelRect = new Rect(lineRect.x, lineRect.y, ActionLabelWidth, lineRect.height);
 
             EditorGUI.LabelField(labelRect, field.Label);
             if (timingProp != null) DrawTimingSegment(segmentRect, timingProp);
 
             if (modifiersProp != null)
             {
-                var summaryRect = new Rect(contentX, lineRect.yMax + 2f, contentWidth, EditorGUIUtility.singleLineHeight);
+                var summaryRect = new Rect(contentX, lineRect.yMax + SummaryLineSpacing, contentWidth, EditorGUIUtility.singleLineHeight);
                 var summary = GetCombinedKeySummary(keyProp, modifiersProp);
                 EditorGUI.LabelField(summaryRect, summary, EditorStyles.miniLabel);
 
-                var tableRect = new Rect(contentX, summaryRect.yMax + 2f, contentWidth, 0f);
+                var tableRect = new Rect(contentX, summaryRect.yMax + TableTopSpacing, contentWidth, 0f);
                 var tableBottomY = DrawKeyTable(tableRect, keyProp, modifiersProp);
 
                 var error = GetModifierValidationError(modifiersProp);
@@ -189,7 +202,7 @@ namespace YukimaruGames.Terminal.Editor
                 {
                     var tableWidth = ModifierValueWidth + ModifierRemoveWidth;
                     var errorHeight = GetHelpBoxHeight(error, tableWidth);
-                    var errorRect = new Rect(contentX, tableBottomY + 2f, tableWidth, errorHeight);
+                    var errorRect = new Rect(contentX, tableBottomY + ErrorBoxSpacing, tableWidth, errorHeight);
                     EditorGUI.HelpBox(errorRect, error, MessageType.Error);
                 }
             }
@@ -264,7 +277,7 @@ namespace YukimaruGames.Terminal.Editor
 
             var headerRect = new Rect(tableRect.x, tableRect.y, tableWidth, ModifierHeaderHeight);
             EditorGUI.LabelField(
-                new Rect(headerRect.x + 4f, headerRect.y, ModifierValueWidth - 4f, headerRect.height),
+                new Rect(headerRect.x + HeaderLabelLeftPadding, headerRect.y, ModifierValueWidth - HeaderLabelLeftPadding, headerRect.height),
                 "Key", EditorStyles.boldLabel);
             EditorGUI.LabelField(
                 new Rect(headerRect.x + ModifierValueWidth, headerRect.y, ModifierRemoveWidth, headerRect.height),
@@ -275,7 +288,7 @@ namespace YukimaruGames.Terminal.Editor
             // Key行(専用キー。削除不可。KeyPickerPopupContentで検索/実キー押下のどちらでも選べる).
             if (keyProp != null)
             {
-                var keyValueRect = new Rect(tableRect.x + 2f, y + 1f, ModifierValueWidth - 4f, ModifierRowHeight - 2f);
+                var keyValueRect = new Rect(tableRect.x + KeyCellPadding, y + KeyCellPadding * 0.5f, ModifierValueWidth - KeyCellPadding * 2f, ModifierRowHeight - KeyCellPadding);
                 if (GUI.Button(keyValueRect, GetEnumDisplayName(keyProp), _modifierValueStyle))
                 {
                     PopupWindow.Show(keyValueRect, new KeyPickerPopupContent(keyProp));
@@ -287,8 +300,8 @@ namespace YukimaruGames.Terminal.Editor
             for (var i = 0; i < modifiersProp.arraySize; ++i)
             {
                 var elementProp = modifiersProp.GetArrayElementAtIndex(i);
-                var valueRect = new Rect(tableRect.x + 2f, y + 1f, ModifierValueWidth - 4f, ModifierRowHeight - 2f);
-                var removeRect = new Rect(tableRect.x + ModifierValueWidth + 1f, y + 1f, ModifierRemoveWidth - 3f, ModifierRowHeight - 2f);
+                var valueRect = new Rect(tableRect.x + KeyCellPadding, y + KeyCellPadding * 0.5f, ModifierValueWidth - KeyCellPadding * 2f, ModifierRowHeight - KeyCellPadding);
+                var removeRect = new Rect(tableRect.x + ModifierValueWidth + RemoveCellRightPadding, y + KeyCellPadding * 0.5f, ModifierRemoveWidth - RemoveCellHorizontalPadding, ModifierRowHeight - KeyCellPadding);
                 var rowIndex = i;
 
                 if (GUI.Button(valueRect, GetEnumDisplayName(elementProp), _modifierValueStyle))
@@ -312,7 +325,7 @@ namespace YukimaruGames.Terminal.Editor
                 y += ModifierRowHeight;
             }
 
-            var addRect = new Rect(tableRect.x + 2f, y + 1f, tableWidth - 4f, ModifierRowHeight - 2f);
+            var addRect = new Rect(tableRect.x + KeyCellPadding, y + KeyCellPadding * 0.5f, tableWidth - KeyCellPadding * 2f, ModifierRowHeight - KeyCellPadding);
             if (GUI.Button(addRect, "+ Add", EditorStyles.label))
             {
                 var newIndex = modifiersProp.arraySize;
@@ -346,19 +359,19 @@ namespace YukimaruGames.Terminal.Editor
             }
 
             // 横罫線(ヘッダー下 + 各行の下 + 外枠上下)
-            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.y, tableRect.width, 1f), borderColor);
+            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.y, tableRect.width, BorderLineThickness), borderColor);
             var lineY = tableRect.y + ModifierHeaderHeight;
             for (var i = 0; i <= dataRowCount; ++i)
             {
-                EditorGUI.DrawRect(new Rect(tableRect.x, lineY, tableRect.width, 1f), borderColor);
+                EditorGUI.DrawRect(new Rect(tableRect.x, lineY, tableRect.width, BorderLineThickness), borderColor);
                 lineY += ModifierRowHeight;
             }
-            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.yMax - 1f, tableRect.width, 1f), borderColor);
+            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.yMax - BorderLineThickness, tableRect.width, BorderLineThickness), borderColor);
 
             // 縦罫線(外枠左右 + Modifier/削除列の間)
-            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.y, 1f, tableRect.height), borderColor);
-            EditorGUI.DrawRect(new Rect(tableRect.x + ModifierValueWidth, tableRect.y, 1f, tableRect.height), borderColor);
-            EditorGUI.DrawRect(new Rect(tableRect.xMax - 1f, tableRect.y, 1f, tableRect.height), borderColor);
+            EditorGUI.DrawRect(new Rect(tableRect.x, tableRect.y, BorderLineThickness, tableRect.height), borderColor);
+            EditorGUI.DrawRect(new Rect(tableRect.x + ModifierValueWidth, tableRect.y, BorderLineThickness, tableRect.height), borderColor);
+            EditorGUI.DrawRect(new Rect(tableRect.xMax - BorderLineThickness, tableRect.y, BorderLineThickness, tableRect.height), borderColor);
         }
 
         private static string GetEnumDisplayName(SerializedProperty enumProp)
@@ -426,7 +439,7 @@ namespace YukimaruGames.Terminal.Editor
             }
             if (_modifierValueStyle == null)
             {
-                _modifierValueStyle = new GUIStyle(EditorStyles.label) { fontSize = 10 };
+                _modifierValueStyle = new GUIStyle(EditorStyles.label) { fontSize = ModifierValueFontSize };
             }
             if (_modifierRemoveStyle == null)
             {

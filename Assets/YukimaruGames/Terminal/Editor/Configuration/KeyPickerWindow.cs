@@ -69,6 +69,12 @@ namespace YukimaruGames.Terminal.Editor
 
         private const string SearchFieldControlName = "KeyPickerSearchField";
 
+        private const float WindowWidth = 260f;
+        private const float WindowHeight = 320f;
+        private const float CaptureButtonHeight = 24f;
+        private const float SpaceSmall = 2f;
+        private const float SpaceMedium = 4f;
+
         private readonly SerializedProperty _targetProp;
         private readonly string[] _displayNames;
         private string _search = "";
@@ -83,8 +89,10 @@ namespace YukimaruGames.Terminal.Editor
             _displayNames = targetProp.enumDisplayNames;
         }
 
-        public override Vector2 GetWindowSize() => new(260f, 320f);
+        /// <inheritdoc />
+        public override Vector2 GetWindowSize() => new(WindowWidth, WindowHeight);
 
+        /// <inheritdoc />
         public override void OnOpen()
         {
             // 修飾キー単体の押下はマウス移動等のイベントを伴わないと検知できないため、
@@ -92,6 +100,7 @@ namespace YukimaruGames.Terminal.Editor
             EditorApplication.update += RequestContinuousRepaint;
         }
 
+        /// <inheritdoc />
         public override void OnClose()
         {
             EditorApplication.update -= RequestContinuousRepaint;
@@ -99,7 +108,12 @@ namespace YukimaruGames.Terminal.Editor
 
         private void RequestContinuousRepaint()
         {
-            editorWindow?.Repaint();
+            // NOTE: 破棄済みのUnityオブジェクトは参照としてはnullでなくなる(pseudo-null)ため、
+            // ?.ではなく==nullでの判定が必要.
+            if (editorWindow != null)
+            {
+                editorWindow.Repaint();
+            }
         }
 
         public override void OnGUI(Rect rect)
@@ -108,12 +122,12 @@ namespace YukimaruGames.Terminal.Editor
 
             using (new GUILayout.AreaScope(rect))
             {
-                EditorGUILayout.Space(4f);
+                EditorGUILayout.Space(SpaceMedium);
                 var content = string.IsNullOrEmpty(_captureStatus) ? "⌨ Press any key..." : $"⌨ {_captureStatus}";
                 // NOTE: 検索欄に一度フォーカスすると、クリックだけではフォーカスが外れず
                 // キー押下検出モードに戻れなくなっていた(実際に発生した不具合)。
                 // このエリア自体をクリック可能にし、検索欄のフォーカスを明示的に外す.
-                if (GUILayout.Button(content, EditorStyles.helpBox, GUILayout.Height(24)))
+                if (GUILayout.Button(content, EditorStyles.helpBox, GUILayout.Height(CaptureButtonHeight)))
                 {
                     GUI.FocusControl(null);
                     _ambiguousCandidates = null;
@@ -133,12 +147,12 @@ namespace YukimaruGames.Terminal.Editor
                     EditorGUILayout.EndHorizontal();
                 }
 
-                EditorGUILayout.Space(4f);
+                EditorGUILayout.Space(SpaceMedium);
                 EditorGUILayout.LabelField("or search:", EditorStyles.miniLabel);
                 GUI.SetNextControlName(SearchFieldControlName);
                 _search = EditorGUILayout.TextField(_search);
 
-                EditorGUILayout.Space(2f);
+                EditorGUILayout.Space(SpaceSmall);
                 _scroll = EditorGUILayout.BeginScrollView(_scroll);
                 for (var i = 0; i < _displayNames.Length; ++i)
                 {
