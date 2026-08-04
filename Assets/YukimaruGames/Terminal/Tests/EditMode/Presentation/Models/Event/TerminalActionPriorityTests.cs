@@ -115,6 +115,26 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Presentation.Models.Event
                 _priority.IsHighestPriority(TerminalAction.Focus, satisfied));
         }
 
+        /// <summary>
+        /// actionそのものがsatisfiedActionsに含まれていない場合は、他の全アクションより
+        /// 優先度が高くてもfalseを返すことを検証する(actionは「成立している」ことが前提のため).
+        /// </summary>
+        [Test]
+        public void IsHighestPriority_ActionNotInSatisfiedActions_ReturnsFalse()
+        {
+            var satisfied = new List<TerminalAction> { TerminalAction.Execute };
+
+            Assert.IsFalse(_priority.IsHighestPriority(TerminalAction.Cancel, satisfied));
+        }
+
+        /// <summary>satisfiedActionsにnullを渡した場合はArgumentNullExceptionを送出することを検証する.</summary>
+        [Test]
+        public void IsHighestPriority_SatisfiedActionsIsNull_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+                _priority.IsHighestPriority(TerminalAction.Execute, null));
+        }
+
         private static void SetOrder(TerminalActionPriority priority, params TerminalAction[] order)
         {
             var field = typeof(TerminalActionPriority).GetField("_order", BindingFlags.NonPublic | BindingFlags.Instance);

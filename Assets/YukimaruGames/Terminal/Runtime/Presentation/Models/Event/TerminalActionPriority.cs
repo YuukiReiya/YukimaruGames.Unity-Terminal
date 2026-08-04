@@ -43,17 +43,27 @@ namespace YukimaruGames.Terminal.Presentation.Models.Event
         /// satisfiedActions(このフレームで条件を満たしている全アクション)の中で、
         /// actionが最も優先度が高い1つであるかどうかを判定する.
         /// </summary>
-        /// <remarks><see cref="TerminalAction.None"/>を渡してはならない.</remarks>
+        /// <remarks>
+        /// <see cref="TerminalAction.None"/>を渡してはならない. actionがsatisfiedActionsに
+        /// 含まれていない場合は(他のどのアクションより優先度が高くても)falseを返す.
+        /// </remarks>
         public bool IsHighestPriority(TerminalAction action, IReadOnlyList<TerminalAction> satisfiedActions)
         {
+            if (satisfiedActions == null) throw new ArgumentNullException(nameof(satisfiedActions));
+
             var myOrder = GetOrder(action);
+            var isActionSatisfied = false;
             for (var i = 0; i < satisfiedActions.Count; ++i)
             {
                 var other = satisfiedActions[i];
-                if (other == action) continue;
+                if (other == action)
+                {
+                    isActionSatisfied = true;
+                    continue;
+                }
                 if (GetOrder(other) < myOrder) return false;
             }
-            return true;
+            return isActionSatisfied;
         }
     }
 }
