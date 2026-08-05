@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Interfaces;
+using YukimaruGames.Terminal.Presentation.Events;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors.Window;
 using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
@@ -22,11 +23,19 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         private readonly ISubmitPresenter _submitPresenter;
         private readonly ILauncherPresenter _launcherPresenter;
         private readonly IEventListener _eventListener;
+        private readonly IWindowFocusInputGuard _windowFocusInputGuard;
 
         private readonly ITerminalService _service;
         private const string BootUpMessage = "Welcome to Runtime YukimaruGames.CLI!\n(c) Independent Developer. All rights reserved.\nType your command below.";
 
         private readonly CancellationTokenSource _destroyCancellationToken = new();
+
+        /// <summary>
+        /// <see cref="_windowFocusInputGuard"/>の表示区間ハンドル(未表示時はnull).
+        /// </summary>
+        private IDisposable _windowFocusInputGuardHandle;
+
+        private bool _disposed;
         
         /// <summary>
         /// 表示されているか.
@@ -44,7 +53,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             ILogPresenter logPresenter,
             ISubmitPresenter submitPresenter,
             ILauncherPresenter launcherPresenter,
-            IEventListener eventListener
+            IEventListener eventListener,
+            IWindowFocusInputGuard windowFocusInputGuard
         )
         {
             _service = service;
@@ -57,6 +67,7 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _submitPresenter = submitPresenter;
             _launcherPresenter = launcherPresenter;
             _eventListener = eventListener;
+            _windowFocusInputGuard = windowFocusInputGuard ?? NullWindowFocusInputGuard.Instance;
 
             RegisterEvents();
 
@@ -104,10 +115,12 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         private void OnOpenTriggered()
         {
             if (_inputPresenter.IsImeComposing) return;
-            
+
             _windowPresenter.Open();
             _inputPresenter.SetFocus(true);
             _scrollMutator.ScrollToEnd();
+
+            EnterWindowFocusInputGuard();
         }
 
         private void OnCloseTriggered()
@@ -119,6 +132,20 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             // 閉じられなくなるスタック状態の方がUXとして深刻).
             _windowPresenter.Close();
             _inputPresenter.SetFocus(false);
+
+            ExitWindowFocusInputGuard();
+        }
+
+        private void EnterWindowFocusInputGuard()
+        {
+            if (_windowFocusInputGuardHandle != null) return;
+            _windowFocusInputGuardHandle = _windowFocusInputGuard.BeginScope();
+        }
+
+        private void ExitWindowFocusInputGuard()
+        {
+            _windowFocusInputGuardHandle?.Dispose();
+            _windowFocusInputGuardHandle = null;
         }
 
         private void OnExecuteTriggered()
@@ -212,8 +239,14 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         
         void IDisposable.Dispose()
         {
+            if (_disposed) return;
+            _disposed = true;
+
             UnregisterEvents();
-            
+
+            // ウィンドウが開いたままDisposeされた場合に備え、ガードの区間を必ず終了させる.
+            ExitWindowFocusInputGuard();
+
             _destroyCancellationToken.Cancel();
             _destroyCancellationToken.Dispose();
         }

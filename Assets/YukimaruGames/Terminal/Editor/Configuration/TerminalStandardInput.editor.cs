@@ -51,6 +51,9 @@ namespace YukimaruGames.Terminal.Editor
         private const float BorderLineThickness = 1f;
         private const int ModifierValueFontSize = 10;
 
+        private static readonly Color ProSkinBorderColor = new(0.12f, 0.12f, 0.12f);
+        private static readonly Color PersonalSkinBorderColor = new(0.55f, 0.55f, 0.55f);
+
         private static GUIStyle _typeStyle;
         private static GUIStyle _stepNumberStyle;
         private static GUIStyle _modifierValueStyle;
@@ -93,6 +96,16 @@ namespace YukimaruGames.Terminal.Editor
 
             EditorGUILayout.Space(KeyboardTypeSpacing);
 
+            if (keyboardType is InputKeyboardType.Legacy)
+            {
+                var allowKeyInputProp = property.FindPropertyRelative("_allowKeyInputWhileTextFieldFocused");
+                if (allowKeyInputProp != null)
+                {
+                    DrawAllowKeyInputToggle(allowKeyInputProp);
+                    EditorGUILayout.Space(KeyboardTypeSpacing);
+                }
+            }
+
             _activeKeyProp = keyboardType switch
             {
                 InputKeyboardType.InputSystem => property.FindPropertyRelative("_inputSystemKey"),
@@ -106,6 +119,11 @@ namespace YukimaruGames.Terminal.Editor
             var priorityProp = property.FindPropertyRelative("_priority");
             var orderProp = priorityProp?.FindPropertyRelative("_order");
 
+            if (keyboardType is InputKeyboardType.Legacy)
+            {
+                DrawSectionSeparator();
+            }
+
             EditorGUILayout.LabelField("Actions", EditorStyles.boldLabel);
             EditorGUILayout.LabelField("優先度: 上ほど高い(ドラッグで並び替え)", EditorStyles.miniLabel);
 
@@ -115,6 +133,54 @@ namespace YukimaruGames.Terminal.Editor
             }
 
             EditorGUI.EndProperty();
+        }
+
+        private static void DrawAllowKeyInputToggle(SerializedProperty allowKeyInputProp)
+        {
+            DrawSectionSeparator();
+
+            EditorGUILayout.LabelField("Allow Key Input While Text Field Focused", EditorStyles.boldLabel);
+
+            var current = allowKeyInputProp.boolValue;
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                var onSelected = GUILayout.Toggle(current, "ON", EditorStyles.miniButtonLeft);
+                var offSelected = GUILayout.Toggle(!current, "OFF", EditorStyles.miniButtonRight);
+
+                if (onSelected && !current)
+                {
+                    allowKeyInputProp.boolValue = true;
+                }
+                else if (offSelected && current)
+                {
+                    allowKeyInputProp.boolValue = false;
+                }
+            }
+
+            var message = allowKeyInputProp.boolValue
+                ? "推奨設定です。入力欄フォーカス中もReturn/Escape等のキー入力を検知できます。" +
+                  "ウィンドウ表示中はホスト側のレガシーキーバインドにも影響する点に注意してください。"
+                : "入力欄がフォーカスを持っている間、Return/Escape等のキー入力が検知されません。" +
+                  "Execute/Close等の操作ができなくなる場合があります。";
+            var messageType = allowKeyInputProp.boolValue ? MessageType.Info : MessageType.Warning;
+
+            // EditorGUILayout.HelpBoxは"HelpBox"スタイル自体のmarginにより左右が内側に
+            // 詰まって見える(ON/OFFトグル行と面が揃わない)ため、marginを持たないRectへ
+            // 手動で描画し、上のトグル行と同じ幅で端まで揃える.
+            var widthProbeRect = EditorGUILayout.GetControlRect(false, 0f);
+            var helpBoxHeight = GetHelpBoxHeight(message, widthProbeRect.width);
+            var helpBoxRect = EditorGUILayout.GetControlRect(false, helpBoxHeight);
+            EditorGUI.HelpBox(helpBoxRect, message, messageType);
+        }
+
+        // 「Actions」テーブル(DrawTableChrome)と同じ罫線色で、セクション間の境界を手描きの横線1本として表す.
+        private static void DrawSectionSeparator()
+        {
+            var rect = EditorGUILayout.GetControlRect(false, BorderLineThickness);
+            if (Event.current.type != EventType.Repaint) return;
+
+            var borderColor = EditorGUIUtility.isProSkin ? ProSkinBorderColor : PersonalSkinBorderColor;
+            EditorGUI.DrawRect(rect, borderColor);
         }
 
         private ActionField GetActionField(TerminalAction action)
@@ -339,7 +405,7 @@ namespace YukimaruGames.Terminal.Editor
 
         private static void DrawTableChrome(Rect tableRect, int dataRowCount)
         {
-            var borderColor = EditorGUIUtility.isProSkin ? new Color(0.12f, 0.12f, 0.12f) : new Color(0.55f, 0.55f, 0.55f);
+            var borderColor = EditorGUIUtility.isProSkin ? ProSkinBorderColor : PersonalSkinBorderColor;
             var headerColor = EditorGUIUtility.isProSkin ? new Color(0.24f, 0.24f, 0.24f) : new Color(0.72f, 0.72f, 0.72f);
             var rowColorA = EditorGUIUtility.isProSkin ? new Color(0.22f, 0.22f, 0.22f) : new Color(0.82f, 0.82f, 0.82f);
             var rowColorB = EditorGUIUtility.isProSkin ? new Color(0.2f, 0.2f, 0.2f) : new Color(0.78f, 0.78f, 0.78f);

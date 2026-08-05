@@ -21,6 +21,7 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
+        [SerializeField] private bool _allowKeyInputWhileTextFieldFocused = true;
         [SerializeField] private LegacyInputKey _legacyInputKey = new();
 #endif
 
@@ -32,6 +33,14 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private TerminalActionPriority _priority = new();
 
         public InputKeyboardType InputKeyboardType => _inputKeyboardType;
+
+#if ENABLE_LEGACY_INPUT_MANAGER
+        /// <inheritdoc/>
+        public bool AllowKeyInputWhileTextFieldFocused => _allowKeyInputWhileTextFieldFocused;
+#else
+        /// <inheritdoc/>
+        public bool AllowKeyInputWhileTextFieldFocused => true;
+#endif
 
 #if ENABLE_LEGACY_INPUT_MANAGER
         public LegacyInputKey LegacyInputKey => _legacyInputKey;
