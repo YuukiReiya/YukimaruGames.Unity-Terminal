@@ -11,9 +11,14 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
     /// <see cref="UnityEngine.Input.eatKeyPressOnTextFieldFocus"/>を無効化するスコープ.
     /// IMGUIのTextFieldがフォーカス(キャレット)を保持している間、既定(true)では
     /// レガシーInput Managerがキー入力そのものを飲み込み、<see cref="UnityEngine.Input.GetKeyDown"/>等が
-    /// 反応しなくなる(Return/Escape/Tab/矢印キー/修飾キーを含む)。ターミナルの入力欄は常にこの状態を
-    /// 想定するため、生存期間中は無効化し、破棄時に元の値へ復元する.
+    /// 反応しなくなる(Return/Escape/Tab/矢印キー/修飾キーを含む)。生成時点で無効化し、
+    /// <see cref="Dispose"/>で必ず元の値へ復元する.
     /// </summary>
+    /// <remarks>
+    /// <see cref="UnityEngine.Input.eatKeyPressOnTextFieldFocus"/>はプロセスグローバルな設定のため、
+    /// このスコープが有効な間はホスト側(ターミナル外)のレガシーキーバインドも文字入力中に反応するように
+    /// なる。呼び出し側はウィンドウが表示されている期間のみ生成し、閉じたら即座に破棄すること.
+    /// </remarks>
     public sealed class LegacyTextFieldKeyEatingScope : IDisposable
     {
         private readonly bool _previous;
@@ -27,7 +32,9 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
 #pragma warning restore CS0618
         }
 
-        public void Dispose()
+        // 外部からの不用意な直接呼び出しを避けるため、明示的インターフェース実装とする.
+        // 呼び出し側は必ず IDisposable として扱うこと(using / IDisposable変数経由).
+        void IDisposable.Dispose()
         {
             if (_disposed) return;
             _disposed = true;

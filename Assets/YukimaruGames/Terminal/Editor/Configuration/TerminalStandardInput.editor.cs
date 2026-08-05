@@ -93,6 +93,22 @@ namespace YukimaruGames.Terminal.Editor
 
             EditorGUILayout.Space(KeyboardTypeSpacing);
 
+            if (keyboardType is InputKeyboardType.Legacy)
+            {
+                var allowKeyInputProp = property.FindPropertyRelative("_allowKeyInputWhileTextFieldFocused");
+                if (allowKeyInputProp != null)
+                {
+                    EditorGUILayout.PropertyField(allowKeyInputProp, new GUIContent(
+                        "Allow Key Input While Text Field Focused",
+                        "有効(既定)にすると、入力欄がフォーカスを持っていてもLegacy Input Manager経由の" +
+                        "キー入力(Return/Escape/Tab/矢印キー等)を検知できるようにします。" +
+                        "ウィンドウ表示中はUnity.Input.eatKeyPressOnTextFieldFocusをプロセスグローバルに" +
+                        "無効化するため、ホスト側(ターミナル外)のレガシーキーバインドも文字入力中に" +
+                        "反応するようになる点に注意してください。"));
+                    EditorGUILayout.Space(KeyboardTypeSpacing);
+                }
+            }
+
             _activeKeyProp = keyboardType switch
             {
                 InputKeyboardType.InputSystem => property.FindPropertyRelative("_inputSystemKey"),

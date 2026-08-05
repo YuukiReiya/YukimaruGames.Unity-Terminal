@@ -24,6 +24,7 @@ namespace YukimaruGames.Terminal.Composition
     {
         // 入力を無効化
         public InputKeyboardType InputKeyboardType => InputKeyboardType.None;
+        public bool AllowKeyInputWhileTextFieldFocused => true;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
         // デフォルトキー設定

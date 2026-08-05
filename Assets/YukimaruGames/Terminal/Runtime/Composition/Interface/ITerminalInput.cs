@@ -20,6 +20,15 @@ namespace YukimaruGames.Terminal.Composition
     {
         InputKeyboardType InputKeyboardType { get; }
 
+        /// <summary>
+        /// Legacy Input Manager選択時、ウィンドウ表示中に
+        /// <see cref="UnityEngine.Input.eatKeyPressOnTextFieldFocus"/>を無効化し、
+        /// 入力欄がフォーカスを持っていてもキー入力(Return/Escape等)を検知できるようにするか.
+        /// true(既定)の場合、ウィンドウ表示中はホスト側のレガシーキーバインドにも影響する
+        /// (プロセスグローバルな設定のため)点に注意.
+        /// </summary>
+        bool AllowKeyInputWhileTextFieldFocused { get; }
+
 #if ENABLE_LEGACY_INPUT_MANAGER
         LegacyInputKey LegacyInputKey { get; }
 #endif

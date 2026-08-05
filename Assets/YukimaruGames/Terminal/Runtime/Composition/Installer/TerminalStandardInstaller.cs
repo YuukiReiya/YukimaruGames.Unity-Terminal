@@ -330,6 +330,17 @@ namespace YukimaruGames.Terminal.Composition
             return factory.Create(resultType);
         }
 
+        private IWindowFocusInputGuard CreateWindowFocusInputGuard(ITerminalOptions options, InputKeyboardType resultType)
+        {
+#if ENABLE_LEGACY_INPUT_MANAGER
+            if (resultType is InputKeyboardType.Legacy && options.Input.AllowKeyInputWhileTextFieldFocused)
+            {
+                return new LegacyTextFieldKeyEatingGuard();
+            }
+#endif
+            return NullWindowFocusInputGuard.Instance;
+        }
+
         private DomainContext BuildDomainContext(ITerminalOptions options)
         {
             var logger = new CommandLogger(options.BufferSize);
@@ -532,6 +543,7 @@ namespace YukimaruGames.Terminal.Composition
             var keyboardType = ResolveKeyboardType(options);
             var inputHandler = CreateInputHandler(options, keyboardType);
             var eventListener = new EventListener(inputHandler);
+            var windowFocusInputGuard = CreateWindowFocusInputGuard(options, keyboardType);
 
             var coordinator = new TerminalCoordinator(
                 domain.Service,
@@ -543,23 +555,18 @@ namespace YukimaruGames.Terminal.Composition
                 rendering.LogPresenter,
                 rendering.SubmitPresenter,
                 rendering.LauncherPresenter,
-                eventListener);
-
-            var components = new List<object> { coordinator, eventListener };
-#if ENABLE_LEGACY_INPUT_MANAGER
-            // 入力欄がフォーカスを持つ間、Legacy Input ManagerがReturn/Escape等のキー入力を
-            // 飲み込む(Input.eatKeyPressOnTextFieldFocus既定=true)問題を回避する.
-            if (keyboardType is InputKeyboardType.Legacy)
-            {
-                components.Add(new LegacyTextFieldKeyEatingScope());
-            }
-#endif
+                eventListener,
+                windowFocusInputGuard);
 
             return new CoordinatorContext
             {
                 Coordinator = coordinator,
                 EventListener = eventListener,
-                Components = components,
+                Components = new object[]
+                {
+                    coordinator,
+                    eventListener,
+                }
             };
         }
 
