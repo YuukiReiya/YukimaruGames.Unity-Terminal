@@ -118,3 +118,6 @@ InitTestScene*.unity*
 # MCP-server
 .serena/
 memories/
+
+# VSCode
+*.code-workspace
