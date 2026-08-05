@@ -545,15 +545,21 @@ namespace YukimaruGames.Terminal.Composition
                 rendering.LauncherPresenter,
                 eventListener);
 
+            var components = new List<object> { coordinator, eventListener };
+#if ENABLE_LEGACY_INPUT_MANAGER
+            // 入力欄がフォーカスを持つ間、Legacy Input ManagerがReturn/Escape等のキー入力を
+            // 飲み込む(Input.eatKeyPressOnTextFieldFocus既定=true)問題を回避する.
+            if (keyboardType is InputKeyboardType.Legacy)
+            {
+                components.Add(new LegacyTextFieldKeyEatingScope());
+            }
+#endif
+
             return new CoordinatorContext
             {
                 Coordinator = coordinator,
                 EventListener = eventListener,
-                Components = new object[]
-                {
-                    coordinator,
-                    eventListener,
-                }
+                Components = components,
             };
         }
 
