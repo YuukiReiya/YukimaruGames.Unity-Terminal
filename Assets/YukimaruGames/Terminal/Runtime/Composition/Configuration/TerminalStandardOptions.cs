@@ -19,6 +19,7 @@ namespace YukimaruGames.Terminal.Composition
         [Header("UI Controls")]
         [SerializeField] private bool _buttonVisible;
         [SerializeField] private bool _buttonReverse;
+        [SerializeField] private bool _showLoadingIndicator = true;
 
         public ITerminalInput Input => _input ?? new TerminalNullInput();
 
@@ -27,5 +28,6 @@ namespace YukimaruGames.Terminal.Composition
         public string BootupCommand => _bootupCommand;
         public bool IsButtonVisible => _buttonVisible;
         public bool IsButtonReverse => _buttonReverse;
+        public bool ShowLoadingIndicator => _showLoadingIndicator;
     }
 }

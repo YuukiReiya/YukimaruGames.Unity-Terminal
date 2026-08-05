@@ -9,6 +9,12 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Presenters
         /// IME入力の変換状態か.
         /// </summary>
         bool IsImeComposing { get; }
+
+        /// <summary>
+        /// 入力欄が編集可能かどうか. falseの間は文字入力を受け付けない.
+        /// </summary>
+        bool IsEditable { get; set; }
+
         void SetInputField(string inputText);
         void SetFocus(bool focus);
         void SetMoveCursorToEnd();

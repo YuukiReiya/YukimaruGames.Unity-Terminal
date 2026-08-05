@@ -151,19 +151,51 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         private void OnExecuteTriggered()
         {
             if (!IsVisible) return;
-            
+
             // IMEの文字列入力における変換中であればスキップ.
             if (_inputPresenter.IsImeComposing) return;
 
             // 処理の実行中であればスキップ.
             if (_service.IsExecuting) return;
 
-            _service.ExecuteAsync(_inputPresenter.InputText, _destroyCancellationToken.Token);
+            var inputText = _inputPresenter.InputText;
 
             _inputPresenter.SetInputField(string.Empty);
             _inputPresenter.SetFocus(true);
             _inputPresenter.SetMoveCursorToEnd();
             _scrollMutator.ScrollToEnd();
+
+            ExecuteAsync(inputText);
+        }
+
+        /// <summary>
+        /// コマンドの実行を待機し、完了するまで入力を受け付けないようにする.
+        /// </summary>
+        /// <remarks>
+        /// 以前はFire-And-Forgetで実行結果を待たずに次の入力が可能だったため、
+        /// 実行完了まで<see cref="IInputPresenter.IsEditable"/>を明示的にロックする.
+        /// </remarks>
+        private async void ExecuteAsync(string inputText)
+        {
+            _inputPresenter.IsEditable = false;
+
+            try
+            {
+                await _service.ExecuteAsync(inputText, _destroyCancellationToken.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // キャンセル(ウィンドウ破棄含む)は正常系として扱う.
+            }
+            finally
+            {
+                if (!_disposed)
+                {
+                    _inputPresenter.IsEditable = true;
+                }
+
+                _scrollMutator.ScrollToEnd();
+            }
         }
 
         private void OnCancelTriggered()
@@ -180,7 +212,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         private void OnPreviousHistoryTriggered()
         {
             if (!IsVisible) return;
-            
+            if (_service.IsExecuting) return;
+
             _inputPresenter.SetInputField(_service.PrevHistory());
             _inputPresenter.SetMoveCursorToEnd();
             _scrollMutator.ScrollToEnd();
@@ -189,7 +222,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         private void OnNextHistoryTriggered()
         {
             if (!IsVisible) return;
-            
+            if (_service.IsExecuting) return;
+
             _inputPresenter.SetInputField(_service.NextHistory());
             _inputPresenter.SetMoveCursorToEnd();
             _scrollMutator.ScrollToEnd();
@@ -198,7 +232,8 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         private void OnAutocompleteTriggered()
         {
             if (!IsVisible) return;
-            
+            if (_service.IsExecuting) return;
+
             var completionResults = _service.Autocomplete(_inputPresenter.InputText);
             var length = completionResults?.Length ?? 0;
             

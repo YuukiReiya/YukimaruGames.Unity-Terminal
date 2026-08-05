@@ -15,6 +15,7 @@ namespace YukimaruGames.Terminal.Editor
         private static GUIStyle _toolbarStyle;
         private static readonly GUIContent _visibleContent = new GUIContent("Visible");
         private static readonly GUIContent _reverseContent = new GUIContent("Reverse");
+        private static readonly GUIContent _loadingIndicatorContent = new GUIContent("Show Loading Indicator", "コマンド実行中にプロンプト横へスピナーを表示します.");
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -78,6 +79,12 @@ namespace YukimaruGames.Terminal.Editor
             var reverseProp = property.FindPropertyRelative("_buttonReverse");
             visibleProp.boolValue = EditorGUILayout.ToggleLeft(_visibleContent, visibleProp.boolValue);
             reverseProp.boolValue = EditorGUILayout.ToggleLeft(_reverseContent, reverseProp.boolValue);
+
+            EditorGUILayout.Space(5f);
+
+            EditorGUILayout.LabelField("Execution", EditorStyles.boldLabel);
+            var loadingIndicatorProp = property.FindPropertyRelative("_showLoadingIndicator");
+            loadingIndicatorProp.boolValue = EditorGUILayout.ToggleLeft(_loadingIndicatorContent, loadingIndicatorProp.boolValue);
         }
 
         private void InitStyles()
