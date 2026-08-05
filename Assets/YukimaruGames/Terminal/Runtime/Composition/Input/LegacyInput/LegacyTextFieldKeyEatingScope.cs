@@ -18,18 +18,27 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
     /// <see cref="UnityEngine.Input.eatKeyPressOnTextFieldFocus"/>はプロセスグローバルな設定のため、
     /// このスコープが有効な間はホスト側(ターミナル外)のレガシーキーバインドも文字入力中に反応するように
     /// なる。呼び出し側はウィンドウが表示されている期間のみ生成し、閉じたら即座に破棄すること.
+    /// 同一プロセス内で複数インスタンスが同時に生存する場合(複数ターミナルを同時に開く等)に備え、
+    /// 生成・破棄をプロセス全体で参照カウントし、最初の1つが元の値を保存、最後の1つが復元する.
     /// </remarks>
     public sealed class LegacyTextFieldKeyEatingScope : IDisposable
     {
-        private readonly bool _previous;
+        private static int _activeScopeCount;
+        private static bool _previous;
+
         private bool _disposed;
 
         public LegacyTextFieldKeyEatingScope()
         {
+            if (_activeScopeCount == 0)
+            {
 #pragma warning disable CS0618 // eatKeyPressOnTextFieldFocusはObsolete指定だが、この挙動を回避する唯一の公式手段.
-            _previous = UnityEngine.Input.eatKeyPressOnTextFieldFocus;
-            UnityEngine.Input.eatKeyPressOnTextFieldFocus = false;
+                _previous = UnityEngine.Input.eatKeyPressOnTextFieldFocus;
+                UnityEngine.Input.eatKeyPressOnTextFieldFocus = false;
 #pragma warning restore CS0618
+            }
+
+            ++_activeScopeCount;
         }
 
         // 外部からの不用意な直接呼び出しを避けるため、明示的インターフェース実装とする.
@@ -38,6 +47,9 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
         {
             if (_disposed) return;
             _disposed = true;
+
+            --_activeScopeCount;
+            if (_activeScopeCount > 0) return;
 
 #pragma warning disable CS0618
             UnityEngine.Input.eatKeyPressOnTextFieldFocus = _previous;

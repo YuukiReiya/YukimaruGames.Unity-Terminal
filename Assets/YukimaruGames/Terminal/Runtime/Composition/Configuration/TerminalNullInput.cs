@@ -24,8 +24,11 @@ namespace YukimaruGames.Terminal.Composition
     {
         // 入力を無効化
         public InputKeyboardType InputKeyboardType => InputKeyboardType.None;
+        // Legacy-onlyビルドではResolveKeyboardType()がInputKeyboardType(None)を無視して
+        // 常にLegacyを返すため、falseにしてNull Input経由でLegacyTextFieldKeyEatingGuardが
+        // 生成されない(=ホストのグローバル設定を変更しない)ようにする.
         /// <inheritdoc/>
-        public bool AllowKeyInputWhileTextFieldFocused => true;
+        public bool AllowKeyInputWhileTextFieldFocused => false;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
         // デフォルトキー設定
