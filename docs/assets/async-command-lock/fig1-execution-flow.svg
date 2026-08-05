@@ -1,0 +1,128 @@
+<svg viewBox="0 0 1000 950" role="img"
+           aria-label="Before では TerminalCoordinator が ExecuteAsync の完了を待たずに入力欄を再利用可能にしてしまい、実行中でも次の Enter が受理される。After では ExecuteAsync を await し、その間 InputPresenter.IsEditable を false にロックすることで、完了までは入力・再実行を無視するようになった。"><style>text{font-family:ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;fill:#1b2430;}text.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;}text.dim{fill:#5b6675;}text.faint{fill:#8894a1;}line.life{stroke:#8894a1;stroke-opacity:0.4;}rect.lane{fill:#f4f6f8;stroke:#d7dde4;}</style><rect x="-40" y="-40" width="2000" height="2000" fill="#ffffff"></rect>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"></path>
+          </marker>
+        </defs>
+
+        <!-- ========================= BEFORE PANEL ========================= -->
+        <g>
+          <text x="0" y="24" font-size="14" font-weight="650" fill="#c1531f">Before — 完了を待たない (Fire-and-Forget)</text>
+          <text x="0" y="42" font-size="12" class="dim">OnExecuteTriggered が ExecuteAsync の戻り値を破棄し、即座に次の入力を許可する</text>
+
+          <!-- lane headers -->
+          <g font-size="12" class="mono">
+            <rect class="lane" x="30" y="58" width="150" height="30" rx="6"></rect>
+            <text x="105" y="77" text-anchor="middle">ユーザー操作</text>
+
+            <rect class="lane" x="300" y="58" width="180" height="30" rx="6"></rect>
+            <text x="390" y="77" text-anchor="middle">TerminalCoordinator</text>
+
+            <rect class="lane" x="565" y="58" width="180" height="30" rx="6"></rect>
+            <text x="655" y="77" text-anchor="middle">InputPresenter</text>
+
+            <rect class="lane" x="830" y="58" width="150" height="30" rx="6"></rect>
+            <text x="905" y="77" text-anchor="middle">ITerminalService</text>
+          </g>
+
+          <!-- lifelines -->
+          <line class="life" x1="105" y1="88" x2="105" y2="360"></line>
+          <line class="life" x1="390" y1="88" x2="390" y2="360"></line>
+          <line class="life" x1="655" y1="88" x2="655" y2="360"></line>
+          <line class="life" x1="905" y1="88" x2="905" y2="360"></line>
+
+          <!-- background execution band on Service lane -->
+          <rect x="893" y="152" width="24" height="150" fill="rgba(193, 83, 31, 0.12)" stroke="#c1531f" stroke-opacity="0.4" stroke-dasharray="3 3"></rect>
+          <text x="924" y="228" font-size="11" class="mono dim" transform="rotate(90 924 228)">バックグラウンドで実行継続</text>
+
+          <!-- e1: input -> coordinator -->
+          <line x1="105" y1="118" x2="384" y2="118" stroke="currentColor" marker-end="url(#arrow)"></line>
+          <text x="115" y="112" font-size="12" class="mono">Enter</text>
+
+          <!-- e2: coordinator -> service (fire-and-forget) -->
+          <line x1="396" y1="152" x2="899" y2="152" stroke="currentColor" marker-end="url(#arrow)"></line>
+          <text x="410" y="146" font-size="12" class="mono">ExecuteAsync(input, ct)</text>
+
+          <!-- e3: service --> coordinator dashed immediate return -->
+          <line x1="893" y1="180" x2="396" y2="180" stroke="#c1531f" stroke-dasharray="4 4" marker-end="url(#arrow)"></line>
+          <text x="500" y="174" font-size="11.5" fill="#c1531f">戻り値(ValueTask)を破棄して即return</text>
+
+          <!-- e4: coordinator -> inputPresenter clear/focus -->
+          <line x1="384" y1="206" x2="649" y2="206" stroke="currentColor" marker-end="url(#arrow)"></line>
+          <text x="410" y="200" font-size="12" class="mono">SetInputField(""), SetFocus(true)</text>
+
+          <!-- e5: re-entrant Enter accepted -->
+          <line x1="105" y1="252" x2="384" y2="252" stroke="#c1531f" marker-end="url(#arrow)"></line>
+          <text x="115" y="246" font-size="12" fill="#c1531f" font-weight="600">Enter（実行中でも受理されてしまう）</text>
+
+          <!-- e6: service completes, unobserved -->
+          <circle cx="905" cy="302" r="4" fill="#c1531f"></circle>
+          <text x="760" y="322" font-size="11.5" class="dim">完了 — 誰も待っていないため結果は静かに消える</text>
+
+          <text x="30" y="345" font-size="11" class="faint">t →</text>
+        </g>
+
+        <!-- ========================= AFTER PANEL ========================= -->
+        <g transform="translate(0, 420)">
+          <text x="0" y="24" font-size="14" font-weight="650" fill="#0f8a7c">After — 完了まで待機してロック (Awaited)</text>
+          <text x="0" y="42" font-size="12" class="dim">await で完了を待ち、その間 IsEditable = false で入力・再実行を無効化する</text>
+
+          <g font-size="12" class="mono">
+            <rect class="lane" x="30" y="58" width="150" height="30" rx="6"></rect>
+            <text x="105" y="77" text-anchor="middle">ユーザー操作</text>
+
+            <rect class="lane" x="300" y="58" width="180" height="30" rx="6"></rect>
+            <text x="390" y="77" text-anchor="middle">TerminalCoordinator</text>
+
+            <rect class="lane" x="565" y="58" width="180" height="30" rx="6"></rect>
+            <text x="655" y="77" text-anchor="middle">InputPresenter</text>
+
+            <rect class="lane" x="830" y="58" width="150" height="30" rx="6"></rect>
+            <text x="905" y="77" text-anchor="middle">ITerminalService</text>
+          </g>
+
+          <line class="life" x1="105" y1="88" x2="105" y2="480"></line>
+          <line class="life" x1="390" y1="88" x2="390" y2="480"></line>
+          <line class="life" x1="655" y1="88" x2="655" y2="480"></line>
+          <line class="life" x1="905" y1="88" x2="905" y2="480"></line>
+
+          <!-- lock band across coordinator / presenter / service -->
+          <rect x="380" y="185" width="535" height="235" fill="rgba(15, 138, 124, 0.10)" stroke="#0f8a7c" stroke-opacity="0.35" stroke-dasharray="3 3"></rect>
+          <text x="647" y="205" text-anchor="middle" font-size="11.5" class="mono" fill="#0f8a7c">🔒 ロック区間 — IsEditable = false / IsExecuting = true</text>
+
+          <!-- e1: Enter -->
+          <line x1="105" y1="118" x2="384" y2="118" stroke="currentColor" marker-end="url(#arrow)"></line>
+          <text x="115" y="112" font-size="12" class="mono">Enter</text>
+
+          <!-- e2: coordinator -> presenter lock -->
+          <line x1="384" y1="152" x2="649" y2="152" stroke="currentColor" marker-end="url(#arrow)"></line>
+          <text x="410" y="146" font-size="12" class="mono">IsEditable = false</text>
+
+          <!-- e3: coordinator -> service await -->
+          <line x1="396" y1="228" x2="899" y2="228" stroke="#0f8a7c" stroke-width="1.6" marker-end="url(#arrow)"></line>
+          <text x="410" y="222" font-size="12" class="mono" fill="#0f8a7c">await ExecuteAsync(input, ct)</text>
+
+          <!-- e4: blocked re-entrant Enter -->
+          <line x1="105" y1="292" x2="230" y2="292" stroke="#8894a1" stroke-dasharray="4 4"></line>
+          <circle cx="238" cy="292" r="7" fill="none" stroke="#8894a1" stroke-width="1.4"></circle>
+          <line x1="233" y1="287" x2="243" y2="297" stroke="#8894a1" stroke-width="1.4"></line>
+          <line x1="243" y1="287" x2="233" y2="297" stroke="#8894a1" stroke-width="1.4"></line>
+          <text x="115" y="286" font-size="12" class="dim">Enter（無視される）</text>
+          <text x="115" y="312" font-size="11" class="faint">IsEditable=false のため HandleTextChanged が破棄</text>
+
+          <!-- e5: service -> coordinator complete -->
+          <line x1="899" y1="392" x2="396" y2="392" stroke="#0f8a7c" stroke-width="1.6" marker-end="url(#arrow)"></line>
+          <text x="500" y="386" font-size="12" fill="#0f8a7c" font-weight="600">完了</text>
+
+          <!-- e6: unlock -->
+          <line x1="384" y1="420" x2="649" y2="420" stroke="currentColor" marker-end="url(#arrow)"></line>
+          <text x="410" y="414" font-size="12" class="mono">IsEditable = true</text>
+
+          <!-- e7: Enter accepted again -->
+          <line x1="105" y1="460" x2="384" y2="460" stroke="currentColor" marker-end="url(#arrow)"></line>
+          <text x="115" y="454" font-size="12" font-weight="600">Enter（再び受理）</text>
+
+          <text x="30" y="475" font-size="11" class="faint">t →</text>
+        </g>
+      </svg>

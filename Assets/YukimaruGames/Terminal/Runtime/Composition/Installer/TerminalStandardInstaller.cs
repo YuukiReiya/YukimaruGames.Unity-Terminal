@@ -299,6 +299,7 @@ namespace YukimaruGames.Terminal.Composition
             {
                 _promptRenderer.Prompt = options.Prompt;
                 _promptRenderer.ShowLoadingIndicator = options.ShowLoadingIndicator;
+                _promptRenderer.LoadingIndicatorFrames = options.LoadingIndicatorFrames;
             }
         }
 
@@ -448,6 +449,7 @@ namespace YukimaruGames.Terminal.Composition
             {
                 Prompt = options.Prompt,
                 ShowLoadingIndicator = options.ShowLoadingIndicator,
+                LoadingIndicatorFrames = options.LoadingIndicatorFrames,
             };
             var executeButtonRenderer = new SubmitRenderer(_executeButtonsGUIStyleAccessor);
             var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherGUIStyleAccessor);

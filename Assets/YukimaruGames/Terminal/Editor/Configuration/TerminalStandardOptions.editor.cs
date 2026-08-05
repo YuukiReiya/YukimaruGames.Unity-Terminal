@@ -15,7 +15,8 @@ namespace YukimaruGames.Terminal.Editor
         private static GUIStyle _toolbarStyle;
         private static readonly GUIContent _visibleContent = new GUIContent("Visible");
         private static readonly GUIContent _reverseContent = new GUIContent("Reverse");
-        private static readonly GUIContent _loadingIndicatorContent = new GUIContent("Show Loading Indicator", "コマンド実行中にプロンプト横へスピナーを表示します.");
+        private static readonly GUIContent _loadingIndicatorContent = new GUIContent("Show Loading Indicator", "コマンド実行中、プロンプトの代わりにローディング表現を表示します.");
+        private static readonly GUIContent _loadingIndicatorFramesContent = new GUIContent("Frames", "ローディング表現として順番に表示するフレーム文字列群.");
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -85,6 +86,12 @@ namespace YukimaruGames.Terminal.Editor
             EditorGUILayout.LabelField("Execution", EditorStyles.boldLabel);
             var loadingIndicatorProp = property.FindPropertyRelative("_showLoadingIndicator");
             loadingIndicatorProp.boolValue = EditorGUILayout.ToggleLeft(_loadingIndicatorContent, loadingIndicatorProp.boolValue);
+
+            using (new EditorGUI.DisabledScope(!loadingIndicatorProp.boolValue))
+            {
+                var loadingIndicatorFramesProp = property.FindPropertyRelative("_loadingIndicatorFrames");
+                EditorGUILayout.PropertyField(loadingIndicatorFramesProp, _loadingIndicatorFramesContent, true);
+            }
         }
 
         private void InitStyles()

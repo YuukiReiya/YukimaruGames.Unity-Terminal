@@ -30,5 +30,8 @@ namespace YukimaruGames.Terminal.Composition
 
                 // ローディング表現なし
                 public bool ShowLoadingIndicator => false;
+
+                // ローディング表現なし
+                public string[] LoadingIndicatorFrames => System.Array.Empty<string>();
         }
 }

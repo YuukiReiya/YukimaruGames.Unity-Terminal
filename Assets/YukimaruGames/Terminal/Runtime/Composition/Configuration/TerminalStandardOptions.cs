@@ -20,6 +20,7 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private bool _buttonVisible;
         [SerializeField] private bool _buttonReverse;
         [SerializeField] private bool _showLoadingIndicator = true;
+        [SerializeField] private string[] _loadingIndicatorFrames = { "|", "/", "-", "\\" };
 
         public ITerminalInput Input => _input ?? new TerminalNullInput();
 
@@ -29,5 +30,6 @@ namespace YukimaruGames.Terminal.Composition
         public bool IsButtonVisible => _buttonVisible;
         public bool IsButtonReverse => _buttonReverse;
         public bool ShowLoadingIndicator => _showLoadingIndicator;
+        public string[] LoadingIndicatorFrames => _loadingIndicatorFrames;
     }
 }
