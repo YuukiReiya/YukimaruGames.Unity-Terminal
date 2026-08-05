@@ -98,13 +98,7 @@ namespace YukimaruGames.Terminal.Editor
                 var allowKeyInputProp = property.FindPropertyRelative("_allowKeyInputWhileTextFieldFocused");
                 if (allowKeyInputProp != null)
                 {
-                    EditorGUILayout.PropertyField(allowKeyInputProp, new GUIContent(
-                        "Allow Key Input While Text Field Focused",
-                        "有効(既定)にすると、入力欄がフォーカスを持っていてもLegacy Input Manager経由の" +
-                        "キー入力(Return/Escape/Tab/矢印キー等)を検知できるようにします。" +
-                        "ウィンドウ表示中はUnity.Input.eatKeyPressOnTextFieldFocusをプロセスグローバルに" +
-                        "無効化するため、ホスト側(ターミナル外)のレガシーキーバインドも文字入力中に" +
-                        "反応するようになる点に注意してください。"));
+                    DrawAllowKeyInputToggle(allowKeyInputProp);
                     EditorGUILayout.Space(KeyboardTypeSpacing);
                 }
             }
@@ -122,6 +116,11 @@ namespace YukimaruGames.Terminal.Editor
             var priorityProp = property.FindPropertyRelative("_priority");
             var orderProp = priorityProp?.FindPropertyRelative("_order");
 
+            if (keyboardType is InputKeyboardType.Legacy)
+            {
+                DrawSectionSeparator();
+            }
+
             EditorGUILayout.LabelField("Actions", EditorStyles.boldLabel);
             EditorGUILayout.LabelField("優先度: 上ほど高い(ドラッグで並び替え)", EditorStyles.miniLabel);
 
@@ -131,6 +130,54 @@ namespace YukimaruGames.Terminal.Editor
             }
 
             EditorGUI.EndProperty();
+        }
+
+        private static void DrawAllowKeyInputToggle(SerializedProperty allowKeyInputProp)
+        {
+            DrawSectionSeparator();
+
+            EditorGUILayout.LabelField("Allow Key Input While Text Field Focused", EditorStyles.boldLabel);
+
+            var current = allowKeyInputProp.boolValue;
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                var onSelected = GUILayout.Toggle(current, "ON", EditorStyles.miniButtonLeft);
+                var offSelected = GUILayout.Toggle(!current, "OFF", EditorStyles.miniButtonRight);
+
+                if (onSelected && !current)
+                {
+                    allowKeyInputProp.boolValue = true;
+                }
+                else if (offSelected && current)
+                {
+                    allowKeyInputProp.boolValue = false;
+                }
+            }
+
+            var message = allowKeyInputProp.boolValue
+                ? "推奨設定です。入力欄フォーカス中もReturn/Escape等のキー入力を検知できます。" +
+                  "ウィンドウ表示中はホスト側のレガシーキーバインドにも影響する点に注意してください。"
+                : "入力欄がフォーカスを持っている間、Return/Escape等のキー入力が検知されません。" +
+                  "Execute/Close等の操作ができなくなる場合があります。";
+            var messageType = allowKeyInputProp.boolValue ? MessageType.Info : MessageType.Warning;
+
+            // EditorGUILayout.HelpBoxは"HelpBox"スタイル自体のmarginにより左右が内側に
+            // 詰まって見える(ON/OFFトグル行と面が揃わない)ため、marginを持たないRectへ
+            // 手動で描画し、上のトグル行と同じ幅で端まで揃える.
+            var widthProbeRect = EditorGUILayout.GetControlRect(false, 0f);
+            var helpBoxHeight = GetHelpBoxHeight(message, widthProbeRect.width);
+            var helpBoxRect = EditorGUILayout.GetControlRect(false, helpBoxHeight);
+            EditorGUI.HelpBox(helpBoxRect, message, messageType);
+        }
+
+        // 「Actions」テーブル(DrawTableChrome)と同じ罫線色で、セクション間の境界を手描きの横線1本として表す.
+        private static void DrawSectionSeparator()
+        {
+            var rect = EditorGUILayout.GetControlRect(false, BorderLineThickness);
+            if (Event.current.type != EventType.Repaint) return;
+
+            var borderColor = EditorGUIUtility.isProSkin ? new Color(0.12f, 0.12f, 0.12f) : new Color(0.55f, 0.55f, 0.55f);
+            EditorGUI.DrawRect(rect, borderColor);
         }
 
         private ActionField GetActionField(TerminalAction action)
