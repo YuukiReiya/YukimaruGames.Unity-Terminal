@@ -35,8 +35,10 @@ namespace YukimaruGames.Terminal.Composition
         public InputKeyboardType InputKeyboardType => _inputKeyboardType;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
+        /// <inheritdoc/>
         public bool AllowKeyInputWhileTextFieldFocused => _allowKeyInputWhileTextFieldFocused;
 #else
+        /// <inheritdoc/>
         public bool AllowKeyInputWhileTextFieldFocused => true;
 #endif
 

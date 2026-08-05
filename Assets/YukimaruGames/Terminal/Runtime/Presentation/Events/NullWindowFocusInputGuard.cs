@@ -9,18 +9,23 @@ namespace YukimaruGames.Terminal.Presentation.Events
     /// </summary>
     public sealed class NullWindowFocusInputGuard : IWindowFocusInputGuard
     {
-        private static readonly Lazy<NullWindowFocusInputGuard> LazyInstance = new(() => new NullWindowFocusInputGuard());
-        public static NullWindowFocusInputGuard Instance => LazyInstance.Value;
+        private static readonly Lazy<NullWindowFocusInputGuard> _lazyInstance = new(() => new NullWindowFocusInputGuard());
+
+        /// <summary>
+        /// 唯一の共有インスタンス.
+        /// </summary>
+        public static NullWindowFocusInputGuard Instance => _lazyInstance.Value;
 
         private sealed class NoopDisposable : IDisposable
         {
-            private static readonly Lazy<NoopDisposable> LazyInstance = new(() => new NoopDisposable());
-            public static NoopDisposable Instance => LazyInstance.Value;
+            private static readonly Lazy<NoopDisposable> _lazyInstance = new(() => new NoopDisposable());
+            public static NoopDisposable Instance => _lazyInstance.Value;
             void IDisposable.Dispose() { }
         }
 
         private NullWindowFocusInputGuard() { }
 
+        /// <inheritdoc/>
         public IDisposable BeginScope() => NoopDisposable.Instance;
     }
 }

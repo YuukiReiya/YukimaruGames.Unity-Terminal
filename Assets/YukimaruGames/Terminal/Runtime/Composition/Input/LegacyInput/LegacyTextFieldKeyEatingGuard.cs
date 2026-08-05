@@ -14,6 +14,7 @@ namespace YukimaruGames.Terminal.Composition.Input.LegacyInput
     /// </summary>
     public sealed class LegacyTextFieldKeyEatingGuard : IWindowFocusInputGuard
     {
+        /// <inheritdoc/>
         public IDisposable BeginScope() => new LegacyTextFieldKeyEatingScope();
     }
 }

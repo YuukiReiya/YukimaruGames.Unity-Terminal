@@ -51,6 +51,9 @@ namespace YukimaruGames.Terminal.Editor
         private const float BorderLineThickness = 1f;
         private const int ModifierValueFontSize = 10;
 
+        private static readonly Color ProSkinBorderColor = new(0.12f, 0.12f, 0.12f);
+        private static readonly Color PersonalSkinBorderColor = new(0.55f, 0.55f, 0.55f);
+
         private static GUIStyle _typeStyle;
         private static GUIStyle _stepNumberStyle;
         private static GUIStyle _modifierValueStyle;
@@ -176,7 +179,7 @@ namespace YukimaruGames.Terminal.Editor
             var rect = EditorGUILayout.GetControlRect(false, BorderLineThickness);
             if (Event.current.type != EventType.Repaint) return;
 
-            var borderColor = EditorGUIUtility.isProSkin ? new Color(0.12f, 0.12f, 0.12f) : new Color(0.55f, 0.55f, 0.55f);
+            var borderColor = EditorGUIUtility.isProSkin ? ProSkinBorderColor : PersonalSkinBorderColor;
             EditorGUI.DrawRect(rect, borderColor);
         }
 
@@ -402,7 +405,7 @@ namespace YukimaruGames.Terminal.Editor
 
         private static void DrawTableChrome(Rect tableRect, int dataRowCount)
         {
-            var borderColor = EditorGUIUtility.isProSkin ? new Color(0.12f, 0.12f, 0.12f) : new Color(0.55f, 0.55f, 0.55f);
+            var borderColor = EditorGUIUtility.isProSkin ? ProSkinBorderColor : PersonalSkinBorderColor;
             var headerColor = EditorGUIUtility.isProSkin ? new Color(0.24f, 0.24f, 0.24f) : new Color(0.72f, 0.72f, 0.72f);
             var rowColorA = EditorGUIUtility.isProSkin ? new Color(0.22f, 0.22f, 0.22f) : new Color(0.82f, 0.82f, 0.82f);
             var rowColorB = EditorGUIUtility.isProSkin ? new Color(0.2f, 0.2f, 0.2f) : new Color(0.78f, 0.78f, 0.78f);
