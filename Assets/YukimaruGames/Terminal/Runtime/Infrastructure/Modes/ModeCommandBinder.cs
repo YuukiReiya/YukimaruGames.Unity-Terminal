@@ -24,9 +24,12 @@ namespace YukimaruGames.Terminal.Infrastructure.Modes
         private readonly Func<ICommandRegistry> _registryFactory;
         private readonly ICommandLogger _logger;
 
-        // 型ごとに1回だけコンパイルする(Expression.Constant(instance)の焼き込みができないため、
-        // インスタンス確定後の処理は Func<object, CommandHandler> に留める).
-        private readonly Dictionary<Type, (string Command, Func<object, CommandHandler> Factory)[]> _compiled = new();
+        // (型, ModeId)の組ごとに1回だけコンパイルする(Expression.Constant(instance)の焼き込みが
+        // できないため、インスタンス確定後の処理は Func<object, CommandHandler> に留める)。
+        // キーにIdも含めるのは、[TerminalModeCommand(modeId: "...")]でのマッチングがIdに依存するため
+        // (同一型でもインスタンスごとにIdが異なりうる設計を許容する。型ごとに不変ならキャッシュの
+        // 実質的なサイズ・挙動は従来と変わらない).
+        private readonly Dictionary<(Type Type, string Id), (string Command, Func<object, CommandHandler> Factory)[]> _compiled = new();
 
         public ModeCommandBinder(ICommandDiscoverer discoverer, Func<ICommandRegistry> registryFactory, ICommandLogger logger)
         {
@@ -38,10 +41,11 @@ namespace YukimaruGames.Terminal.Infrastructure.Modes
         ICommandRegistry IModeCommandBinder.BindFor(ITerminalMode mode)
         {
             var type = mode.GetType();
-            if (!_compiled.TryGetValue(type, out var entries))
+            var key = (type, mode.Id ?? string.Empty);
+            if (!_compiled.TryGetValue(key, out var entries))
             {
                 entries = Compile(type, mode.Id);
-                _compiled[type] = entries;
+                _compiled[key] = entries;
             }
 
             var registry = _registryFactory != null ? _registryFactory() : (ICommandRegistry)NullCommandRegistry.Instance;
