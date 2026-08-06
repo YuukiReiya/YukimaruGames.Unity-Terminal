@@ -212,6 +212,21 @@ namespace YukimaruGames.Terminal.Composition
             }
         }
 
+        async System.Threading.Tasks.ValueTask IInstaller.UninstallAsync(TerminalRuntimeScope scope)
+        {
+            try
+            {
+                if (scope != null)
+                {
+                    await ((IAsyncDisposable)scope).DisposeAsync();
+                }
+            }
+            finally
+            {
+                ClearReferences();
+            }
+        }
+
         void IInstaller.Resolve(TerminalRuntimeScope scope)
         {
             if (scope == null) return;
@@ -589,7 +604,8 @@ namespace YukimaruGames.Terminal.Composition
                     .Concat(coordinator.Components).ToArray();
 
             var updatables = instances.OfType<IUpdatable>().ToList();
-            var disposables = instances.OfType<IDisposable>().ToList();
+            var asyncDisposables = instances.OfType<IAsyncDisposable>().ToList();
+            var disposables = instances.OfType<IDisposable>().Where(d => d is not IAsyncDisposable).ToList();
 
             var entryPoint = new TerminalEntryPoint(updatables, rendering.GUI);
 
@@ -599,7 +615,8 @@ namespace YukimaruGames.Terminal.Composition
                 domain.Registry,
                 domain.Autocomplete,
                 rendering.View,
-                disposables);
+                disposables,
+                asyncDisposables);
         }
     }
 }
