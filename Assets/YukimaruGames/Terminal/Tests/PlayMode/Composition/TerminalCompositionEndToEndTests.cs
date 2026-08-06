@@ -226,5 +226,22 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
 
             Assert.AreEqual(WindowState.Close, state);
         }
+
+        /// <summary>
+        /// terminal.stack診断コマンド(static + IModeStackInspector/IModeOutput注入)が
+        /// 実際の配線(TerminalStandardInstaller)経由で動作することを検証する.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator ExecuteAsync_TerminalStackCommand_LogsNormalMode()
+        {
+            yield return null;
+
+            var task = _scope.Service.ExecuteAsync("terminal.stack", CancellationToken.None).AsTask();
+            yield return new WaitUntil(() => task.IsCompleted);
+
+            var logs = _scope.Service.Logs;
+            var dump = string.Join(" | ", logs.Select(l => $"[{l.MessageType}] {l.Message}"));
+            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message.Contains("normal")), $"logs: {dump}");
+        }
     }
 }

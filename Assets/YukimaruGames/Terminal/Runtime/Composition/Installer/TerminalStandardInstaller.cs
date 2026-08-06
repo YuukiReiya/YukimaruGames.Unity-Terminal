@@ -20,6 +20,7 @@ using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Modes;
 using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Accessors;
@@ -75,6 +76,8 @@ namespace YukimaruGames.Terminal.Composition
             public ICommandAutocomplete Autocomplete;
             /// <inheritdoc cref="ICommandDiscoverer"/>
             public ICommandDiscoverer Discoverer;
+            /// <inheritdoc cref="IExecuteCommandUseCase"/>
+            public IExecuteCommandUseCase UseCase;
         }
 
         /// <summary>
@@ -394,18 +397,48 @@ namespace YukimaruGames.Terminal.Composition
                 Autocomplete = autocomplete,
                 Discoverer = discover,
                 Service = service,
+                UseCase = executeCommandUseCase,
             };
         }
 
         private void RegisterCommands(in DomainContext domain)
         {
+            // static コマンドから ITerminalModeStack を注入可能にする(python等の入場コマンド、
+            // terminal.stack 等の診断コマンド用)。ITerminalService丸ごとは注入しない
+            // (ExecuteAsync等を誤って呼ぶとディスパッチャの排他ロックでデッドロックするため).
+            var services = new Dictionary<Type, object>
+            {
+                { typeof(IModeStackInspector), domain.UseCase },
+                { typeof(IModeOutput), domain.UseCase.Output },
+                { typeof(IModeTransitionRequestSink), domain.UseCase.Transitions },
+            };
+            var bundle = new ModeServiceBundle(services);
+
             var specs = domain.Discoverer.Discover();
             foreach (var spec in specs)
             {
-                var handler = CommandFactory.Create(spec.Method);
+                var handler = CommandFactory.Create(spec.Method, bundle);
                 if (domain.Registry.Add(spec.Meta.Command, handler))
                 {
                     domain.Autocomplete.Register(spec.Meta.Command);
+                }
+            }
+
+            // terminal.stack等のパッケージ内蔵コマンドは、Assembly-CSharpの参照グラフ次第で
+            // 属性発見(ICommandDiscoverer.Discover)に乗らない場合がある(利用者コードが実際に
+            // 型を参照していないアセンブリはAssemblyRefに現れないため)。Composition層は
+            // Infrastructureを直接知っているので、確実性のためここで直接登録する.
+            RegisterBuiltinCommands(domain, bundle);
+        }
+
+        private void RegisterBuiltinCommands(in DomainContext domain, in ModeServiceBundle bundle)
+        {
+            foreach (var method in TerminalModeDiagnosticsCommands.Methods)
+            {
+                var handler = CommandFactory.Create(method, bundle);
+                if (domain.Registry.Add(handler.Meta.Command, handler))
+                {
+                    domain.Autocomplete.Register(handler.Meta.Command);
                 }
             }
         }

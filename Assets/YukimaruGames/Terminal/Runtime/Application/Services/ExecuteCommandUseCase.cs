@@ -85,6 +85,12 @@ namespace YukimaruGames.Terminal.Application.Services
         public int Depth => _stack.Depth;
 
         /// <inheritdoc/>
+        public IModeOutput Output => _output;
+
+        /// <inheritdoc/>
+        public IModeTransitionRequestSink Transitions => _sink;
+
+        /// <inheritdoc/>
         async ValueTask IExecuteCommandUseCase.ExecutePipelineAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
         {
             if (Volatile.Read(ref _disposedState) != 0)

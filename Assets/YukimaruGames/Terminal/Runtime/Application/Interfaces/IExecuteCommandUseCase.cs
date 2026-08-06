@@ -14,8 +14,21 @@ namespace YukimaruGames.Terminal.Application.Interfaces
     /// 現在モードの読み取り専用ビュー(Prompt/履歴/補完)もここに集約する
     /// (Facadeである <see cref="ITerminalService"/> はこれへ委譲するだけに留める).
     /// </remarks>
-    public interface IExecuteCommandUseCase : IDisposable, IAsyncDisposable
+    public interface IExecuteCommandUseCase : IDisposable, IAsyncDisposable, IModeStackInspector
     {
+        /// <summary>
+        /// グローバル(staticコマンド)から利用可能な出力窓口.
+        /// </summary>
+        IModeOutput Output { get; }
+
+        /// <summary>
+        /// グローバル(staticコマンド)から利用可能なモード遷移要求の窓口.
+        /// </summary>
+        /// <remarks>
+        /// <c>python</c>のような「モードへ入場するコマンド」はこれを注入されて使う.
+        /// </remarks>
+        IModeTransitionRequestSink Transitions { get; }
+
         /// <summary>
         /// 実行中フラグ
         /// </summary>
@@ -35,11 +48,6 @@ namespace YukimaruGames.Terminal.Application.Interfaces
         /// 現在のモードが、コマンド実行中のプロンプトとスピナーの併記描画を許容するか.
         /// </summary>
         bool AllowsConcurrentSpinner { get; }
-
-        /// <summary>
-        /// 現在のモードスタックの深さ(最下段の NormalMode を含む).
-        /// </summary>
-        int Depth { get; }
 
         /// <summary>
         /// 入力されたコマンド文字列を解析し、検証から実行に至るまでの一連の処理パイプラインを実行。
@@ -71,10 +79,5 @@ namespace YukimaruGames.Terminal.Application.Interfaces
 
         /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services.ICommandAutocomplete.Complete"/>
         string[] Autocomplete(string partialWord);
-
-        /// <summary>
-        /// 現在のモードスタックのスナップショットを取得する(診断用、読み取り専用).
-        /// </summary>
-        IReadOnlyList<ModeStackFrameInfo> Snapshot();
     }
 }
