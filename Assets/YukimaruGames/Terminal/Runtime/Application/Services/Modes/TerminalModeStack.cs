@@ -53,8 +53,19 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
 
         /// <summary>
         /// 最上段を指定したモードへ置き換える. 深さは変わらない.
+        /// 最下段(root)しか無い場合は「常に非空・最下段は固定」の不変条件を守るため置き換えない.
         /// </summary>
-        public void Replace(ITerminalMode mode, IModeContext context) => _frames[_frames.Count - 1] = new Frame(mode, context);
+        /// <returns>置き換えに成功したら true。最下段しか無く拒否した場合は false.</returns>
+        public bool TryReplace(ITerminalMode mode, IModeContext context)
+        {
+            if (_frames.Count <= 1)
+            {
+                return false;
+            }
+
+            _frames[_frames.Count - 1] = new Frame(mode, context);
+            return true;
+        }
 
         /// <summary>
         /// 最上段を取り除く. 最下段(root)は取り除けない.
