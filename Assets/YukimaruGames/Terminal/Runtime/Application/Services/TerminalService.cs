@@ -108,6 +108,12 @@ namespace YukimaruGames.Terminal.Application.Services
         public bool IsExecuting => _executeCommandUseCase.IsExecuting;
 
         /// <inheritdoc/>
+        public string Prompt => _executeCommandUseCase.Prompt;
+
+        /// <inheritdoc/>
+        public bool AllowsConcurrentSpinner => _executeCommandUseCase.AllowsConcurrentSpinner;
+
+        /// <inheritdoc/>
         ValueTask ITerminalService.ExecuteAsync(string str, CancellationToken cancellationToken) => _executeCommandUseCase.ExecutePipelineAsync(str.AsMemory(), cancellationToken);
 
         /// <inheritdoc/>

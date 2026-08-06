@@ -141,6 +141,7 @@ namespace YukimaruGames.Terminal.Composition
         [NonSerialized] private LauncherVisibleAccessor _launcherVisibleAccessor;
         [NonSerialized] private IWindowRenderer _windowRenderer;
         [NonSerialized] private IPromptRenderer _promptRenderer;
+        [NonSerialized] private NormalMode _normalMode;
         [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
         
         [NonSerialized] private IGUIStyleAccessor _logGUIStyleAccessor;
@@ -232,6 +233,7 @@ namespace YukimaruGames.Terminal.Composition
             _launcherVisibleAccessor = null;
             _windowRenderer = null;
             _promptRenderer = null;
+            _normalMode = null;
             _cursorFlashSpeedAccessor = null;
             _logGUIStyleAccessor = null;
             _inputGUIStyleAccessor = null;
@@ -295,9 +297,13 @@ namespace YukimaruGames.Terminal.Composition
                 _launcherVisibleAccessor.IsReverse = options.IsButtonReverse;
             }
 
+            if (_normalMode != null)
+            {
+                _normalMode.Prompt = options.Prompt;
+            }
+
             if (_promptRenderer != null)
             {
-                _promptRenderer.Prompt = options.Prompt;
                 _promptRenderer.ShowLoadingIndicator = options.ShowLoadingIndicator;
                 _promptRenderer.LoadingIndicatorFrames = options.LoadingIndicatorFrames;
             }
@@ -352,7 +358,8 @@ namespace YukimaruGames.Terminal.Composition
             var history = new CommandHistory();
             var discover = new CommandDiscoverer(logger);
             var autocomplete = new CommandAutocomplete();
-            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete);
+            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
+            _normalMode = normalMode;
             var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode);
             var service = new TerminalService(
                 logger,
@@ -443,7 +450,6 @@ namespace YukimaruGames.Terminal.Composition
             var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, _colorPaletteAccessor, cursorView);
             _promptRenderer = new PromptRenderer(_promptGUIStyleAccessor, domain.Service)
             {
-                Prompt = options.Prompt,
                 ShowLoadingIndicator = options.ShowLoadingIndicator,
                 LoadingIndicatorFrames = options.LoadingIndicatorFrames,
             };

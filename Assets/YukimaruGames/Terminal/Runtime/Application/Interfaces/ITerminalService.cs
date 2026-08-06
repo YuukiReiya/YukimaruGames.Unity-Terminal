@@ -33,7 +33,21 @@ namespace YukimaruGames.Terminal.Application.Interfaces
         /// コマンド実行中有無
         /// </summary>
         bool IsExecuting { get; }
-        
+
+        /// <summary>
+        /// 現在の実効プロンプト文字列(継続入力中は継続用のプロンプト).
+        /// </summary>
+        /// <remarks>
+        /// モードスタックの状態を毎フレーム反映するpull型のプロパティ。
+        /// 呼び出し側(Renderer等)は値の変化検知を自前で行うこと.
+        /// </remarks>
+        string Prompt { get; }
+
+        /// <summary>
+        /// 現在のモードが、コマンド実行中のプロンプトとスピナーの併記描画を許容するか.
+        /// </summary>
+        bool AllowsConcurrentSpinner { get; }
+
         /// <summary>
         /// コマンドの実行.
         /// </summary>
