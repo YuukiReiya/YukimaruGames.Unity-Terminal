@@ -5,6 +5,7 @@ using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Contracts.Modes;
+using YukimaruGames.Terminal.Domain.Contracts.Modes.Null;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Domain.Services
@@ -38,8 +39,10 @@ namespace YukimaruGames.Terminal.Domain.Services
             _registry = registry;
             _invoker = invoker;
             _parser = parser;
-            _history = history;
-            _autocomplete = autocomplete;
+            // ITerminalMode.History/Autocomplete はnullを許容しない契約(既定実装のNull Objectを
+            // 返すこと)なので、コンストラクタ時点でNull Objectへ差し替える.
+            _history = history ?? NullCommandHistory.Instance;
+            _autocomplete = autocomplete ?? NullCommandAutocomplete.Instance;
         }
 
         /// <inheritdoc/>

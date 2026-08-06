@@ -303,6 +303,33 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         }
 
         [Test]
+        public void Autocomplete_NullInjected_ReturnsNullObject()
+        {
+            var sut = new NormalMode(_logger, _registry, _invoker, _parser, _history, autocomplete: null);
+            Assert.IsNotNull(sut.Autocomplete);
+        }
+
+        [Test]
+        public void History_NullInjected_ReturnsNullObject()
+        {
+            var sut = new NormalMode(_logger, _registry, _invoker, _parser, history: null, autocomplete: null);
+            Assert.IsNotNull(sut.History);
+        }
+
+        [Test]
+        public void Prompt_ReturnsNonEmpty()
+        {
+            Assert.IsNotEmpty(_sut.Prompt);
+            Assert.IsNotEmpty(_sut.ContinuationPrompt);
+        }
+
+        [Test]
+        public void AllowsConcurrentSpinner_DefaultsToFalse()
+        {
+            Assert.IsFalse(_sut.AllowsConcurrentSpinner);
+        }
+
+        [Test]
         public void OnInterrupt_ReturnsNotHandled()
         {
             Assert.AreEqual(InterruptDisposition.NotHandled, _sut.OnInterrupt(isCommandRunning: false));
