@@ -364,7 +364,6 @@ namespace YukimaruGames.Terminal.Composition
             var service = new TerminalService(
                 logger,
                 registry,
-                history,
                 autocomplete,
                 executeCommandUseCase
             );

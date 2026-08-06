@@ -56,9 +56,11 @@ namespace YukimaruGames.Terminal.Application.Interfaces
         ValueTask ExecuteAsync(string str, CancellationToken cancellationToken);
 
         /// <summary>
-        /// コマンドのキャンセル.
+        /// Ctrl+C相当の割り込み. 実行中ならコマンドをキャンセルするのみ(モードは変更しない)。
+        /// 非実行中(モード入力待ち)なら現在モードへ割り込みを問い合わせ、
+        /// 応答に応じてモードから抜ける.
         /// </summary>
-        void Cancel();
+        void Interrupt();
 
         #region Autocomplete
 
