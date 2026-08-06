@@ -22,6 +22,11 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
             BindingFlags.Public | BindingFlags.Static |
             BindingFlags.InvokeMethod | BindingFlags.NonPublic;
 
+        // ReSharper disable once InconsistentNaming
+        private const BindingFlags kModeBindingFlags =
+            BindingFlags.Instance | BindingFlags.Public |
+            BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
         public CommandDiscoverer(ICommandLogger logger)
             : this(logger, new[] { "Assembly-CSharp" })
         {
@@ -103,6 +108,95 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
                     MessageType.Exception,
                     $"Referenced assembly '{referencedAssemblyName}' from assembly '{assemblyName}' could not be loaded: {e.GetType()}{Environment.NewLine}{e.Message}");
                 throw;
+            }
+        }
+
+        /// <inheritdoc/>
+        public IReadOnlyList<CommandSpecification> DiscoverModeCommands(Type modeType, string modeId)
+        {
+            var results = new List<CommandSpecification>();
+            var seenOverrides = new HashSet<MethodInfo>();
+            var seenNames = new HashSet<string>(StringComparer.Ordinal);
+
+            for (var type = modeType; type != null && type != typeof(object); type = type.BaseType)
+            {
+                foreach (var method in GetMethodsSafely(type, kModeBindingFlags))
+                {
+                    foreach (var attribute in GetModeAttributes(method))
+                    {
+                        if (!Matches(attribute, modeType, modeId))
+                        {
+                            continue;
+                        }
+
+                        var commandName = attribute.Meta.Command;
+                        if (string.IsNullOrWhiteSpace(commandName))
+                        {
+                            _logger?.Send(
+                                MessageType.Warning,
+                                $"Command name is null or empty for method '{method.Name}' in type '{method.DeclaringType!.FullName}'.");
+                            continue;
+                        }
+
+                        // overrideされたメソッドは基底定義で同一視し、派生側(先に列挙される)を優先する.
+                        if (!seenOverrides.Add(method.GetBaseDefinition()))
+                        {
+                            continue;
+                        }
+
+                        if (!seenNames.Add(commandName))
+                        {
+                            _logger?.Send(
+                                MessageType.Warning,
+                                $"Mode command '{commandName}' is declared more than once in the hierarchy of '{modeType.FullName}'. The declaration in '{type.FullName}' is ignored.");
+                            continue;
+                        }
+
+                        results.Add(new CommandSpecification(method, attribute.Meta));
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// モード型・識別子に対して属性が適用可能かを判定する.
+        /// </summary>
+        private static bool Matches(TerminalModeCommandAttribute attribute, Type modeType, string modeId)
+        {
+            return attribute.ModeType != null
+                ? attribute.ModeType.IsAssignableFrom(modeType)
+                : string.Equals(attribute.ModeId, modeId, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// [TerminalModeCommand] を複数形で取得する(AllowMultiple=trueのため).
+        /// </summary>
+        /// <remarks>
+        /// [TerminalCommand](AllowMultiple=false)は単数形の <see cref="TryGetAttribute"/> を使う。
+        /// 複数許容の属性を単数形で取得すると AmbiguousMatchException になるため使い分けに注意.
+        /// </remarks>
+        private IEnumerable<TerminalModeCommandAttribute> GetModeAttributes(MethodInfo methodInfo)
+        {
+            try
+            {
+                var attributes = Attribute.GetCustomAttributes(methodInfo, typeof(TerminalModeCommandAttribute), inherit: false);
+                if (attributes.Length == 0)
+                {
+                    return Array.Empty<TerminalModeCommandAttribute>();
+                }
+
+                var result = new TerminalModeCommandAttribute[attributes.Length];
+                Array.Copy(attributes, result, attributes.Length);
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger?.Send(
+                    MessageType.Warning,
+                    $"Failed to read TerminalModeCommandAttribute(s) for method '{methodInfo.Name}' in type '{methodInfo.DeclaringType!.FullName}'.{Environment.NewLine}{e.GetType().Name}:{e.Message}");
+                return Array.Empty<TerminalModeCommandAttribute>();
             }
         }
 

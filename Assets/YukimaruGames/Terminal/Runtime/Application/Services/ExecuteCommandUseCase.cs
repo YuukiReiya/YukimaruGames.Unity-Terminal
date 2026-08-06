@@ -43,7 +43,7 @@ namespace YukimaruGames.Terminal.Application.Services
         private readonly TerminalModeStack _stack;
         private readonly ModeTransitionRequestSink _sink;
         private readonly LoggerModeOutput _output;
-        private readonly Func<ICommandRegistry> _registryFactory;
+        private readonly IModeCommandBinder _binder;
         private readonly System.Text.StringBuilder _continuationBuffer = new();
         private readonly SemaphoreSlim _transitionGate = new(1, 1);
         private readonly StackInspector _stackInspector;
@@ -52,13 +52,13 @@ namespace YukimaruGames.Terminal.Application.Services
         private int _isExecutingState = Idle;
         private int _disposedState;
 
-        public ExecuteCommandUseCase(ICommandLogger logger, ITerminalMode root, Func<ICommandRegistry> registryFactory = null)
+        public ExecuteCommandUseCase(ICommandLogger logger, ITerminalMode root, IModeCommandBinder binder = null)
         {
             if (root is null) throw new ArgumentNullException(nameof(root));
 
             _logger = logger;
             _output = new LoggerModeOutput(logger);
-            _registryFactory = registryFactory;
+            _binder = binder ?? NullModeCommandBinder.Instance;
             _sink = new ModeTransitionRequestSink(logger);
             _stackInspector = StackInspector.From(this);
 
@@ -465,7 +465,7 @@ namespace YukimaruGames.Terminal.Application.Services
 
         private IModeContext BuildContextFor(ITerminalMode mode)
         {
-            var commands = _registryFactory?.Invoke() ?? (ICommandRegistry)NullCommandRegistry.Instance;
+            var commands = _binder.BindFor(mode);
             return new ModeContext(commands, _output, _sink, _stackInspector);
         }
 

@@ -26,6 +26,7 @@ using YukimaruGames.Terminal.Infrastructure.Accessors;
 using YukimaruGames.Terminal.Infrastructure.Diagnostics;
 using YukimaruGames.Terminal.Infrastructure.Discoverer;
 using YukimaruGames.Terminal.Infrastructure.Factories;
+using YukimaruGames.Terminal.Infrastructure.Modes;
 using YukimaruGames.Terminal.Infrastructure.Repositories;
 using YukimaruGames.Terminal.Presentation.Accessors;
 using YukimaruGames.Terminal.Presentation.Animators;
@@ -371,11 +372,12 @@ namespace YukimaruGames.Terminal.Composition
             var invoker = new CommandInvoker();
             var parser = new CommandParser();
             var history = new CommandHistory();
-            var discover = new CommandDiscoverer(logger);
+            var discover = new CommandDiscoverer(logger, new[] { "Assembly-CSharp" }.Concat(options.AdditionalCommandAssemblies ?? Array.Empty<string>()));
             var autocomplete = new CommandAutocomplete();
             var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
             _normalMode = normalMode;
-            var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode);
+            var modeCommandBinder = new ModeCommandBinder(discover, () => new CommandRegistry(logger), logger);
+            var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode, modeCommandBinder);
             var service = new TerminalService(
                 logger,
                 registry,
