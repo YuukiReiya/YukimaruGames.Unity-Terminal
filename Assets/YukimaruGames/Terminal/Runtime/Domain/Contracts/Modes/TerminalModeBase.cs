@@ -18,11 +18,16 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
     /// </remarks>
     public abstract class TerminalModeBase : ITerminalMode
     {
+        /// <summary>
+        /// 既定のプロンプト文字列.
+        /// </summary>
+        protected const string DefaultPrompt = ">";
+
         /// <inheritdoc/>
         public abstract string Id { get; }
 
         /// <inheritdoc/>
-        public virtual string Prompt => ">";
+        public virtual string Prompt => DefaultPrompt;
 
         /// <inheritdoc/>
         public virtual string ContinuationPrompt => Prompt;
