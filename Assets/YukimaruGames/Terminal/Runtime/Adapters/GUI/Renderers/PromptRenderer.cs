@@ -38,10 +38,9 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
         {
             set
             {
-                var frames = value is { Length: > 0 } ? value : DefaultLoadingIndicatorFrames;
-                if (ReferenceEquals(_loadingIndicatorFrames, frames)) return;
-
-                _loadingIndicatorFrames = frames;
+                // 呼び出し元(TerminalStandardOptions等)が同じ配列インスタンスの要素だけを
+                // 書き換えて再設定するケースがあるため、参照の同一性では判定せず毎回再計算する.
+                _loadingIndicatorFrames = value is { Length: > 0 } ? value : DefaultLoadingIndicatorFrames;
                 _spinnerMaxSize = CalcMaxSpinnerSize(_provider);
             }
         }

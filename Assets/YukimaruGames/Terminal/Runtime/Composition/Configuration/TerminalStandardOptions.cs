@@ -29,7 +29,9 @@ namespace YukimaruGames.Terminal.Composition
         public string BootupCommand => _bootupCommand;
         public bool IsButtonVisible => _buttonVisible;
         public bool IsButtonReverse => _buttonReverse;
+        /// <inheritdoc/>
         public bool ShowLoadingIndicator => _showLoadingIndicator;
+        /// <inheritdoc/>
         public string[] LoadingIndicatorFrames => _loadingIndicatorFrames;
     }
 }
