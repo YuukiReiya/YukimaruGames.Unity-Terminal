@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Presentation.Contracts;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Composition
 {
@@ -26,6 +27,7 @@ namespace YukimaruGames.Terminal.Composition
 
         private readonly IReadOnlyList<IDisposable> _disposables;
         private readonly IReadOnlyList<IAsyncDisposable> _asyncDisposables;
+        private readonly ICommandLogger _logger;
         private bool _disposed;
 
         public TerminalRuntimeScope(
@@ -35,7 +37,8 @@ namespace YukimaruGames.Terminal.Composition
             ICommandAutocomplete autocomplete,
             ITerminalView view,
             IReadOnlyList<IDisposable> disposables,
-            IReadOnlyList<IAsyncDisposable> asyncDisposables = null)
+            IReadOnlyList<IAsyncDisposable> asyncDisposables = null,
+            ICommandLogger logger = null)
         {
             EntryPoint = entryPoint;
             Service = service;
@@ -44,23 +47,23 @@ namespace YukimaruGames.Terminal.Composition
             View = view;
             _disposables = disposables ?? new List<IDisposable>(0);
             _asyncDisposables = asyncDisposables ?? new List<IAsyncDisposable>(0);
+            _logger = logger;
         }
 
         /// <summary>
         /// 同期経路での破棄(Unityの<c>OnDestroy</c>等、非同期を許容できない箇所からのフォールバック).
         /// </summary>
         /// <remarks>
-        /// <see cref="IAsyncDisposable"/>のみを実装するコンポーネント(同期<see cref="IDisposable"/>を
-        /// 実装していないもの)は、この経路では完全に破棄できない。その場合は警告としてログに残す
-        /// (ここでは例外化して呼び出し元の破棄処理全体を止めないよう、他のリストに集約する)。
-        /// 完全な破棄を保証したい場合は <see cref="DisposeAsync"/> を使うこと.
+        /// 完走を保証しない(ログのみ)。<see cref="IAsyncDisposable"/>のみを実装するコンポーネント
+        /// (同期<see cref="IDisposable"/>を実装していないもの)は、この経路では破棄できないため
+        /// 警告ログに残すのみに留める。個々の破棄で発生した例外も同様にログのみとし、例外は投げない
+        /// (Unityの<c>OnDestroy</c>から例外を投げると、以後の破棄処理やシーン破棄そのものを止めてしまうため)。
+        /// 完全な破棄と例外の伝播を保証したい場合は <see cref="DisposeAsync"/> を使うこと.
         /// </remarks>
         void IDisposable.Dispose()
         {
             if (_disposed) return;
             _disposed = true;
-
-            List<Exception> exceptions = null;
 
             // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < _asyncDisposables.Count; i++)
@@ -73,16 +76,15 @@ namespace YukimaruGames.Terminal.Composition
                     }
                     catch (Exception e)
                     {
-                        exceptions ??= new List<Exception>();
-                        exceptions.Add(e);
+                        _logger?.Send(MessageType.Exception, $"Failed to dispose '{_asyncDisposables[i].GetType().FullName}': {e}");
                     }
                 }
                 else
                 {
-                    exceptions ??= new List<Exception>();
-                    exceptions.Add(new InvalidOperationException(
+                    _logger?.Send(
+                        MessageType.Warning,
                         $"'{_asyncDisposables[i].GetType().FullName}' implements only IAsyncDisposable and could not be disposed synchronously. " +
-                        "Call DisposeAsync() (or the equivalent async shutdown entry point) instead of the synchronous Dispose()."));
+                        "Call DisposeAsync() (or the equivalent async shutdown entry point) instead of the synchronous Dispose().");
                 }
             }
 
@@ -95,14 +97,8 @@ namespace YukimaruGames.Terminal.Composition
                 }
                 catch (Exception e)
                 {
-                    exceptions ??= new List<Exception>();
-                    exceptions.Add(e);
+                    _logger?.Send(MessageType.Exception, $"Failed to dispose '{_disposables[i]?.GetType().FullName}': {e}");
                 }
-            }
-
-            if (exceptions != null)
-            {
-                throw new AggregateException("One or more exceptions occurred while disposing resources.", exceptions);
             }
         }
 

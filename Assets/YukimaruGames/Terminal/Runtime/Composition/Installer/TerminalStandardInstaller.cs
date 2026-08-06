@@ -651,7 +651,8 @@ namespace YukimaruGames.Terminal.Composition
                 domain.Autocomplete,
                 rendering.View,
                 disposables,
-                asyncDisposables);
+                asyncDisposables,
+                domain.Logger);
         }
     }
 }
