@@ -12,6 +12,7 @@ using YukimaruGames.Terminal.Composition.Input.LegacyInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using YukimaruGames.Terminal.Adapters.GUI;
 using YukimaruGames.Terminal.Adapters.GUI.Accessors;
@@ -216,13 +217,17 @@ namespace YukimaruGames.Terminal.Composition
             }
         }
 
-        async System.Threading.Tasks.ValueTask IInstaller.UninstallAsync(TerminalRuntimeScope scope)
+        async ValueTask IInstaller.UninstallAsync(TerminalRuntimeScope scope)
         {
             try
             {
-                if (scope != null)
+                if (scope is IAsyncDisposable asyncDisposable)
                 {
-                    await ((IAsyncDisposable)scope).DisposeAsync();
+                    await asyncDisposable.DisposeAsync();
+                }
+                else
+                {
+                    (scope as IDisposable)?.Dispose();
                 }
             }
             finally
