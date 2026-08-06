@@ -4,7 +4,7 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
     /// モード実行中の逐次出力用インターフェイス.
     /// </summary>
     /// <remarks>
-    /// <see cref="YukimaruGames.Terminal.Application.Interfaces.ITerminalService"/> 丸ごとではなく、
+    /// <c>ITerminalService</c> 丸ごとではなく、
     /// 出力用途に絞った狭いインターフェイス。理由は、モード実装から
     /// <c>ITerminalService.ExecuteAsync</c> 等を呼べてしまうと、ディスパッチャの排他ロックにより
     /// デッドロックするため(実行中に自分自身の実行を要求してしまう).

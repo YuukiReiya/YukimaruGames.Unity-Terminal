@@ -21,6 +21,11 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
         /// </summary>
         public bool IsContinuation { get; }
 
+        /// <summary>
+        /// 入力テキストと継続入力フラグを指定して初期化する.
+        /// </summary>
+        /// <param name="text">評価対象のテキスト.</param>
+        /// <param name="isContinuation">継続入力かどうか.</param>
         public ModeInput(ReadOnlyMemory<char> text, bool isContinuation)
         {
             Text = text;

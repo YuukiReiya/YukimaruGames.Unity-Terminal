@@ -8,7 +8,7 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
     /// </summary>
     /// <remarks>
     /// <p>
-    /// <see cref="YukimaruGames.Terminal.Infrastructure.Factories.CommandFactory"/> が Expression Tree 生成時に
+    /// <c>CommandFactory</c> が Expression Tree 生成時に
     /// <c>Expression.Constant</c> として式木へ焼き込むための値を保持する。
     /// </p>
     /// <p>
@@ -25,6 +25,10 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
 
         private readonly IReadOnlyDictionary<Type, object> _services;
 
+        /// <summary>
+        /// 型ごとの注入対象サービスを指定して初期化する.
+        /// </summary>
+        /// <param name="services">型からサービスインスタンスへのマップ(<c>null</c>可、その場合は常に解決失敗する).</param>
         public ModeServiceBundle(IReadOnlyDictionary<Type, object> services)
         {
             _services = services;

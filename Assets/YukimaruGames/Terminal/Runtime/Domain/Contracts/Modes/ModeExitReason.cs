@@ -6,8 +6,11 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
     public enum ModeExitReason
     {
         /// <summary>
-        /// 通常のPop(exitコマンド、Ctrl+C等)によって抜けた.
+        /// 通常のPop(exitコマンド等)によって抜けた.
         /// </summary>
+        /// <remarks>
+        /// 割り込み(Ctrl+C相当)による退場は <see cref="Interrupted"/> が使われる。
+        /// </remarks>
         Popped = 0,
 
         /// <summary>

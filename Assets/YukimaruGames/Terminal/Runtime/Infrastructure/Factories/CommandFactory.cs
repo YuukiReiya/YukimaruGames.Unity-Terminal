@@ -124,6 +124,12 @@ namespace YukimaruGames.Terminal.Infrastructure.Factories
             /// <summary>
             /// メソッド情報とサービスバンドルから分類結果を構築する.
             /// </summary>
+            /// <remarks>
+            /// 分類の優先順位は「<see cref="CancellationToken"/> &gt; <paramref name="services"/>による解決
+            /// &gt; コマンド引数」の順で固定。<paramref name="services"/>に<c>string</c>や<c>int</c>のような
+            /// 基本型を登録すると、本来コマンド引数であるはずのパラメータが黙ってサービス解決に
+            /// 差し替わる点に注意(現状の配線ではインターフェイス型のみを登録するため実害は無い)。
+            /// </remarks>
             public static ParameterPlan Build(MethodInfo methodInfo, in ModeServiceBundle services)
             {
                 var parameters = methodInfo.GetParameters();

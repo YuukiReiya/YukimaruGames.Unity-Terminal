@@ -46,8 +46,14 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
         /// </summary>
         public int Depth => _frames.Count;
 
+        /// <summary>
+        /// 最上段に新しいモードを積む. 深さが1増える.
+        /// </summary>
         public void Push(ITerminalMode mode, IModeContext context) => _frames.Add(new Frame(mode, context));
 
+        /// <summary>
+        /// 最上段を指定したモードへ置き換える. 深さは変わらない.
+        /// </summary>
         public void Replace(ITerminalMode mode, IModeContext context) => _frames[_frames.Count - 1] = new Frame(mode, context);
 
         /// <summary>
@@ -66,6 +72,9 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
             return top.Mode;
         }
 
+        /// <summary>
+        /// 現在のスタック内容の読み取り専用スナップショットを返す(診断用).
+        /// </summary>
         public IReadOnlyList<ModeStackFrameInfo> Snapshot()
         {
             var result = new ModeStackFrameInfo[_frames.Count];

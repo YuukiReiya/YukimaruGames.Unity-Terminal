@@ -69,6 +69,12 @@ namespace YukimaruGames.Terminal.Application.Interfaces
         /// 非実行中(モード入力待ち)なら現在モードへ割り込みを問い合わせ、
         /// 応答に応じてモードから抜ける.
         /// </summary>
+        /// <remarks>
+        /// 非実行中の割り込みは内部で非同期に処理される(モードからのPopを伴いうるため)。
+        /// このメソッド自体はその完了を待たずに返る(fire-and-forget)。呼び出し側は
+        /// UIスレッドからの同期呼び出しを想定しており、完了通知が必要な場合は
+        /// <see cref="IModeStackInspector.Snapshot"/> 等で事後に状態を確認すること.
+        /// </remarks>
         void Interrupt();
 
         /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories.ICommandHistory.Next"/>

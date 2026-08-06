@@ -15,6 +15,9 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
         /// <summary>
         /// 指定したモードインスタンスへ束縛したコマンドレジストリを返す.
         /// </summary>
+        /// <remarks>
+        /// モード専用コマンドが1件も無い場合も空のレジストリを返し、<c>null</c>は返さない.
+        /// </remarks>
         ICommandRegistry BindFor(ITerminalMode mode);
     }
 }
