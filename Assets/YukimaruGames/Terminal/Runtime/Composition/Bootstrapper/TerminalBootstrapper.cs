@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -14,18 +15,32 @@ namespace YukimaruGames.Terminal.Composition
         private TerminalRuntimeScope _scope;
 
         /// <summary>
-        /// 0: 生存中, 1: シャットダウン済み(または進行中).
+        /// 0: 未シャットダウン, 1: シャットダウン済み(または進行中)。
+        /// <c>Awake</c>より先に<c>ShutdownAsync</c>/<c>OnDestroy</c>が走った場合に
+        /// 以後の<c>Install</c>を抑止するためのフラグ(破棄権の管理は<c>_scope</c>自体で行う).
         /// </summary>
         private int _shutdownState;
 
         private void Awake()
         {
-            if (_installer == null)
+            _installer ??= new TerminalNullInstaller();
+
+            if (Volatile.Read(ref _shutdownState) != 0)
             {
-                _installer = new TerminalNullInstaller();
+                // Awakeより先にシャットダウンされていた: 以後構築しない.
+                return;
             }
 
-            _scope = _installer.Install();
+            var scope = _installer.Install();
+
+            // Install中(同期処理だが将来非同期化される可能性も考慮)にシャットダウンされていないか再確認.
+            if (Volatile.Read(ref _shutdownState) != 0)
+            {
+                _installer.Uninstall(scope);
+                return;
+            }
+
+            _scope = scope;
         }
 
         private void OnValidate()
@@ -59,10 +74,11 @@ namespace YukimaruGames.Terminal.Composition
         /// </remarks>
         public async Task ShutdownAsync()
         {
-            if (Interlocked.Exchange(ref _shutdownState, 1) == 1) return;
+            Volatile.Write(ref _shutdownState, 1);
 
-            var scope = _scope;
-            _scope = null; // Update/OnGUIからの参照を即座に断つ
+            // 破棄権はこの1回のExchangeでのみ獲得される(Awake前後どちらの順序でも、
+            // scopeが生成されていれば必ず1回だけ、どちらか片方の経路で破棄される).
+            var scope = Interlocked.Exchange(ref _scope, null);
             if (scope == null || _installer == null) return;
 
             await _installer.UninstallAsync(scope);
@@ -70,15 +86,22 @@ namespace YukimaruGames.Terminal.Composition
 
         private void OnDestroy()
         {
-            // ShutdownAsync()が既に呼ばれていれば何もしない(二重破棄防止).
-            if (Interlocked.Exchange(ref _shutdownState, 1) == 1) return;
+            Volatile.Write(ref _shutdownState, 1);
 
-            var scope = _scope;
-            _scope = null;
+            var scope = Interlocked.Exchange(ref _scope, null);
             if (scope == null) return;
 
             // Unityのライフサイクル制約(OnDestroyは同期voidメソッド)による同期フォールバック.
-            _installer?.Uninstall(scope);
+            // _installerはSerializeReferenceでユーザー実装が入りうるため、
+            // OnDestroyから例外を飛ばしてシーン破棄そのものを止めないよう防御する.
+            try
+            {
+                _installer?.Uninstall(scope);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e, this);
+            }
         }
     }
 }
