@@ -113,8 +113,11 @@ namespace YukimaruGames.Terminal.Application.Services
 
                 var current = _stack.Current;
                 var wasContinuation = IsAwaitingContinuation;
+
+                // _continuationBuffer は「確定済みの継続入力」のみを保持する不変条件とし、
+                // 連結はローカル変数で行う(バッファへは成功パスでのみ書き込む).
                 var accumulatedText = wasContinuation
-                    ? _continuationBuffer.Append('\n').Append(str.ToString()).ToString()
+                    ? string.Concat(_continuationBuffer.ToString(), "\n", str.ToString())
                     : str.ToString();
 
                 var input = new ModeInput(accumulatedText.AsMemory(), wasContinuation);
@@ -131,13 +134,17 @@ namespace YukimaruGames.Terminal.Application.Services
                 }
                 catch (OperationCanceledException)
                 {
-                    // キャンセルは正常系として扱う。モードも変更しない.
+                    // キャンセルは正常系として扱う。モードも変更しない。
+                    // 継続入力もbashのCtrl+C準拠で破棄する.
+                    _continuationBuffer.Clear();
                     _sink.Abort(turnId);
                     return;
                 }
                 catch (Exception e)
                 {
-                    // 例外時はモード変更しない(積まれた遷移要求は破棄=トランザクショナル).
+                    // 例外時はモード変更しない(積まれた遷移要求は破棄=トランザクショナル)。
+                    // 継続入力バッファも破棄し、「旧状態+失敗行」という不整合な状態を防ぐ.
+                    _continuationBuffer.Clear();
                     _sink.Abort(turnId);
                     HandleException(e);
                     return;
@@ -195,38 +202,6 @@ namespace YukimaruGames.Terminal.Application.Services
 
         private async ValueTask InterruptAsync()
         {
-            if (Volatile.Read(ref _disposedState) != 0)
-            {
-                return;
-            }
-
-            if (_stack.Depth <= 1)
-            {
-                // NormalModeのみ: 抜ける先が無いので何もしない.
-                return;
-            }
-
-            var top = _stack.Current;
-            InterruptDisposition disposition;
-            try
-            {
-                disposition = top.OnInterrupt(isCommandRunning: false);
-            }
-            catch (Exception e)
-            {
-                _logger?.Send(MessageType.Warning, $"OnInterrupt threw ({e.GetType().Name}: {e.Message}); treated as NotHandled.");
-                disposition = InterruptDisposition.NotHandled;
-            }
-
-            // 継続入力中の割り込みはバッファを破棄する(bashのCtrl+C準拠).
-            _continuationBuffer.Clear();
-
-            if (disposition == InterruptDisposition.Handled)
-            {
-                return;
-            }
-
-            await _transitionGate.WaitAsync();
             try
             {
                 if (Volatile.Read(ref _disposedState) != 0)
@@ -234,17 +209,56 @@ namespace YukimaruGames.Terminal.Application.Services
                     return;
                 }
 
-                if (!ReferenceEquals(_stack.Current, top))
+                if (_stack.Depth <= 1)
                 {
-                    _logger?.Send(MessageType.Warning, "Interrupt was requested against a mode that is no longer current. Discarded.");
+                    // NormalModeのみ: 抜ける先が無いので何もしない.
                     return;
                 }
 
-                await PopOneAsync(ModeExitReason.Interrupted);
+                var top = _stack.Current;
+                InterruptDisposition disposition;
+                try
+                {
+                    disposition = top.OnInterrupt(isCommandRunning: false);
+                }
+                catch (Exception e)
+                {
+                    _logger?.Send(MessageType.Warning, $"OnInterrupt threw ({e.GetType().Name}: {e.Message}); treated as NotHandled.");
+                    disposition = InterruptDisposition.NotHandled;
+                }
+
+                // 継続入力中の割り込みはバッファを破棄する(bashのCtrl+C準拠).
+                _continuationBuffer.Clear();
+
+                if (disposition == InterruptDisposition.Handled)
+                {
+                    return;
+                }
+
+                await _transitionGate.WaitAsync();
+                try
+                {
+                    if (Volatile.Read(ref _disposedState) != 0)
+                    {
+                        return;
+                    }
+
+                    if (!ReferenceEquals(_stack.Current, top))
+                    {
+                        _logger?.Send(MessageType.Warning, "Interrupt was requested against a mode that is no longer current. Discarded.");
+                        return;
+                    }
+
+                    await PopOneAsync(ModeExitReason.Interrupted);
+                }
+                finally
+                {
+                    _transitionGate.Release();
+                }
             }
-            finally
+            catch (Exception e)
             {
-                _transitionGate.Release();
+                _logger?.Send(MessageType.Exception, $"Interrupt handling failed: {e}");
             }
         }
 
@@ -414,6 +428,14 @@ namespace YukimaruGames.Terminal.Application.Services
 
         private async ValueTask ApplyReplaceAsync(ITerminalMode mode, Queue<ModeTransitionRequestSink.Request> queue, CancellationToken cancellationToken)
         {
+            if (_stack.Depth <= 1)
+            {
+                // 最下段(NormalMode)はReplaceで置き換えられない(常に非空・最下段固定の不変条件).
+                // mode はまだ入場していないので OnEnterAsync は呼ばない.
+                _logger?.Send(MessageType.Warning, $"Replace was requested at the root frame and is not allowed. Use Push instead. (mode: {mode.GetType().Name})");
+                return;
+            }
+
             var context = BuildContextFor(mode);
             var turnId = _sink.BeginTurn(mode);
             try
@@ -429,7 +451,15 @@ namespace YukimaruGames.Terminal.Application.Services
             }
 
             var old = _stack.Current;
-            _stack.Replace(mode, context);
+            if (!_stack.TryReplace(mode, context))
+            {
+                // OnEnterAsync実行中にPopAllAsync等で深さ1まで縮んだ場合のフォールバック.
+                _sink.Abort(turnId);
+                _logger?.Send(MessageType.Warning, $"Replace was discarded because the stack shrank to the root frame during OnEnterAsync. (mode: {mode.GetType().Name})");
+                await SafeExitAsync(mode, ModeExitReason.EnterFailed);
+                return;
+            }
+
             await SafeExitAsync(old, ModeExitReason.Replaced);
 
             foreach (var follow in _sink.EndTurn(turnId))
