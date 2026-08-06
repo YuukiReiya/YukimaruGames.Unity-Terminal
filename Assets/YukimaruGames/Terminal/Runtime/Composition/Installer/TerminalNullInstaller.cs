@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Services;
 using YukimaruGames.Terminal.Domain.Repositories;
@@ -20,14 +21,10 @@ namespace YukimaruGames.Terminal.Composition
             var parser = new CommandParser();
             var history = new CommandHistory();
             var autocomplete = new CommandAutocomplete();
-            var executeCommandUseCase = new ExecuteCommandUseCase(
-                logger,
-                registry,
-                invoker,
-                parser,
-                history);
+            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete);
+            var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode);
             var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), null);
-            var disposables = new object[]
+            var components = new object[]
             {
                 logger,
                 registry,
@@ -37,11 +34,12 @@ namespace YukimaruGames.Terminal.Composition
                 autocomplete,
                 executeCommandUseCase,
                 entryPoint,
-            }.OfType<IDisposable>().ToArray();
+            };
+            var asyncDisposables = components.OfType<IAsyncDisposable>().ToArray();
+            var disposables = components.OfType<IDisposable>().Where(d => d is not IAsyncDisposable).ToArray();
             var service = new TerminalService(
                 logger,
                 registry,
-                history,
                 autocomplete,
                 executeCommandUseCase);
             return new TerminalRuntimeScope(
@@ -50,12 +48,19 @@ namespace YukimaruGames.Terminal.Composition
                 registry,
                 autocomplete,
                 new NullTerminalView(),
-                disposables);
+                disposables,
+                asyncDisposables);
         }
 
         void IInstaller.Uninstall(TerminalRuntimeScope scope)
         {
             (scope as IDisposable)?.Dispose();
+        }
+
+        async ValueTask IInstaller.UninstallAsync(TerminalRuntimeScope scope)
+        {
+            if (scope is null) return;
+            await ((IAsyncDisposable)scope).DisposeAsync();
         }
 
         public void Resolve(TerminalRuntimeScope scope)

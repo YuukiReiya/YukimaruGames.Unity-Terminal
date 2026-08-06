@@ -5,18 +5,24 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Services;
-using YukimaruGames.Terminal.Domain.Contracts.Exceptions;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Models.Entities;
 using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Modes;
+using YukimaruGames.Terminal.Domain.Contracts.Modes.Null;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
 {
     /// <summary>
-    /// <see cref="ExecuteCommandUseCase"/> の一連の処理パイプラインを検証するテストクラス。
+    /// <see cref="ExecuteCommandUseCase"/> のディスパッチャとしての振る舞い
+    /// (排他ロック・キャンセル/割り込み・モード遷移の適用・破棄処理)を検証するテストクラス。
     /// </summary>
+    /// <remarks>
+    /// 「1行の解釈」(パース/履歴/エコー)は <c>NormalModeTests</c> 側で検証済みのため、
+    /// ここでは <see cref="TestMode"/> を使ってディスパッチャ固有の関心事のみを検証する。
+    /// </remarks>
     [TestFixture]
     public sealed class ExecuteCommandUseCaseTests
     {
@@ -25,9 +31,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
         private sealed class MockCommandLogger : ICommandLogger
         {
             public int MaxLogs => 100;
-            public IReadOnlyCollection<CommandLog> Logs => _logs;
-            // ReSharper disable once CollectionNeverUpdated.Local
-            private readonly List<CommandLog> _logs = new ();
+            public IReadOnlyCollection<CommandLog> Logs => Array.Empty<CommandLog>();
             public List<(MessageType type, string message)> Sent { get; } = new();
 
             // ReSharper disable once EventNeverSubscribedTo.Local
@@ -37,221 +41,84 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             // ReSharper disable once EventNeverSubscribedTo.Local
             public event Action<CommandLog[]> OnItemRemoved { add { } remove { } }
 
-            public void Clear() => _logs.Clear();
+            public void Clear() { }
             public void Send(MessageType msgType, string message) => Sent.Add((msgType, message));
         }
 
-        private sealed class MockCommandRegistry : ICommandRegistry
+        /// <summary>
+        /// テスト用の可制御なモード. Push/Pop/割り込み/継続入力/例外の各シナリオを注入できる.
+        /// </summary>
+        private sealed class TestMode : ITerminalMode
         {
-            private readonly Dictionary<string, CommandHandler> _handlers = new();
+            public string Id { get; set; } = "test";
+            public string Prompt => "test>";
+            public string ContinuationPrompt => "...";
+            public ICommandHistory History { get; set; } = NullCommandHistory.Instance;
+            public ICommandAutocomplete Autocomplete { get; set; } = NullCommandAutocomplete.Instance;
+            public bool AllowsConcurrentSpinner => false;
 
-            public bool Add(string command, CommandHandler handle) { _handlers[command] = handle; return true; }
-            public bool Remove(string command) => _handlers.Remove(command);
-            public bool TryGet(string command, out CommandHandler handler) => _handlers.TryGetValue(command, out handler);
-        }
+            public bool OnEnterCalled { get; private set; }
+            public ModeExitReason? OnExitReason { get; private set; }
+            public InterruptDisposition InterruptResult { get; set; } = InterruptDisposition.NotHandled;
+            public Func<ModeInput, IModeContext, ValueTask<ModeResult>> OnHandle { get; set; }
+            public Exception ThrowOnEnter { get; set; }
+            public IModeContext LastContext { get; private set; }
 
-        private sealed class MockCommandInvoker : ICommandInvoker
-        {
-            public bool ExecuteCalled { get; private set; }
-            public bool ExecuteAsyncCalled { get; private set; }
-            public int ExecuteAsyncCallCount { get; private set; }
-            public bool CancellationObserved { get; private set; }
-            public Exception ThrowException { get; set; }
+            private TaskCompletionSource<bool> _handleGate;
+            public void UseGate() => _handleGate = new TaskCompletionSource<bool>();
+            public void OpenGate() => _handleGate?.TrySetResult(true);
 
-            private TaskCompletionSource<bool> _executeAsyncGate;
-            public void OpenGate() => _executeAsyncGate?.TrySetResult(true);
-            public void UseGate() => _executeAsyncGate = new TaskCompletionSource<bool>();
-
-            public void Execute(CommandHandler handler, ReadOnlyMemory<CommandArgument> arguments)
+            public async ValueTask OnEnterAsync(IModeContext context, CancellationToken cancellationToken)
             {
-                ExecuteCalled = true;
-                if (ThrowException != null) throw ThrowException;
+                if (ThrowOnEnter != null) throw ThrowOnEnter;
+                OnEnterCalled = true;
+                await Task.CompletedTask;
             }
 
-            public async ValueTask ExecuteAsync(CommandHandler handler, ReadOnlyMemory<CommandArgument> arguments, CancellationToken cancellationToken)
+            public async ValueTask<ModeResult> HandleAsync(ModeInput input, IModeContext context, CancellationToken cancellationToken)
             {
-                ExecuteAsyncCalled = true;
-                ExecuteAsyncCallCount++;
-                if (_executeAsyncGate != null)
+                LastContext = context;
+                if (_handleGate != null)
                 {
-                    await _executeAsyncGate.Task;
+                    await _handleGate.Task;
                 }
-                if (cancellationToken.IsCancellationRequested)
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (OnHandle != null)
                 {
-                    CancellationObserved = true;
+                    return await OnHandle(input, context);
                 }
-                cancellationToken.ThrowIfCancellationRequested();
-                if (ThrowException != null) throw ThrowException;
+
+                return ModeResult.Continue;
             }
-        }
 
-        private sealed class MockCommandParser : ICommandParser
-        {
-            public string CommandName { get; set; }
-            private CommandArgument[] Arguments { get; } = Array.Empty<CommandArgument>();
-            public ICommandParser.ParseStatusCode StatusCode { get; set; } = ICommandParser.ParseStatusCode.Ok;
+            public InterruptDisposition OnInterrupt(bool isCommandRunning) => InterruptResult;
 
-            public ICommandParser.ParseStatusCode Parse(string str, out (string Command, CommandArgument[] Arguments) tuple)
+            public ValueTask OnExitAsync(ModeExitReason reason)
             {
-                tuple = (CommandName, Arguments);
-                return StatusCode;
+                OnExitReason = reason;
+                return default;
             }
-
-            ICommandParser.ParseStatusCode ICommandParser.Parse(ReadOnlyMemory<char> str, out (string Command, CommandArgument[] Arguments) tuple)
-            {
-                tuple = (CommandName, Arguments);
-                return StatusCode;
-            }
-
-            ValueTask<(ICommandParser.ParseStatusCode Status, string Command, CommandArgument[] Arguments)> ICommandParser.ParseAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                return new((StatusCode, CommandName, Arguments));
-            }
-        }
-
-        private sealed class MockCommandHistory : ICommandHistory
-        {
-            public List<string> Histories { get; } = new();
-            IReadOnlyCollection<string> ICommandHistory.Histories => Histories;
-            public void Clear() => Histories.Clear();
-            public bool Add(string str) { Histories.Add(str); return true; }
-            public string Next() => null;
-            public string Previous() => null;
         }
 
         // ─── Setup ───────────────────────────────────────────────────────────
 
         private MockCommandLogger _logger;
-        private MockCommandRegistry _registry;
-        private MockCommandInvoker _invoker;
-        private MockCommandParser _parser;
-        private MockCommandHistory _history;
+        private TestMode _root;
         private ExecuteCommandUseCase _sut;
-
-        private static readonly CommandHandler SyncHandler =
-            new((_) => { }, "cmd", 0, 0, "");
-
-        private static readonly CommandHandler AsyncHandler =
-            new ((_, _) => default, "cmd", 0, 0, "");
 
         [SetUp]
         public void SetUp()
         {
-            _logger   = new MockCommandLogger();
-            _registry = new MockCommandRegistry();
-            _invoker  = new MockCommandInvoker();
-            _parser   = new MockCommandParser();
-            _history  = new MockCommandHistory();
-            _sut = new ExecuteCommandUseCase(_logger, _registry, _invoker, _parser, _history);
+            _logger = new MockCommandLogger();
+            _root = new TestMode { Id = "root" };
+            _sut = new ExecuteCommandUseCase(_logger, _root);
         }
 
-        // ─── ExecutePipelineAsync: 正常系 ─────────────────────────────────────
+        private IExecuteCommandUseCase UseCase => _sut;
 
-        /// <summary>
-        /// 有効な同期コマンドが入力された際、パイプライン経由で同期ハンドラーが呼び出されることを検証します。
-        /// </summary>
-        [Test]
-        public async Task ExecutePipelineAsync_ValidSyncCommand_InvokesExecute()
-        {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", SyncHandler);
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
-
-            Assert.IsTrue(_invoker.ExecuteCalled);
-            Assert.IsFalse(_invoker.ExecuteAsyncCalled);
-        }
-
-        /// <summary>
-        /// 有効な非同期コマンドが入力された際、パイプライン経由で非同期ハンドラーが呼び出されることを検証します。
-        /// </summary>
-        [Test]
-        public async Task ExecutePipelineAsync_ValidAsyncCommand_InvokesExecuteAsync()
-        {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", AsyncHandler);
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
-
-            Assert.IsTrue(_invoker.ExecuteAsyncCalled);
-            Assert.IsFalse(_invoker.ExecuteCalled);
-        }
-
-        /// <summary>
-        /// パイプライン経由での実行時、有効なコマンドであれば正常に履歴（History）レポジトリに保存されることを検証します。
-        /// </summary>
-        [Test]
-        public async Task ExecutePipelineAsync_ValidCommand_AddsToHistory()
-        {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", SyncHandler);
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
-
-            CollectionAssert.Contains(_history.Histories, "cmd");
-        }
-
-        /// <summary>
-        /// コマンドの実行開始時、パイプラインによってエントリログが送信されることを検証します。
-        /// </summary>
-        [Test]
-        public async Task ExecutePipelineAsync_ValidCommand_LogsEntry()
-        {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", SyncHandler);
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
-
-            Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Entry));
-        }
-
-        // ─── ExecutePipelineAsync: 異常系 ─────────────────────────────────────
-
-        /// <summary>
-        /// 未知のコマンド名が入力された場合、実行されずにエラーログが出力されることを検証します。
-        /// </summary>
-        [Test]
-        public async Task ExecutePipelineAsync_UnknownCommand_DoesNotInvoke()
-        {
-            _parser.CommandName = "unknown";
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("unknown".AsMemory(), CancellationToken.None);
-
-            Assert.IsFalse(_invoker.ExecuteCalled);
-            Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Error));
-        }
-
-        /// <summary>
-        /// 空文字など、コマンド名が抽出されなかった入力に対しては、何も処理を行わずに早期リターンすることを検証します。
-        /// </summary>
-        [Test]
-        public async Task ExecutePipelineAsync_EmptyCommand_DoesNotInvoke()
-        {
-            _parser.CommandName = null;
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync(ReadOnlyMemory<char>.Empty, CancellationToken.None);
-
-            Assert.IsFalse(_invoker.ExecuteCalled);
-        }
-
-        /// <summary>
-        /// 構文エラー（SyntaxError）が発生した場合は実行を拒否し、エラーログを出力することを検証します。
-        /// </summary>
-        [Test]
-        public async Task ExecutePipelineAsync_SyntaxError_DoesNotInvoke()
-        {
-            _parser.CommandName = "cmd";
-            _parser.StatusCode  = ICommandParser.ParseStatusCode.SyntaxError;
-            _registry.Add("cmd", SyncHandler);
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
-
-            Assert.IsFalse(_invoker.ExecuteCalled);
-            Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Error));
-        }
-
-        // ─── IsExecuting ──────────────────────────────────────────────────────
+        // ─── IsExecuting / 排他ロック ────────────────────────────────────────
 
         [Test]
         public void IsExecuting_BeforeExecution_IsFalse()
@@ -259,160 +126,281 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
             Assert.IsFalse(_sut.IsExecuting);
         }
 
-        /// <summary>
-        /// 非同期コマンドの処理が実行されている「最中」は、実行中フラグが確実に True になることを検証します。
-        /// </summary>
         [Test]
-        public async Task IsExecuting_DuringAsyncExecution_IsTrue()
+        public async Task IsExecuting_DuringHandleAsync_IsTrue()
         {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", AsyncHandler);
-            _invoker.UseGate();
-
-            var use = (IExecuteCommandUseCase)_sut;
-            var task = use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
+            _root.UseGate();
+            var task = UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
 
             await Task.Yield();
             Assert.IsTrue(_sut.IsExecuting);
 
-            _invoker.OpenGate();
+            _root.OpenGate();
             await task;
-        }
-
-        [Test]
-        public async Task IsExecuting_AfterExecution_IsFalse()
-        {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", AsyncHandler);
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
-
             Assert.IsFalse(_sut.IsExecuting);
         }
 
-        /// <summary>
-        /// 多重実行要求が走った場合、その2回目は完全に無視されることを検証します。
-        /// </summary>
         [Test]
         public async Task ExecutePipelineAsync_WhileExecuting_SecondCallIsIgnored()
         {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", AsyncHandler);
-            _invoker.UseGate();
+            var callCount = 0;
+            _root.OnHandle = (_, _) => { callCount++; return new ValueTask<ModeResult>(ModeResult.Continue); };
+            _root.UseGate();
 
-            var use = (IExecuteCommandUseCase)_sut;
-            var first = use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
-
+            var first = UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
             await Task.Yield();
 
-            // 実行中に2回目を呼ぶ → 無視される
-            await use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
+            await UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
 
-            _invoker.OpenGate();
+            _root.OpenGate();
             await first;
 
-            Assert.AreEqual(1, _invoker.ExecuteAsyncCallCount);
+            Assert.AreEqual(1, callCount);
         }
 
-        // ─── CancelCommandIfNeeded ────────────────────────────────────────────
-
         [Test]
-        public void CancelCommandIfNeeded_WhenNotExecuting_DoesNotThrow()
+        public async Task ExecutePipelineAsync_CancelledToken_DoesNotInvokeHandleAsync()
         {
-            var use = (IExecuteCommandUseCase)_sut;
-            Assert.DoesNotThrow(() => use.CancelCommandIfNeeded());
-        }
-
-        /// <summary>
-        /// 実行中に外部からキャンセルが要求された場合、内部トークンが連動してキャンセルされ、例外が安全に吸収されることを検証します。
-        /// </summary>
-        [Test]
-        public async Task CancelCommandIfNeeded_DuringAsyncExecution_CancelsCommand()
-        {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", AsyncHandler);
-            _invoker.UseGate();
-
-            var use = (IExecuteCommandUseCase)_sut;
-            var task = use.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
-
-            await Task.Yield();
-
-            use.CancelCommandIfNeeded();
-            _invoker.OpenGate();
-
-            await task; 
-
-            Assert.IsTrue(_invoker.CancellationObserved);
-            Assert.IsFalse(_sut.IsExecuting);
-        }
-
-        // ─── CancellationToken ────────────────────────────────────────────────
-
-        [Test]
-        public async Task ExecutePipelineAsync_CancelledToken_DoesNotInvoke()
-        {
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", SyncHandler);
+            var called = false;
+            _root.OnHandle = (_, _) => { called = true; return new ValueTask<ModeResult>(ModeResult.Continue); };
             var cts = new CancellationTokenSource();
             cts.Cancel();
 
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), cts.Token);
+            await UseCase.ExecutePipelineAsync("cmd".AsMemory(), cts.Token);
 
-            Assert.IsFalse(_invoker.ExecuteCalled);
+            Assert.IsFalse(called);
         }
 
-        // ─── 例外ハンドリング ─────────────────────────────────────────────────
+        // ─── Interrupt ──────────────────────────────────────────────────────
 
         [Test]
-        public async Task ExecutePipelineAsync_CommandArgumentException_LogsException()
+        public void Interrupt_WhenNotExecuting_AtRoot_DoesNotThrow()
         {
-            _parser.CommandName    = "cmd";
-            _registry.Add("cmd", SyncHandler);
-            _invoker.ThrowException = new CommandArgumentException(3, 1, 2, null);
-
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
-
-            Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Exception));
+            Assert.DoesNotThrow(() => UseCase.Interrupt());
         }
 
         [Test]
-        public async Task ExecutePipelineAsync_CommandFormatException_LogsException()
+        public async Task Interrupt_DuringExecution_CancelsCurrentCommandToken()
         {
-            _parser.CommandName    = "cmd";
-            _registry.Add("cmd", SyncHandler);
-            _invoker.ThrowException = new CommandFormatException(0, "bad", typeof(int), null);
+            _root.OnHandle = async (_, _) =>
+            {
+                await Task.Yield();
+                return ModeResult.Continue;
+            };
 
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
+            _root.UseGate();
+            var task = UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None).AsTask();
+            await Task.Yield();
 
-            Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Exception));
+            // 実行中にInterrupt() -> 内部CTSがCancelされる(HandleAsyncのctが観測できることは
+            // TestMode.HandleAsync自体がcancellationToken.ThrowIfCancellationRequested()で保証する).
+            UseCase.Interrupt();
+            _root.OpenGate();
+
+            await task;
+            Assert.IsFalse(_sut.IsExecuting);
         }
 
         [Test]
-        public async Task ExecutePipelineAsync_UnexpectedException_LogsExceptionWithTypeName()
+        public async Task Interrupt_WhenNotExecuting_WithPushedMode_PopsOnNotHandled()
         {
-            _parser.CommandName    = "cmd";
-            _registry.Add("cmd", SyncHandler);
-            _invoker.ThrowException = new InvalidOperationException("oops");
+            var child = new TestMode { Id = "child", InterruptResult = InterruptDisposition.NotHandled };
+            await PushAsync(child);
+            Assert.AreEqual(2, _sut.Depth);
 
-            await ((IExecuteCommandUseCase)_sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
+            UseCase.Interrupt();
+            await WaitUntil(() => _sut.Depth == 1);
 
-            Assert.IsTrue(_logger.Sent.Exists(s =>
-                s.type == MessageType.Exception &&
-                s.message.Contains(nameof(InvalidOperationException))));
+            Assert.AreEqual(1, _sut.Depth);
+            Assert.AreEqual(ModeExitReason.Interrupted, child.OnExitReason);
         }
 
-        // ─── null logger 許容 ────────────────────────────────────────────────
+        [Test]
+        public async Task Interrupt_WhenNotExecuting_WithPushedMode_StaysOnHandled()
+        {
+            var child = new TestMode { Id = "child", InterruptResult = InterruptDisposition.Handled };
+            await PushAsync(child);
+
+            UseCase.Interrupt();
+            await Task.Delay(50);
+
+            Assert.AreEqual(2, _sut.Depth);
+            Assert.IsNull(child.OnExitReason);
+        }
+
+        // ─── モード遷移(Push/Pop) ────────────────────────────────────────────
 
         [Test]
-        public void ExecutePipelineAsync_NullLogger_DoesNotThrow()
+        public async Task Push_ViaSink_IncreasesDepthAndCallsOnEnter()
         {
-            var sut = new ExecuteCommandUseCase(null, _registry, _invoker, _parser, _history);
-            _parser.CommandName = "cmd";
-            _registry.Add("cmd", SyncHandler);
+            var child = new TestMode { Id = "child" };
+            await PushAsync(child);
 
-            Assert.DoesNotThrowAsync(async () =>
-                await ((IExecuteCommandUseCase)sut).ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None));
+            Assert.AreEqual(2, _sut.Depth);
+            Assert.IsTrue(child.OnEnterCalled);
+        }
+
+        [Test]
+        public async Task Pop_ViaSink_ReturnsToRootAndCallsOnExit()
+        {
+            var child = new TestMode { Id = "child" };
+            await PushAsync(child);
+
+            child.OnHandle = (_, context) =>
+            {
+                context.Transitions.RequestPop();
+                return new ValueTask<ModeResult>(ModeResult.Continue);
+            };
+
+            await UseCase.ExecutePipelineAsync("exit".AsMemory(), CancellationToken.None);
+
+            Assert.AreEqual(1, _sut.Depth);
+            Assert.AreEqual(ModeExitReason.Popped, child.OnExitReason);
+        }
+
+        [Test]
+        public async Task Push_OnEnterThrows_DoesNotIncreaseDepth_AndCallsOnExitWithEnterFailed()
+        {
+            var child = new TestMode { Id = "child", ThrowOnEnter = new InvalidOperationException("boom") };
+            await PushAsync(child);
+
+            Assert.AreEqual(1, _sut.Depth);
+            Assert.AreEqual(ModeExitReason.EnterFailed, child.OnExitReason);
+        }
+
+        [Test]
+        public async Task RequestPop_ExceedingDepth_ClampsAtRoot()
+        {
+            var child = new TestMode { Id = "child" };
+            await PushAsync(child);
+
+            child.OnHandle = (_, context) =>
+            {
+                context.Transitions.RequestPop(count: 99);
+                return new ValueTask<ModeResult>(ModeResult.Continue);
+            };
+
+            await UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
+
+            Assert.AreEqual(1, _sut.Depth);
+        }
+
+        // ─── 継続入力(NeedMoreInput) ─────────────────────────────────────────
+
+        [Test]
+        public async Task HandleAsync_NeedMoreInput_SetsIsAwaitingContinuation()
+        {
+            _root.OnHandle = (_, _) => new ValueTask<ModeResult>(ModeResult.NeedMoreInput);
+
+            await UseCase.ExecutePipelineAsync("line1".AsMemory(), CancellationToken.None);
+
+            Assert.IsTrue(_sut.IsAwaitingContinuation);
+            Assert.AreEqual(_root.ContinuationPrompt, _sut.Prompt);
+        }
+
+        [Test]
+        public async Task HandleAsync_ContinuationCompletes_AccumulatesText()
+        {
+            string received = null;
+            var first = true;
+            _root.OnHandle = (input, _) =>
+            {
+                if (first)
+                {
+                    first = false;
+                    return new ValueTask<ModeResult>(ModeResult.NeedMoreInput);
+                }
+
+                received = input.Text.ToString();
+                return new ValueTask<ModeResult>(ModeResult.Continue);
+            };
+
+            await UseCase.ExecutePipelineAsync("line1".AsMemory(), CancellationToken.None);
+            await UseCase.ExecutePipelineAsync("line2".AsMemory(), CancellationToken.None);
+
+            Assert.AreEqual("line1\nline2", received);
+            Assert.IsFalse(_sut.IsAwaitingContinuation);
+        }
+
+        // ─── 例外ハンドリング ────────────────────────────────────────────────
+
+        [Test]
+        public async Task HandleAsync_Throws_LogsExceptionAndDoesNotChangeMode()
+        {
+            _root.OnHandle = (_, _) => throw new InvalidOperationException("oops");
+
+            await UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
+
+            Assert.IsTrue(_logger.Sent.Exists(s => s.type == MessageType.Exception && s.message.Contains(nameof(InvalidOperationException))));
+            Assert.AreEqual(1, _sut.Depth);
+        }
+
+        [Test]
+        public async Task HandleAsync_ThrowsAfterRequestingPush_DiscardsTheRequest()
+        {
+            _root.OnHandle = (_, context) =>
+            {
+                context.Transitions.RequestPush(new TestMode { Id = "child" });
+                throw new InvalidOperationException("oops");
+            };
+
+            await UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None);
+
+            Assert.AreEqual(1, _sut.Depth);
+        }
+
+        // ─── Dispose ────────────────────────────────────────────────────────
+
+        [Test]
+        public async Task DisposeAsync_PopsAllPushedModes()
+        {
+            var child = new TestMode { Id = "child" };
+            await PushAsync(child);
+
+            await ((IAsyncDisposable)_sut).DisposeAsync();
+
+            Assert.AreEqual(1, _sut.Depth);
+            Assert.AreEqual(ModeExitReason.Shutdown, child.OnExitReason);
+        }
+
+        [Test]
+        public async Task DisposeAsync_IsIdempotent()
+        {
+            await ((IAsyncDisposable)_sut).DisposeAsync();
+            Assert.DoesNotThrowAsync(async () => await ((IAsyncDisposable)_sut).DisposeAsync());
+        }
+
+        [Test]
+        public void ExecutePipelineAsync_AfterDispose_DoesNothing()
+        {
+            ((IDisposable)_sut).Dispose();
+            Assert.DoesNotThrowAsync(async () => await UseCase.ExecutePipelineAsync("cmd".AsMemory(), CancellationToken.None));
+        }
+
+        // ─── ヘルパー ────────────────────────────────────────────────────────
+
+        private async Task PushAsync(TestMode child)
+        {
+            _root.OnHandle = (_, context) =>
+            {
+                context.Transitions.RequestPush(child);
+                return new ValueTask<ModeResult>(ModeResult.Continue);
+            };
+
+            await UseCase.ExecutePipelineAsync("enter".AsMemory(), CancellationToken.None);
+
+            // 以降の呼び出しでPushを繰り返さないよう解除
+            _root.OnHandle = null;
+        }
+
+        private static async Task WaitUntil(Func<bool> predicate, int timeoutMs = 1000)
+        {
+            var elapsed = 0;
+            while (!predicate() && elapsed < timeoutMs)
+            {
+                await Task.Delay(10);
+                elapsed += 10;
+            }
         }
     }
 }

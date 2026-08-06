@@ -25,7 +25,6 @@ namespace YukimaruGames.Terminal.Application.Services
     {
         private readonly ICommandLogger _logger;
         private readonly ICommandRegistry _registry;
-        private readonly ICommandHistory _history;
         private readonly ICommandAutocomplete _autocomplete;
         private readonly IExecuteCommandUseCase _executeCommandUseCase;
 
@@ -68,13 +67,11 @@ namespace YukimaruGames.Terminal.Application.Services
         public TerminalService(
             ICommandLogger logger,
             ICommandRegistry registry,
-            ICommandHistory history,
             ICommandAutocomplete autocomplete,
             IExecuteCommandUseCase executeCommandUseCase)
         {
             _logger = logger;
             _registry = registry;
-            _history = history;
             _autocomplete = autocomplete;
             _executeCommandUseCase = executeCommandUseCase;
 
@@ -108,10 +105,16 @@ namespace YukimaruGames.Terminal.Application.Services
         public bool IsExecuting => _executeCommandUseCase.IsExecuting;
 
         /// <inheritdoc/>
+        public string Prompt => _executeCommandUseCase.Prompt;
+
+        /// <inheritdoc/>
+        public bool AllowsConcurrentSpinner => _executeCommandUseCase.AllowsConcurrentSpinner;
+
+        /// <inheritdoc/>
         ValueTask ITerminalService.ExecuteAsync(string str, CancellationToken cancellationToken) => _executeCommandUseCase.ExecutePipelineAsync(str.AsMemory(), cancellationToken);
 
         /// <inheritdoc/>
-        public void Cancel() => _executeCommandUseCase.CancelCommandIfNeeded();
+        public void Interrupt() => _executeCommandUseCase.Interrupt();
 
         /// <inheritdoc/>
         int ITerminalService.LogBufferSize => _logger?.MaxLogs ?? 0;
@@ -140,14 +143,21 @@ namespace YukimaruGames.Terminal.Application.Services
         /// <inheritdoc/>
         void ITerminalService.SystemMessage(string message) => _logger?.Send(MessageType.System, message);
 
-        /// <inheritdoc cref="ICommandHistory.Next"/> 
-        string ITerminalService.NextHistory() => _history.Next();
+        /// <inheritdoc cref="ICommandHistory.Next"/>
+        /// <remarks>
+        /// 現在のモードスタックの最上段(<see cref="IExecuteCommandUseCase"/>経由)へ委譲する。
+        /// モードごとに独立した履歴を持つため、固定の <c>ICommandHistory</c> を直接保持しない.
+        /// </remarks>
+        string ITerminalService.NextHistory() => _executeCommandUseCase.NextHistory();
 
-        /// <inheritdoc cref="ICommandHistory.Previous"/> 
-        string ITerminalService.PrevHistory() => _history.Previous();
+        /// <inheritdoc cref="ICommandHistory.Previous"/>
+        string ITerminalService.PrevHistory() => _executeCommandUseCase.PrevHistory();
 
-        /// <inheritdoc cref="ICommandAutocomplete.Complete"/> 
-        string[] ITerminalService.Autocomplete(string partialWord) => _autocomplete.Complete(partialWord);
+        /// <inheritdoc cref="ICommandAutocomplete.Complete"/>
+        /// <remarks>
+        /// 現在のモードスタックの最上段の補完へ委譲する(グローバル登録は <see cref="Register"/> 参照).
+        /// </remarks>
+        string[] ITerminalService.Autocomplete(string partialWord) => _executeCommandUseCase.Autocomplete(partialWord);
 
         /// <inheritdoc/>
         void IDisposable.Dispose()

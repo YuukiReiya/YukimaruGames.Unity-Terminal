@@ -202,11 +202,10 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
         {
             if (!IsVisible) return;
 
-            if (_service.IsExecuting)
-            {
-                _service.Cancel();
-                _scrollMutator.ScrollToEnd();
-            }
+            // 実行中かどうかの分岐はITerminalService.Interrupt()の内部に閉じ込める。
+            // モード入力待ち(非実行中)のCtrl+Cもここで弾かず、常にInterrupt()へ届ける.
+            _service.Interrupt();
+            _scrollMutator.ScrollToEnd();
         }
 
         private void OnPreviousHistoryTriggered()

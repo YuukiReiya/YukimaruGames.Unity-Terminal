@@ -33,5 +33,8 @@ namespace YukimaruGames.Terminal.Composition
 
                 /// <inheritdoc/>
                 public string[] LoadingIndicatorFrames => System.Array.Empty<string>();
+
+                /// <inheritdoc/>
+                public string[] AdditionalCommandAssemblies => System.Array.Empty<string>();
         }
 }

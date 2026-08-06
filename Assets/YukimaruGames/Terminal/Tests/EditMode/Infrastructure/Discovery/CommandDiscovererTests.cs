@@ -132,5 +132,129 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
 
             Assert.DoesNotThrow(() => discoverer.Discover().ToArray());
         }
+
+        // ─── DiscoverModeCommands ────────────────────────────────────────────
+
+        private class BaseMode
+        {
+            [TerminalModeCommand(typeof(BaseMode), "shared.help")]
+            public void Help()
+            {
+            }
+
+            [TerminalModeCommand(typeof(BaseMode), "shared.overridden")]
+            public virtual void Overridden()
+            {
+            }
+        }
+
+        private sealed class DerivedMode : BaseMode
+        {
+            [TerminalModeCommand(typeof(DerivedMode), "derived.only")]
+            public void DerivedOnly()
+            {
+            }
+
+            [TerminalModeCommand(typeof(DerivedMode), "shared.overridden")]
+            public override void Overridden()
+            {
+            }
+        }
+
+        private sealed class UnrelatedMode
+        {
+            [TerminalModeCommand("string-id-mode", "byid.command")]
+            public void ById()
+            {
+            }
+        }
+
+        /// <summary>
+        /// 基底クラスに宣言されたコマンドが、派生モードでも発見されることを検証します。
+        /// </summary>
+        [Test]
+        public void DiscoverModeCommands_FindsCommandsDeclaredOnBaseClass()
+        {
+            var logger = new MockCommandLogger();
+            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+
+            var specs = discoverer.DiscoverModeCommands(typeof(DerivedMode), "derived");
+
+            Assert.That(specs.Any(s => s.Meta.Command == "shared.help"), Is.True);
+        }
+
+        /// <summary>
+        /// 派生クラス自身のコマンドも発見されることを検証します。
+        /// </summary>
+        [Test]
+        public void DiscoverModeCommands_FindsCommandsDeclaredOnDerivedClass()
+        {
+            var logger = new MockCommandLogger();
+            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+
+            var specs = discoverer.DiscoverModeCommands(typeof(DerivedMode), "derived");
+
+            Assert.That(specs.Any(s => s.Meta.Command == "derived.only"), Is.True);
+        }
+
+        /// <summary>
+        /// override されたメソッドは、派生側の属性・宣言だけが採用され重複しないことを検証します。
+        /// </summary>
+        [Test]
+        public void DiscoverModeCommands_OverriddenMethod_PrefersDerivedDeclaration()
+        {
+            var logger = new MockCommandLogger();
+            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+
+            var specs = discoverer.DiscoverModeCommands(typeof(DerivedMode), "derived");
+
+            var matches = specs.Where(s => s.Meta.Command == "shared.overridden").ToArray();
+            Assert.That(matches.Length, Is.EqualTo(1));
+            Assert.That(matches[0].Method.DeclaringType, Is.EqualTo(typeof(DerivedMode)));
+        }
+
+        /// <summary>
+        /// 基底クラス限定(typeof(BaseMode))で探索した場合、派生専用コマンドは含まれないことを検証します。
+        /// </summary>
+        [Test]
+        public void DiscoverModeCommands_BaseTypeOnly_DoesNotIncludeDerivedOnlyCommand()
+        {
+            var logger = new MockCommandLogger();
+            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+
+            var specs = discoverer.DiscoverModeCommands(typeof(BaseMode), "base");
+
+            Assert.That(specs.Any(s => s.Meta.Command == "derived.only"), Is.False);
+        }
+
+        /// <summary>
+        /// 文字列ID指定の属性は、modeIdが一致した場合にのみ発見されることを検証します。
+        /// </summary>
+        [Test]
+        public void DiscoverModeCommands_StringId_MatchesOnlyWhenIdEqual()
+        {
+            var logger = new MockCommandLogger();
+            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+
+            var matched = discoverer.DiscoverModeCommands(typeof(UnrelatedMode), "string-id-mode");
+            var unmatched = discoverer.DiscoverModeCommands(typeof(UnrelatedMode), "different-id");
+
+            Assert.That(matched.Any(s => s.Meta.Command == "byid.command"), Is.True);
+            Assert.That(unmatched.Any(s => s.Meta.Command == "byid.command"), Is.False);
+        }
+
+        /// <summary>
+        /// 無関係なモード型では、[TerminalModeCommand(typeof(BaseMode))]なコマンドは発見されないことを検証します。
+        /// </summary>
+        [Test]
+        public void DiscoverModeCommands_UnrelatedType_DoesNotMatch()
+        {
+            var logger = new MockCommandLogger();
+            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+
+            var specs = discoverer.DiscoverModeCommands(typeof(UnrelatedMode), "unrelated");
+
+            Assert.That(specs.Any(s => s.Meta.Command == "shared.help"), Is.False);
+        }
     }
 }

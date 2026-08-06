@@ -22,6 +22,10 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private bool _showLoadingIndicator = true;
         [SerializeField] private string[] _loadingIndicatorFrames = { "|", "/", "-", "\\" };
 
+        [Header("Mode Settings")]
+        [Tooltip("コマンド走査に追加するアセンブリ名. 独自asmdefにコマンドやモードを置く場合はここに列挙する.")]
+        [SerializeField] private string[] _additionalCommandAssemblies = Array.Empty<string>();
+
         public ITerminalInput Input => _input ?? new TerminalNullInput();
 
         public int BufferSize => _bufferSize;
@@ -33,5 +37,7 @@ namespace YukimaruGames.Terminal.Composition
         public bool ShowLoadingIndicator => _showLoadingIndicator;
         /// <inheritdoc/>
         public string[] LoadingIndicatorFrames => _loadingIndicatorFrames;
+        /// <inheritdoc/>
+        public string[] AdditionalCommandAssemblies => _additionalCommandAssemblies;
     }
 }

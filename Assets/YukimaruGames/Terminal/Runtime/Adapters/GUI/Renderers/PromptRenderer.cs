@@ -16,19 +16,8 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
         private Vector2 _promptSize;
         private Vector2 _spinnerMaxSize;
 
-        private string _prompt = "$";
+        private string _cachedPrompt;
         private string[] _loadingIndicatorFrames = DefaultLoadingIndicatorFrames;
-
-        public string Prompt
-        {
-            private get => _prompt;
-            set
-            {
-                if (_prompt == value) return;
-                _prompt = value;
-                _promptSize = CalcSize(_provider, value);
-            }
-        }
 
         /// <inheritdoc/>
         public bool ShowLoadingIndicator { private get; set; } = true;
@@ -49,7 +38,8 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
         {
             _provider = provider;
             _service = service;
-            _promptSize = CalcSize(_provider, _prompt);
+            _cachedPrompt = _service?.Prompt ?? string.Empty;
+            _promptSize = CalcSize(_provider, _cachedPrompt);
             _spinnerMaxSize = CalcMaxSpinnerSize(_provider);
             _provider.OnStyleChanged += OnChangedStyle;
         }
@@ -72,9 +62,16 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(Prompt))
+            var prompt = _service?.Prompt ?? string.Empty;
+            if (!string.Equals(prompt, _cachedPrompt, StringComparison.Ordinal))
             {
-                GUILayout.Label(Prompt, _provider.GetStyle(), GUILayout.Width(_promptSize.x), GUILayout.Height(_promptSize.y));
+                _cachedPrompt = prompt;
+                _promptSize = CalcSize(_provider, prompt);
+            }
+
+            if (!string.IsNullOrWhiteSpace(_cachedPrompt))
+            {
+                GUILayout.Label(_cachedPrompt, _provider.GetStyle(), GUILayout.Width(_promptSize.x), GUILayout.Height(_promptSize.y));
             }
         }
 
@@ -102,7 +99,7 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
 
         private void OnChangedStyle()
         {
-            _promptSize = CalcSize(_provider, Prompt);
+            _promptSize = CalcSize(_provider, _cachedPrompt);
             _spinnerMaxSize = CalcMaxSpinnerSize(_provider);
         }
     }

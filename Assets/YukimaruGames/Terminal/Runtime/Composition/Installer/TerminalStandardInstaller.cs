@@ -12,6 +12,7 @@ using YukimaruGames.Terminal.Composition.Input.LegacyInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using YukimaruGames.Terminal.Adapters.GUI;
 using YukimaruGames.Terminal.Adapters.GUI.Accessors;
@@ -20,12 +21,14 @@ using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
+using YukimaruGames.Terminal.Domain.Contracts.Modes;
 using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Accessors;
 using YukimaruGames.Terminal.Infrastructure.Diagnostics;
 using YukimaruGames.Terminal.Infrastructure.Discoverer;
 using YukimaruGames.Terminal.Infrastructure.Factories;
+using YukimaruGames.Terminal.Infrastructure.Modes;
 using YukimaruGames.Terminal.Infrastructure.Repositories;
 using YukimaruGames.Terminal.Presentation.Accessors;
 using YukimaruGames.Terminal.Presentation.Animators;
@@ -74,6 +77,8 @@ namespace YukimaruGames.Terminal.Composition
             public ICommandAutocomplete Autocomplete;
             /// <inheritdoc cref="ICommandDiscoverer"/>
             public ICommandDiscoverer Discoverer;
+            /// <inheritdoc cref="IExecuteCommandUseCase"/>
+            public IExecuteCommandUseCase UseCase;
         }
 
         /// <summary>
@@ -141,6 +146,7 @@ namespace YukimaruGames.Terminal.Composition
         [NonSerialized] private LauncherVisibleAccessor _launcherVisibleAccessor;
         [NonSerialized] private IWindowRenderer _windowRenderer;
         [NonSerialized] private IPromptRenderer _promptRenderer;
+        [NonSerialized] private NormalMode _normalMode;
         [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
         
         [NonSerialized] private IGUIStyleAccessor _logGUIStyleAccessor;
@@ -211,6 +217,25 @@ namespace YukimaruGames.Terminal.Composition
             }
         }
 
+        async ValueTask IInstaller.UninstallAsync(TerminalRuntimeScope scope)
+        {
+            try
+            {
+                if (scope is IAsyncDisposable asyncDisposable)
+                {
+                    await asyncDisposable.DisposeAsync();
+                }
+                else
+                {
+                    (scope as IDisposable)?.Dispose();
+                }
+            }
+            finally
+            {
+                ClearReferences();
+            }
+        }
+
         void IInstaller.Resolve(TerminalRuntimeScope scope)
         {
             if (scope == null) return;
@@ -232,6 +257,7 @@ namespace YukimaruGames.Terminal.Composition
             _launcherVisibleAccessor = null;
             _windowRenderer = null;
             _promptRenderer = null;
+            _normalMode = null;
             _cursorFlashSpeedAccessor = null;
             _logGUIStyleAccessor = null;
             _inputGUIStyleAccessor = null;
@@ -295,9 +321,13 @@ namespace YukimaruGames.Terminal.Composition
                 _launcherVisibleAccessor.IsReverse = options.IsButtonReverse;
             }
 
+            if (_normalMode != null)
+            {
+                _normalMode.Prompt = options.Prompt;
+            }
+
             if (_promptRenderer != null)
             {
-                _promptRenderer.Prompt = options.Prompt;
                 _promptRenderer.ShowLoadingIndicator = options.ShowLoadingIndicator;
                 _promptRenderer.LoadingIndicatorFrames = options.LoadingIndicatorFrames;
             }
@@ -350,43 +380,70 @@ namespace YukimaruGames.Terminal.Composition
             var invoker = new CommandInvoker();
             var parser = new CommandParser();
             var history = new CommandHistory();
-            var discover = new CommandDiscoverer(logger);
+            var discover = new CommandDiscoverer(logger, new[] { "Assembly-CSharp" }.Concat(options.AdditionalCommandAssemblies ?? Array.Empty<string>()));
             var autocomplete = new CommandAutocomplete();
-            var executeCommandUseCase = new ExecuteCommandUseCase(
-                logger,
-                registry,
-                invoker,
-                parser,
-                history);
+            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
+            _normalMode = normalMode;
+            var modeCommandBinder = new ModeCommandBinder(discover, () => new CommandRegistry(logger), logger);
+            var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode, modeCommandBinder);
             var service = new TerminalService(
                 logger,
                 registry,
-                history,
                 autocomplete,
                 executeCommandUseCase
             );
 
             return new DomainContext
             {
-                Components = new object[] { logger, registry, history, autocomplete, discover, service },
+                Components = new object[] { logger, registry, history, autocomplete, discover, executeCommandUseCase, service },
                 Logger = logger,
                 Registry = registry,
                 History = history,
                 Autocomplete = autocomplete,
                 Discoverer = discover,
                 Service = service,
+                UseCase = executeCommandUseCase,
             };
         }
 
         private void RegisterCommands(in DomainContext domain)
         {
+            // static コマンドから ITerminalModeStack を注入可能にする(python等の入場コマンド、
+            // terminal.stack 等の診断コマンド用)。ITerminalService丸ごとは注入しない
+            // (ExecuteAsync等を誤って呼ぶとディスパッチャの排他ロックでデッドロックするため).
+            var services = new Dictionary<Type, object>
+            {
+                { typeof(IModeStackInspector), domain.UseCase },
+                { typeof(IModeOutput), domain.UseCase.Output },
+                { typeof(IModeTransitionRequestSink), domain.UseCase.Transitions },
+            };
+            var bundle = new ModeServiceBundle(services);
+
             var specs = domain.Discoverer.Discover();
             foreach (var spec in specs)
             {
-                var handler = CommandFactory.Create(spec.Method);
+                var handler = CommandFactory.Create(spec.Method, bundle);
                 if (domain.Registry.Add(spec.Meta.Command, handler))
                 {
                     domain.Autocomplete.Register(spec.Meta.Command);
+                }
+            }
+
+            // terminal.stack等のパッケージ内蔵コマンドは、Assembly-CSharpの参照グラフ次第で
+            // 属性発見(ICommandDiscoverer.Discover)に乗らない場合がある(利用者コードが実際に
+            // 型を参照していないアセンブリはAssemblyRefに現れないため)。Composition層は
+            // Infrastructureを直接知っているので、確実性のためここで直接登録する.
+            RegisterBuiltinCommands(domain, bundle);
+        }
+
+        private void RegisterBuiltinCommands(in DomainContext domain, in ModeServiceBundle bundle)
+        {
+            foreach (var method in TerminalModeDiagnosticsCommands.Methods)
+            {
+                var handler = CommandFactory.Create(method, bundle);
+                if (domain.Registry.Add(handler.Meta.Command, handler))
+                {
+                    domain.Autocomplete.Register(handler.Meta.Command);
                 }
             }
         }
@@ -447,7 +504,6 @@ namespace YukimaruGames.Terminal.Composition
             var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, _colorPaletteAccessor, cursorView);
             _promptRenderer = new PromptRenderer(_promptGUIStyleAccessor, domain.Service)
             {
-                Prompt = options.Prompt,
                 ShowLoadingIndicator = options.ShowLoadingIndicator,
                 LoadingIndicatorFrames = options.LoadingIndicatorFrames,
             };
@@ -588,7 +644,8 @@ namespace YukimaruGames.Terminal.Composition
                     .Concat(coordinator.Components).ToArray();
 
             var updatables = instances.OfType<IUpdatable>().ToList();
-            var disposables = instances.OfType<IDisposable>().ToList();
+            var asyncDisposables = instances.OfType<IAsyncDisposable>().ToList();
+            var disposables = instances.OfType<IDisposable>().Where(d => d is not IAsyncDisposable).ToList();
 
             var entryPoint = new TerminalEntryPoint(updatables, rendering.GUI);
 
@@ -598,7 +655,9 @@ namespace YukimaruGames.Terminal.Composition
                 domain.Registry,
                 domain.Autocomplete,
                 rendering.View,
-                disposables);
+                disposables,
+                asyncDisposables,
+                domain.Logger);
         }
     }
 }
