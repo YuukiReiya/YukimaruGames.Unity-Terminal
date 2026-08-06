@@ -20,12 +20,8 @@ namespace YukimaruGames.Terminal.Composition
             var parser = new CommandParser();
             var history = new CommandHistory();
             var autocomplete = new CommandAutocomplete();
-            var executeCommandUseCase = new ExecuteCommandUseCase(
-                logger,
-                registry,
-                invoker,
-                parser,
-                history);
+            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete);
+            var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode);
             var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), null);
             var disposables = new object[]
             {

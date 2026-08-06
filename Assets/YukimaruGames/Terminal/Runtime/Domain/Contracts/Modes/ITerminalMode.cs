@@ -65,7 +65,12 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
         /// <summary>
         /// 1行(または継続入力込みの確定済みテキスト)の評価.
         /// </summary>
-        ValueTask<ModeResult> HandleAsync(in ModeInput input, IModeContext context, CancellationToken cancellationToken);
+        /// <remarks>
+        /// <c>in</c>修飾を付けないのは意図的。C#の言語仕様上、<c>async</c>メソッドは
+        /// <c>ref</c>/<c>in</c>/<c>out</c>パラメータを取れないため、実装側が非同期メソッドとして
+        /// 素直に書けるよう、<see cref="ModeInput"/>は値渡しにする(小さいreadonly structなのでコストは軽微).
+        /// </remarks>
+        ValueTask<ModeResult> HandleAsync(ModeInput input, IModeContext context, CancellationToken cancellationToken);
 
         /// <summary>
         /// 割り込み(Ctrl+C相当)の同期的な問い合わせ.

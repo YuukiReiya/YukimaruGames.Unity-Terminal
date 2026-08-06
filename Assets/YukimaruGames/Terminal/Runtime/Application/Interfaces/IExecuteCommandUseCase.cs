@@ -1,18 +1,45 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using YukimaruGames.Terminal.Domain.Contracts.Modes;
 
 namespace YukimaruGames.Terminal.Application.Interfaces
 {
     /// <summary>
     /// コマンド実行ユースケースのインターフェイス.
     /// </summary>
-    public interface IExecuteCommandUseCase
+    /// <remarks>
+    /// モードスタックの唯一の所有者. 「通常状態も1つのモード」として統一する設計のため、
+    /// 現在モードの読み取り専用ビュー(Prompt/履歴/補完)もここに集約する
+    /// (Facadeである <see cref="ITerminalService"/> はこれへ委譲するだけに留める).
+    /// </remarks>
+    public interface IExecuteCommandUseCase : IDisposable, IAsyncDisposable
     {
         /// <summary>
         /// 実行中フラグ
         /// </summary>
         bool IsExecuting { get; }
+
+        /// <summary>
+        /// 継続入力(複数行)待ちかどうか.
+        /// </summary>
+        bool IsAwaitingContinuation { get; }
+
+        /// <summary>
+        /// 現在の実効プロンプト文字列(継続入力中は <see cref="ITerminalMode.ContinuationPrompt"/>).
+        /// </summary>
+        string Prompt { get; }
+
+        /// <summary>
+        /// 現在のモードが、コマンド実行中のプロンプトとスピナーの併記描画を許容するか.
+        /// </summary>
+        bool AllowsConcurrentSpinner { get; }
+
+        /// <summary>
+        /// 現在のモードスタックの深さ(最下段の NormalMode を含む).
+        /// </summary>
+        int Depth { get; }
 
         /// <summary>
         /// 入力されたコマンド文字列を解析し、検証から実行に至るまでの一連の処理パイプラインを実行。
@@ -28,10 +55,26 @@ namespace YukimaruGames.Terminal.Application.Interfaces
         /// このメソッド内部で適切な実行コンテキストへの振り分けと安全な排他制御が行われ、実処理の完遂が保証されます。
         /// </remarks>
         ValueTask ExecutePipelineAsync(ReadOnlyMemory<char> str, CancellationToken cancellationToken);
-        
+
         /// <summary>
-        /// 実行中コマンドのキャンセル.
+        /// Ctrl+C相当の割り込み. 実行中ならコマンドをキャンセルするのみ(モードは変更しない)。
+        /// 非実行中(モード入力待ち)なら現在モードへ割り込みを問い合わせ、
+        /// 応答に応じてモードから抜ける.
         /// </summary>
-        void CancelCommandIfNeeded();
+        void Interrupt();
+
+        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories.ICommandHistory.Next"/>
+        string NextHistory();
+
+        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories.ICommandHistory.Previous"/>
+        string PrevHistory();
+
+        /// <inheritdoc cref="YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services.ICommandAutocomplete.Complete"/>
+        string[] Autocomplete(string partialWord);
+
+        /// <summary>
+        /// 現在のモードスタックのスナップショットを取得する(診断用、読み取り専用).
+        /// </summary>
+        IReadOnlyList<ModeStackFrameInfo> Snapshot();
     }
 }

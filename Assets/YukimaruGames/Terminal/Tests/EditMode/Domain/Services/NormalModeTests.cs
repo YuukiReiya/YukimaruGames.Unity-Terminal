@@ -139,7 +139,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         private ValueTask<ModeResult> HandleAsync(string text, CancellationToken cancellationToken = default)
         {
             var input = new ModeInput(text.AsMemory(), isContinuation: false);
-            return _sut.HandleAsync(in input, context: null, cancellationToken);
+            return _sut.HandleAsync(input, context: null, cancellationToken);
         }
 
         // ─── 正常系 ─────────────────────────────────────
@@ -284,7 +284,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
             Assert.DoesNotThrowAsync(async () =>
             {
                 var input = new ModeInput("cmd".AsMemory(), isContinuation: false);
-                await sut.HandleAsync(in input, context: null, CancellationToken.None);
+                await sut.HandleAsync(input, context: null, CancellationToken.None);
             });
         }
 

@@ -40,7 +40,7 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
         public virtual ValueTask OnEnterAsync(IModeContext context, CancellationToken cancellationToken) => default;
 
         /// <inheritdoc/>
-        public abstract ValueTask<ModeResult> HandleAsync(in ModeInput input, IModeContext context, CancellationToken cancellationToken);
+        public abstract ValueTask<ModeResult> HandleAsync(ModeInput input, IModeContext context, CancellationToken cancellationToken);
 
         /// <inheritdoc/>
         public virtual InterruptDisposition OnInterrupt(bool isCommandRunning) => InterruptDisposition.NotHandled;

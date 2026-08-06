@@ -68,7 +68,7 @@ namespace YukimaruGames.Terminal.Domain.Services
         public ValueTask OnEnterAsync(IModeContext context, CancellationToken cancellationToken) => default;
 
         /// <inheritdoc/>
-        public ValueTask<ModeResult> HandleAsync(in ModeInput input, IModeContext context, CancellationToken cancellationToken)
+        public ValueTask<ModeResult> HandleAsync(ModeInput input, IModeContext context, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {

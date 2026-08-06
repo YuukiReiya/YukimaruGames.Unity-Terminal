@@ -352,12 +352,8 @@ namespace YukimaruGames.Terminal.Composition
             var history = new CommandHistory();
             var discover = new CommandDiscoverer(logger);
             var autocomplete = new CommandAutocomplete();
-            var executeCommandUseCase = new ExecuteCommandUseCase(
-                logger,
-                registry,
-                invoker,
-                parser,
-                history);
+            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete);
+            var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode);
             var service = new TerminalService(
                 logger,
                 registry,
@@ -368,7 +364,7 @@ namespace YukimaruGames.Terminal.Composition
 
             return new DomainContext
             {
-                Components = new object[] { logger, registry, history, autocomplete, discover, service },
+                Components = new object[] { logger, registry, history, autocomplete, discover, executeCommandUseCase, service },
                 Logger = logger,
                 Registry = registry,
                 History = history,

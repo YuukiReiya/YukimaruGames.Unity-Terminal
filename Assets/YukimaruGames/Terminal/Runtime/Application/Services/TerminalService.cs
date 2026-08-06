@@ -111,7 +111,7 @@ namespace YukimaruGames.Terminal.Application.Services
         ValueTask ITerminalService.ExecuteAsync(string str, CancellationToken cancellationToken) => _executeCommandUseCase.ExecutePipelineAsync(str.AsMemory(), cancellationToken);
 
         /// <inheritdoc/>
-        public void Cancel() => _executeCommandUseCase.CancelCommandIfNeeded();
+        public void Cancel() => _executeCommandUseCase.Interrupt();
 
         /// <inheritdoc/>
         int ITerminalService.LogBufferSize => _logger?.MaxLogs ?? 0;
