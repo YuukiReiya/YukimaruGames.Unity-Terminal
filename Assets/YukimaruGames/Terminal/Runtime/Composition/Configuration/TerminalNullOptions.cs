@@ -27,5 +27,11 @@ namespace YukimaruGames.Terminal.Composition
 
                 // ボタン順序はデフォルト
                 public bool IsButtonReverse => false;
+
+                /// <inheritdoc/>
+                public bool ShowLoadingIndicator => false;
+
+                /// <inheritdoc/>
+                public string[] LoadingIndicatorFrames => System.Array.Empty<string>();
         }
 }

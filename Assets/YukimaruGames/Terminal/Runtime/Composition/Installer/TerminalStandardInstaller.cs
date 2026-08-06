@@ -298,6 +298,8 @@ namespace YukimaruGames.Terminal.Composition
             if (_promptRenderer != null)
             {
                 _promptRenderer.Prompt = options.Prompt;
+                _promptRenderer.ShowLoadingIndicator = options.ShowLoadingIndicator;
+                _promptRenderer.LoadingIndicatorFrames = options.LoadingIndicatorFrames;
             }
         }
 
@@ -443,7 +445,12 @@ namespace YukimaruGames.Terminal.Composition
             var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor, _logCopyButtonGUIStyleAccessor);
             var logRenderer = new LogRenderer(clipboardRenderer, _logGUIStyleAccessor, _colorPaletteAccessor, logLinePool);
             var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, _colorPaletteAccessor, cursorView);
-            _promptRenderer = new PromptRenderer(_promptGUIStyleAccessor) { Prompt = options.Prompt };
+            _promptRenderer = new PromptRenderer(_promptGUIStyleAccessor, domain.Service)
+            {
+                Prompt = options.Prompt,
+                ShowLoadingIndicator = options.ShowLoadingIndicator,
+                LoadingIndicatorFrames = options.LoadingIndicatorFrames,
+            };
             var executeButtonRenderer = new SubmitRenderer(_executeButtonsGUIStyleAccessor);
             var launcherRenderer = new LauncherRenderer(_pixelTextureRepository, _launcherGUIStyleAccessor);
 
