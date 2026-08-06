@@ -38,7 +38,13 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
 
         private readonly ICommandLogger _logger;
         private readonly List<Request> _pending = new();
-        private long _turnId;
+
+        // 採番カウンタ(単調増加、0は「未発行」を表す値として予約し使わない)と、
+        // 現在アクティブなターンのIDを分離して保持する。1フィールド兼用にすると
+        // EndTurn/Abortでの0リセット後に同じ値が再発行され、古いトークンによる
+        // EndTurn/Abortの呼び出しが「別ターン」として誤って受理されてしまう.
+        private long _nextTurnId;
+        private long _activeTurnId;
         private ITerminalMode _turnTop;
 
         public ModeTransitionRequestSink(ICommandLogger logger)
@@ -51,9 +57,15 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
         /// </summary>
         public long BeginTurn(ITerminalMode currentTop)
         {
+            if (_activeTurnId != 0)
+            {
+                _logger?.Send(MessageType.Warning, "BeginTurn was called while another turn is still active. The previous turn is discarded.");
+            }
+
             _pending.Clear();
             _turnTop = currentTop;
-            return ++_turnId;
+            _activeTurnId = ++_nextTurnId;
+            return _activeTurnId;
         }
 
         /// <summary>
@@ -61,14 +73,14 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
         /// </summary>
         public Request[] EndTurn(long turnId)
         {
-            if (_turnId != turnId || turnId == 0)
+            if (turnId == 0 || _activeTurnId != turnId)
             {
                 return Empty;
             }
 
             var result = _pending.Count == 0 ? Empty : _pending.ToArray();
             _pending.Clear();
-            _turnId = 0;
+            _activeTurnId = 0;
             _turnTop = null;
             return result;
         }
@@ -78,13 +90,13 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
         /// </summary>
         public void Abort(long turnId)
         {
-            if (_turnId != turnId)
+            if (turnId == 0 || _activeTurnId != turnId)
             {
                 return;
             }
 
             _pending.Clear();
-            _turnId = 0;
+            _activeTurnId = 0;
             _turnTop = null;
         }
 
@@ -117,7 +129,7 @@ namespace YukimaruGames.Terminal.Application.Services.Modes
 
         private void Enqueue(RequestKind kind, ITerminalMode mode, int count)
         {
-            if (_turnId == 0)
+            if (_activeTurnId == 0)
             {
                 _logger?.Send(MessageType.Warning, $"Mode transition request ({kind}) was made outside of a mode turn and has been discarded.");
                 return;
