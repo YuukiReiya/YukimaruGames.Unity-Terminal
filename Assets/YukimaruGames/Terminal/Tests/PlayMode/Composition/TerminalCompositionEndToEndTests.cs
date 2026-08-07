@@ -72,14 +72,16 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
         {
             yield return null;
 
+            // NOTE: "echo" は組み込みコマンド(TerminalGeneralCommands)が既に使用しているため、
+            // このテスト専用のダミーコマンド名として "test.echo" を使う.
             System.Action echo = () => _scope.Service.Message("hello");
-            Assert.IsTrue(_scope.Registry.Add("echo", CommandFactory.Create(echo)));
+            Assert.IsTrue(_scope.Registry.Add("test.echo", CommandFactory.Create(echo)));
 
-            var task = _scope.Service.ExecuteAsync("echo", CancellationToken.None).AsTask();
+            var task = _scope.Service.ExecuteAsync("test.echo", CancellationToken.None).AsTask();
             yield return new WaitUntil(() => task.IsCompleted);
 
             var logs = _scope.Service.Logs;
-            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Entry && l.Message == "echo"));
+            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Entry && l.Message == "test.echo"));
             Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message == "hello"));
         }
 
