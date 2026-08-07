@@ -16,12 +16,15 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
     /// パッケージ内蔵コマンドは <see cref="Infrastructure.Discoverer.CommandDiscoverer"/> による
     /// アセンブリ走査(既定では利用者の <c>Assembly-CSharp</c>とその参照先のみ)に乗らない場合がある
     /// (利用者コードがこのアセンブリの型を実際に参照していないと、コンパイル後の参照メタデータに
-    /// このアセンブリが現れないため)。そのため <see cref="TerminalBuiltinCommands"/> から
-    /// Composition層で直接登録する.
+    /// このアセンブリが現れないため)。そのため<see cref="Methods"/>経由でComposition層から直接登録する.
+    /// </p>
     /// </remarks>
-    public static class TerminalModeDiagnosticsCommands
+    public static class BuiltinDiagnosticsCommands
     {
-        [TerminalCommand("terminal.stack", help: "Prints the current terminal mode stack.")]
+        private const string StackCommand = "terminal.stack";
+        private const string StackHelp = "Prints the current terminal mode stack.";
+
+        [TerminalCommand(StackCommand, help: StackHelp)]
         private static void PrintModeStack(IModeStackInspector stack, IModeOutput output)
         {
             var frames = stack.Snapshot();
@@ -43,7 +46,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         /// </summary>
         public static MethodInfo[] Methods { get; } =
         {
-            typeof(TerminalModeDiagnosticsCommands).GetMethod(
+            typeof(BuiltinDiagnosticsCommands).GetMethod(
                 nameof(PrintModeStack), BindingFlags.NonPublic | BindingFlags.Static)!,
         };
     }

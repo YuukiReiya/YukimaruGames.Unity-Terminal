@@ -29,7 +29,10 @@ namespace YukimaruGames.Terminal.Domain.Services
         /// </summary>
         /// <param name="logger">ロガーインスタンス.</param>
         public CommandRegistry(ICommandLogger logger) => _logger = logger;
-        
+
+        /// <inheritdoc/>
+        public IEnumerable<CommandHandler> All => _commands.Values;
+
         /// <summary>
         /// コマンドの追加.
         /// </summary>
