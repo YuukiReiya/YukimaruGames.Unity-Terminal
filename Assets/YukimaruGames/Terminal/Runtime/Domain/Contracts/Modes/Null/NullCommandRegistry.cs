@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 
@@ -20,6 +21,8 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes.Null
         private NullCommandRegistry()
         {
         }
+
+        IEnumerable<CommandHandler> ICommandRegistry.All => System.Array.Empty<CommandHandler>();
 
         bool ICommandRegistry.Add(string command, CommandHandler handle) => false;
 

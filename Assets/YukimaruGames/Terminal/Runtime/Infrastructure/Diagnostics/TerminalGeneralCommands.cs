@@ -26,20 +26,30 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             output.Message(args.Length == 0 ? string.Empty : string.Join(' ', args.Select(a => a.String)));
         }
 
-        [TerminalCommand("commands", help: "Lists all registered command names.")]
-        private static void ListCommands(ICommandAutocomplete autocomplete, IModeOutput output)
+        [TerminalCommand("commands", help: "Lists all registered commands with their help text.")]
+        private static void ListCommands(ICommandRegistry registry, IModeOutput output)
         {
-            var names = autocomplete.KnownWords.OrderBy(n => n, StringComparer.Ordinal).ToArray();
-            if (names.Length == 0)
+            var handlers = registry.All
+                .OrderBy(h => h.Meta.Command, StringComparer.Ordinal)
+                .ToArray();
+
+            if (handlers.Length == 0)
             {
                 output.Message("No commands are registered.");
                 return;
             }
 
             var builder = new StringBuilder();
-            for (var i = 0; i < names.Length; i++)
+            for (var i = 0; i < handlers.Length; i++)
             {
-                builder.Append(names[i]).Append(i == names.Length - 1 ? string.Empty : "\n");
+                var meta = handlers[i].Meta;
+                builder.Append(meta.Command);
+                if (!string.IsNullOrEmpty(meta.Help))
+                {
+                    builder.Append(" - ").Append(meta.Help);
+                }
+
+                builder.Append(i == handlers.Length - 1 ? string.Empty : "\n");
             }
 
             output.Message(builder.ToString());

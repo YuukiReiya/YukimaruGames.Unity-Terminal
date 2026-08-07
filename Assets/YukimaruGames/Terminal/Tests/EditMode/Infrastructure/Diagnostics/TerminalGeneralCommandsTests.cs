@@ -29,17 +29,22 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         }
 
         /// <summary>
-        /// 固定の登録済みワード一覧を返す<see cref="ICommandAutocomplete"/>テストダブル.
+        /// 固定のハンドラー一覧を返す<see cref="ICommandRegistry"/>テストダブル.
         /// </summary>
-        private sealed class FixedAutocomplete : ICommandAutocomplete
+        private sealed class FixedRegistry : ICommandRegistry
         {
-            public IEnumerable<string> KnownWords { get; set; } = Array.Empty<string>();
-            public bool Register(string word) => true;
-            public bool Unregister(string word) => true;
-            public string[] Complete(string text) => Array.Empty<string>();
+            public IEnumerable<CommandHandler> All { get; set; } = Array.Empty<CommandHandler>();
+            public bool Add(string command, CommandHandler handle) => true;
+            public bool Remove(string command) => true;
+
+            public bool TryGet(string command, out CommandHandler handler)
+            {
+                handler = default;
+                return false;
+            }
         }
 
-        private static CommandHandler CreateHandler(string methodName, RecordingOutput output, FixedAutocomplete autocomplete)
+        private static CommandHandler CreateHandler(string methodName, RecordingOutput output, FixedRegistry registry)
         {
             var method = typeof(TerminalGeneralCommands).GetMethod(
                 methodName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
@@ -48,17 +53,23 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             var services = new Dictionary<Type, object>
             {
                 { typeof(IModeOutput), output },
-                { typeof(ICommandAutocomplete), autocomplete },
+                { typeof(ICommandRegistry), registry },
             };
 
             return CommandFactory.Create(method, new ModeServiceBundle(services));
         }
 
+        private static CommandHandler CreateHandler(string methodName, RecordingOutput output) =>
+            CreateHandler(methodName, output, new FixedRegistry());
+
+        private static CommandHandler MakeStubHandler(string command, string help) =>
+            new((CommandDelegate)(_ => { }), command, minArgCount: 0, maxArgCount: 0, help);
+
         [Test]
         public void Echo_WithArguments_JoinsArgumentsWithSpace()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("Echo", output, new FixedAutocomplete());
+            var handler = CreateHandler("Echo", output);
 
             handler.Proc(new CommandArgument[] { new("hello"), new("world") }.AsMemory());
 
@@ -70,7 +81,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         public void Echo_WithoutArguments_PrintsEmptyMessage()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("Echo", output, new FixedAutocomplete());
+            var handler = CreateHandler("Echo", output);
 
             handler.Proc(ReadOnlyMemory<CommandArgument>.Empty);
 
@@ -79,23 +90,33 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         }
 
         [Test]
-        public void ListCommands_WithRegisteredWords_PrintsThemSortedOrdinally()
+        public void ListCommands_WithRegisteredHandlers_PrintsNameAndHelpSortedOrdinally()
         {
             var output = new RecordingOutput();
-            var autocomplete = new FixedAutocomplete { KnownWords = new[] { "echo", "commands", "fps" } };
-            var handler = CreateHandler("ListCommands", output, autocomplete);
+            var registry = new FixedRegistry
+            {
+                All = new[]
+                {
+                    MakeStubHandler("echo", "Echoes text back."),
+                    MakeStubHandler("commands", "Lists all registered commands."),
+                    MakeStubHandler("fps", string.Empty),
+                },
+            };
+            var handler = CreateHandler("ListCommands", output, registry);
 
             handler.Proc(ReadOnlyMemory<CommandArgument>.Empty);
 
             Assert.That(output.Messages, Has.Count.EqualTo(1));
-            Assert.That(output.Messages[0], Is.EqualTo("commands\necho\nfps"));
+            Assert.That(
+                output.Messages[0],
+                Is.EqualTo("commands - Lists all registered commands.\necho - Echoes text back.\nfps"));
         }
 
         [Test]
-        public void ListCommands_WithNoRegisteredWords_PrintsPlaceholderMessage()
+        public void ListCommands_WithNoRegisteredHandlers_PrintsPlaceholderMessage()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("ListCommands", output, new FixedAutocomplete());
+            var handler = CreateHandler("ListCommands", output);
 
             handler.Proc(ReadOnlyMemory<CommandArgument>.Empty);
 
@@ -107,7 +128,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         public void TimeScale_WithNegativeValue_ReportsErrorWithoutApplying()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("TimeScale", output, new FixedAutocomplete());
+            var handler = CreateHandler("TimeScale", output);
             var before = UnityEngine.Time.timeScale;
 
             handler.Proc(new CommandArgument[] { new("-1") }.AsMemory());
@@ -120,7 +141,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         public void SetTargetFrameRate_WithPositiveValue_AppliesValue()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("SetTargetFrameRate", output, new FixedAutocomplete());
+            var handler = CreateHandler("SetTargetFrameRate", output);
             var before = UnityEngine.Application.targetFrameRate;
 
             try
@@ -140,7 +161,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         public void SetTargetFrameRate_WithZero_ReportsErrorWithoutApplying()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("SetTargetFrameRate", output, new FixedAutocomplete());
+            var handler = CreateHandler("SetTargetFrameRate", output);
             var before = UnityEngine.Application.targetFrameRate;
 
             handler.Proc(new CommandArgument[] { new("0") }.AsMemory());
@@ -153,7 +174,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         public void SetQualityLevel_WithoutArguments_ReportsUsageError()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("SetQualityLevel", output, new FixedAutocomplete());
+            var handler = CreateHandler("SetQualityLevel", output);
 
             handler.Proc(ReadOnlyMemory<CommandArgument>.Empty);
 
@@ -165,7 +186,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         public void SetQualityLevel_WithOutOfRangeIndex_ReportsError()
         {
             var output = new RecordingOutput();
-            var handler = CreateHandler("SetQualityLevel", output, new FixedAutocomplete());
+            var handler = CreateHandler("SetQualityLevel", output);
 
             handler.Proc(new CommandArgument[] { new("999999") }.AsMemory());
 

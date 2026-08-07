@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 
 namespace YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services
@@ -7,6 +8,11 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services
     /// </summary>
     public interface ICommandRegistry
     {
+        /// <summary>
+        /// 登録済みの全ハンドラー(ヘルプ表示・一覧表示等の読み取り専用用途).
+        /// </summary>
+        IEnumerable<CommandHandler> All { get; }
+
         /// <summary>
         /// コマンドの追加.
         /// </summary>
