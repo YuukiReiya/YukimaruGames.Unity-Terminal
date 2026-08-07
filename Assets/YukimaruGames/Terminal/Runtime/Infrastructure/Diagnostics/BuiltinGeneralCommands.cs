@@ -75,9 +75,9 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             }
 
             var value = args[0].Float;
-            if (value < 0f)
+            if (float.IsNaN(value) || float.IsInfinity(value) || value < 0f)
             {
-                output.Error($"{TimeScaleCommand} requires a value >= 0.");
+                output.Error($"{TimeScaleCommand} requires a finite value >= 0.");
                 return;
             }
 

@@ -156,6 +156,34 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(UnityEngine.Time.timeScale, Is.EqualTo(before));
         }
 
+        /// <summary>NaNを指定した場合、エラーを報告しTime.timeScaleを変更しないことを検証します.</summary>
+        [Test]
+        public void TimeScale_WithNaN_ReportsErrorWithoutApplying()
+        {
+            var output = new RecordingOutput();
+            var handler = CreateHandler("TimeScale", output);
+            var before = UnityEngine.Time.timeScale;
+
+            handler.Proc(new CommandArgument[] { new("NaN") }.AsMemory());
+
+            Assert.That(output.Errors, Has.Count.EqualTo(1));
+            Assert.That(UnityEngine.Time.timeScale, Is.EqualTo(before));
+        }
+
+        /// <summary>Infinityを指定した場合、エラーを報告しTime.timeScaleを変更しないことを検証します.</summary>
+        [Test]
+        public void TimeScale_WithInfinity_ReportsErrorWithoutApplying()
+        {
+            var output = new RecordingOutput();
+            var handler = CreateHandler("TimeScale", output);
+            var before = UnityEngine.Time.timeScale;
+
+            handler.Proc(new CommandArgument[] { new("Infinity") }.AsMemory());
+
+            Assert.That(output.Errors, Has.Count.EqualTo(1));
+            Assert.That(UnityEngine.Time.timeScale, Is.EqualTo(before));
+        }
+
         /// <summary>正の値を指定した場合、Application.targetFrameRateに反映されることを検証します.</summary>
         [Test]
         public void SetTargetFrameRate_WithPositiveValue_AppliesValue()
