@@ -10,22 +10,32 @@ using YukimaruGames.Terminal.Infrastructure.Factories;
 namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
 {
     /// <summary>
-    /// <see cref="TerminalGeneralCommands"/> が提供する組み込みコマンドを検証するテストクラス.
+    /// <see cref="BuiltinGeneralCommands"/> が提供する組み込みコマンドを検証するテストクラス.
     /// </summary>
     [TestFixture]
-    public sealed class TerminalGeneralCommandsTests
+    public sealed class BuiltinGeneralCommandsTests
     {
         /// <summary>
         /// 出力を記録するだけの<see cref="IModeOutput"/>テストダブル.
         /// </summary>
         private sealed class RecordingOutput : IModeOutput
         {
-            public readonly List<string> Messages = new();
-            public readonly List<string> Errors = new();
+            private readonly List<string> _messages = new();
+            private readonly List<string> _errors = new();
 
-            public void Message(string message) => Messages.Add(message);
+            /// <summary>
+            /// <see cref="Message"/>で記録されたメッセージ一覧.
+            /// </summary>
+            public IReadOnlyList<string> Messages => _messages;
+
+            /// <summary>
+            /// <see cref="Error"/>で記録されたエラー一覧.
+            /// </summary>
+            public IReadOnlyList<string> Errors => _errors;
+
+            public void Message(string message) => _messages.Add(message);
             public void Warning(string message) { }
-            public void Error(string message) => Errors.Add(message);
+            public void Error(string message) => _errors.Add(message);
         }
 
         /// <summary>
@@ -33,7 +43,11 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         /// </summary>
         private sealed class FixedRegistry : ICommandRegistry
         {
+            /// <summary>
+            /// <see cref="ICommandRegistry.All"/>として返す固定のハンドラー一覧.
+            /// </summary>
             public IEnumerable<CommandHandler> All { get; set; } = Array.Empty<CommandHandler>();
+
             public bool Add(string command, CommandHandler handle) => true;
             public bool Remove(string command) => true;
 
@@ -46,7 +60,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
 
         private static CommandHandler CreateHandler(string methodName, RecordingOutput output, FixedRegistry registry)
         {
-            var method = typeof(TerminalGeneralCommands).GetMethod(
+            var method = typeof(BuiltinGeneralCommands).GetMethod(
                 methodName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
             Assert.That(method, Is.Not.Null, $"Method '{methodName}' was not found.");
 
@@ -65,6 +79,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
         private static CommandHandler MakeStubHandler(string command, string help) =>
             new((CommandDelegate)(_ => { }), command, minArgCount: 0, maxArgCount: 0, help);
 
+        /// <summary>引数付きechoが、空白区切りで結合したメッセージを出力することを検証します.</summary>
         [Test]
         public void Echo_WithArguments_JoinsArgumentsWithSpace()
         {
@@ -77,6 +92,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(output.Messages[0], Is.EqualTo("hello world"));
         }
 
+        /// <summary>引数無しechoが、空文字列のメッセージを出力することを検証します.</summary>
         [Test]
         public void Echo_WithoutArguments_PrintsEmptyMessage()
         {
@@ -89,6 +105,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(output.Messages[0], Is.EqualTo(string.Empty));
         }
 
+        /// <summary>登録済みハンドラーがある場合、コマンド名の辞書順で「名前 - ヘルプ」形式に整形されることを検証します.</summary>
         [Test]
         public void ListCommands_WithRegisteredHandlers_PrintsNameAndHelpSortedOrdinally()
         {
@@ -112,6 +129,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
                 Is.EqualTo("commands - Lists all registered commands.\necho - Echoes text back.\nfps"));
         }
 
+        /// <summary>登録済みハンドラーが無い場合、プレースホルダーメッセージを出力することを検証します.</summary>
         [Test]
         public void ListCommands_WithNoRegisteredHandlers_PrintsPlaceholderMessage()
         {
@@ -124,6 +142,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(output.Messages[0], Is.EqualTo("No commands are registered."));
         }
 
+        /// <summary>負の値を指定した場合、エラーを報告しTime.timeScaleを変更しないことを検証します.</summary>
         [Test]
         public void TimeScale_WithNegativeValue_ReportsErrorWithoutApplying()
         {
@@ -137,6 +156,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(UnityEngine.Time.timeScale, Is.EqualTo(before));
         }
 
+        /// <summary>正の値を指定した場合、Application.targetFrameRateに反映されることを検証します.</summary>
         [Test]
         public void SetTargetFrameRate_WithPositiveValue_AppliesValue()
         {
@@ -157,6 +177,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             }
         }
 
+        /// <summary>0を指定した場合、エラーを報告しApplication.targetFrameRateを変更しないことを検証します.</summary>
         [Test]
         public void SetTargetFrameRate_WithZero_ReportsErrorWithoutApplying()
         {
@@ -170,6 +191,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(UnityEngine.Application.targetFrameRate, Is.EqualTo(before));
         }
 
+        /// <summary>引数無しでquality.setを実行した場合、使用方法エラーを報告することを検証します.</summary>
         [Test]
         public void SetQualityLevel_WithoutArguments_ReportsUsageError()
         {
@@ -182,6 +204,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(output.Errors[0], Does.Contain("Usage"));
         }
 
+        /// <summary>範囲外のインデックスを指定した場合、エラーを報告することを検証します.</summary>
         [Test]
         public void SetQualityLevel_WithOutOfRangeIndex_ReportsError()
         {

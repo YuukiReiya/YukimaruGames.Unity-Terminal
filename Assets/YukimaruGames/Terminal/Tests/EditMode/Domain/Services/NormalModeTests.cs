@@ -48,6 +48,9 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         {
             private readonly Dictionary<string, CommandHandler> _handlers = new();
 
+            /// <summary>
+            /// 登録済みの全ハンドラー.
+            /// </summary>
             public IEnumerable<CommandHandler> All => _handlers.Values;
 
             public bool Add(string command, CommandHandler handle)

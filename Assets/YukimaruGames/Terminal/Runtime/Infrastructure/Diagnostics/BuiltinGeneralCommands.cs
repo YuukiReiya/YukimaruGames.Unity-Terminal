@@ -14,19 +14,26 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
     /// 特定アプリに依存しない、汎用的な診断・ユーティリティ用の組み込みコマンド群.
     /// </summary>
     /// <remarks>
-    /// <see cref="TerminalModeDiagnosticsCommands"/>と同様、パッケージ内蔵コマンドは
+    /// <see cref="BuiltinDiagnosticsCommands"/>と同様、パッケージ内蔵コマンドは
     /// <c>CommandDiscoverer</c>によるアセンブリ走査に乗らない場合があるため、
     /// Composition層から<see cref="Methods"/>経由で直接登録する.
     /// </remarks>
-    public static class TerminalGeneralCommands
+    public static class BuiltinGeneralCommands
     {
-        [TerminalCommand("echo", maxArgCount: 64, minArgCount: 0, help: "Echoes the given arguments back. Usage: echo [text...]")]
+        private const string EchoCommand = "echo";
+        private const int EchoMaxArgCount = 64;
+        private const string EchoHelp = "Echoes the given arguments back. Usage: echo [text...]";
+
+        [TerminalCommand(EchoCommand, maxArgCount: EchoMaxArgCount, minArgCount: 0, help: EchoHelp)]
         private static void Echo(CommandArgument[] args, IModeOutput output)
         {
             output.Message(args.Length == 0 ? string.Empty : string.Join(' ', args.Select(a => a.String)));
         }
 
-        [TerminalCommand("commands", help: "Lists all registered commands with their help text.")]
+        private const string CommandsCommand = "commands";
+        private const string CommandsHelp = "Lists all registered commands with their help text.";
+
+        [TerminalCommand(CommandsCommand, help: CommandsHelp)]
         private static void ListCommands(ICommandRegistry registry, IModeOutput output)
         {
             var handlers = registry.All
@@ -55,7 +62,10 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             output.Message(builder.ToString());
         }
 
-        [TerminalCommand("time.scale", maxArgCount: 1, minArgCount: 0, help: "Gets or sets Time.timeScale. Usage: time.scale [value]")]
+        private const string TimeScaleCommand = "time.scale";
+        private const string TimeScaleHelp = "Gets or sets Time.timeScale. Usage: time.scale [value]";
+
+        [TerminalCommand(TimeScaleCommand, maxArgCount: 1, minArgCount: 0, help: TimeScaleHelp)]
         private static void TimeScale(CommandArgument[] args, IModeOutput output)
         {
             if (args.Length == 0)
@@ -67,7 +77,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             var value = args[0].Float;
             if (value < 0f)
             {
-                output.Error("time.scale requires a value >= 0.");
+                output.Error($"{TimeScaleCommand} requires a value >= 0.");
                 return;
             }
 
@@ -75,27 +85,35 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             output.Message($"Time.timeScale = {Time.timeScale}");
         }
 
-        [TerminalCommand("fps", help: "Prints the current frame rate.")]
+        private const string FpsCommand = "fps";
+        private const string FpsHelp = "Prints the current frame rate.";
+        private const float MillisecondsPerSecond = 1000f;
+
+        [TerminalCommand(FpsCommand, help: FpsHelp)]
         private static void PrintFps(IModeOutput output)
         {
             var deltaTime = Time.unscaledDeltaTime;
             var fps = deltaTime > 0f ? 1f / deltaTime : 0f;
-            output.Message($"{fps:F1} fps ({deltaTime * 1000f:F2} ms)");
+            output.Message($"{fps:F1} fps ({deltaTime * MillisecondsPerSecond:F2} ms)");
         }
 
-        [TerminalCommand("fps.set", maxArgCount: 1, minArgCount: 1, help: "Sets Application.targetFrameRate. Usage: fps.set <value> (-1 = unlimited)")]
+        private const string FpsSetCommand = "fps.set";
+        private const string FpsSetHelp = "Sets Application.targetFrameRate. Usage: fps.set <value> (-1 = unlimited)";
+        private const int UnlimitedFrameRate = -1;
+
+        [TerminalCommand(FpsSetCommand, maxArgCount: 1, minArgCount: 1, help: FpsSetHelp)]
         private static void SetTargetFrameRate(CommandArgument[] args, IModeOutput output)
         {
             if (args.Length < 1)
             {
-                output.Error("Usage: fps.set <value> (-1 = unlimited)");
+                output.Error($"Usage: {FpsSetCommand} <value> ({UnlimitedFrameRate} = unlimited)");
                 return;
             }
 
             var value = args[0].Int;
-            if (value < -1 || value == 0)
+            if (value < UnlimitedFrameRate || value == 0)
             {
-                output.Error("fps.set requires -1 (unlimited) or a positive value.");
+                output.Error($"{FpsSetCommand} requires {UnlimitedFrameRate} (unlimited) or a positive value.");
                 return;
             }
 
@@ -103,7 +121,10 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             output.Message($"Application.targetFrameRate = {Application.targetFrameRate}");
         }
 
-        [TerminalCommand("quality.list", help: "Lists the available QualitySettings levels.")]
+        private const string QualityListCommand = "quality.list";
+        private const string QualityListHelp = "Lists the available QualitySettings levels.";
+
+        [TerminalCommand(QualityListCommand, help: QualityListHelp)]
         private static void ListQualityLevels(IModeOutput output)
         {
             var names = QualitySettings.names;
@@ -120,12 +141,15 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             output.Message(builder.ToString());
         }
 
-        [TerminalCommand("quality.set", maxArgCount: 1, minArgCount: 1, help: "Sets the QualitySettings level by index. Usage: quality.set <index>")]
+        private const string QualitySetCommand = "quality.set";
+        private const string QualitySetHelp = "Sets the QualitySettings level by index. Usage: quality.set <index>";
+
+        [TerminalCommand(QualitySetCommand, maxArgCount: 1, minArgCount: 1, help: QualitySetHelp)]
         private static void SetQualityLevel(CommandArgument[] args, IModeOutput output)
         {
             if (args.Length < 1)
             {
-                output.Error("Usage: quality.set <index>");
+                output.Error($"Usage: {QualitySetCommand} <index>");
                 return;
             }
 
@@ -141,13 +165,17 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             output.Message($"Quality level set to [{index}] {names[index]}.");
         }
 
-        [TerminalCommand("gc.collect", help: "Forces an immediate garbage collection.")]
+        private const string GcCollectCommand = "gc.collect";
+        private const string GcCollectHelp = "Forces an immediate garbage collection.";
+        private const float BytesPerKilobyte = 1024f;
+
+        [TerminalCommand(GcCollectCommand, help: GcCollectHelp)]
         private static void ForceGarbageCollect(IModeOutput output)
         {
             var before = GC.GetTotalMemory(forceFullCollection: false);
             GC.Collect();
             var after = GC.GetTotalMemory(forceFullCollection: false);
-            output.Message($"GC.Collect() done. {before / 1024f:F1} KB -> {after / 1024f:F1} KB");
+            output.Message($"GC.Collect() done. {before / BytesPerKilobyte:F1} KB -> {after / BytesPerKilobyte:F1} KB");
         }
 
         /// <summary>
@@ -155,14 +183,14 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         /// </summary>
         public static MethodInfo[] Methods { get; } =
         {
-            typeof(TerminalGeneralCommands).GetMethod(nameof(Echo), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalGeneralCommands).GetMethod(nameof(ListCommands), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalGeneralCommands).GetMethod(nameof(TimeScale), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalGeneralCommands).GetMethod(nameof(PrintFps), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalGeneralCommands).GetMethod(nameof(SetTargetFrameRate), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalGeneralCommands).GetMethod(nameof(ListQualityLevels), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalGeneralCommands).GetMethod(nameof(SetQualityLevel), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalGeneralCommands).GetMethod(nameof(ForceGarbageCollect), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(Echo), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(ListCommands), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(TimeScale), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(PrintFps), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(SetTargetFrameRate), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(ListQualityLevels), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(SetQualityLevel), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(ForceGarbageCollect), BindingFlags.NonPublic | BindingFlags.Static)!,
         };
     }
 }

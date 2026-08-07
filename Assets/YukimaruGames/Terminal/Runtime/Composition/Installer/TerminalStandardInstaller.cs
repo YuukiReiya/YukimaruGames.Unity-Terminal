@@ -440,13 +440,13 @@ namespace YukimaruGames.Terminal.Composition
 
         private void RegisterBuiltinCommands(in DomainContext domain, in ModeServiceBundle bundle)
         {
-            RegisterBuiltinCommandMethods(domain, bundle, TerminalModeDiagnosticsCommands.Methods);
-            RegisterBuiltinCommandMethods(domain, bundle, TerminalGeneralCommands.Methods);
+            RegisterBuiltinCommandMethods(domain, bundle, BuiltinDiagnosticsCommands.Methods);
+            RegisterBuiltinCommandMethods(domain, bundle, BuiltinGeneralCommands.Methods);
 
 #if UNITY_EDITOR
             // Editor限定コマンドは実機ビルド(UNITY_EDITOR未定義)では型ごとコンパイル対象外になる
             // ため、この呼び出し自体も#if UNITY_EDITORで囲い、実機ビルドに参照を残さない.
-            RegisterBuiltinCommandMethods(domain, bundle, TerminalEditorOnlyCommands.Methods);
+            RegisterBuiltinCommandMethods(domain, bundle, BuiltinEditorCommands.Methods);
 #endif
         }
 

@@ -15,21 +15,28 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
     /// 型ごとコンパイル対象から除外される。登録側(<c>TerminalStandardInstaller</c>)の呼び出し箇所も
     /// 同様に<c>#if UNITY_EDITOR</c>で囲い、実機ビルドにこの型への参照自体が残らないようにする.
     /// </remarks>
-    public static class TerminalEditorOnlyCommands
+    public static class BuiltinEditorCommands
     {
-        [TerminalCommand("editor.pause", help: "Toggles EditorApplication.isPaused.")]
+        private const string PauseCommand = "editor.pause";
+        private const string PauseHelp = "Toggles EditorApplication.isPaused.";
+
+        [TerminalCommand(PauseCommand, help: PauseHelp)]
         private static void TogglePause(IModeOutput output)
         {
             EditorApplication.isPaused = !EditorApplication.isPaused;
             output.Message($"EditorApplication.isPaused = {EditorApplication.isPaused}");
         }
 
-        [TerminalCommand("editor.ping", maxArgCount: 1, minArgCount: 1, help: "Pings (selects and highlights) an asset in the Project window. Usage: editor.ping <assetPath>")]
+        private const string PingCommand = "editor.ping";
+        private const string PingHelp = "Pings (selects and highlights) an asset in the Project window. Usage: editor.ping <assetPath>";
+        private const int PingArgCount = 1;
+
+        [TerminalCommand(PingCommand, maxArgCount: PingArgCount, minArgCount: PingArgCount, help: PingHelp)]
         private static void PingAsset(CommandArgument[] args, IModeOutput output)
         {
-            if (args.Length < 1)
+            if (args.Length < PingArgCount)
             {
-                output.Error("Usage: editor.ping <assetPath>");
+                output.Error($"Usage: {PingCommand} <assetPath>");
                 return;
             }
 
@@ -50,8 +57,8 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         /// </summary>
         public static MethodInfo[] Methods { get; } =
         {
-            typeof(TerminalEditorOnlyCommands).GetMethod(nameof(TogglePause), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(TerminalEditorOnlyCommands).GetMethod(nameof(PingAsset), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinEditorCommands).GetMethod(nameof(TogglePause), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinEditorCommands).GetMethod(nameof(PingAsset), BindingFlags.NonPublic | BindingFlags.Static)!,
         };
     }
 }

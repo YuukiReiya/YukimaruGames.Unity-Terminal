@@ -26,6 +26,12 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
     [TestFixture]
     public sealed class TerminalCompositionEndToEndTests
     {
+        /// <summary>
+        /// テスト専用のダミーコマンド名. 組み込みコマンド(<see cref="Infrastructure.Diagnostics.BuiltinGeneralCommands"/>)
+        /// の"echo"と衝突しないよう別名にしている.
+        /// </summary>
+        private const string TestEchoCommand = "test.echo";
+
         private IInstaller _installer;
         private TerminalRuntimeScope _scope;
 
@@ -72,17 +78,31 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
         {
             yield return null;
 
-            // NOTE: "echo" は組み込みコマンド(TerminalGeneralCommands)が既に使用しているため、
-            // このテスト専用のダミーコマンド名として "test.echo" を使う.
             System.Action echo = () => _scope.Service.Message("hello");
-            Assert.IsTrue(_scope.Registry.Add("test.echo", CommandFactory.Create(echo)));
+            Assert.IsTrue(_scope.Registry.Add(TestEchoCommand, CommandFactory.Create(echo)));
 
-            var task = _scope.Service.ExecuteAsync("test.echo", CancellationToken.None).AsTask();
+            var task = _scope.Service.ExecuteAsync(TestEchoCommand, CancellationToken.None).AsTask();
             yield return new WaitUntil(() => task.IsCompleted);
 
             var logs = _scope.Service.Logs;
-            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Entry && l.Message == "test.echo"));
+            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Entry && l.Message == TestEchoCommand));
             Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message == "hello"));
+        }
+
+        /// <summary>
+        /// 組み込みコマンド(<see cref="Infrastructure.Diagnostics.BuiltinGeneralCommands"/>の"echo")が
+        /// 実際の配線(TerminalStandardInstaller)経由で登録・実行されることを検証する.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator ExecuteAsync_BuiltinEchoCommand_LogsArgumentsBack()
+        {
+            yield return null;
+
+            var task = _scope.Service.ExecuteAsync("echo hello world", CancellationToken.None).AsTask();
+            yield return new WaitUntil(() => task.IsCompleted);
+
+            var logs = _scope.Service.Logs;
+            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message == "hello world"));
         }
 
         /// <summary>未登録コマンドを実行すると、実行はされずエラーログのみが記録されることを検証する.</summary>
