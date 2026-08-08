@@ -121,3 +121,9 @@ memories/
 
 # VSCode
 *.code-workspace
+
+# Claude
+.claude/*
+
+# Git
+.githooks/
