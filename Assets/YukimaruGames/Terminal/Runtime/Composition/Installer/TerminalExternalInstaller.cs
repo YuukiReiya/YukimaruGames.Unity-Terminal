@@ -31,7 +31,7 @@ namespace YukimaruGames.Terminal.Composition
     /// 「どちらのViewを使うか」は<see cref="TerminalBootstrapper"/>の_installerフィールド
     /// (SerializeReferenceの型選択メニュー)で切り替える想定.
     /// </remarks>
-    [Serializable, AddTypeMenu("External(cmd/zsh)")]
+    [Serializable, AddTypeMenu("External(cmd,zsh)")]
     public sealed class TerminalExternalInstaller : IInstaller
     {
         /// <summary>
