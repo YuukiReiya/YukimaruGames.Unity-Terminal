@@ -15,7 +15,6 @@ using YukimaruGames.Terminal.Infrastructure.Diagnostics;
 using YukimaruGames.Terminal.Infrastructure.Discoverer;
 using YukimaruGames.Terminal.Infrastructure.Factories;
 using YukimaruGames.Terminal.Infrastructure.Modes;
-using YukimaruGames.Terminal.Infrastructure.Repositories;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Composition.Shared;
 
@@ -31,7 +30,7 @@ namespace YukimaruGames.Terminal.Composition
     /// 「どちらのViewを使うか」は<see cref="TerminalBootstrapper"/>の_installerフィールド
     /// (SerializeReferenceの型選択メニュー)で切り替える想定.
     /// </remarks>
-    [Serializable, AddTypeMenu("External(cmd,zsh)")]
+    [Serializable, AddTypeMenu("CLI(cmd,zsh)")]
     public sealed class TerminalExternalInstaller : IInstaller
     {
         /// <summary>
