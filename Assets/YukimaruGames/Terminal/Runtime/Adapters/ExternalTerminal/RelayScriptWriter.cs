@@ -38,6 +38,9 @@ $reader = New-Object System.IO.StreamReader($stream)
 
 $receiveThread = [System.Threading.Thread]::new([System.Threading.ParameterizedThreadStart]{
     param($r)
+    # クロージャ経由の変数参照は別スレッド上のデリゲート実行では信頼できないため、
+    # プレフィックスはここでリテラルとして直接書く.
+    $promptPrefix = 'PROMPT'
     while ($true) {
         try {
             $line = $r.ReadLine()
@@ -46,7 +49,13 @@ $receiveThread = [System.Threading.Thread]::new([System.Threading.ParameterizedT
             break
         }
         if ($null -eq $line) { break }
-        [Console]::Out.WriteLine($line)
+        if ($line.StartsWith($promptPrefix)) {
+            # プロンプト行は改行せずその場に出力し、続けて入力できるようにする(キャレット代わり).
+            [Console]::Out.Write($line.Substring($promptPrefix.Length))
+        }
+        else {
+            [Console]::Out.WriteLine($line)
+        }
     }
     # 受信ループがソケット切断(EOF)で抜けても、フォアグラウンドの[Console]::In.ReadLine()は
     # ブロックされたままになり続ける([Console]::In.ReadLine()には安全な割り込み方法が無いため)。
@@ -91,7 +100,15 @@ exec 3<>""/dev/tcp/127.0.0.1/$PORT"" || {
 PARENT_PID=$$
 
 ( while IFS= read -r line <&3; do
-      echo ""$line""
+      case ""$line"" in
+          PROMPT*)
+              # プロンプト行は改行せずその場に出力し、続けて入力できるようにする(キャレット代わり).
+              printf '%s' ""${line#PROMPT}""
+              ;;
+          *)
+              echo ""$line""
+              ;;
+      esac
   done
   # 受信ループがソケット切断(EOF)で抜けても、フォアグラウンドの`read`(標準入力待ち)は
   # ブロックされたままになり続ける。ウィンドウをゾンビ状態のまま放置しないよう、

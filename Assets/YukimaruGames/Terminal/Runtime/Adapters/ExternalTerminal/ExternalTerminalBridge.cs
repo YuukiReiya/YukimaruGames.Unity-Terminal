@@ -22,6 +22,28 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
     /// </remarks>
     public sealed class ExternalTerminalBridge : IDisposable
     {
+        /// <summary>
+        /// プロンプト行(キャレット代わり)の目印文字列.
+        /// </summary>
+        /// <remarks>
+        /// 通常のログ行(<see cref="HandleLogAdded"/>)は末尾に改行を付けて送るのに対し、
+        /// プロンプトは「同じ行の続きにユーザーの入力が来る」ことを期待するため改行を付けない。
+        /// ただし中継スクリプト側の受信ループは改行区切りで1行ずつ読む都合上、プロンプト自体は
+        /// 改行付きの1行として送りつつ、この目印を先頭に付けることで中継スクリプト側に
+        /// 「改行せず出力しろ」と伝える(<see cref="RelayScriptWriter"/>の受信ループ実装を参照).
+        /// </remarks>
+        private const string PromptSentinel = "PROMPT";
+
+        /// <summary>
+        /// ANSIエスケープシーケンスによる画面クリア(カーソルを左上へ戻す).
+        /// </summary>
+        /// <remarks>
+        /// 中継スクリプト(bash/PowerShell)側の受信ループは改行区切りで1行ずつ読むため、
+        /// 末尾の"\n"が無いとバッファに滞留し、次の(改行付きの)出力が来るまで反映されない
+        /// (=クリアが1テンポ遅れて見える不具合の原因だった).
+        /// </remarks>
+        private static readonly byte[] AnsiClearScreen = Encoding.UTF8.GetBytes("\x1b[2J\x1b[H\n");
+
         private readonly ITerminalService _service;
         private readonly TcpListener _listener;
         private readonly CancellationTokenSource _cts = new();
@@ -70,6 +92,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                         _clients.Add(client);
                     }
 
+                    SendPromptTo(client);
                     _ = ClientReadLoopAsync(client, ct);
                 }
             }
@@ -164,17 +187,68 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
             {
                 _service.Exception(e.ToString());
             }
+            finally
+            {
+                // コマンド完了後、実行結果のログ出力(HandleLogAdded)より後にプロンプトを送ることで
+                // 「出力の下に次のプロンプトが来る」通常のシェルの見た目に合わせる.
+                SendPromptToAll();
+            }
         }
 
         /// <summary>
-        /// ANSIエスケープシーケンスによる画面クリア(カーソルを左上へ戻す).
+        /// 新規接続したクライアントへ、キャレット代わりのプロンプトを送る(接続直後は
+        /// まだ何も入力されておらず、入力可能であることが視覚的にわからないため).
+        /// </summary>
+        private void SendPromptTo(TcpClient client)
+        {
+            RunOnMainThread(() =>
+            {
+                var bytes = Encoding.UTF8.GetBytes(PromptSentinel + _service.Prompt + "\n");
+                TryWrite(client, bytes);
+            });
+        }
+
+        /// <summary>
+        /// 接続中の全クライアントへ、キャレット代わりのプロンプトを送る.
         /// </summary>
         /// <remarks>
-        /// 中継スクリプト(bash/PowerShell)側の受信ループは改行区切りで1行ずつ読むため、
-        /// 末尾の"\n"が無いとバッファに滞留し、次の(改行付きの)出力が来るまで反映されない
-        /// (=クリアが1テンポ遅れて見える不具合の原因だった).
+        /// 呼び出し元(<see cref="ExecuteAndLogAsync"/>の<c>finally</c>)は既にUnityメインスレッド上で
+        /// 実行されているため、ここでは<see cref="RunOnMainThread"/>を経由しない.
         /// </remarks>
-        private static readonly byte[] AnsiClearScreen = Encoding.UTF8.GetBytes("\x1b[2J\x1b[H\n");
+        private void SendPromptToAll()
+        {
+            List<TcpClient> snapshot;
+            lock (_clientsLock)
+            {
+                if (_clients.Count == 0)
+                {
+                    return;
+                }
+
+                snapshot = new List<TcpClient>(_clients);
+            }
+
+            var bytes = Encoding.UTF8.GetBytes(PromptSentinel + _service.Prompt + "\n");
+            foreach (var client in snapshot)
+            {
+                TryWrite(client, bytes);
+            }
+        }
+
+        /// <summary>
+        /// <see cref="ITerminalService"/>への読み取りアクセスもメインスレッドへ寄せるための
+        /// 汎用ヘルパー(<see cref="ExecuteOnMainThreadAsync"/>と異なり完了を待たない).
+        /// </summary>
+        private void RunOnMainThread(Action action)
+        {
+            if (_mainThreadContext == null)
+            {
+                action();
+                return;
+            }
+
+            _mainThreadContext.Post(_ => action(), null);
+        }
 
         /// <summary>
         /// ログバッファの全件削除(clearコマンド等による<c>ICommandLogger.Clear()</c>)を検知し、
