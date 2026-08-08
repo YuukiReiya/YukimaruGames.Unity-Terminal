@@ -14,17 +14,24 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
     {
         public bool IsSupported => true;
 
-        public Process Launch(int port)
+        public Process Launch(int port, string token)
         {
             var relayPath = CommandLineRelayScriptWriter.WriteMacRelayScript();
             MakeExecutable(relayPath);
+
+            // トークンそのものではなく、トークンを書いた一時ファイルのパスだけを引数に渡す
+            // (引数は`ps`等で同一マシンの他プロセスから丸見えになり、認証の意味が薄れるため)。
+            // TMPDIR未設定で/tmpへフォールバックした場合に備え、ファイル自体も所有者のみ
+            // 読み書き可能にしておく.
+            var tokenPath = CommandLineRelayScriptWriter.WriteTokenFile(token);
+            RestrictToOwner(tokenPath);
 
             var launcherPath = CommandLineRelayScriptWriter.WriteMacLauncherScript();
 
             var startInfo = new ProcessStartInfo
             {
                 FileName = "osascript",
-                Arguments = $"\"{launcherPath}\" \"{relayPath}\" {port}",
+                Arguments = $"\"{launcherPath}\" \"{relayPath}\" {port} \"{tokenPath}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true,
             };
@@ -32,12 +39,16 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             return Process.Start(startInfo);
         }
 
-        private static void MakeExecutable(string path)
+        private static void MakeExecutable(string path) => Chmod("+x", path);
+
+        private static void RestrictToOwner(string path) => Chmod("600", path);
+
+        private static void Chmod(string mode, string path)
         {
             using var chmod = Process.Start(new ProcessStartInfo
             {
                 FileName = "/bin/chmod",
-                Arguments = $"+x \"{path}\"",
+                Arguments = $"{mode} \"{path}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true,
             });

@@ -10,14 +10,19 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
     {
         public bool IsSupported => true;
 
-        public Process Launch(int port)
+        public Process Launch(int port, string token)
         {
             var scriptPath = CommandLineRelayScriptWriter.WriteWindowsRelayScript();
+
+            // トークンそのものではなく、トークンを書いた一時ファイルのパスだけを引数に渡す
+            // (引数はタスクマネージャー/WMI等から他プロセスに見えてしまうため).
+            // Windowsの一時ディレクトリはユーザー毎に分離されているため、追加のACL設定は行わない.
+            var tokenPath = CommandLineRelayScriptWriter.WriteTokenFile(token);
 
             var startInfo = new ProcessStartInfo
             {
                 FileName = "cmd.exe",
-                Arguments = $"/K powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\" -Port {port}",
+                Arguments = $"/K powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\" -Port {port} -TokenPath \"{tokenPath}\"",
                 UseShellExecute = true,
                 CreateNoWindow = false,
             };

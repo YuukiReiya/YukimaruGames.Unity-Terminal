@@ -17,6 +17,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         private const string WindowsRelayFileName = "yukimaru_terminal_relay.ps1";
         private const string MacRelayFileName = "yukimaru_terminal_relay.sh";
         private const string MacLauncherFileName = "yukimaru_terminal_launcher.applescript";
+        private const string TokenFileName = "yukimaru_terminal_token.txt";
 
         // プロンプトを自前でRedraw管理しながら描画するため、標準搭載のPSReadLineには頼らず
         // (スクリプト内蔵ループには効かない)、[Console]::ReadKey()でキー単位に読み取る自前実装で
@@ -24,9 +25,33 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         // 受信は「プロンプト行が来るまで出力し続けてから入力を受け付ける」同期ループとし、
         // バックグラウンドスレッドでの受信は行わない(非同期に届いた出力が、ユーザーが行編集中の
         // 表示と競合して画面が乱れるのを避けるため).
-        private const string WindowsRelayScript = @"param([int]$Port)
+        private const string WindowsRelayScript = @"param([int]$Port, [string]$TokenPath)
 
 $ErrorActionPreference = 'Stop'
+
+# セッショントークンは起動引数ではなく一時ファイル経由で受け取る(引数はタスクマネージャー等から
+# 他プロセスに見えてしまうため)。読み取ったら速やかに削除し、露出時間を最小化する.
+try {
+    $Token = (Get-Content -Path $TokenPath -Raw).Trim()
+}
+catch {
+    Write-Host ""Failed to read the session token file.""
+    exit 1
+}
+
+Remove-Item -Path $TokenPath -Force -ErrorAction SilentlyContinue
+
+if ([string]::IsNullOrEmpty($Token)) {
+    Write-Host ""The session token file was empty.""
+    exit 1
+}
+
+# サーバーからの制御行の目印。トークンを前置することで、コマンドの実行結果が偶然
+# 'PROMPT'等で始まっても制御行と誤認されない(トークンは予測不可能なため).
+$promptSentinel = $Token + 'PROMPT'
+$completePrefix = $Token + 'COMPLETE:'
+$candidatesPrefix = $Token + 'CANDIDATES:'
+$noMatchResponse = $Token + 'NOMATCH'
 
 try {
     $client = New-Object System.Net.Sockets.TcpClient
@@ -41,6 +66,10 @@ $stream = $client.GetStream()
 $writer = New-Object System.IO.StreamWriter($stream)
 $writer.AutoFlush = $true
 $reader = New-Object System.IO.StreamReader($stream)
+
+# 接続後の最初の1行としてトークンを送る。これが一致しない接続はサーバー側で
+# 何も送られないまま即座に閉じられる.
+$writer.WriteLine($Token)
 
 try { [Console]::Clear() } catch { }
 
@@ -80,19 +109,49 @@ function Read-LineWithHistory([string]$Prompt) {
         }
         elseif ($key.Key -eq [ConsoleKey]::Tab) {
             # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
-            # 応答を待つ.
+            # 応答を待つ。
+            # 応答を待っている間にも、Unity側から無関係な非同期のログ行やプロンプト行が
+            # 同じソケットへ流れてくることがある(ゲームコードからのログ出力等)。
+            # 1行だけ読んで応答とみなすと、それらを補完応答と取り違えた上に本来の
+            # ログ行を握り潰してしまうため、目印(トークン付き)が来るまで読み続ける.
             $writer.WriteLine(""AUTOCOMPLETE:"" + $buffer.ToString())
-            $acResponse = $reader.ReadLine()
-            if ($null -ne $acResponse -and $acResponse.StartsWith('COMPLETE:')) {
-                $old = $buffer.ToString()
-                $buffer.Clear() | Out-Null
-                $buffer.Append($acResponse.Substring(9)) | Out-Null
-                Redraw $old $buffer.ToString()
-            }
-            elseif ($null -ne $acResponse -and $acResponse.StartsWith('CANDIDATES:')) {
-                [Console]::Out.WriteLine()
-                [Console]::Out.WriteLine($acResponse.Substring(11))
-                [Console]::Write($Prompt + $buffer.ToString())
+            while ($true) {
+                try {
+                    $acResponse = $reader.ReadLine()
+                }
+                catch {
+                    $acResponse = $null
+                }
+                if ($null -eq $acResponse) { break }
+
+                if ($acResponse.StartsWith($completePrefix)) {
+                    $old = $buffer.ToString()
+                    $buffer.Clear() | Out-Null
+                    $buffer.Append($acResponse.Substring($completePrefix.Length)) | Out-Null
+                    Redraw $old $buffer.ToString()
+                    break
+                }
+                elseif ($acResponse.StartsWith($candidatesPrefix)) {
+                    [Console]::Out.WriteLine()
+                    [Console]::Out.WriteLine($acResponse.Substring($candidatesPrefix.Length))
+                    [Console]::Write($Prompt + $buffer.ToString())
+                    break
+                }
+                elseif ($acResponse -eq $noMatchResponse) {
+                    break
+                }
+                elseif ($acResponse.StartsWith($promptSentinel)) {
+                    # 補完待ちの最中に届いたプロンプトは破棄する。既に入力行を表示中で
+                    # 重複してしまう上、無関係なコマンドの完了通知に過ぎないため
+                    # (次にEnterを押して実行した際に、改めてプロンプトが送られてくる).
+                }
+                else {
+                    # 通常の出力行。入力途中の行を壊さないよう、改行してから出力し、
+                    # プロンプトと入力中バッファを描き直す(候補一覧の表示と同じ手法).
+                    [Console]::Out.WriteLine()
+                    [Console]::Out.WriteLine($acResponse)
+                    [Console]::Write($Prompt + $buffer.ToString())
+                }
             }
         }
         elseif ($key.Key -eq [ConsoleKey]::UpArrow) {
@@ -136,8 +195,8 @@ while ($true) {
             $line = $null
         }
         if ($null -eq $line) { break }
-        if ($line.StartsWith('PROMPT')) {
-            $promptText = $line.Substring(6)
+        if ($line.StartsWith($promptSentinel)) {
+            $promptText = $line.Substring($promptSentinel.Length)
             break
         }
         [Console]::Out.WriteLine($line)
@@ -172,16 +231,38 @@ $client.Close()
         // ユーザーが行編集中の表示と競合して画面が乱れるのを避けるため).
         private const string MacRelayScript = @"#!/bin/bash
 PORT=""$1""
+TOKEN_PATH=""$2""
 
-if [ -z ""$PORT"" ]; then
-    echo ""Usage: $0 <port>""
+if [ -z ""$PORT"" ] || [ -z ""$TOKEN_PATH"" ]; then
+    echo ""Usage: $0 <port> <token-file>""
     exit 1
 fi
+
+# セッショントークンは起動引数ではなく一時ファイル経由で受け取る(引数は`ps`等で
+# 同一マシンの他プロセスから丸見えになるため)。読み取ったら速やかに削除する.
+TOKEN=$(tr -d '\r\n' < ""$TOKEN_PATH"" 2>/dev/null)
+rm -f ""$TOKEN_PATH"" 2>/dev/null
+
+if [ -z ""$TOKEN"" ]; then
+    echo ""Failed to read the session token file.""
+    exit 1
+fi
+
+# サーバーからの制御行の目印。トークンを前置することで、コマンドの実行結果が偶然
+# 'PROMPT'等で始まっても制御行と誤認されない(トークンは予測不可能なため).
+PROMPT_SENTINEL=""${TOKEN}PROMPT""
+COMPLETE_PREFIX=""${TOKEN}COMPLETE:""
+CANDIDATES_PREFIX=""${TOKEN}CANDIDATES:""
+NOMATCH_RESPONSE=""${TOKEN}NOMATCH""
 
 exec 3<>""/dev/tcp/127.0.0.1/$PORT"" || {
     echo ""Failed to connect to Unity Terminal on port $PORT""
     exit 1
 }
+
+# 接続後の最初の1行としてトークンを送る。これが一致しない接続はサーバー側で
+# 何も送られないまま即座に閉じられる.
+printf '%s\n' ""$TOKEN"" >&3
 
 ORIGINAL_STTY=$(stty -g 2>/dev/null)
 
@@ -259,23 +340,40 @@ read_line_with_history() {
         elif [ ""$char"" = $'\t' ]; then
             # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
             # 応答を待つ(fd3はターミナルのstty raw設定と独立したソケットの読み書きなので、
-            # ここで同期的にread <&3しても行編集中の他の入力処理と競合しない).
+            # ここで同期的にread <&3しても行編集中の他の入力処理と競合しない)。
+            # 応答を待っている間にも、Unity側から無関係な非同期のログ行やプロンプト行が
+            # 同じソケットへ流れてくることがある(ゲームコードからのログ出力等)。
+            # 1行だけ読んで応答とみなすと、それらを補完応答と取り違えた上に本来の
+            # ログ行を握り潰してしまうため、目印(トークン付き)が来るまで読み続ける.
             printf 'AUTOCOMPLETE:%s\n' ""$buffer"" >&3
             local ac_response
-            IFS= read -r ac_response <&3
-            case ""$ac_response"" in
-                COMPLETE:*)
-                    local old_len=${#buffer}
-                    buffer=""${ac_response#COMPLETE:}""
-                    redraw ""$old_len"" ""$buffer""
-                    ;;
-                CANDIDATES:*)
-                    printf '\r\n%s\r\n%s%s' ""${ac_response#CANDIDATES:}"" ""$prompt"" ""$buffer""
-                    ;;
-                *)
-                    : # NOMATCH等は何もしない
-                    ;;
-            esac
+            while IFS= read -r ac_response <&3; do
+                case ""$ac_response"" in
+                    ""$COMPLETE_PREFIX""*)
+                        local old_len=${#buffer}
+                        buffer=""${ac_response#$COMPLETE_PREFIX}""
+                        redraw ""$old_len"" ""$buffer""
+                        break
+                        ;;
+                    ""$CANDIDATES_PREFIX""*)
+                        printf '\r\n%s\r\n%s%s' ""${ac_response#$CANDIDATES_PREFIX}"" ""$prompt"" ""$buffer""
+                        break
+                        ;;
+                    ""$NOMATCH_RESPONSE"")
+                        break
+                        ;;
+                    ""$PROMPT_SENTINEL""*)
+                        # 補完待ちの最中に届いたプロンプトは破棄する。既に入力行を表示中で
+                        # 重複してしまう上、無関係なコマンドの完了通知に過ぎないため
+                        # (次にEnterを押して実行した際に、改めてプロンプトが送られてくる).
+                        ;;
+                    *)
+                        # 通常の出力行。入力途中の行を壊さないよう、改行してから出力し、
+                        # プロンプトと入力中バッファを描き直す(候補一覧の表示と同じ手法).
+                        printf '\r\n%s\r\n%s%s' ""$ac_response"" ""$prompt"" ""$buffer""
+                        ;;
+                esac
+            done
         elif [ ""$char"" = $'\x1b' ]; then
             # エスケープシーケンス(矢印/Delete/Home/End等)を読み切る。
             # 上下矢印(CSI: ESC [ A/B)以外にも、Delete(ESC [ 3 ~)のように長さが
@@ -349,8 +447,8 @@ while true; do
     got_prompt=0
     while IFS= read -r line <&3; do
         case ""$line"" in
-            PROMPT*)
-                prompt_text=""${line#PROMPT}""
+            ""$PROMPT_SENTINEL""*)
+                prompt_text=""${line#$PROMPT_SENTINEL}""
                 got_prompt=1
                 break
                 ;;
@@ -387,7 +485,8 @@ printf 'Disconnected from Unity Terminal.\r\n'
         private const string MacLauncherScriptTemplate = @"on run argv
     set relayPath to item 1 of argv
     set thePort to item 2 of argv
-    set theCommand to (quoted form of relayPath) & "" "" & thePort
+    set tokenPath to item 3 of argv
+    set theCommand to (quoted form of relayPath) & "" "" & thePort & "" "" & (quoted form of tokenPath)
     tell application ""Terminal""
         activate
         if (count of windows) is 0 then
@@ -402,15 +501,22 @@ end run
         /// <summary>
         /// 一時ディレクトリ直下への固定ファイル名書き出しは、TMPDIR未設定の共有環境
         /// (Linux等の/tmp)で他ユーザーによるシンボリックリンク先変更・スクリプト差し替えの
-        /// 余地を生む。プロセス固有のサブディレクトリへ隔離することでこれを避ける.
+        /// 余地を生む。ユーザー名・プロセスIDに加え、プロセス起動ごとの乱数要素も
+        /// ディレクトリ名へ含めることでディレクトリパスそのものの予測を難しくする
+        /// (接続の実認証自体は<see cref="CommandLineBridge.Token"/>が担うため、ここでは
+        /// symlink解決までの厳密なチェックはせず、パスの当てずっぽうを防ぐ程度に留める).
+        /// プロセス内で複数回呼んでも同じディレクトリを指すよう、1回だけ計算して使い回す
+        /// (呼び出しごとに乱数を振ると、スクリプト・トークンファイルが別ディレクトリに
+        /// 散らばってしまう).
         /// </summary>
+        private static readonly string ScriptDirectory = Path.Combine(
+            Path.GetTempPath(),
+            $"yukimaru_terminal_{Environment.UserName}_{Process.GetCurrentProcess().Id}_{Path.GetRandomFileName().Replace(".", string.Empty)}");
+
         private static string EnsureScriptDirectory()
         {
-            var directory = Path.Combine(
-                Path.GetTempPath(),
-                $"yukimaru_terminal_{Environment.UserName}_{Process.GetCurrentProcess().Id}");
-            Directory.CreateDirectory(directory);
-            return directory;
+            Directory.CreateDirectory(ScriptDirectory);
+            return ScriptDirectory;
         }
 
         /// <summary>
@@ -431,6 +537,23 @@ end run
         {
             var path = Path.Combine(EnsureScriptDirectory(), MacRelayFileName);
             File.WriteAllText(path, NormalizeToLf(MacRelayScript));
+            return path;
+        }
+
+        /// <summary>
+        /// セッション認証用トークンを一時ファイルへ書き出し、そのパスを返す.
+        /// </summary>
+        /// <remarks>
+        /// トークンを中継スクリプトの起動引数として直接渡すと、`ps`やタスクマネージャー等から
+        /// 同一マシンの他プロセスに丸見えになり、「ポートを見つけただけの他プロセスを弾く」という
+        /// 認証の目的が果たせない。引数にはこのファイルのパスのみを渡し、中継スクリプトは
+        /// 読み取り直後にこのファイルを削除する(露出時間を最小化する).
+        /// なお改行を含めると読み取り側でのトリムが必要になるため、トークンのみを書き出す.
+        /// </remarks>
+        public static string WriteTokenFile(string token)
+        {
+            var path = Path.Combine(EnsureScriptDirectory(), TokenFileName);
+            File.WriteAllText(path, token);
             return path;
         }
 

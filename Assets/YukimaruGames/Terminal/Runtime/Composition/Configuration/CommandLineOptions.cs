@@ -17,14 +17,18 @@ namespace YukimaruGames.Terminal.Composition
     {
         private const int DefaultBufferSize = 256;
         private const string DefaultPrompt = "$";
+        private const string CommandSettingsHeader = "Command Settings";
+        private const string ModeSettingsHeader = "Mode Settings";
+        private const string AdditionalCommandAssembliesTooltip =
+            "コマンド走査に追加するアセンブリ名. 独自asmdefにコマンドやモードを置く場合はここに列挙する.";
 
-        [Header("Command Settings")]
+        [Header(CommandSettingsHeader)]
         [Min(0)]
         [SerializeField] private int _bufferSize = DefaultBufferSize;
         [SerializeField] private string _prompt = DefaultPrompt;
 
-        [Header("Mode Settings")]
-        [Tooltip("コマンド走査に追加するアセンブリ名. 独自asmdefにコマンドやモードを置く場合はここに列挙する.")]
+        [Header(ModeSettingsHeader)]
+        [Tooltip(AdditionalCommandAssembliesTooltip)]
         [SerializeField] private string[] _additionalCommandAssemblies = Array.Empty<string>();
 
         /// <summary>
@@ -32,7 +36,14 @@ namespace YukimaruGames.Terminal.Composition
         /// </summary>
         public ITerminalInput Input => new TerminalNullInput();
 
+        /// <summary>
+        /// 保持するコマンドログの最大数.
+        /// </summary>
         public int BufferSize => _bufferSize;
+
+        /// <summary>
+        /// 外部ターミナルに表示するプロンプト文字列.
+        /// </summary>
         public string Prompt => _prompt;
 
         /// <summary>外部ターミナルにはIMGUIの入力欄が無いため未使用.</summary>

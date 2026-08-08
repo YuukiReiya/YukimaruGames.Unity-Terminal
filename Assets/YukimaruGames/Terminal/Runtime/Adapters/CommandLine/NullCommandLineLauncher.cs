@@ -9,6 +9,6 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
     {
         public bool IsSupported => false;
 
-        public Process Launch(int port) => null;
+        public Process Launch(int port, string token) => null;
     }
 }

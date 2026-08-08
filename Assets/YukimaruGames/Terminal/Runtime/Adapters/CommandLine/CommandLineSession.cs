@@ -64,7 +64,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                 // 扱う(片方だけtry外だと、ポート確保失敗時とプロセス起動失敗時とで
                 // 後始末の一貫性が崩れるため).
                 bridge = new CommandLineBridge(_service);
-                _process = _launcher.Launch(bridge.Port);
+                _process = _launcher.Launch(bridge.Port, bridge.Token);
                 _bridge = bridge;
             }
             catch (Exception e)

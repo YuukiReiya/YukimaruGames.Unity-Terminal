@@ -17,7 +17,12 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// 外部ターミナルを起動し、指定ポートへ接続する中継スクリプトを実行する.
         /// </summary>
         /// <param name="port">接続先の127.0.0.1ループバックポート</param>
+        /// <param name="token">
+        /// 接続直後に中継スクリプトが送る認証用トークン(<see cref="CommandLineBridge.Token"/>).
+        /// 実装は、他プロセスから覗かれないようこれを起動引数として直接渡さず、
+        /// 一時ファイル経由で中継スクリプトへ受け渡すこと.
+        /// </param>
         /// <returns>起動したプロセス(起動できなかった場合はnull)</returns>
-        Process Launch(int port);
+        Process Launch(int port, string token);
     }
 }

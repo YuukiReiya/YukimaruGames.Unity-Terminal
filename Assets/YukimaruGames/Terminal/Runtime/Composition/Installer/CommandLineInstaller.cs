@@ -38,15 +38,25 @@ namespace YukimaruGames.Terminal.Composition
         /// </summary>
         private struct DomainContext
         {
-            public IReadOnlyList<object> Components;
-            public ITerminalService Service;
-            public ICommandLogger Logger;
-            public ICommandHistory History;
-            public ICommandRegistry Registry;
-            public ICommandAutocomplete Autocomplete;
-            public ICommandDiscoverer Discoverer;
-            public IExecuteCommandUseCase UseCase;
+            /// <summary>構築済みの破棄対象コンポーネント一覧.</summary>
+            public IReadOnlyList<object> Components { get; set; }
+            /// <summary>コマンド実行系のファサード.</summary>
+            public ITerminalService Service { get; set; }
+            /// <summary>コマンドログの保持・通知を担うロガー.</summary>
+            public ICommandLogger Logger { get; set; }
+            /// <summary>コマンド入力履歴.</summary>
+            public ICommandHistory History { get; set; }
+            /// <summary>コマンドハンドラの登録先.</summary>
+            public ICommandRegistry Registry { get; set; }
+            /// <summary>Tab補完候補の登録先.</summary>
+            public ICommandAutocomplete Autocomplete { get; set; }
+            /// <summary>アセンブリからのコマンド走査器.</summary>
+            public ICommandDiscoverer Discoverer { get; set; }
+            /// <summary>コマンド実行ユースケース.</summary>
+            public IExecuteCommandUseCase UseCase { get; set; }
         }
+
+        private const string DefaultCommandAssembly = "Assembly-CSharp";
 
         [SerializeReference, SerializeInterface]
         private ITerminalOptions _options = new CommandLineOptions();
@@ -161,7 +171,7 @@ namespace YukimaruGames.Terminal.Composition
             var invoker = new CommandInvoker();
             var parser = new CommandParser();
             var history = new CommandHistory();
-            var discover = new CommandDiscoverer(logger, new[] { "Assembly-CSharp" }.Concat(options.AdditionalCommandAssemblies ?? Array.Empty<string>()));
+            var discover = new CommandDiscoverer(logger, new[] { DefaultCommandAssembly }.Concat(options.AdditionalCommandAssemblies ?? Array.Empty<string>()));
             var autocomplete = new CommandAutocomplete();
             var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
             _normalMode = normalMode;
