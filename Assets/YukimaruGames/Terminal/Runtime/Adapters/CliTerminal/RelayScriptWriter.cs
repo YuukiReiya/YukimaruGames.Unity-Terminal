@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CliTerminal
 {
     /// <summary>
     /// 外部ターミナル側で動かす中継スクリプト(1行入力→ソケット送信、受信→コンソール出力を繰り返す)を

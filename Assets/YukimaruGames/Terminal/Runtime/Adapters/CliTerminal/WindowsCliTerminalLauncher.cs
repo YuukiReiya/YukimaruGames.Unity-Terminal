@@ -1,12 +1,12 @@
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 using System.Diagnostics;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CliTerminal
 {
     /// <summary>
     /// cmd.exe上でPowerShell中継スクリプトを実行し、外部ターミナルウィンドウを起動するランチャー.
     /// </summary>
-    public sealed class WindowsExternalTerminalLauncher : IExternalTerminalLauncher
+    public sealed class WindowsCliTerminalLauncher : ICliTerminalLauncher
     {
         public bool IsSupported => true;
 

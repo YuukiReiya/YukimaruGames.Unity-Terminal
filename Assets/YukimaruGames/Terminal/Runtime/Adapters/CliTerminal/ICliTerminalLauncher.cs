@@ -1,12 +1,12 @@
 using System.Diagnostics;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CliTerminal
 {
     /// <summary>
     /// OSネイティブの外部ターミナル(cmd.exe/Terminal.app等)を起動し、
-    /// <see cref="ExternalTerminalBridge"/>のループバックポートへ接続する中継プロセスを立ち上げる契約.
+    /// <see cref="CliTerminalBridge"/>のループバックポートへ接続する中継プロセスを立ち上げる契約.
     /// </summary>
-    public interface IExternalTerminalLauncher
+    public interface ICliTerminalLauncher
     {
         /// <summary>
         /// 現在の実行環境でこのランチャーが利用可能か.

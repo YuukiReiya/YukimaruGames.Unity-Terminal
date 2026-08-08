@@ -1,11 +1,11 @@
 using System.Diagnostics;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CliTerminal
 {
     /// <summary>
     /// 未対応プラットフォーム向けのNull Objectパターン実装.
     /// </summary>
-    public sealed class NullExternalTerminalLauncher : IExternalTerminalLauncher
+    public sealed class NullCliTerminalLauncher : ICliTerminalLauncher
     {
         public bool IsSupported => false;
 

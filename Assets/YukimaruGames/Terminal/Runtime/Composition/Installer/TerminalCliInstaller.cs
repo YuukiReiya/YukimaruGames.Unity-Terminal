@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using YukimaruGames.Terminal.Adapters.ExternalTerminal;
+using YukimaruGames.Terminal.Adapters.CliTerminal;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
@@ -31,7 +31,7 @@ namespace YukimaruGames.Terminal.Composition
     /// (SerializeReferenceの型選択メニュー)で切り替える想定.
     /// </remarks>
     [Serializable, AddTypeMenu("CLI(cmd,zsh)")]
-    public sealed class TerminalExternalInstaller : IInstaller
+    public sealed class TerminalCliInstaller : IInstaller
     {
         /// <summary>
         /// ドメイン層のパラメータをとりまとめたContext
@@ -49,7 +49,7 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         [SerializeReference, SerializeInterface]
-        private ITerminalOptions _options = new TerminalExternalOptions();
+        private ITerminalOptions _options = new TerminalCliOptions();
 
         [NonSerialized] private NormalMode _normalMode;
 
@@ -60,18 +60,18 @@ namespace YukimaruGames.Terminal.Composition
             // 反してnullのまま復元されることがある(既知のシリアライズ上の癖。実際に検証で再現した)。
             // TerminalNullOptions(BufferSize=0)へフォールバックするとCommandLoggerの実効バッファが
             // 1件まで縮んで外部ターミナルとして機能しなくなるため、フォールバック先も
-            // 専用設定(TerminalExternalOptions)の既定値にする.
-            var options = _options ?? new TerminalExternalOptions();
+            // 専用設定(TerminalCliOptions)の既定値にする.
+            var options = _options ?? new TerminalCliOptions();
 
             DomainContext domainContext = default;
-            ExternalTerminalSession session = null;
+            CliTerminalSession session = null;
 
             try
             {
                 domainContext = BuildDomainContext(options);
                 RegisterCommands(in domainContext);
 
-                session = new ExternalTerminalSession(domainContext.Service);
+                session = new CliTerminalSession(domainContext.Service);
                 session.Open();
 
                 var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), null);
@@ -142,7 +142,7 @@ namespace YukimaruGames.Terminal.Composition
         {
             if (scope == null) return;
 
-            var options = _options ?? new TerminalExternalOptions();
+            var options = _options ?? new TerminalCliOptions();
             if (_normalMode != null)
             {
                 _normalMode.Prompt = options.Prompt;

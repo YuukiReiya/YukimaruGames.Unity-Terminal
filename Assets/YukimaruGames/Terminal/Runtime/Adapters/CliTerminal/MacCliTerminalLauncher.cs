@@ -1,7 +1,7 @@
 #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
 using System.Diagnostics;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CliTerminal
 {
     /// <summary>
     /// Terminal.app上でbash中継スクリプト(/dev/tcp)を実行し、外部ターミナルウィンドウを起動するランチャー.
@@ -10,7 +10,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
     /// 引数のクォート崩れを避けるため、osascriptへは直接コマンド文字列を渡さず、
     /// 一時ファイルへ書き出したAppleScriptを実行する形を取っている.
     /// </remarks>
-    public sealed class MacExternalTerminalLauncher : IExternalTerminalLauncher
+    public sealed class MacCliTerminalLauncher : ICliTerminalLauncher
     {
         public bool IsSupported => true;
 
