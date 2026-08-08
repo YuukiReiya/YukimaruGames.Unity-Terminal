@@ -76,6 +76,23 @@ function Read-LineWithHistory([string]$Prompt) {
                 [Console]::Write(""`b `b"")
             }
         }
+        elseif ($key.Key -eq [ConsoleKey]::Tab) {
+            # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
+            # 応答を待つ.
+            $writer.WriteLine(""AUTOCOMPLETE:"" + $buffer.ToString())
+            $acResponse = $reader.ReadLine()
+            if ($null -ne $acResponse -and $acResponse.StartsWith('COMPLETE:')) {
+                $old = $buffer.ToString()
+                $buffer.Clear() | Out-Null
+                $buffer.Append($acResponse.Substring(9)) | Out-Null
+                Redraw $old $buffer.ToString()
+            }
+            elseif ($null -ne $acResponse -and $acResponse.StartsWith('CANDIDATES:')) {
+                [Console]::Out.WriteLine()
+                [Console]::Out.WriteLine($acResponse.Substring(11))
+                [Console]::Write($Prompt + $buffer.ToString())
+            }
+        }
         elseif ($key.Key -eq [ConsoleKey]::UpArrow) {
             if ($script:historyIndex -gt 0) {
                 $script:historyIndex--
@@ -236,6 +253,26 @@ read_line_with_history() {
                 buffer=""${buffer%?}""
                 printf '\b \b'
             fi
+        elif [ ""$char"" = $'\t' ]; then
+            # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
+            # 応答を待つ(fd3はターミナルのstty raw設定と独立したソケットの読み書きなので、
+            # ここで同期的にread <&3しても行編集中の他の入力処理と競合しない).
+            printf 'AUTOCOMPLETE:%s\n' ""$buffer"" >&3
+            local ac_response
+            IFS= read -r ac_response <&3
+            case ""$ac_response"" in
+                COMPLETE:*)
+                    local old_len=${#buffer}
+                    buffer=""${ac_response#COMPLETE:}""
+                    redraw ""$old_len"" ""$buffer""
+                    ;;
+                CANDIDATES:*)
+                    printf '\r\n%s\r\n%s%s' ""${ac_response#CANDIDATES:}"" ""$prompt"" ""$buffer""
+                    ;;
+                *)
+                    : # NOMATCH等は何もしない
+                    ;;
+            esac
         elif [ ""$char"" = $'\x1b' ]; then
             # エスケープシーケンス(矢印/Delete/Home/End等)を読み切る。
             # 上下矢印(CSI: ESC [ A/B)以外にも、Delete(ESC [ 3 ~)のように長さが

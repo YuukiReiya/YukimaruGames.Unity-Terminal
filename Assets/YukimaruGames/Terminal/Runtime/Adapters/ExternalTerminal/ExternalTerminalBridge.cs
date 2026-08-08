@@ -35,6 +35,30 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
         private const string PromptSentinel = "PROMPT";
 
         /// <summary>
+        /// クライアントからの自動補完リクエストの目印(この文字列で始まる入力行は
+        /// コマンドとして実行せず、<see cref="ITerminalService.Autocomplete"/>への
+        /// 問い合わせとして扱う).
+        /// </summary>
+        private const string AutocompleteRequestPrefix = "AUTOCOMPLETE:";
+
+        /// <summary>
+        /// 自動補完の結果、候補が1件だけに絞れた場合の応答の目印(直後に補完後の
+        /// 文字列が続く。中継スクリプトはこれで現在の入力行を置き換える).
+        /// </summary>
+        private const string AutocompleteCompleteResponsePrefix = "COMPLETE:";
+
+        /// <summary>
+        /// 自動補完の結果、候補が複数あった場合の応答の目印(直後に空白区切りの
+        /// 候補一覧が続く。中継スクリプトはこれを新しい行として表示する).
+        /// </summary>
+        private const string AutocompleteCandidatesResponsePrefix = "CANDIDATES:";
+
+        /// <summary>
+        /// 自動補完の結果、候補が無かった場合の応答.
+        /// </summary>
+        private const string AutocompleteNoMatchResponse = "NOMATCH";
+
+        /// <summary>
         /// ANSIエスケープシーケンスによる画面クリア(カーソルを左上へ戻す).
         /// </summary>
         /// <remarks>
@@ -122,6 +146,13 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                             break;
                         }
 
+                        if (line.StartsWith(AutocompleteRequestPrefix, StringComparison.Ordinal))
+                        {
+                            var partialWord = line.Substring(AutocompleteRequestPrefix.Length);
+                            await RespondToAutocompleteAsync(client, partialWord).ConfigureAwait(false);
+                            continue;
+                        }
+
                         await ExecuteOnMainThreadAsync(line, ct).ConfigureAwait(false);
                     }
                 }
@@ -193,6 +224,47 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                 // 「出力の下に次のプロンプトが来る」通常のシェルの見た目に合わせる.
                 SendPromptToAll();
             }
+        }
+
+        /// <summary>
+        /// 自動補完リクエストに応答する(IMGUI版のTabキー相当の機能を外部ターミナルにも提供する).
+        /// <see cref="ITerminalService"/>への問い合わせはメインスレッドへ寄せた上で行う.
+        /// </summary>
+        private Task RespondToAutocompleteAsync(TcpClient client, string partialWord)
+        {
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            RunOnMainThread(() =>
+            {
+                try
+                {
+                    string[] results;
+                    try
+                    {
+                        results = _service.Autocomplete(partialWord) ?? Array.Empty<string>();
+                    }
+                    catch (Exception e)
+                    {
+                        _service.Exception(e.ToString());
+                        results = Array.Empty<string>();
+                    }
+
+                    string response = results.Length switch
+                    {
+                        0 => AutocompleteNoMatchResponse,
+                        1 => AutocompleteCompleteResponsePrefix + results[0],
+                        _ => AutocompleteCandidatesResponsePrefix + string.Join(" ", results),
+                    };
+
+                    TryWrite(client, Encoding.UTF8.GetBytes(response + "\n"));
+                }
+                finally
+                {
+                    tcs.TrySetResult(true);
+                }
+            });
+
+            return tcs.Task;
         }
 
         /// <summary>
