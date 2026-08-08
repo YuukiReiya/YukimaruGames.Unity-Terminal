@@ -4,7 +4,7 @@ using UnityEngine;
 namespace YukimaruGames.Terminal.Composition
 {
     /// <summary>
-    /// <see cref="TerminalExternalInstaller"/>専用の設定.
+    /// <see cref="CommandLineInstaller"/>専用の設定.
     /// </summary>
     /// <remarks>
     /// <see cref="TerminalStandardOptions"/>はIMGUI描画(ボタン表示・ローディングインジケータ・
@@ -13,7 +13,7 @@ namespace YukimaruGames.Terminal.Composition
     /// ため、それらを持たない専用の設定型として分離している.
     /// </remarks>
     [Serializable]
-    public sealed class TerminalExternalOptions : ITerminalOptions
+    public sealed class CommandLineOptions : ITerminalOptions
     {
         private const int DefaultBufferSize = 256;
         private const string DefaultPrompt = "$";

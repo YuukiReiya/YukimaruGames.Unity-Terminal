@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Models;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CommandLine
 {
     /// <summary>
     /// 127.0.0.1のループバックTCPソケットを介して、外部ターミナルプロセス(cmd.exe/zsh等で
@@ -20,7 +20,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
     /// (子プロセスのコンソールバッファへの出力自体が止まるため)、ソケット越しに
     /// テキスト行を送受信し、外部ターミナル側の中継スクリプトがコンソールへ描画する構成を取る.
     /// </remarks>
-    public sealed class ExternalTerminalBridge : IDisposable
+    public sealed class CommandLineBridge : IDisposable
     {
         /// <summary>
         /// プロンプト行(キャレット代わり)の目印文字列.
@@ -30,7 +30,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
         /// プロンプトは「同じ行の続きにユーザーの入力が来る」ことを期待するため改行を付けない。
         /// ただし中継スクリプト側の受信ループは改行区切りで1行ずつ読む都合上、プロンプト自体は
         /// 改行付きの1行として送りつつ、この目印を先頭に付けることで中継スクリプト側に
-        /// 「改行せず出力しろ」と伝える(<see cref="RelayScriptWriter"/>の受信ループ実装を参照).
+        /// 「改行せず出力しろ」と伝える(<see cref="CommandLineRelayScriptWriter"/>の受信ループ実装を参照).
         /// </remarks>
         private const string PromptSentinel = "PROMPT";
 
@@ -81,7 +81,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
         /// </summary>
         public int Port { get; }
 
-        public ExternalTerminalBridge(ITerminalService service)
+        public CommandLineBridge(ITerminalService service)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
 

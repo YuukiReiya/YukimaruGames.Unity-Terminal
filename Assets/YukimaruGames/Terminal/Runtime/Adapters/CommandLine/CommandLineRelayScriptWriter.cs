@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CommandLine
 {
     /// <summary>
     /// 外部ターミナル側で動かす中継スクリプト(1行入力→ソケット送信、受信→コンソール出力を繰り返す)を
@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
     /// 追加ランタイム依存(Python等)を要求しないよう、Windowsは標準搭載のPowerShell、
     /// macOSは標準搭載のbash(/dev/tcp疑似デバイス)のみで完結させている.
     /// </remarks>
-    internal static class RelayScriptWriter
+    internal static class CommandLineRelayScriptWriter
     {
         private const string WindowsRelayFileName = "yukimaru_terminal_relay.ps1";
         private const string MacRelayFileName = "yukimaru_terminal_relay.sh";

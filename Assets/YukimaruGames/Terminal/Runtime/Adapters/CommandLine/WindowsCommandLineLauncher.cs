@@ -1,18 +1,18 @@
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 using System.Diagnostics;
 
-namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
+namespace YukimaruGames.Terminal.Adapters.CommandLine
 {
     /// <summary>
     /// cmd.exe上でPowerShell中継スクリプトを実行し、外部ターミナルウィンドウを起動するランチャー.
     /// </summary>
-    public sealed class WindowsExternalTerminalLauncher : IExternalTerminalLauncher
+    public sealed class WindowsCommandLineLauncher : ICommandLineLauncher
     {
         public bool IsSupported => true;
 
         public Process Launch(int port)
         {
-            var scriptPath = RelayScriptWriter.WriteWindowsRelayScript();
+            var scriptPath = CommandLineRelayScriptWriter.WriteWindowsRelayScript();
 
             var startInfo = new ProcessStartInfo
             {
