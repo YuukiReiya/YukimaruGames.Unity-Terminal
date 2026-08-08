@@ -40,6 +40,8 @@ $writer = New-Object System.IO.StreamWriter($stream)
 $writer.AutoFlush = $true
 $reader = New-Object System.IO.StreamReader($stream)
 
+try { [Console]::Clear() } catch { }
+
 Write-Host ""Connected to Unity Terminal (127.0.0.1:$Port). Type commands below. Close this window or Ctrl+C to disconnect.""
 
 $script:history = New-Object System.Collections.Generic.List[string]
@@ -170,6 +172,11 @@ cleanup() {
     fi
 }
 trap cleanup EXIT
+
+# ウィンドウは(Terminal.appの仕様上)前回セッションのものを使い回すことがあり、
+# 前回の表示が画面に残ったままだと新しいセッションの出力と混ざって見えるため、
+# セッション開始時に必ず画面をクリアしてから始める.
+printf '\033[2J\033[H'
 
 # read -n1 は呼び出しごとに端末モードを一時的に切り替えて1文字読むが、矢印キーの
 # 高速な連打(OSのキーリピート等)でこれを繰り返すと、切り替えの往復コストが入力の
