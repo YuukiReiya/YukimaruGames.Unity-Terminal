@@ -86,7 +86,9 @@ namespace YukimaruGames.Terminal.Domain.Services
         private void Add(MessageType type, string message)
         {
             var id = _buffer.Count + 1;
-            if (MaxLogs < _buffer.Count + 1)
+            // _buffer.Count > 0 のガードが無いと、MaxLogs(=0)を指定した際に空のQueueへ
+            // Dequeue()してしまい InvalidOperationException("Queue empty.") で例外になる.
+            if (_buffer.Count > 0 && MaxLogs < _buffer.Count + 1)
             {
                 var item = _buffer.Dequeue();
                 _onItemRemoved?.Invoke(new[] { item });

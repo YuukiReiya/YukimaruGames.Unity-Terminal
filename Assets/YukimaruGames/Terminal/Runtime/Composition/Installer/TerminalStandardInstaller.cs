@@ -418,6 +418,7 @@ namespace YukimaruGames.Terminal.Composition
                 { typeof(IModeOutput), domain.UseCase.Output },
                 { typeof(IModeTransitionRequestSink), domain.UseCase.Transitions },
                 { typeof(ICommandRegistry), domain.Registry },
+                { typeof(ICommandLogger), domain.Logger },
             };
             var bundle = new ModeServiceBundle(services);
 
