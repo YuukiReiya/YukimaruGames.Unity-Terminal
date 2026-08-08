@@ -2,9 +2,9 @@
     "name": "YukimaruGames.Terminal.Presentation",
     "rootNamespace": "YukimaruGames.Terminal.Presentation",
     "references": [
-        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa",
-        "GUID:d764c6ed281635040b4758671293b427",
-        "GUID:b91bfe61ad34c074d9f0d4e53cb288f0"
+        "YukimaruGames.Terminal.SharedKernel",
+        "YukimaruGames.Terminal.Application",
+        "YukimaruGames.Terminal.Domain.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

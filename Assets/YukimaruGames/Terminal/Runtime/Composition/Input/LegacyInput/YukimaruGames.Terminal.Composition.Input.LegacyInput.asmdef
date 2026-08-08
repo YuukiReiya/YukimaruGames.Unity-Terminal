@@ -2,8 +2,8 @@
     "name": "YukimaruGames.Terminal.Composition.Input.LegacyInput",
     "rootNamespace": "YukimaruGames.Terminal.Composition.Input.LegacyInput",
     "references": [
-        "GUID:8ec3eb264e595ce40a396804df86acbb",
-        "GUID:e219bb3678c74bd4bab8e224eb77b2ad"
+        "YukimaruGames.Terminal.Composition.Shared",
+        "YukimaruGames.Terminal.Presentation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

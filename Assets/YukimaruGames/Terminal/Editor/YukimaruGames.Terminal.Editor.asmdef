@@ -2,9 +2,9 @@
     "name": "YukimaruGames.Terminal.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:ff00dc9bec88d6840a6862f796286f47",
-        "GUID:e219bb3678c74bd4bab8e224eb77b2ad",
-        "GUID:8ec3eb264e595ce40a396804df86acbb"
+        "YukimaruGames.Terminal.Composition",
+        "YukimaruGames.Terminal.Presentation",
+        "YukimaruGames.Terminal.Composition.Shared"
     ],
     "includePlatforms": [
         "Editor"

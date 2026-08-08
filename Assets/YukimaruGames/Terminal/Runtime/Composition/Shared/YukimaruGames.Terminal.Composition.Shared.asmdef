@@ -2,7 +2,7 @@
     "name": "YukimaruGames.Terminal.Composition.Shared",
     "rootNamespace": "YukimaruGames.Terminal.Composition.Shared",
     "references": [
-        "GUID:37e9bf61fa8119c4c8e79d1f08c439aa"
+        "YukimaruGames.Terminal.SharedKernel"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
