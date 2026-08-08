@@ -237,19 +237,52 @@ read_line_with_history() {
                 printf '\b \b'
             fi
         elif [ ""$char"" = $'\x1b' ]; then
-            # 矢印キー等のエスケープシーケンス(ESC [ A/B等)の残り2バイトを読む。
+            # エスケープシーケンス(矢印/Delete/Home/End等)を読み切る。
+            # 上下矢印(CSI: ESC [ A/B)以外にも、Delete(ESC [ 3 ~)のように長さが
+            # まちまちなキーや、SS3形式(ESC O A。アプリケーションカーソルモード時の
+            # 矢印キー等で使われる)のように導入バイトが""[""ではないキーも存在する。
+            # 固定バイト数だけ読むと後続バイトを読み残し、次のreadで生の文字として
+            # バッファに混入する不具合の原因になっていた(プロンプト直前に説明のつかない
+            # 文字が現れて消せない、という形で表面化した)。
             # bash 3.2(macOS標準)はread -tに小数秒を指定できないため整数秒を使う
-            # (矢印キーなら後続バイトは即座に届くため、体感の遅延にはならない).
-            read -rsn1 -t 1 seq1
-            read -rsn1 -t 1 seq2
-            if [ ""$seq1"" = ""["" ] && [ ""$seq2"" = ""A"" ]; then
+            # (実際のキー入力なら後続バイトは即座に届くため、体感の遅延にはならない).
+            local esc_seq="""" esc_next
+            read -rsn1 -t 1 esc_next
+            if [ ""$esc_next"" = ""["" ]; then
+                # CSI: 終端文字(英字または~)が来るか、後続バイトが届かなくなる
+                # (タイムアウト)まで読み切る.
+                esc_seq=""[""
+                while true; do
+                    read -rsn1 -t 1 esc_next
+                    if [ $? -ne 0 ]; then
+                        break
+                    fi
+                    esc_seq=""${esc_seq}${esc_next}""
+                    case ""$esc_next"" in
+                        [A-Za-z~]) break ;;
+                    esac
+                    if [ ${#esc_seq} -ge 8 ]; then
+                        break
+                    fi
+                done
+            elif [ ""$esc_next"" = ""O"" ]; then
+                # SS3: 導入バイト""O""の直後の1文字で確定する(例: ESC O A).
+                local ss3_next
+                read -rsn1 -t 1 ss3_next
+                esc_seq=""O${ss3_next}""
+            else
+                # Option+キー等のMeta修飾はESCの直後の1文字だけで確定する.
+                esc_seq=""$esc_next""
+            fi
+
+            if [ ""$esc_seq"" = ""[A"" ]; then
                 if [ ""$HISTORY_INDEX"" -gt 0 ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX - 1))
                     local old_len=${#buffer}
                     buffer=""${HISTORY[$HISTORY_INDEX]}""
                     redraw ""$old_len"" ""$buffer""
                 fi
-            elif [ ""$seq1"" = ""["" ] && [ ""$seq2"" = ""B"" ]; then
+            elif [ ""$esc_seq"" = ""[B"" ]; then
                 local old_len=${#buffer}
                 if [ ""$HISTORY_INDEX"" -lt $((${#HISTORY[@]} - 1)) ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX + 1))
@@ -261,6 +294,8 @@ read_line_with_history() {
                     redraw ""$old_len"" """"
                 fi
             fi
+            # それ以外の未知のシーケンス(Left/Right/Delete/Home/End等)は読み切った上で破棄する
+            # (現状は上下矢印による履歴呼び出しのみ対応).
         else
             buffer=""${buffer}${char}""
             printf '%s' ""$char""
