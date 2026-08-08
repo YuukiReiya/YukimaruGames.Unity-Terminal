@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Models;
 
-namespace YukimaruGames.Terminal.Adapters.CliTerminal
+namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
 {
     /// <summary>
     /// 127.0.0.1のループバックTCPソケットを介して、外部ターミナルプロセス(cmd.exe/zsh等で
@@ -20,7 +20,7 @@ namespace YukimaruGames.Terminal.Adapters.CliTerminal
     /// (子プロセスのコンソールバッファへの出力自体が止まるため)、ソケット越しに
     /// テキスト行を送受信し、外部ターミナル側の中継スクリプトがコンソールへ描画する構成を取る.
     /// </remarks>
-    public sealed class CliTerminalBridge : IDisposable
+    public sealed class ExternalTerminalBridge : IDisposable
     {
         /// <summary>
         /// プロンプト行(キャレット代わり)の目印文字列.
@@ -81,7 +81,7 @@ namespace YukimaruGames.Terminal.Adapters.CliTerminal
         /// </summary>
         public int Port { get; }
 
-        public CliTerminalBridge(ITerminalService service)
+        public ExternalTerminalBridge(ITerminalService service)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
 

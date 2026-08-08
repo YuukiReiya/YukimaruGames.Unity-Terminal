@@ -2,18 +2,18 @@ using System;
 using System.Diagnostics;
 using YukimaruGames.Terminal.Application.Interfaces;
 
-namespace YukimaruGames.Terminal.Adapters.CliTerminal
+namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
 {
     /// <summary>
-    /// <see cref="CliTerminalBridge"/>(TCP中継)と<see cref="ICliTerminalLauncher"/>
+    /// <see cref="ExternalTerminalBridge"/>(TCP中継)と<see cref="IExternalTerminalLauncher"/>
     /// (外部プロセス起動)を束ね、外部ターミナルの開始/終了ライフサイクルを管理するオーケストレータ.
     /// </summary>
-    public sealed class CliTerminalSession : IDisposable
+    public sealed class ExternalTerminalSession : IDisposable
     {
         private readonly ITerminalService _service;
-        private readonly ICliTerminalLauncher _launcher;
+        private readonly IExternalTerminalLauncher _launcher;
 
-        private CliTerminalBridge _bridge;
+        private ExternalTerminalBridge _bridge;
         private Process _process;
         private bool _disposed;
 
@@ -22,20 +22,20 @@ namespace YukimaruGames.Terminal.Adapters.CliTerminal
         /// </summary>
         public bool IsOpen => _bridge != null;
 
-        public CliTerminalSession(ITerminalService service, ICliTerminalLauncher launcher = null)
+        public ExternalTerminalSession(ITerminalService service, IExternalTerminalLauncher launcher = null)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _launcher = launcher ?? CreatePlatformLauncher();
         }
 
-        private static ICliTerminalLauncher CreatePlatformLauncher()
+        private static IExternalTerminalLauncher CreatePlatformLauncher()
         {
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            return new WindowsCliTerminalLauncher();
+            return new WindowsExternalTerminalLauncher();
 #elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-            return new MacCliTerminalLauncher();
+            return new MacExternalTerminalLauncher();
 #else
-            return new NullCliTerminalLauncher();
+            return new NullExternalTerminalLauncher();
 #endif
         }
 
@@ -56,14 +56,14 @@ namespace YukimaruGames.Terminal.Adapters.CliTerminal
                 return;
             }
 
-            CliTerminalBridge bridge = null;
+            ExternalTerminalBridge bridge = null;
 
             try
             {
                 // TcpListener.Start()(ポート確保)もLaunch()(プロセス起動)と同じ失敗経路で
                 // 扱う(片方だけtry外だと、ポート確保失敗時とプロセス起動失敗時とで
                 // 後始末の一貫性が崩れるため).
-                bridge = new CliTerminalBridge(_service);
+                bridge = new ExternalTerminalBridge(_service);
                 _process = _launcher.Launch(bridge.Port);
                 _bridge = bridge;
             }
