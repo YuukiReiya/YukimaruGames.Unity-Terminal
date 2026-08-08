@@ -161,12 +161,27 @@ exec 3<>""/dev/tcp/127.0.0.1/$PORT"" || {
     exit 1
 }
 
+ORIGINAL_STTY=$(stty -g 2>/dev/null)
+
 cleanup() {
     exec 3<&- 3>&- 2>/dev/null
+    if [ -n ""$ORIGINAL_STTY"" ]; then
+        stty ""$ORIGINAL_STTY"" 2>/dev/null
+    fi
 }
 trap cleanup EXIT
 
-echo ""Connected to Unity Terminal (127.0.0.1:$PORT). Type commands below. Close this window or Ctrl+D to disconnect.""
+# read -n1 は呼び出しごとに端末モードを一時的に切り替えて1文字読むが、矢印キーの
+# 高速な連打(OSのキーリピート等)でこれを繰り返すと、切り替えの往復コストが入力の
+# 到着に追いつかずバイトが化ける(エスケープシーケンスの一部が生の文字として
+# バッファに紛れ込み、キャレット扱いされない余計な文字が現在行に残る不具合の原因だった)。
+# stty rawでセッション全体を通して端末モードを1回だけ切り替えておくことで、
+# 以後の read -n1 はモード切り替えのオーバーヘッド無しに安定して1バイトずつ読める.
+if [ -n ""$ORIGINAL_STTY"" ]; then
+    stty raw -echo
+fi
+
+printf 'Connected to Unity Terminal (127.0.0.1:%s). Type commands below. Close this window or Ctrl+D to disconnect.\r\n' ""$PORT""
 
 HISTORY=()
 HISTORY_INDEX=0
@@ -191,12 +206,23 @@ read_line_with_history() {
     while true; do
         IFS= read -rsn1 char
         if [ -z ""$char"" ]; then
-            echo
+            # bashのreadは端末からの読み取り時、-n指定でも改行/復帰文字を空文字として
+            # 返す(実測で確認した挙動)。CR/LFのバイト値そのものでは一致しないため、
+            # 空文字判定でEnterを検出する.
+            printf '\r\n'
             if [ -n ""$buffer"" ]; then
                 HISTORY+=(""$buffer"")
             fi
             HISTORY_INDEX=${#HISTORY[@]}
             __READLINE_RESULT=""$buffer""
+            return 0
+        elif [ ""$char"" = $'\x04' ] && [ -z ""$buffer"" ]; then
+            # stty rawの下ではCtrl+Dは端末ドライバのEOF処理を経由せず生バイトとして
+            # 届くため、ここで明示的にハンドリングしないと切断操作として機能しない
+            # (何も入力していない行でのCtrl+Dのみ切断とみなす。一般的なシェルの挙動に合わせる).
+            printf '\r\n'
+            __READLINE_RESULT=""$buffer""
+            __DISCONNECT_REQUESTED=1
             return 0
         elif [ ""$char"" = $'\x7f' ] || [ ""$char"" = $'\x08' ]; then
             if [ -n ""$buffer"" ]; then
@@ -247,7 +273,7 @@ while true; do
                 break
                 ;;
             *)
-                echo ""$line""
+                printf '%s\r\n' ""$line""
                 ;;
         esac
     done
@@ -257,11 +283,15 @@ while true; do
         break
     fi
 
+    __DISCONNECT_REQUESTED=0
     read_line_with_history ""$prompt_text""
+    if [ ""$__DISCONNECT_REQUESTED"" -eq 1 ]; then
+        break
+    fi
     echo ""$__READLINE_RESULT"" >&3
 done
 
-echo ""Disconnected from Unity Terminal.""
+printf 'Disconnected from Unity Terminal.\r\n'
 ";
 
         // 'tell application "Terminal"' はTerminal.app未起動時にそれ自体が起動のトリガーとなり、
