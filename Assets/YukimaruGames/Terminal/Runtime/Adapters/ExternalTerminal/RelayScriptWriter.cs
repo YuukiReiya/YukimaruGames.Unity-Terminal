@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
@@ -146,9 +148,10 @@ while ($true) {
         break
     }
 
-    $input = Read-LineWithHistory $promptText
+    # $inputはPowerShellの予約自動変数(パイプライン入力用)のため、別名を使う.
+    $inputLine = Read-LineWithHistory $promptText
     try {
-        $writer.WriteLine($input)
+        $writer.WriteLine($inputLine)
     }
     catch {
         break
@@ -367,7 +370,9 @@ while true; do
     if [ ""$__DISCONNECT_REQUESTED"" -eq 1 ]; then
         break
     fi
-    echo ""$__READLINE_RESULT"" >&3
+    # 組み込みechoは""-n""/""-e""等をオプションとして解釈してしまい、ユーザーの入力が
+    # 偶然それらと一致すると改行が送られずセッションが停止する。printfならそのリスクが無い.
+    printf '%s\n' ""$__READLINE_RESULT"" >&3
 done
 
 printf 'Disconnected from Unity Terminal.\r\n'
@@ -394,24 +399,45 @@ printf 'Disconnected from Unity Terminal.\r\n'
 end run
 ";
 
+        /// <summary>
+        /// 一時ディレクトリ直下への固定ファイル名書き出しは、TMPDIR未設定の共有環境
+        /// (Linux等の/tmp)で他ユーザーによるシンボリックリンク先変更・スクリプト差し替えの
+        /// 余地を生む。プロセス固有のサブディレクトリへ隔離することでこれを避ける.
+        /// </summary>
+        private static string EnsureScriptDirectory()
+        {
+            var directory = Path.Combine(
+                Path.GetTempPath(),
+                $"yukimaru_terminal_{Environment.UserName}_{Process.GetCurrentProcess().Id}");
+            Directory.CreateDirectory(directory);
+            return directory;
+        }
+
+        /// <summary>
+        /// C#の逐語的文字列リテラルはソースファイル上の改行バイトをそのまま保持するため、
+        /// リポジトリのチェックアウト設定次第でCRLFになりうる。bashはCRLFのシバン行
+        /// (「#!/bin/bash」+CR)を正しく解釈できず起動に失敗するため、書き出し前にLFへ揃える.
+        /// </summary>
+        private static string NormalizeToLf(string text) => text.Replace("\r\n", "\n").Replace("\r", "\n");
+
         public static string WriteWindowsRelayScript()
         {
-            var path = Path.Combine(Path.GetTempPath(), WindowsRelayFileName);
+            var path = Path.Combine(EnsureScriptDirectory(), WindowsRelayFileName);
             File.WriteAllText(path, WindowsRelayScript);
             return path;
         }
 
         public static string WriteMacRelayScript()
         {
-            var path = Path.Combine(Path.GetTempPath(), MacRelayFileName);
-            File.WriteAllText(path, MacRelayScript);
+            var path = Path.Combine(EnsureScriptDirectory(), MacRelayFileName);
+            File.WriteAllText(path, NormalizeToLf(MacRelayScript));
             return path;
         }
 
         public static string WriteMacLauncherScript()
         {
-            var path = Path.Combine(Path.GetTempPath(), MacLauncherFileName);
-            File.WriteAllText(path, MacLauncherScriptTemplate);
+            var path = Path.Combine(EnsureScriptDirectory(), MacLauncherFileName);
+            File.WriteAllText(path, NormalizeToLf(MacLauncherScriptTemplate));
             return path;
         }
     }

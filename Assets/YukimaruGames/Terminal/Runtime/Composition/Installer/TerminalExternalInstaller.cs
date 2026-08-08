@@ -142,7 +142,7 @@ namespace YukimaruGames.Terminal.Composition
         {
             if (scope == null) return;
 
-            var options = _options ?? new TerminalNullOptions();
+            var options = _options ?? new TerminalExternalOptions();
             if (_normalMode != null)
             {
                 _normalMode.Prompt = options.Prompt;

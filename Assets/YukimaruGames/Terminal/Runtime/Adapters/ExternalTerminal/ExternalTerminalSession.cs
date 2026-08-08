@@ -56,17 +56,21 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                 return;
             }
 
-            var bridge = new ExternalTerminalBridge(_service);
+            ExternalTerminalBridge bridge = null;
 
             try
             {
+                // TcpListener.Start()(ポート確保)もLaunch()(プロセス起動)と同じ失敗経路で
+                // 扱う(片方だけtry外だと、ポート確保失敗時とプロセス起動失敗時とで
+                // 後始末の一貫性が崩れるため).
+                bridge = new ExternalTerminalBridge(_service);
                 _process = _launcher.Launch(bridge.Port);
                 _bridge = bridge;
             }
             catch (Exception e)
             {
                 _service.Exception($"Failed to launch external terminal: {e}");
-                bridge.Dispose();
+                bridge?.Dispose();
             }
         }
 

@@ -149,7 +149,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                         if (line.StartsWith(AutocompleteRequestPrefix, StringComparison.Ordinal))
                         {
                             var partialWord = line.Substring(AutocompleteRequestPrefix.Length);
-                            await RespondToAutocompleteAsync(client, partialWord).ConfigureAwait(false);
+                            await RespondToAutocompleteAsync(client, partialWord, ct).ConfigureAwait(false);
                             continue;
                         }
 
@@ -179,16 +179,25 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
         /// 例外はここで全てログへ変換して握りつぶすため、呼び出し元(バックグラウンドスレッド)へは
         /// 伝播しない(=ソケットを閉じてしまう誤動作を防ぐ).
         /// </summary>
-        private Task ExecuteOnMainThreadAsync(string line, CancellationToken ct)
+        /// <remarks>
+        /// Play終了/Dispose()等でUnity側のメッセージポンプが停止すると、Postしたデリゲートが
+        /// 二度と実行されず<paramref name="ct"/>だけが唯一の抜け道になる場合がある。
+        /// ctのキャンセルでも完了するようにし、ClientReadLoopAsyncのawaitが永久に返らない
+        /// (=接続がリークし続ける)事態を避ける.
+        /// </remarks>
+        private async Task ExecuteOnMainThreadAsync(string line, CancellationToken ct)
         {
             if (_mainThreadContext == null)
             {
                 // メインスレッドのコンテキストを取得できなかった場合のフォールバック
                 // (本来は起こらない想定だが、呼び出し元を巻き込まないようその場で処理する).
-                return ExecuteAndLogAsync(line, ct);
+                await ExecuteAndLogAsync(line, ct).ConfigureAwait(false);
+                return;
             }
 
             var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var registration = ct.Register(() => tcs.TrySetResult(true));
+
             _mainThreadContext.Post(async _ =>
             {
                 try
@@ -201,7 +210,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                 }
             }, null);
 
-            return tcs.Task;
+            await tcs.Task.ConfigureAwait(false);
         }
 
         private async Task ExecuteAndLogAsync(string line, CancellationToken ct)
@@ -230,9 +239,14 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
         /// 自動補完リクエストに応答する(IMGUI版のTabキー相当の機能を外部ターミナルにも提供する).
         /// <see cref="ITerminalService"/>への問い合わせはメインスレッドへ寄せた上で行う.
         /// </summary>
-        private Task RespondToAutocompleteAsync(TcpClient client, string partialWord)
+        /// <remarks>
+        /// <see cref="ExecuteOnMainThreadAsync"/>と同様、Play終了/Dispose()等でメッセージポンプが
+        /// 止まった場合に備え、<paramref name="ct"/>のキャンセルでも完了するようにしている.
+        /// </remarks>
+        private async Task RespondToAutocompleteAsync(TcpClient client, string partialWord, CancellationToken ct)
         {
             var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var registration = ct.Register(() => tcs.TrySetResult(true));
 
             RunOnMainThread(() =>
             {
@@ -264,7 +278,7 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                 }
             });
 
-            return tcs.Task;
+            await tcs.Task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -402,6 +416,14 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
                 // 切断済みクライアントへの書き込み失敗は無視する(次のReadLoopで除去される).
             }
             catch (ObjectDisposedException)
+            {
+                // 切断済みクライアントへの書き込み失敗は無視する.
+            }
+            catch (InvalidOperationException)
+            {
+                // client.Connectedのチェック直後に切断された場合、GetStream()が投げる.
+            }
+            catch (SocketException)
             {
                 // 切断済みクライアントへの書き込み失敗は無視する.
             }

@@ -85,6 +85,13 @@ namespace YukimaruGames.Terminal.Domain.Services
         /// </summary>
         private void Add(MessageType type, string message)
         {
+            // MaxLogs == 0 は「保持数0」の契約のため、Enqueueせず即座に抜ける
+            // (このガードが無いと、下のEnqueueで常に最低1件は保持されてしまう).
+            if (MaxLogs == 0)
+            {
+                return;
+            }
+
             var id = _buffer.Count + 1;
             // _buffer.Count > 0 のガードが無いと、MaxLogs(=0)を指定した際に空のQueueへ
             // Dequeue()してしまい InvalidOperationException("Queue empty.") で例外になる.

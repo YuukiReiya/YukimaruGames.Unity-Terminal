@@ -15,9 +15,13 @@ namespace YukimaruGames.Terminal.Composition
     [Serializable]
     public sealed class TerminalExternalOptions : ITerminalOptions
     {
+        private const int DefaultBufferSize = 256;
+        private const string DefaultPrompt = "$";
+
         [Header("Command Settings")]
-        [SerializeField] private int _bufferSize = 256;
-        [SerializeField] private string _prompt = "$";
+        [Min(0)]
+        [SerializeField] private int _bufferSize = DefaultBufferSize;
+        [SerializeField] private string _prompt = DefaultPrompt;
 
         [Header("Mode Settings")]
         [Tooltip("コマンド走査に追加するアセンブリ名. 独自asmdefにコマンドやモードを置く場合はここに列挙する.")]
