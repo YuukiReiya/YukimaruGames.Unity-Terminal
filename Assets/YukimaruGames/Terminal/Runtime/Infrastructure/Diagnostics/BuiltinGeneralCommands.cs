@@ -165,6 +165,15 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             output.Message($"Quality level set to [{index}] {names[index]}.");
         }
 
+        private const string ClearCommand = "clear";
+        private const string ClearHelp = "Clears all terminal logs.";
+
+        [TerminalCommand(ClearCommand, help: ClearHelp)]
+        private static void Clear(ICommandLogger logger)
+        {
+            logger.Clear();
+        }
+
         private const string GcCollectCommand = "gc.collect";
         private const string GcCollectHelp = "Forces an immediate garbage collection.";
         private const float BytesPerKilobyte = 1024f;
@@ -190,6 +199,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
             typeof(BuiltinGeneralCommands).GetMethod(nameof(SetTargetFrameRate), BindingFlags.NonPublic | BindingFlags.Static)!,
             typeof(BuiltinGeneralCommands).GetMethod(nameof(ListQualityLevels), BindingFlags.NonPublic | BindingFlags.Static)!,
             typeof(BuiltinGeneralCommands).GetMethod(nameof(SetQualityLevel), BindingFlags.NonPublic | BindingFlags.Static)!,
+            typeof(BuiltinGeneralCommands).GetMethod(nameof(Clear), BindingFlags.NonPublic | BindingFlags.Static)!,
             typeof(BuiltinGeneralCommands).GetMethod(nameof(ForceGarbageCollect), BindingFlags.NonPublic | BindingFlags.Static)!,
         };
     }
