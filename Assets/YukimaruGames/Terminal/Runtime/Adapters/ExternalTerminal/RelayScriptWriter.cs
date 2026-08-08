@@ -16,8 +16,12 @@ namespace YukimaruGames.Terminal.Adapters.ExternalTerminal
         private const string MacRelayFileName = "yukimaru_terminal_relay.sh";
         private const string MacLauncherFileName = "yukimaru_terminal_launcher.applescript";
 
-        // PowerShellの単一スレッドでは「受信して表示」と「入力して送信」を同時に回せないため、
-        // 受信ループはバックグラウンドのParameterizedThreadStartスレッドへ逃がしている.
+        // プロンプトを自前でRedraw管理しながら描画するため、標準搭載のPSReadLineには頼らず
+        // (スクリプト内蔵ループには効かない)、[Console]::ReadKey()でキー単位に読み取る自前実装で
+        // 上下矢印キーによるセッション内履歴呼び出しに対応する。
+        // 受信は「プロンプト行が来るまで出力し続けてから入力を受け付ける」同期ループとし、
+        // バックグラウンドスレッドでの受信は行わない(非同期に届いた出力が、ユーザーが行編集中の
+        // 表示と競合して画面が乱れるのを避けるため).
         private const string WindowsRelayScript = @"param([int]$Port)
 
 $ErrorActionPreference = 'Stop'
@@ -36,43 +40,8 @@ $writer = New-Object System.IO.StreamWriter($stream)
 $writer.AutoFlush = $true
 $reader = New-Object System.IO.StreamReader($stream)
 
-$receiveThread = [System.Threading.Thread]::new([System.Threading.ParameterizedThreadStart]{
-    param($r)
-    # クロージャ経由の変数参照は別スレッド上のデリゲート実行では信頼できないため、
-    # プレフィックスはここでリテラルとして直接書く.
-    $promptPrefix = 'PROMPT'
-    while ($true) {
-        try {
-            $line = $r.ReadLine()
-        }
-        catch {
-            break
-        }
-        if ($null -eq $line) { break }
-        if ($line.StartsWith($promptPrefix)) {
-            # プロンプト行は改行せずその場に出力し、続けて入力できるようにする(キャレット代わり).
-            [Console]::Out.Write($line.Substring($promptPrefix.Length))
-        }
-        else {
-            [Console]::Out.WriteLine($line)
-        }
-    }
-    # 受信ループがソケット切断(EOF)で抜けても、フォアグラウンドの[Console]::In.ReadLine()は
-    # ブロックされたままになり続ける([Console]::In.ReadLine()には安全な割り込み方法が無いため)。
-    # ウィンドウをゾンビ状態のまま放置しないよう、プロセスごと終了してcmd.exeのプロンプトへ戻す.
-    [Console]::Out.WriteLine(""Disconnected from Unity Terminal."")
-    [Environment]::Exit(0)
-})
-$receiveThread.IsBackground = $true
-$receiveThread.Start($reader)
-
 Write-Host ""Connected to Unity Terminal (127.0.0.1:$Port). Type commands below. Close this window or Ctrl+C to disconnect.""
 
-# [Console]::In.ReadLine()は1行丸ごとの読み取りしかできず、矢印キーでの履歴呼び出しに対応しない
-# (対話的なPowerShellホストが提供するPSReadLineは、こうしたスクリプト内蔵ループには効かない)。
-# そのためキー単位で読み取り、上下矢印キーでこのセッション内の入力履歴を辿れるようにする。
-# $script:history/$script:historyIndexは呼び出しをまたいで保持する必要があるため
-# (関数ローカル変数だと1行確定するたびに履歴が消えてしまう)、スクリプトスコープに置く.
 $script:history = New-Object System.Collections.Generic.List[string]
 $script:historyIndex = 0
 
@@ -83,7 +52,8 @@ function Redraw($old, $new) {
     [Console]::Write($new)
 }
 
-function Read-LineWithHistory {
+function Read-LineWithHistory([string]$Prompt) {
+    [Console]::Write($Prompt)
     $buffer = New-Object System.Text.StringBuilder
 
     while ($true) {
@@ -136,21 +106,48 @@ function Read-LineWithHistory {
 }
 
 while ($true) {
-    $line = Read-LineWithHistory
-    if ($null -eq $line) { break }
+    $promptText = $null
+    while ($true) {
+        try {
+            $line = $reader.ReadLine()
+        }
+        catch {
+            $line = $null
+        }
+        if ($null -eq $line) { break }
+        if ($line.StartsWith('PROMPT')) {
+            $promptText = $line.Substring(6)
+            break
+        }
+        [Console]::Out.WriteLine($line)
+    }
+
+    if ($null -eq $promptText) {
+        # ソケットが切断された(EOF). プロンプトを受け取れないまま抜けてきたということ.
+        break
+    }
+
+    $input = Read-LineWithHistory $promptText
     try {
-        $writer.WriteLine($line)
+        $writer.WriteLine($input)
     }
     catch {
         break
     }
 }
 
+Write-Host ""Disconnected from Unity Terminal.""
 $client.Close()
 ";
 
-        // bashのみで完結させるため、fd3をソケットへ双方向接続(/dev/tcp)し、受信専用のサブシェルを
-        // バックグラウンドで走らせつつ、フォアグラウンドで標準入力を読んで送信する.
+        // bashのみで完結させるため、fd3をソケットへ双方向接続(/dev/tcp)する。
+        // 当初はGNU Readline(read -e)で上下矢印キーの履歴呼び出しに対応させていたが、
+        // readlineは「自分がプロンプトを描画した」という前提で画面を再描画するため、
+        // こちらが別途printfしたプロンプト文字列と競合し表示が崩れる不具合があった。
+        // そのためreadlineには頼らず、キー単位で読み取る自前実装(PowerShell版と同じ設計)に
+        // 統一している。受信も「プロンプト行が来るまで出力し続けてから入力を受け付ける」
+        // 同期ループとし、バックグラウンドでの受信は行わない(非同期に届いた出力が、
+        // ユーザーが行編集中の表示と競合して画面が乱れるのを避けるため).
         private const string MacRelayScript = @"#!/bin/bash
 PORT=""$1""
 
@@ -164,45 +161,107 @@ exec 3<>""/dev/tcp/127.0.0.1/$PORT"" || {
     exit 1
 }
 
-PARENT_PID=$$
-
-( while IFS= read -r line <&3; do
-      case ""$line"" in
-          PROMPT*)
-              # プロンプト行は改行せずその場に出力し、続けて入力できるようにする(キャレット代わり).
-              printf '%s' ""${line#PROMPT}""
-              ;;
-          *)
-              echo ""$line""
-              ;;
-      esac
-  done
-  # 受信ループがソケット切断(EOF)で抜けても、フォアグラウンドの`read`(標準入力待ち)は
-  # ブロックされたままになり続ける。ウィンドウをゾンビ状態のまま放置しないよう、
-  # 親プロセスへTERMを送りメインループの`read`を割り込ませてスクリプトを終了させる
-  # (ウィンドウ自体は閉じない。シェルのプロンプトへ戻り、次回の起動で再利用できる状態になる).
-  kill -TERM ""$PARENT_PID"" 2>/dev/null
-) &
-READER_PID=$!
-
 cleanup() {
-    kill ""$READER_PID"" 2>/dev/null
     exec 3<&- 3>&- 2>/dev/null
 }
 trap cleanup EXIT
-trap 'echo ""Disconnected from Unity Terminal.""; exit 0' TERM
 
 echo ""Connected to Unity Terminal (127.0.0.1:$PORT). Type commands below. Close this window or Ctrl+D to disconnect.""
 
-# -e でGNU Readlineを有効化し、上下矢印キーでの履歴呼び出し・左右矢印/Home/End等の
-# 行編集を使えるようにする。ただしreadlineの履歴リストは既定では空のままなので、
-# 確定した行を都度history -sで積み、このセッション内で入力した行を辿れるようにする.
-while IFS= read -e -r line; do
-    if [ -n ""$line"" ]; then
-        history -s ""$line""
+HISTORY=()
+HISTORY_INDEX=0
+
+redraw() {
+    local old_len=$1
+    local new_text=$2
+    local i
+    for ((i = 0; i < old_len; i++)); do
+        printf '\b \b'
+    done
+    printf '%s' ""$new_text""
+}
+
+read_line_with_history() {
+    local prompt=$1
+    local buffer=""""
+    local char seq1 seq2
+
+    printf '%s' ""$prompt""
+
+    while true; do
+        IFS= read -rsn1 char
+        if [ -z ""$char"" ]; then
+            echo
+            if [ -n ""$buffer"" ]; then
+                HISTORY+=(""$buffer"")
+            fi
+            HISTORY_INDEX=${#HISTORY[@]}
+            __READLINE_RESULT=""$buffer""
+            return 0
+        elif [ ""$char"" = $'\x7f' ] || [ ""$char"" = $'\x08' ]; then
+            if [ -n ""$buffer"" ]; then
+                buffer=""${buffer%?}""
+                printf '\b \b'
+            fi
+        elif [ ""$char"" = $'\x1b' ]; then
+            # 矢印キー等のエスケープシーケンス(ESC [ A/B等)の残り2バイトを読む。
+            # bash 3.2(macOS標準)はread -tに小数秒を指定できないため整数秒を使う
+            # (矢印キーなら後続バイトは即座に届くため、体感の遅延にはならない).
+            read -rsn1 -t 1 seq1
+            read -rsn1 -t 1 seq2
+            if [ ""$seq1"" = ""["" ] && [ ""$seq2"" = ""A"" ]; then
+                if [ ""$HISTORY_INDEX"" -gt 0 ]; then
+                    HISTORY_INDEX=$((HISTORY_INDEX - 1))
+                    local old_len=${#buffer}
+                    buffer=""${HISTORY[$HISTORY_INDEX]}""
+                    redraw ""$old_len"" ""$buffer""
+                fi
+            elif [ ""$seq1"" = ""["" ] && [ ""$seq2"" = ""B"" ]; then
+                local old_len=${#buffer}
+                if [ ""$HISTORY_INDEX"" -lt $((${#HISTORY[@]} - 1)) ]; then
+                    HISTORY_INDEX=$((HISTORY_INDEX + 1))
+                    buffer=""${HISTORY[$HISTORY_INDEX]}""
+                    redraw ""$old_len"" ""$buffer""
+                elif [ ""$HISTORY_INDEX"" -eq $((${#HISTORY[@]} - 1)) ]; then
+                    HISTORY_INDEX=$((HISTORY_INDEX + 1))
+                    buffer=""""
+                    redraw ""$old_len"" """"
+                fi
+            fi
+        else
+            buffer=""${buffer}${char}""
+            printf '%s' ""$char""
+            HISTORY_INDEX=${#HISTORY[@]}
+        fi
+    done
+}
+
+while true; do
+    prompt_text=""""
+    got_prompt=0
+    while IFS= read -r line <&3; do
+        case ""$line"" in
+            PROMPT*)
+                prompt_text=""${line#PROMPT}""
+                got_prompt=1
+                break
+                ;;
+            *)
+                echo ""$line""
+                ;;
+        esac
+    done
+
+    if [ ""$got_prompt"" -eq 0 ]; then
+        # ソケットが切断された(EOF). プロンプトを受け取れないまま抜けてきたということ.
+        break
     fi
-    echo ""$line"" >&3
+
+    read_line_with_history ""$prompt_text""
+    echo ""$__READLINE_RESULT"" >&3
 done
+
+echo ""Disconnected from Unity Terminal.""
 ";
 
         // 'tell application "Terminal"' はTerminal.app未起動時にそれ自体が起動のトリガーとなり、
