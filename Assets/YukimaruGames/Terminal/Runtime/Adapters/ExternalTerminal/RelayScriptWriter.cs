@@ -68,8 +68,75 @@ $receiveThread.Start($reader)
 
 Write-Host ""Connected to Unity Terminal (127.0.0.1:$Port). Type commands below. Close this window or Ctrl+C to disconnect.""
 
+# [Console]::In.ReadLine()は1行丸ごとの読み取りしかできず、矢印キーでの履歴呼び出しに対応しない
+# (対話的なPowerShellホストが提供するPSReadLineは、こうしたスクリプト内蔵ループには効かない)。
+# そのためキー単位で読み取り、上下矢印キーでこのセッション内の入力履歴を辿れるようにする。
+# $script:history/$script:historyIndexは呼び出しをまたいで保持する必要があるため
+# (関数ローカル変数だと1行確定するたびに履歴が消えてしまう)、スクリプトスコープに置く.
+$script:history = New-Object System.Collections.Generic.List[string]
+$script:historyIndex = 0
+
+function Redraw($old, $new) {
+    if ($old.Length -gt 0) {
+        [Console]::Write((""`b"" * $old.Length) + ("" "" * $old.Length) + (""`b"" * $old.Length))
+    }
+    [Console]::Write($new)
+}
+
+function Read-LineWithHistory {
+    $buffer = New-Object System.Text.StringBuilder
+
+    while ($true) {
+        $key = [Console]::ReadKey($true)
+
+        if ($key.Key -eq [ConsoleKey]::Enter) {
+            [Console]::Out.WriteLine()
+            $line = $buffer.ToString()
+            if ($line.Length -gt 0) {
+                $script:history.Add($line)
+            }
+            $script:historyIndex = $script:history.Count
+            return $line
+        }
+        elseif ($key.Key -eq [ConsoleKey]::Backspace) {
+            if ($buffer.Length -gt 0) {
+                $buffer.Length = $buffer.Length - 1
+                [Console]::Write(""`b `b"")
+            }
+        }
+        elseif ($key.Key -eq [ConsoleKey]::UpArrow) {
+            if ($script:historyIndex -gt 0) {
+                $script:historyIndex--
+                $old = $buffer.ToString()
+                $buffer.Clear() | Out-Null
+                $buffer.Append($script:history[$script:historyIndex]) | Out-Null
+                Redraw $old $buffer.ToString()
+            }
+        }
+        elseif ($key.Key -eq [ConsoleKey]::DownArrow) {
+            $old = $buffer.ToString()
+            if ($script:historyIndex -lt $script:history.Count - 1) {
+                $script:historyIndex++
+                $buffer.Clear() | Out-Null
+                $buffer.Append($script:history[$script:historyIndex]) | Out-Null
+                Redraw $old $buffer.ToString()
+            }
+            elseif ($script:historyIndex -eq $script:history.Count - 1) {
+                $script:historyIndex++
+                $buffer.Clear() | Out-Null
+                Redraw $old """"
+            }
+        }
+        elseif ($key.KeyChar -and -not [char]::IsControl($key.KeyChar)) {
+            $buffer.Append($key.KeyChar) | Out-Null
+            [Console]::Write($key.KeyChar)
+            $script:historyIndex = $script:history.Count
+        }
+    }
+}
+
 while ($true) {
-    $line = [Console]::In.ReadLine()
+    $line = Read-LineWithHistory
     if ($null -eq $line) { break }
     try {
         $writer.WriteLine($line)
@@ -127,7 +194,13 @@ trap 'echo ""Disconnected from Unity Terminal.""; exit 0' TERM
 
 echo ""Connected to Unity Terminal (127.0.0.1:$PORT). Type commands below. Close this window or Ctrl+D to disconnect.""
 
-while IFS= read -r line; do
+# -e でGNU Readlineを有効化し、上下矢印キーでの履歴呼び出し・左右矢印/Home/End等の
+# 行編集を使えるようにする。ただしreadlineの履歴リストは既定では空のままなので、
+# 確定した行を都度history -sで積み、このセッション内で入力した行を辿れるようにする.
+while IFS= read -e -r line; do
+    if [ -n ""$line"" ]; then
+        history -s ""$line""
+    fi
     echo ""$line"" >&3
 done
 ";
