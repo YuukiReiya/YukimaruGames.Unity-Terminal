@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Models.Window;
@@ -55,7 +56,11 @@ namespace YukimaruGames.Terminal.Adapters.Input
         /// <summary>保持している入力文字列を設定する（外部からの初期化・クリア用）.</summary>
         public void SetInputText(string text)
         {
-            _inputText = text ?? string.Empty;
+            var inputText = text ?? string.Empty;
+            if (_inputText == inputText) return;
+
+            _inputText = inputText;
+            OnInputTextChanged?.Invoke(_inputText);
         }
 
         private void DetectComposingStateChanged()
@@ -84,7 +89,7 @@ namespace YukimaruGames.Terminal.Adapters.Input
                 {
                     case '\b':
                         if (_inputText.Length == 0) continue;
-                        _inputText = _inputText[..^1];
+                        _inputText = RemoveLastTextElement(_inputText);
                         changed = true;
                         continue;
                     case '\n':
@@ -101,6 +106,19 @@ namespace YukimaruGames.Terminal.Adapters.Input
 
             OnInputTextChanged?.Invoke(_inputText);
             OnMoveCursorToEndTriggerChanged?.Invoke(true);
+        }
+
+        /// <summary>末尾の書記素クラスタ（grapheme cluster）1つを削除した文字列を返す.</summary>
+        internal static string RemoveLastTextElement(string text)
+        {
+            var lastElementStart = 0;
+            var enumerator = StringInfo.GetTextElementEnumerator(text);
+            while (enumerator.MoveNext())
+            {
+                lastElementStart = enumerator.ElementIndex;
+            }
+
+            return text[..lastElementStart];
         }
     }
 }
