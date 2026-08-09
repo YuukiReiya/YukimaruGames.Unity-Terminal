@@ -15,6 +15,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.LegacyInput
         private GameObject _gameObject;
         private LegacyInputAdapter _adapter;
 
+        /// <summary>検証対象の<see cref="LegacyInputAdapter"/>を生成する.</summary>
         [SetUp]
         public void SetUp()
         {
@@ -22,6 +23,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.LegacyInput
             _adapter = _gameObject.AddComponent<LegacyInputAdapter>();
         }
 
+        /// <summary>検証対象のGameObjectを破棄する.</summary>
         [TearDown]
         public void TearDown()
         {
@@ -87,9 +89,9 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.LegacyInput
         [Test]
         public void RemoveLastTextElement_SurrogatePair_RemovesWholeCharacter()
         {
-            const string text = "abc\U0001F600"; // "abc" + 😀 (surrogate pair)
+            const string Text = "abc\U0001F600"; // "abc" + 😀 (surrogate pair)
 
-            var result = LegacyInputAdapter.RemoveLastTextElement(text);
+            var result = LegacyInputAdapter.RemoveLastTextElement(Text);
 
             Assert.AreEqual("abc", result);
         }
@@ -98,9 +100,9 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.LegacyInput
         [Test]
         public void RemoveLastTextElement_CombiningCharacter_RemovesWholeCluster()
         {
-            const string text = "abce\u0301"; // "abc" + "e" + combining acute accent (U+0301)
+            const string Text = "abce\u0301"; // "abc" + "e" + combining acute accent (U+0301)
 
-            var result = LegacyInputAdapter.RemoveLastTextElement(text);
+            var result = LegacyInputAdapter.RemoveLastTextElement(Text);
 
             Assert.AreEqual("abc", result);
         }
@@ -109,9 +111,9 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.LegacyInput
         [Test]
         public void RemoveLastTextElement_AsciiCharacter_RemovesSingleCharacter()
         {
-            const string text = "abc";
+            const string Text = "abc";
 
-            var result = LegacyInputAdapter.RemoveLastTextElement(text);
+            var result = LegacyInputAdapter.RemoveLastTextElement(Text);
 
             Assert.AreEqual("ab", result);
         }
