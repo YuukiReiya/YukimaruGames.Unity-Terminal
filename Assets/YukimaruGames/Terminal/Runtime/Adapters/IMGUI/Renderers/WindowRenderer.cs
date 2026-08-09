@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 {
     public sealed class WindowRenderer : IWindowRenderer
     {
@@ -22,11 +22,12 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
             });
         }
 
-        public void Render(WindowRenderData viewModel, UnityEngine.GUI.WindowFunction func)
+        /// <inheritdoc/>
+        public void Render(WindowRenderData viewModel, Action<int> func)
         {
             var rect = viewModel.Rect;
             var unityRect = new Rect(rect.X, rect.Y, rect.Width, rect.Height);
-            UnityEngine.GUI.Window(viewModel.Id, unityRect, func, string.Empty, _styleLazy.Value);
+            UnityEngine.GUI.Window(viewModel.Id, unityRect, func.Invoke, string.Empty, _styleLazy.Value);
         }
     }
 }

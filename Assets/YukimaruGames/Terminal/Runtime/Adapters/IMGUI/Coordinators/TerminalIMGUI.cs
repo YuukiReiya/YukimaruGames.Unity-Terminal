@@ -7,7 +7,7 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Coordinators;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models;
 
-namespace YukimaruGames.Terminal.Presentation.Coordinators
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Coordinators
 {
     public sealed class TerminalIMGUI : ITerminalGUI, IDisposable
     {

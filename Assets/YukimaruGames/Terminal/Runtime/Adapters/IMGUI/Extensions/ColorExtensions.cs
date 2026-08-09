@@ -1,7 +1,7 @@
 using UnityEngine;
 using YukimaruGames.Terminal.Domain.Models;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Extensions
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Extensions
 {
     /// <summary>
     /// <see cref="TerminalColor"/>と<see cref="Color"/>を相互変換する拡張メソッド.

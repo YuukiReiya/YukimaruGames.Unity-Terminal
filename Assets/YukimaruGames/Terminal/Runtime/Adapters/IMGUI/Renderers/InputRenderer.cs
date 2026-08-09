@@ -2,12 +2,13 @@ using System;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Constants;
 using YukimaruGames.Terminal.Presentation.Contracts;
+using YukimaruGames.Terminal.Adapters.IMGUI.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Input;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 {
     /// <summary>
     /// IMGUIによる入力欄の描画と、入力イベントの通知を行う.

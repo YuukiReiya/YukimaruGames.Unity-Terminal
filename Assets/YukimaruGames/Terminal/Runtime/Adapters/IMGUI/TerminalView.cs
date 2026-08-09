@@ -1,7 +1,7 @@
 using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Interfaces.Presenters;
 
-namespace YukimaruGames.Terminal.Adapters.GUI
+namespace YukimaruGames.Terminal.Adapters.IMGUI
 {
     /// <summary>
     /// <see cref="ITerminalView"/>の実装。<see cref="IWindowPresenter"/>の開閉アニメーションを介して

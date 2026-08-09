@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Adapters.IMGUI.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Accessors
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Accessors
 {
     public sealed class GUIStyleAccessor : IGUIStyleAccessor, IDisposable
     {
