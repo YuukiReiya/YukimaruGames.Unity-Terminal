@@ -5,11 +5,11 @@ using YukimaruGames.Terminal.Composition.Shared;
 namespace YukimaruGames.Terminal.Composition
 {
     [Serializable]
-    public sealed class TerminalStandardOptions : ITerminalOptions
+    public sealed class TerminalIMGUIOptions : ITerminalOptions
     {
         [Header("Input Settings")]
         [SerializeReference, SerializeInterface]
-        private ITerminalInput _input = new TerminalStandardInput();
+        private ITerminalInput _input = new TerminalIMGUIInput();
 
         [Header("Command Settings")]
         [SerializeField] private int _bufferSize = 256;

@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
     /// </summary>
     /// <remarks>
     /// クラス全体を<c>UNITY_EDITOR</c>シンボルで囲むことで、シンボルが定義されない実機ビルドでは
-    /// 型ごとコンパイル対象から除外される。登録側(<c>TerminalStandardInstaller</c>)の呼び出し箇所も
+    /// 型ごとコンパイル対象から除外される。登録側(<c>TerminalIMGUIInstaller</c>)の呼び出し箇所も
     /// 同様に<c>#if UNITY_EDITOR</c>で囲い、実機ビルドにこの型への参照自体が残らないようにする.
     /// </remarks>
     public static class BuiltinEditorCommands

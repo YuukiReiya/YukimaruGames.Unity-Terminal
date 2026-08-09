@@ -16,7 +16,7 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 namespace YukimaruGames.Terminal.Composition
 {
     [Serializable]
-    public sealed class TerminalStandardInput : ITerminalInput
+    public sealed class TerminalIMGUIInput : ITerminalInput
     {
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
 

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace YukimaruGames.Terminal.Composition
 {
     [Serializable]
-    public sealed class TerminalStandardTheme : ITerminalTheme
+    public sealed class TerminalIMGUITheme : ITerminalTheme
     {
         [Header("View Settings")]
         [SerializeField] private Font _font;

@@ -27,7 +27,7 @@ namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
         {
             set
             {
-                // 呼び出し元(TerminalStandardOptions等)が同じ配列インスタンスの要素だけを
+                // 呼び出し元(TerminalIMGUIOptions等)が同じ配列インスタンスの要素だけを
                 // 書き換えて再設定するケースがあるため、参照の同一性では判定せず毎回再計算する.
                 _loadingIndicatorFrames = value is { Length: > 0 } ? value : DefaultLoadingIndicatorFrames;
                 _spinnerMaxSize = CalcMaxSpinnerSize(_provider);

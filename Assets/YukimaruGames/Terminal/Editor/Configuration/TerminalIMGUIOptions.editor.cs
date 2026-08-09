@@ -5,8 +5,8 @@ using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {
-    [CustomPropertyDrawer(typeof(TerminalStandardOptions))]
-    public sealed class TerminalStandardOptionsDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(TerminalIMGUIOptions))]
+    public sealed class TerminalIMGUIOptionsDrawer : PropertyDrawer
     {
         private enum Tab { Input, System } // 分割された責務に合わせる
         private Tab _tab = Tab.Input;
@@ -56,7 +56,7 @@ namespace YukimaruGames.Terminal.Editor
         private void RenderInputCategory(SerializedProperty property)
         {
             // Key/Modifiers/Trigger Timing/Priorityのアクション別グルーピング表示は
-            // TerminalStandardInputDrawer(_inputフィールドの[SerializeInterface]経由で自動的に使用される)に委譲する.
+            // TerminalIMGUIInputDrawer(_inputフィールドの[SerializeInterface]経由で自動的に使用される)に委譲する.
             var inputProp = property.FindPropertyRelative("_input");
             if (inputProp == null) return;
             EditorGUILayout.PropertyField(inputProp, new GUIContent("Input"), true);

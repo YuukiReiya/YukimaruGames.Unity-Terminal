@@ -10,7 +10,7 @@ namespace YukimaruGames.Terminal.Composition
     /// <see cref="ITerminalAnimation"/> の基本ルールに従います。
     /// </remarks>
     [Serializable]
-    public sealed class TerminalStandardAnimation : ITerminalAnimation
+    public sealed class TerminalIMGUIAnimation : ITerminalAnimation
     {
         [SerializeField] private WindowState _bootupWindowState = WindowState.Close;
         [SerializeField] private WindowAnchor _anchor = WindowAnchor.Top;

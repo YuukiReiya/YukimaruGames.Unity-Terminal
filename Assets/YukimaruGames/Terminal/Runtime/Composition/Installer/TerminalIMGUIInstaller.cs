@@ -52,7 +52,7 @@ using YukimaruGames.Terminal.Composition.Shared;
 namespace YukimaruGames.Terminal.Composition
 {
     [Serializable]
-    public sealed class TerminalStandardInstaller : IInstaller
+    public sealed class TerminalIMGUIInstaller : IInstaller
     {
         #region inner-struct
 
@@ -131,13 +131,13 @@ namespace YukimaruGames.Terminal.Composition
         #endregion
         
         [SerializeReference, SerializeInterface] 
-        private ITerminalTheme _theme = new TerminalStandardTheme();
+        private ITerminalTheme _theme = new TerminalIMGUITheme();
 
         [SerializeReference, SerializeInterface] 
-        private ITerminalAnimation _animation = new TerminalStandardAnimation();
+        private ITerminalAnimation _animation = new TerminalIMGUIAnimation();
 
         [SerializeReference, SerializeInterface] 
-        private ITerminalOptions _options = new TerminalStandardOptions();
+        private ITerminalOptions _options = new TerminalIMGUIOptions();
 
         #region runtime-instances
 

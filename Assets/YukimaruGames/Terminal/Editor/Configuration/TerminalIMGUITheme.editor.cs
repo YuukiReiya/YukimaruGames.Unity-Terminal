@@ -5,8 +5,8 @@ using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {
-    [CustomPropertyDrawer(typeof(TerminalStandardTheme))]
-    public sealed class TerminalStandardThemeDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(TerminalIMGUITheme))]
+    public sealed class TerminalIMGUIThemeDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

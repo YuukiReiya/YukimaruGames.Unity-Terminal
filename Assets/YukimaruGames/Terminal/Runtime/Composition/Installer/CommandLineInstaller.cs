@@ -24,7 +24,7 @@ namespace YukimaruGames.Terminal.Composition
     /// CMD/zsh等の外部ターミナルプロセスを起動し、そこへコマンド入出力を中継するInstaller.
     /// </summary>
     /// <remarks>
-    /// <see cref="TerminalStandardInstaller"/>がIMGUIレンダリング一式(Renderer/Presenter/Coordinator/
+    /// <see cref="TerminalIMGUIInstaller"/>がIMGUIレンダリング一式(Renderer/Presenter/Coordinator/
     /// TerminalIMGUI)を構築するのに対し、こちらはコマンド実行系(Domain/Application層)のみを構築し、
     /// 描画は行わない(ゲーム内ウィンドウを持たないため<see cref="ITerminalView"/>はNull実装を使う)。
     /// 「どちらのViewを使うか」は<see cref="TerminalBootstrapper"/>の_installerフィールド

@@ -6,8 +6,8 @@ using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {
-    [CustomPropertyDrawer(typeof(TerminalStandardAnimation))]
-    public sealed class TerminalStandardAnimationDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(TerminalIMGUIAnimation))]
+    public sealed class TerminalIMGUIAnimationDrawer : PropertyDrawer
     {
         private static GUIStyle _toolbarStyle;
         private static readonly Lazy<GUIStyle> _popupStyle = new(() => new GUIStyle(EditorStyles.popup)
