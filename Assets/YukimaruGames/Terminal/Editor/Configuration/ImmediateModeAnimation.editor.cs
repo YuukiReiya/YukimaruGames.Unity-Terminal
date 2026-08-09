@@ -6,8 +6,11 @@ using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {
-    [CustomPropertyDrawer(typeof(TerminalStandardAnimation))]
-    public sealed class TerminalStandardAnimationDrawer : PropertyDrawer
+    /// <summary>
+    /// <see cref="ImmediateModeAnimation"/>のInspector表示用PropertyDrawer.
+    /// </summary>
+    [CustomPropertyDrawer(typeof(ImmediateModeAnimation))]
+    public sealed class ImmediateModeAnimationDrawer : PropertyDrawer
     {
         private static GUIStyle _toolbarStyle;
         private static readonly Lazy<GUIStyle> _popupStyle = new(() => new GUIStyle(EditorStyles.popup)

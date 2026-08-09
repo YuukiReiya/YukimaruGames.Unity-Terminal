@@ -1,10 +1,14 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Composition
 {
-    [Serializable]
-    public sealed class TerminalStandardTheme : ITerminalTheme
+    /// <summary>
+    /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalTheme"/>実装.
+    /// </summary>
+    [Serializable, AddTypeMenu("IMGUI Theme")]
+    public sealed class ImmediateModeTheme : ITerminalTheme
     {
         [Header("View Settings")]
         [SerializeField] private Font _font;

@@ -11,12 +11,16 @@ using YukimaruGames.Terminal.Composition.Input.LegacyInput;
 
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Composition.Shared;
 using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Composition
 {
-    [Serializable]
-    public sealed class TerminalStandardInput : ITerminalInput
+    /// <summary>
+    /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalInput"/>実装.
+    /// </summary>
+    [Serializable, AddTypeMenu("IMGUI Input")]
+    public sealed class ImmediateModeInput : ITerminalInput
     {
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
 
@@ -32,6 +36,7 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private TerminalActionTriggerTiming _triggerTiming = new();
         [SerializeField] private TerminalActionPriority _priority = new();
 
+        /// <inheritdoc/>
         public InputKeyboardType InputKeyboardType => _inputKeyboardType;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
@@ -43,14 +48,18 @@ namespace YukimaruGames.Terminal.Composition
 #endif
 
 #if ENABLE_LEGACY_INPUT_MANAGER
+        /// <inheritdoc/>
         public LegacyInputKey LegacyInputKey => _legacyInputKey;
 #endif
 
 #if ENABLE_INPUT_SYSTEM
+        /// <inheritdoc/>
         public InputSystemKey InputSystemKey => _inputSystemKey;
 #endif
 
+        /// <inheritdoc/>
         public TerminalActionTriggerTiming TriggerTiming => _triggerTiming;
+        /// <inheritdoc/>
         public TerminalActionPriority Priority => _priority;
     }
 }

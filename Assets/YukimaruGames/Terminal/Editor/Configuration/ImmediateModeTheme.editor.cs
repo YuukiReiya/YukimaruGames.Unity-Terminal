@@ -5,8 +5,11 @@ using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {
-    [CustomPropertyDrawer(typeof(TerminalStandardTheme))]
-    public sealed class TerminalStandardThemeDrawer : PropertyDrawer
+    /// <summary>
+    /// <see cref="ImmediateModeTheme"/>のInspector表示用PropertyDrawer.
+    /// </summary>
+    [CustomPropertyDrawer(typeof(ImmediateModeTheme))]
+    public sealed class ImmediateModeThemeDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

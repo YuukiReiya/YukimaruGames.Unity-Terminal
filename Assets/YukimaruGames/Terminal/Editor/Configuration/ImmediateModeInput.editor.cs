@@ -8,8 +8,11 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Editor
 {
-    [CustomPropertyDrawer(typeof(TerminalStandardInput))]
-    public sealed class TerminalStandardInputDrawer : PropertyDrawer
+    /// <summary>
+    /// <see cref="ImmediateModeInput"/>のInspector表示用PropertyDrawer.
+    /// </summary>
+    [CustomPropertyDrawer(typeof(ImmediateModeInput))]
+    public sealed class ImmediateModeInputDrawer : PropertyDrawer
     {
         // NOTE: このプロジェクトの言語バージョン/ターゲットではinitアクセサ(IsExternalInit)が
         // 使用できないため、setで代替する.

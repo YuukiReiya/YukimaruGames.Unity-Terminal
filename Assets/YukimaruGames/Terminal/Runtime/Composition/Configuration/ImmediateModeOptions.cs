@@ -4,12 +4,15 @@ using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Composition
 {
-    [Serializable]
-    public sealed class TerminalStandardOptions : ITerminalOptions
+    /// <summary>
+    /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalOptions"/>実装.
+    /// </summary>
+    [Serializable, AddTypeMenu("IMGUI Options")]
+    public sealed class ImmediateModeOptions : ITerminalOptions
     {
         [Header("Input Settings")]
         [SerializeReference, SerializeInterface]
-        private ITerminalInput _input = new TerminalStandardInput();
+        private ITerminalInput _input = new ImmediateModeInput();
 
         [Header("Command Settings")]
         [SerializeField] private int _bufferSize = 256;
@@ -26,12 +29,18 @@ namespace YukimaruGames.Terminal.Composition
         [Tooltip("コマンド走査に追加するアセンブリ名. 独自asmdefにコマンドやモードを置く場合はここに列挙する.")]
         [SerializeField] private string[] _additionalCommandAssemblies = Array.Empty<string>();
 
+        /// <inheritdoc/>
         public ITerminalInput Input => _input ?? new TerminalNullInput();
 
+        /// <inheritdoc/>
         public int BufferSize => _bufferSize;
+        /// <inheritdoc/>
         public string Prompt => _prompt;
+        /// <inheritdoc/>
         public string BootupCommand => _bootupCommand;
+        /// <inheritdoc/>
         public bool IsButtonVisible => _buttonVisible;
+        /// <inheritdoc/>
         public bool IsButtonReverse => _buttonReverse;
         /// <inheritdoc/>
         public bool ShowLoadingIndicator => _showLoadingIndicator;

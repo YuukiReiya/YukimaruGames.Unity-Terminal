@@ -51,8 +51,11 @@ using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Composition
 {
-    [Serializable]
-    public sealed class TerminalStandardInstaller : IInstaller
+    /// <summary>
+    /// Immediate Mode(IMGUI)ベースの標準実装を構築する<see cref="IInstaller"/>実装.
+    /// </summary>
+    [Serializable, AddTypeMenu("IMGUI Installer")]
+    public sealed class ImmediateModeInstaller : IInstaller
     {
         #region inner-struct
 
@@ -131,13 +134,13 @@ namespace YukimaruGames.Terminal.Composition
         #endregion
         
         [SerializeReference, SerializeInterface] 
-        private ITerminalTheme _theme = new TerminalStandardTheme();
+        private ITerminalTheme _theme = new ImmediateModeTheme();
 
         [SerializeReference, SerializeInterface] 
-        private ITerminalAnimation _animation = new TerminalStandardAnimation();
+        private ITerminalAnimation _animation = new ImmediateModeAnimation();
 
         [SerializeReference, SerializeInterface] 
-        private ITerminalOptions _options = new TerminalStandardOptions();
+        private ITerminalOptions _options = new ImmediateModeOptions();
 
         #region runtime-instances
 

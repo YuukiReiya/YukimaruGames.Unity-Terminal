@@ -10,7 +10,7 @@ namespace YukimaruGames.Terminal.Composition
     {
         [Header("Installer")]
         [SerializeReference, SerializeInterface]
-        private IInstaller _installer = new TerminalStandardInstaller();
+        private IInstaller _installer = new ImmediateModeInstaller();
 
         private TerminalRuntimeScope _scope;
 
