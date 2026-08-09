@@ -101,7 +101,7 @@ Unity公式マニュアルにより、`package.json`の`samples[].path`は**必�
 パスでなければならない**（"the path to the sample folder starting at the `Samples~` folder"）。
 `Samples~/`以外のパッケージ直下トップレベルに独自の`~`フォルダ（例: `UIToolkit~/`）を作る方式は、
 Unityが`~`終わりのフォルダをAssetDatabaseから除外すること自体は正しいが、Package Managerの
-Samplesタブ・Import機能としては**公式にサポートされない**（2026-08-10、実装前に判明・訂正）。
+Samplesタブ・Import機能としては**公式にサポートされない**（実装前の検証で判明・訂正）。
 
 「デモ・チュートリアル」（例: `BasicSetup`）と「正式な機能拡張」（UIToolkit/uGUI等）は性質が
 異なるが、両者とも`Samples~/`直下の**サブフォルダとして区別する**（`Samples~/BasicSetup/`・
@@ -132,13 +132,18 @@ Package ManagerのSample Importは「`"path"`で指定したフォルダの**中
 
 そのため、
 
-- `Samples~/<Backend>.Resources/`: バックエンドごとに独立してImportできるようにするための`"path"`用の
-  区切り（`Resources`を内包する側）
-- `Resources/Terminal/<Backend>/`: `Resources.Load`のキー衝突を防ぐための論理パス（後述）
+- `Samples~/<Backend>.Resources/`: バックエンドごとに独立してImportできるようにするための、
+  Sampleごとに一意な`"path"`ルート（`Resources`を内包する側）。**Unityが要求するのは
+  「他のSampleと重複しない一意なフォルダ」であって`<Backend>`という名前自体では無い** —
+  ここに`<Backend>`を含めているのは、Sample一覧から見て何のフォルダか分かりやすくするための
+  このプロジェクト独自の命名規約
+- `Resources/Terminal/<Backend>/`: `Resources.Load`のキー衝突を防ぐための論理パス（後述）。
+  こちらは`<Backend>`名を含めること自体がUnity側の`Resources`マージ仕様上必要（後述）
 
-という**目的の異なる2つの理由**でそれぞれ`<Backend>`名が必要になり、結果として物理パス上に
-同じバックエンド名が2回登場する。冗長に見えるが、「バックエンドごとの独立Import」と
-「Resources.Loadの動作」を両立させる上で技術的に必要な重複であり、削れない
+上記の通り、外側は「一意なSample rootであれば良い」という規約上の理由、内側は「Resources.Loadの
+キー衝突回避」という技術的必然、と**理由の性質が異なる**まま、結果的に同じバックエンド名が
+物理パス上に2回登場する。冗長に見えるが、外側を規約として統一しておくことで開発者・レビュアーが
+迷わない実利があるため、あえてこの命名で揃える
 （全バックエンド共通の1つのSampleにまとめれば重複は消えるが、その場合バックエンド単位での
 個別Importができなくなる）。
 
