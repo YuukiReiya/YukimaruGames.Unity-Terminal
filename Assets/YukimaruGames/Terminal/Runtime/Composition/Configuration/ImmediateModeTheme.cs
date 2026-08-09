@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Composition
 {
     /// <summary>
     /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalTheme"/>実装.
     /// </summary>
-    [Serializable]
+    [Serializable, AddTypeMenu("IMGUI Theme")]
     public sealed class ImmediateModeTheme : ITerminalTheme
     {
         [Header("View Settings")]

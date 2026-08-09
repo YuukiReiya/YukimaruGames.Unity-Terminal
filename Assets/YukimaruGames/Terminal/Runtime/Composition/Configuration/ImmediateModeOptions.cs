@@ -7,7 +7,7 @@ namespace YukimaruGames.Terminal.Composition
     /// <summary>
     /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalOptions"/>実装.
     /// </summary>
-    [Serializable]
+    [Serializable, AddTypeMenu("IMGUI Options")]
     public sealed class ImmediateModeOptions : ITerminalOptions
     {
         [Header("Input Settings")]

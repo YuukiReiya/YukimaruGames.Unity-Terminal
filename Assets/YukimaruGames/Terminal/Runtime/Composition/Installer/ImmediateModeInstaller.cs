@@ -54,7 +54,7 @@ namespace YukimaruGames.Terminal.Composition
     /// <summary>
     /// Immediate Mode(IMGUI)ベースの標準実装を構築する<see cref="IInstaller"/>実装.
     /// </summary>
-    [Serializable]
+    [Serializable, AddTypeMenu("IMGUI Installer")]
     public sealed class ImmediateModeInstaller : IInstaller
     {
         #region inner-struct

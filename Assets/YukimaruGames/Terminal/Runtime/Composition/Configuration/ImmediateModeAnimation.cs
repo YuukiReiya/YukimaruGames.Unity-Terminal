@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Composition.Shared;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
 namespace YukimaruGames.Terminal.Composition
@@ -9,7 +10,7 @@ namespace YukimaruGames.Terminal.Composition
     /// ターミナルウィンドウのアニメーション・レイアウト設定のデフォルト実装です。
     /// <see cref="ITerminalAnimation"/> の基本ルールに従います。
     /// </remarks>
-    [Serializable]
+    [Serializable, AddTypeMenu("IMGUI Animation")]
     public sealed class ImmediateModeAnimation : ITerminalAnimation
     {
         [SerializeField] private WindowState _bootupWindowState = WindowState.Close;

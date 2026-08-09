@@ -11,6 +11,7 @@ using YukimaruGames.Terminal.Composition.Input.LegacyInput;
 
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Composition.Shared;
 using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Composition
@@ -18,7 +19,7 @@ namespace YukimaruGames.Terminal.Composition
     /// <summary>
     /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalInput"/>実装.
     /// </summary>
-    [Serializable]
+    [Serializable, AddTypeMenu("IMGUI Input")]
     public sealed class ImmediateModeInput : ITerminalInput
     {
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
