@@ -51,6 +51,9 @@ using YukimaruGames.Terminal.Composition.Shared;
 
 namespace YukimaruGames.Terminal.Composition
 {
+    /// <summary>
+    /// IMGUIベースの標準実装を構築する<see cref="IInstaller"/>実装.
+    /// </summary>
     [Serializable]
     public sealed class TerminalIMGUIInstaller : IInstaller
     {

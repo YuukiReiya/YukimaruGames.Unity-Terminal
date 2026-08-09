@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace YukimaruGames.Terminal.Composition
 {
+    /// <summary>
+    /// IMGUIベースの標準実装における<see cref="ITerminalTheme"/>実装.
+    /// </summary>
     [Serializable]
     public sealed class TerminalIMGUITheme : ITerminalTheme
     {

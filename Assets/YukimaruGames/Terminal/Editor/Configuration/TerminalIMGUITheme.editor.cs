@@ -5,6 +5,9 @@ using YukimaruGames.Terminal.Composition;
 
 namespace YukimaruGames.Terminal.Editor
 {
+    /// <summary>
+    /// <see cref="TerminalIMGUITheme"/>のInspector表示用PropertyDrawer.
+    /// </summary>
     [CustomPropertyDrawer(typeof(TerminalIMGUITheme))]
     public sealed class TerminalIMGUIThemeDrawer : PropertyDrawer
     {

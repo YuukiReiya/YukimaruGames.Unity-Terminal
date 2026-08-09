@@ -8,6 +8,9 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Editor
 {
+    /// <summary>
+    /// <see cref="TerminalIMGUIInput"/>のInspector表示用PropertyDrawer.
+    /// </summary>
     [CustomPropertyDrawer(typeof(TerminalIMGUIInput))]
     public sealed class TerminalIMGUIInputDrawer : PropertyDrawer
     {

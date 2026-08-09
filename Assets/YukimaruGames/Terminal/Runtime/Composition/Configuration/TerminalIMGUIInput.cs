@@ -15,6 +15,9 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 
 namespace YukimaruGames.Terminal.Composition
 {
+    /// <summary>
+    /// IMGUIベースの標準実装における<see cref="ITerminalInput"/>実装.
+    /// </summary>
     [Serializable]
     public sealed class TerminalIMGUIInput : ITerminalInput
     {
@@ -32,6 +35,7 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private TerminalActionTriggerTiming _triggerTiming = new();
         [SerializeField] private TerminalActionPriority _priority = new();
 
+        /// <inheritdoc/>
         public InputKeyboardType InputKeyboardType => _inputKeyboardType;
 
 #if ENABLE_LEGACY_INPUT_MANAGER
@@ -43,14 +47,18 @@ namespace YukimaruGames.Terminal.Composition
 #endif
 
 #if ENABLE_LEGACY_INPUT_MANAGER
+        /// <inheritdoc/>
         public LegacyInputKey LegacyInputKey => _legacyInputKey;
 #endif
 
 #if ENABLE_INPUT_SYSTEM
+        /// <inheritdoc/>
         public InputSystemKey InputSystemKey => _inputSystemKey;
 #endif
 
+        /// <inheritdoc/>
         public TerminalActionTriggerTiming TriggerTiming => _triggerTiming;
+        /// <inheritdoc/>
         public TerminalActionPriority Priority => _priority;
     }
 }
