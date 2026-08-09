@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.Adapters.GUI.Interfaces.Accessors;
+using YukimaruGames.Terminal.Adapters.IMGUI.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 {
     public sealed class ClipboardRenderer : IClipboardRenderer, IDisposable
     {

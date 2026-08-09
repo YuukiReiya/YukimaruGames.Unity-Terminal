@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Models;
 using YukimaruGames.Terminal.Presentation.Constants;
-using YukimaruGames.Terminal.Adapters.GUI.Interfaces.Accessors;
+using YukimaruGames.Terminal.Adapters.IMGUI.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Log;
 using YukimaruGames.Terminal.SharedKernel;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 {
     public sealed class LogRenderer : ILogRenderer, IDisposable
     {

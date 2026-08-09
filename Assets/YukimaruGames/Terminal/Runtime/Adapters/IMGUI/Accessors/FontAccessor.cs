@@ -3,7 +3,7 @@ using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Composition.Shared.Extensions;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Accessors
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Accessors
 {
     public sealed class FontAccessor : IFontAccessor, IDisposable
     {

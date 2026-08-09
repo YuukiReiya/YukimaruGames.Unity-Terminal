@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace YukimaruGames.Terminal.Adapters.GUI
+namespace YukimaruGames.Terminal.Adapters.IMGUI
 {
     /// <summary>
     /// ログ1行分の描画状態を保持するView.

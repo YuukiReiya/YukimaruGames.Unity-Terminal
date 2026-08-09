@@ -1,12 +1,12 @@
 using System;
 using UnityEngine;
-using YukimaruGames.Terminal.Adapters.GUI.Interfaces.Accessors;
+using YukimaruGames.Terminal.Adapters.IMGUI.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 using YukimaruGames.Terminal.Presentation.Models.Launcher;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 {
     public sealed class LauncherRenderer : ILauncherRenderer, IDisposable
     {

@@ -1,6 +1,6 @@
 using UnityEngine.Pool;
 
-namespace YukimaruGames.Terminal.Adapters.GUI
+namespace YukimaruGames.Terminal.Adapters.IMGUI
 {
     /// <summary>
     /// <see cref="LogLineView"/>を再利用するためのオブジェクトプール.

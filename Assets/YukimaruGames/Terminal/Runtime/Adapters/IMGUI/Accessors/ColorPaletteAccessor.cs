@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Accessors
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Accessors
 {
     /// <summary>
     /// テーマラベルとカラーの対応表を保持するアクセサ.

@@ -1,6 +1,6 @@
 using YukimaruGames.Terminal.Presentation.Contracts;
 
-namespace YukimaruGames.Terminal.Adapters.GUI
+namespace YukimaruGames.Terminal.Adapters.IMGUI
 {
     /// <summary>
     /// <see cref="ICursorView"/>の実装。<see cref="Presentation.Presenters.CursorPresenter"/>から

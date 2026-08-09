@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.Adapters.Input.InputSystem
     /// </summary>
     /// <remarks>
     /// <para>
-    /// 現行の標準パイプラインでは、IME対応済みのOnGUI TextField（Adapters/GUI/Renderers/InputRenderer）が
+    /// 現行の標準パイプラインでは、IME対応済みのOnGUI TextField（Adapters/IMGUI/Renderers/InputRenderer）が
     /// <see cref="IInputProvider"/>を実装し、既定のDI配線もそちらに接続されている。
     /// </para>
     /// <para>

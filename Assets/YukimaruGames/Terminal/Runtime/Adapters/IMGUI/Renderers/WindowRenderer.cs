@@ -5,7 +5,7 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 using YukimaruGames.Terminal.Presentation.Models.Window;
 
-namespace YukimaruGames.Terminal.Adapters.GUI.Renderers
+namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 {
     public sealed class WindowRenderer : IWindowRenderer
     {
