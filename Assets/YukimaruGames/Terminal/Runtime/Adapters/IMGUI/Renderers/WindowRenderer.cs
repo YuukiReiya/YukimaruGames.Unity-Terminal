@@ -27,7 +27,7 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
         {
             var rect = viewModel.Rect;
             var unityRect = new Rect(rect.X, rect.Y, rect.Width, rect.Height);
-            UnityEngine.GUI.Window(viewModel.Id, unityRect, id => func(id), string.Empty, _styleLazy.Value);
+            UnityEngine.GUI.Window(viewModel.Id, unityRect, func.Invoke, string.Empty, _styleLazy.Value);
         }
     }
 }
