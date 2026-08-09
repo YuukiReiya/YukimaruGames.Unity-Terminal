@@ -5,6 +5,7 @@
         "UnityEngine.TestRunner",
         "Unity.InputSystem",
         "YukimaruGames.Terminal.Adapters.Input.InputSystem",
+        "YukimaruGames.Terminal.Adapters.Input.LegacyInput",
         "YukimaruGames.Terminal.Presentation",
         "YukimaruGames.Terminal.Composition",
         "YukimaruGames.Terminal.Application",
