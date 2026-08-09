@@ -22,6 +22,7 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
             });
         }
 
+        /// <inheritdoc/>
         public void Render(WindowRenderData viewModel, Action<int> func)
         {
             var rect = viewModel.Rect;
