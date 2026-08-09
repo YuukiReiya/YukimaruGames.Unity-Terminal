@@ -109,7 +109,7 @@ namespace YukimaruGames.Terminal.Adapters.Input
         }
 
         /// <summary>末尾の書記素クラスタ（grapheme cluster）1つを削除した文字列を返す.</summary>
-        private static string RemoveLastTextElement(string text)
+        internal static string RemoveLastTextElement(string text)
         {
             var lastElementStart = 0;
             var enumerator = StringInfo.GetTextElementEnumerator(text);

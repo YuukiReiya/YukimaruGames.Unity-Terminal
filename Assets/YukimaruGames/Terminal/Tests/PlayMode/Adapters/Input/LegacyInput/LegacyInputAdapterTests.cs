@@ -7,7 +7,7 @@ using YukimaruGames.Terminal.Adapters.Input;
 namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.LegacyInput
 {
     /// <summary>
-    /// <see cref="LegacyInputAdapter"/>の入力テキスト更新通知を検証する.
+    /// <see cref="LegacyInputAdapter"/>の入力テキスト更新通知・書記素クラスタ単位の削除を検証する.
     /// </summary>
     [TestFixture]
     public sealed class LegacyInputAdapterTests
@@ -81,6 +81,39 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.Input.LegacyInput
             _adapter.SetInputText(null);
 
             Assert.AreEqual(string.Empty, lastValue);
+        }
+
+        /// <summary>サロゲートペア（絵文字等）の末尾1文字が書記素クラスタ単位で削除されることを検証する.</summary>
+        [Test]
+        public void RemoveLastTextElement_SurrogatePair_RemovesWholeCharacter()
+        {
+            const string text = "abc\U0001F600"; // "abc" + 😀 (surrogate pair)
+
+            var result = LegacyInputAdapter.RemoveLastTextElement(text);
+
+            Assert.AreEqual("abc", result);
+        }
+
+        /// <summary>結合文字を含む末尾1文字が書記素クラスタ単位で削除されることを検証する.</summary>
+        [Test]
+        public void RemoveLastTextElement_CombiningCharacter_RemovesWholeCluster()
+        {
+            const string text = "abce\u0301"; // "abc" + "e" + combining acute accent (U+0301)
+
+            var result = LegacyInputAdapter.RemoveLastTextElement(text);
+
+            Assert.AreEqual("abc", result);
+        }
+
+        /// <summary>末尾がASCII文字1文字の場合はその1文字のみ削除されることを検証する.</summary>
+        [Test]
+        public void RemoveLastTextElement_AsciiCharacter_RemovesSingleCharacter()
+        {
+            const string text = "abc";
+
+            var result = LegacyInputAdapter.RemoveLastTextElement(text);
+
+            Assert.AreEqual("ab", result);
         }
     }
 }
