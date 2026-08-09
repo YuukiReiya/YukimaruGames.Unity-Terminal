@@ -1,0 +1,16 @@
+{
+    "name": "YukimaruGames.Terminal.Adapters.Input.LegacyInput",
+    "rootNamespace": "YukimaruGames.Terminal.Adapters.Input",
+    "references": [
+        "YukimaruGames.Terminal.Presentation"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

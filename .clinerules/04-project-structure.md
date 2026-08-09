@@ -43,7 +43,8 @@ Assets/YukimaruGames/Terminal/
 │       ├── Lifecycle/       # ライフサイクル管理
 │       ├── Model/           # Runtimeモデル
 │       └── Shared/          # 内部共有
-├── Samples~/            # サンプルシーン
+├── Samples~/            # Sample群（Package ManagerのSamplesタブからImport。1Sample=1サブフォルダ）
+│   └── BasicSetup/        # "Basic Setup & Commands"
 ├── Tests/               # テストコード
 ├── package.json         # UPMパッケージ定義
 └── CHANGELOG.md         # 変更履歴
@@ -83,6 +84,32 @@ Assets/YukimaruGames/Terminal/
 
 ## 注意事項
 
-- `Resources.Load()` は極力使用しない（Addressablesを検討する）
 - `FindObjectOfType()` は使用禁止（DI経由で依存を解決する）
 - パスの起点は `Assets/YukimaruGames/Terminal/Runtime/` であり `Assets/Scripts/` ではない
+
+## UIバックエンド用Sampleの同梱デフォルトアセット規約
+
+UIToolkit/uGUI等、任意導入のUIバックエンドは**別パッケージではなくSamples機構**
+（`package.json`の`"samples"`配列、`Samples~`フォルダ）で提供する。1バックエンドにつき
+「コード」と「デフォルトアセット」を別Sampleに分け、機能だけ導入して自前アセットに差し替えたい
+ユーザーが不要な`Resources`同梱を避けられるようにする。
+
+- `package.json`の`"samples"`エントリは`"UI Backend: <Backend>"`（コード）／
+  `"UI Backend: <Backend> Default Resources"`（アセット）の組で用意する
+  （Package ManagerのSamplesタブはカテゴリ表示を持たないフラット一覧のため、視覚的にまとまるよう
+  displayNameのプレフィックスで揃える）
+- 配置場所: `Samples~/<Backend>Resources/External/<Backend>/Resources/Terminal/<Backend>/` 配下
+  （例: `Samples~/UIToolkitResources/External/UIToolKit/Resources/Terminal/UIToolKit/DefaultTerminal.uxml`）
+- 参照方法: `Resources.Load<T>("Terminal/<Backend>/...")` の文字列パスで解決する
+  （`[SerializeField] private VisualTreeAsset _default = ...` のようなGUID直接参照はしない。
+  GUIDは利用側プロジェクトの資産更新・Sample再importで壊れやすいため）
+- Installer側のデフォルト値解決は `Composition.Shared.Extensions.UnityObjectExtensions.OrResource<T>()`
+  （`_override.OrResource("Terminal/<Backend>/...")`）を使う。Resources Sample未導入で解決できない場合は
+  例外にせず、ログ警告＋最小限フォールバック、またはユーザーへの明確な導入案内に留める
+- `Resources`フォルダは各バックエンドの「Default Resources」Sample側にのみ置く。コード側Sample・
+  コアパッケージ本体には置かない（未Importならプロジェクトに一切含まれないことを保証するため）
+- 複数バックエンドのResources Sampleを同時導入しても、`Resources`フォルダはプロジェクト全体で
+  1つの仮想空間にマージされるため、`Terminal/<Backend>/...`のようにバックエンド名でサブフォルダを
+  分け、パス衝突を防ぐ
+- Addressablesは依存追加のコストが大きいため不採用（詳細判断の経緯は
+  [Issue #129](https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal/issues/129) 参照）
