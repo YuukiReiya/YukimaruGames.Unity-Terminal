@@ -44,7 +44,10 @@ Assets/YukimaruGames/Terminal/
 │       ├── Model/           # Runtimeモデル
 │       └── Shared/          # 内部共有
 ├── Samples~/            # Sample群（Package ManagerのSamplesタブからImport。1Sample=1サブフォルダ）
-│   └── BasicSetup/        # "Basic Setup & Commands"
+│   ├── BasicSetup/            # "Basic Setup & Commands"（デモ・チュートリアル）
+│   ├── UIToolkit/              # "UI Backend: UIToolkit"（コード。正式な機能拡張）
+│   └── UIToolkit.Resources/    # "UI Backend: UIToolkit Default Resources"
+│       └── Resources/Terminal/UIToolkit/  # Resources.Loadで解決されるデフォルトアセット
 ├── Tests/               # テストコード
 ├── package.json         # UPMパッケージ定義
 └── CHANGELOG.md         # 変更履歴
@@ -92,17 +95,17 @@ Assets/YukimaruGames/Terminal/
 UIToolkit/uGUI等、任意導入のUIバックエンドは**別パッケージではなくPackage ManagerのSamples機構**
 （`package.json`の`"samples"`配列、`~`サフィックスでAssetDatabaseから除外されるフォルダ）で提供する。
 
-### `Samples~/`と`<Backend>~/`の使い分け
+### すべて`Samples~/`配下に置く（重要な制約）
 
-Unityは名前を問わず`~`で終わるフォルダをAssetDatabaseから除外する（`Samples~`という名前自体に
-特別な意味は無い）。この性質を踏まえ、**性質が異なる2種類のコンテンツを別々のトップレベルフォルダに
-分ける**。
+Unity公式マニュアルにより、`package.json`の`samples[].path`は**必ず`Samples~/`から始まる
+パスでなければならない**（"the path to the sample folder starting at the `Samples~` folder"）。
+`Samples~/`以外のパッケージ直下トップレベルに独自の`~`フォルダ（例: `UIToolkit~/`）を作る方式は、
+Unityが`~`終わりのフォルダをAssetDatabaseから除外すること自体は正しいが、Package Managerの
+Samplesタブ・Import機能としては**公式にサポートされない**（2026-08-10、実装前に判明・訂正）。
 
-- `Samples~/`: 学習・改造前提の**デモ・チュートリアルコンテンツ**専用（例: `Samples~/BasicSetup/`）。
-  Unity公式のSamples機構が本来想定している用途。
-- `<Backend>~/`（パッケージ直下のトップレベル、例: `UIToolkit~/`）: UIToolkit/uGUI等、
-  **正式な機能拡張（技術的なバックエンド実装）**専用。「デモ」ではなく「使うかどうかを選べる機能」
-  なので`Samples~/`には同居させない。
+「デモ・チュートリアル」（例: `BasicSetup`）と「正式な機能拡張」（UIToolkit/uGUI等）は性質が
+異なるが、両者とも`Samples~/`直下の**サブフォルダとして区別する**（`Samples~/BasicSetup/`・
+`Samples~/UIToolkit/`のように、フォルダを分けることで区別し、トップレベル自体は分けない）。
 
 ### バックエンドごとに「コード」と「デフォルトアセット」を別Sampleに分ける
 
@@ -112,28 +115,32 @@ Unityは名前を問わず`~`で終わるフォルダをAssetDatabaseから除�
   `"UI Backend: <Backend> Default Resources"`（アセット）の組で用意する
   （Package ManagerのSamplesタブはカテゴリ表示を持たないフラット一覧のため、視覚的にまとまるよう
   displayNameのプレフィックスで揃える）
-- コード側配置・`"path"`: `<Backend>~/`（例: `UIToolkit~/`）。`Resources`フォルダは含まない
-- デフォルトアセット側配置: `External~/<Backend>/Resources/Terminal/<Backend>/` 配下
-  （例: `External~/UIToolKit/Resources/Terminal/UIToolKit/DefaultTerminal.uxml`）。
-  `"path"`は`External~/<Backend>`（`Resources`フォルダそのものではなく、それを内包する
+- コード側配置・`"path"`: `Samples~/<Backend>/`（例: `Samples~/UIToolkit/`）。`Resources`フォルダは
+  含まない
+- デフォルトアセット側配置: `Samples~/<Backend>.Resources/Resources/Terminal/<Backend>/` 配下
+  （例: `Samples~/UIToolkit.Resources/Resources/Terminal/UIToolkit/DefaultTerminal.uxml`。
+  `<Backend>`と`Resources`は`.`区切りとし、`UIToolkitResources`のように連結しない）。
+  `"path"`は`Samples~/<Backend>.Resources`（`Resources`フォルダそのものではなく、それを内包する
   親フォルダを指定すること。理由は次項）
 
-### なぜ`<Backend>`表記が物理パスに2回（`External~/UIToolKit/.../Terminal/UIToolKit/`）出るのか
+### なぜ`<Backend>`表記が物理パスに2回（`UIToolkit.Resources/.../Terminal/UIToolkit/`）出るのか
 
 Package ManagerのSample Importは「`"path"`で指定したフォルダの**中身**」だけをコピーし、
 `"path"`フォルダ自身の名前は破棄される。もし`"path"`を`Resources`より深い階層
-（例: `External~/Resources/Terminal/UIToolKit`）に設定すると、Import後は`Resources`という
+（例: `Samples~/Resources/UIToolkit`）に設定すると、Import後は`Resources`という
 祖先フォルダ自体が失われ、`Resources.Load`が機能しなくなる。
 
 そのため、
 
-- `External~/<Backend>/`: バックエンドごとに独立してImportできるようにするための`"path"`用の区切り
-  （`Resources`を内包する側）
+- `Samples~/<Backend>.Resources/`: バックエンドごとに独立してImportできるようにするための`"path"`用の
+  区切り（`Resources`を内包する側）
 - `Resources/Terminal/<Backend>/`: `Resources.Load`のキー衝突を防ぐための論理パス（後述）
 
 という**目的の異なる2つの理由**でそれぞれ`<Backend>`名が必要になり、結果として物理パス上に
 同じバックエンド名が2回登場する。冗長に見えるが、「バックエンドごとの独立Import」と
-「Resources.Loadの動作」を両立させる上で技術的に必要な重複であり、削れない。
+「Resources.Loadの動作」を両立させる上で技術的に必要な重複であり、削れない
+（全バックエンド共通の1つのSampleにまとめれば重複は消えるが、その場合バックエンド単位での
+個別Importができなくなる）。
 
 ### 参照方法・フォールバック
 
