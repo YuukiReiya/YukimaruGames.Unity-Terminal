@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.Application.Models;
 using YukimaruGames.Terminal.Presentation.Constants;
+using YukimaruGames.Terminal.Adapters.GUI.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Models.Log;

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace YukimaruGames.Terminal.Presentation.Interfaces.Accessors
+namespace YukimaruGames.Terminal.Adapters.GUI.Interfaces.Accessors
 {
     public interface IGUIStyleAccessor :
         IGUIStyleProvider,

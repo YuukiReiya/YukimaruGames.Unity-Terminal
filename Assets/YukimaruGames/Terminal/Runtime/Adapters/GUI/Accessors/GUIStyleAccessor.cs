@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using YukimaruGames.Terminal.Adapters.GUI.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 
 namespace YukimaruGames.Terminal.Adapters.GUI.Accessors

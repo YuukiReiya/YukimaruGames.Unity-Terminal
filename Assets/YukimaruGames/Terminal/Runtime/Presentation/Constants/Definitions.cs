@@ -14,8 +14,8 @@ namespace YukimaruGames.Terminal.Presentation.Constants
             public const string System = nameof(MessageType.System);
             
             public const string Window = "WindowRenderer";
-            public const string Cursor = nameof(UnityEngine.GUI.skin.settings.cursorColor);
-            public const string Selection = nameof(UnityEngine.GUI.skin.settings.selectionColor);
+            public const string Cursor = "cursorColor";
+            public const string Selection = "selectionColor";
         }
     }
 }
