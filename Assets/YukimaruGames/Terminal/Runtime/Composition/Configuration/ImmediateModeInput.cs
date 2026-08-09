@@ -16,10 +16,10 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 namespace YukimaruGames.Terminal.Composition
 {
     /// <summary>
-    /// IMGUIベースの標準実装における<see cref="ITerminalInput"/>実装.
+    /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalInput"/>実装.
     /// </summary>
     [Serializable]
-    public sealed class TerminalIMGUIInput : ITerminalInput
+    public sealed class ImmediateModeInput : ITerminalInput
     {
         [SerializeField] private InputKeyboardType _inputKeyboardType = InputKeyboardType.InputSystem;
 

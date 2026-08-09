@@ -4,10 +4,10 @@ using UnityEngine;
 namespace YukimaruGames.Terminal.Composition
 {
     /// <summary>
-    /// IMGUIベースの標準実装における<see cref="ITerminalTheme"/>実装.
+    /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalTheme"/>実装.
     /// </summary>
     [Serializable]
-    public sealed class TerminalIMGUITheme : ITerminalTheme
+    public sealed class ImmediateModeTheme : ITerminalTheme
     {
         [Header("View Settings")]
         [SerializeField] private Font _font;

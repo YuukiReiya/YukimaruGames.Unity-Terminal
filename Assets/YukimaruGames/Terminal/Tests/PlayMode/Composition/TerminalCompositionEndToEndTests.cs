@@ -16,7 +16,7 @@ using YukimaruGames.Terminal.SharedKernel;
 namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
 {
     /// <summary>
-    /// <see cref="TerminalIMGUIInstaller"/>による実配線(DI)から、
+    /// <see cref="ImmediateModeInstaller"/>による実配線(DI)から、
     /// コマンド登録・実行・ログ出力までの一連のユーザー操作フローを検証する.
     /// </summary>
     /// <remarks>
@@ -36,13 +36,13 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
         private TerminalRuntimeScope _scope;
 
         /// <summary>
-        /// 各テスト実行前に<see cref="TerminalIMGUIInstaller"/>でDI配線を構築し、
+        /// 各テスト実行前に<see cref="ImmediateModeInstaller"/>でDI配線を構築し、
         /// <see cref="TerminalRuntimeScope"/>を取得する(<see cref="TerminalBootstrapper"/>のAwake相当).
         /// </summary>
         [SetUp]
         public void SetUp()
         {
-            _installer = new TerminalIMGUIInstaller();
+            _installer = new ImmediateModeInstaller();
             _scope = _installer.Install();
         }
 
@@ -91,7 +91,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
 
         /// <summary>
         /// 組み込みコマンド(<see cref="Infrastructure.Diagnostics.BuiltinGeneralCommands"/>の"echo")が
-        /// 実際の配線(TerminalIMGUIInstaller)経由で登録・実行されることを検証する.
+        /// 実際の配線(ImmediateModeInstaller)経由で登録・実行されることを検証する.
         /// </summary>
         [UnityTest]
         public IEnumerator ExecuteAsync_BuiltinEchoCommand_LogsArgumentsBack()
@@ -251,7 +251,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
 
         /// <summary>
         /// terminal.stack診断コマンド(static + IModeStackInspector/IModeOutput注入)が
-        /// 実際の配線(TerminalIMGUIInstaller)経由で動作することを検証する.
+        /// 実際の配線(ImmediateModeInstaller)経由で動作することを検証する.
         /// </summary>
         [UnityTest]
         public IEnumerator ExecuteAsync_TerminalStackCommand_LogsNormalMode()

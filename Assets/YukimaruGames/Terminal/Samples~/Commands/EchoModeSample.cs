@@ -82,7 +82,7 @@ namespace YukimaruGames.Terminal.Samples
         // [TerminalCommand]はstaticのみ発見される。IModeTransitionRequestSinkは
         // 起動時に確定済みのシングルトンとしてExpression.Constant経由で注入される
         // (CommandFactory.Create(MethodInfo, in ModeServiceBundle)。詳細は
-        // TerminalIMGUIInstaller.RegisterCommands を参照)。
+        // ImmediateModeInstaller.RegisterCommands を参照)。
         [TerminalCommand("echo-mode", help: "Enter EchoReplMode.")]
         private static void EnterEchoMode(IModeTransitionRequestSink transitions)
         {

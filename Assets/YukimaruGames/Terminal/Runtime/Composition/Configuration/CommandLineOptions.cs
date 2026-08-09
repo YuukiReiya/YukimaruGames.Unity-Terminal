@@ -7,7 +7,7 @@ namespace YukimaruGames.Terminal.Composition
     /// <see cref="CommandLineInstaller"/>専用の設定.
     /// </summary>
     /// <remarks>
-    /// <see cref="TerminalIMGUIOptions"/>はIMGUI描画(ボタン表示・ローディングインジケータ・
+    /// <see cref="ImmediateModeOptions"/>はIMGUI描画(ボタン表示・ローディングインジケータ・
     /// キーボード入力方式等)を前提としたパラメータを多く含むが、外部ターミナル(cmd/zsh)では
     /// コマンド実行系(バッファサイズ・プロンプト・追加コマンドアセンブリ)以外は一切使われない
     /// ため、それらを持たない専用の設定型として分離している.

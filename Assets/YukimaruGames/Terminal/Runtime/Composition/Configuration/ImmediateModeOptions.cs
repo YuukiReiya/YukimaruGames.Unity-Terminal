@@ -5,14 +5,14 @@ using YukimaruGames.Terminal.Composition.Shared;
 namespace YukimaruGames.Terminal.Composition
 {
     /// <summary>
-    /// IMGUIベースの標準実装における<see cref="ITerminalOptions"/>実装.
+    /// Immediate Mode(IMGUI)ベースの標準実装における<see cref="ITerminalOptions"/>実装.
     /// </summary>
     [Serializable]
-    public sealed class TerminalIMGUIOptions : ITerminalOptions
+    public sealed class ImmediateModeOptions : ITerminalOptions
     {
         [Header("Input Settings")]
         [SerializeReference, SerializeInterface]
-        private ITerminalInput _input = new TerminalIMGUIInput();
+        private ITerminalInput _input = new ImmediateModeInput();
 
         [Header("Command Settings")]
         [SerializeField] private int _bufferSize = 256;

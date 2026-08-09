@@ -6,10 +6,10 @@ using YukimaruGames.Terminal.Composition;
 namespace YukimaruGames.Terminal.Editor
 {
     /// <summary>
-    /// <see cref="TerminalIMGUIOptions"/>のInspector表示用PropertyDrawer.
+    /// <see cref="ImmediateModeOptions"/>のInspector表示用PropertyDrawer.
     /// </summary>
-    [CustomPropertyDrawer(typeof(TerminalIMGUIOptions))]
-    public sealed class TerminalIMGUIOptionsDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ImmediateModeOptions))]
+    public sealed class ImmediateModeOptionsDrawer : PropertyDrawer
     {
         private enum Tab { Input, System } // 分割された責務に合わせる
         private Tab _tab = Tab.Input;
@@ -59,7 +59,7 @@ namespace YukimaruGames.Terminal.Editor
         private void RenderInputCategory(SerializedProperty property)
         {
             // Key/Modifiers/Trigger Timing/Priorityのアクション別グルーピング表示は
-            // TerminalIMGUIInputDrawer(_inputフィールドの[SerializeInterface]経由で自動的に使用される)に委譲する.
+            // ImmediateModeInputDrawer(_inputフィールドの[SerializeInterface]経由で自動的に使用される)に委譲する.
             var inputProp = property.FindPropertyRelative("_input");
             if (inputProp == null) return;
             EditorGUILayout.PropertyField(inputProp, new GUIContent("Input"), true);

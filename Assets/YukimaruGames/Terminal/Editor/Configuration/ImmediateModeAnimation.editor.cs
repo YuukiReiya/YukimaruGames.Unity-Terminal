@@ -7,10 +7,10 @@ using YukimaruGames.Terminal.Composition;
 namespace YukimaruGames.Terminal.Editor
 {
     /// <summary>
-    /// <see cref="TerminalIMGUIAnimation"/>のInspector表示用PropertyDrawer.
+    /// <see cref="ImmediateModeAnimation"/>のInspector表示用PropertyDrawer.
     /// </summary>
-    [CustomPropertyDrawer(typeof(TerminalIMGUIAnimation))]
-    public sealed class TerminalIMGUIAnimationDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ImmediateModeAnimation))]
+    public sealed class ImmediateModeAnimationDrawer : PropertyDrawer
     {
         private static GUIStyle _toolbarStyle;
         private static readonly Lazy<GUIStyle> _popupStyle = new(() => new GUIStyle(EditorStyles.popup)

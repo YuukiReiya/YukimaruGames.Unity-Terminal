@@ -9,10 +9,10 @@ using YukimaruGames.Terminal.Presentation.Models.Event;
 namespace YukimaruGames.Terminal.Editor
 {
     /// <summary>
-    /// <see cref="TerminalIMGUIInput"/>のInspector表示用PropertyDrawer.
+    /// <see cref="ImmediateModeInput"/>のInspector表示用PropertyDrawer.
     /// </summary>
-    [CustomPropertyDrawer(typeof(TerminalIMGUIInput))]
-    public sealed class TerminalIMGUIInputDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ImmediateModeInput))]
+    public sealed class ImmediateModeInputDrawer : PropertyDrawer
     {
         // NOTE: このプロジェクトの言語バージョン/ターゲットではinitアクセサ(IsExternalInit)が
         // 使用できないため、setで代替する.

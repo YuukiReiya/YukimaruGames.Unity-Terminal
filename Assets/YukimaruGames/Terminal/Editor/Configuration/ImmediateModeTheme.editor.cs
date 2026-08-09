@@ -6,10 +6,10 @@ using YukimaruGames.Terminal.Composition;
 namespace YukimaruGames.Terminal.Editor
 {
     /// <summary>
-    /// <see cref="TerminalIMGUITheme"/>のInspector表示用PropertyDrawer.
+    /// <see cref="ImmediateModeTheme"/>のInspector表示用PropertyDrawer.
     /// </summary>
-    [CustomPropertyDrawer(typeof(TerminalIMGUITheme))]
-    public sealed class TerminalIMGUIThemeDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ImmediateModeTheme))]
+    public sealed class ImmediateModeThemeDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
