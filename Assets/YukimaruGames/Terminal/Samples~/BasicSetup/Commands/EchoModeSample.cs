@@ -9,10 +9,12 @@
 // 使い方: このファイルをプロジェクトの Assembly-CSharp (またはお好みのasmdef)配下に
 // コピーしてください(Samples~ は Unity のインポート対象外のため、そのままでは動作しません)。
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using YukimaruGames.Terminal.Domain.Contracts.Attributes;
 using YukimaruGames.Terminal.Domain.Contracts.Modes;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 
 namespace YukimaruGames.Terminal.Samples
 {
@@ -56,8 +58,29 @@ namespace YukimaruGames.Terminal.Samples
                 return new ValueTask<ModeResult>(ModeResult.NeedMoreInput);
             }
 
+            // [TerminalModeCommand] で登録したモード専用コマンド(ここでは"exit")は
+            // 自動では呼ばれない。HandleAsyncの中でcontext.Commandsから解決し、
+            // 一致したものだけ実行して、それ以外の入力のみエコーする.
+            var trimmed = input.Text.ToString().Trim();
+            if (context.Commands.TryGet(trimmed, out var handler))
+            {
+                if (handler.IsAsync)
+                {
+                    return ExecuteModeCommandAsync(handler, cancellationToken);
+                }
+
+                handler.Proc(ReadOnlyMemory<CommandArgument>.Empty);
+                return new ValueTask<ModeResult>(ModeResult.Continue);
+            }
+
             context.Output.Message(input.Text.ToString());
             return new ValueTask<ModeResult>(ModeResult.Continue);
+        }
+
+        private static async ValueTask<ModeResult> ExecuteModeCommandAsync(CommandHandler handler, CancellationToken cancellationToken)
+        {
+            await handler.AsyncProc(ReadOnlyMemory<CommandArgument>.Empty, cancellationToken);
+            return ModeResult.Continue;
         }
 
         public override ValueTask OnExitAsync(ModeExitReason reason)
