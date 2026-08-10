@@ -14,7 +14,8 @@
         "YukimaruGames.Terminal.Domain.Contracts",
         "YukimaruGames.Terminal.Composition.Input.InputSystem",
         "YukimaruGames.Terminal.Composition.Input.LegacyInput",
-        "Unity.InputSystem.TestFramework"
+        "Unity.InputSystem.TestFramework",
+        "YukimaruGames.Terminal.Adapters"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
