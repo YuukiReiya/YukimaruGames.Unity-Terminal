@@ -113,9 +113,12 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
         {
             if (_scrollView == null) return;
 
-            _scrollView.scrollOffset = Mathf.Approximately(position.y, float.MaxValue)
-                ? new Vector2(_scrollView.scrollOffset.x, _scrollView.contentContainer.layout.height)
-                : position;
+            // ScrollToEnd(float.MaxValue)を、contentContainer.layout.heightを自前計算した値に
+            // 差し替えていたが、新しいログ行が追加された直後はまだレイアウトが再計算されておらず
+            // 1フレーム分古い(短い)高さを参照してしまい、末尾まで届かない不具合が実機検証で
+            // 確認された(#122)。ScrollView.scrollOffsetのセッター自身が現在の有効な最大値へ
+            // 正しくクランプする(verticalScroller.highValueと一致)ため、素通しする.
+            _scrollView.scrollOffset = position;
         }
 
         private void HandleLogCopied(string copiedText)

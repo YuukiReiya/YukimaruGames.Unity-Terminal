@@ -29,6 +29,8 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
         private readonly ObjectPool<LogLineElement> _linePool;
         private readonly List<LogLineElement> _lineElements = new();
         private Color _copyButtonColor;
+        private FontDefinition _fontDefinition;
+        private int _fontSize;
 
         /// <summary>
         /// Inspector上のテーマ変更(<see cref="Composition.IInstaller.Resolve"/>経由の再同期)を
@@ -37,6 +39,20 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
         public Color CopyButtonColor
         {
             set => _copyButtonColor = value;
+        }
+
+        /// <summary>
+        /// フォントが未割り当てのままだとグリフの計測ができずログ行の高さが常に0になり
+        /// 一切表示されなくなる(#122で判明)ため、テーマのフォントを行要素にも反映する.
+        /// </summary>
+        public FontDefinition FontDefinition
+        {
+            set => _fontDefinition = value;
+        }
+
+        public int FontSize
+        {
+            set => _fontSize = value;
         }
 
         public LogRenderer(
@@ -87,6 +103,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
                 line.SetMessage(entry.Message);
                 line.SetColor(GetColor(entry.MessageType));
                 line.SetCopyButtonColor(_copyButtonColor);
+                line.SetFont(_fontDefinition, _fontSize);
 
                 if (ShouldDrawCopyButton(entry))
                 {
@@ -160,6 +177,10 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             {
                 _root = new VisualElement { name = "log-line" };
                 _root.style.flexDirection = FlexDirection.Row;
+                // flex-shrinkの既定値(1)のままだと、ScrollViewの表示領域を超えるログ行数に
+                // なった際に各行が圧縮されて重なり合ってしまう(スクロールもできなくなる)。
+                // 行の実測サイズを常に保つため、縮小させない.
+                _root.style.flexShrink = 0;
 
                 _label = new Label { name = "log-line-message" };
                 _label.style.flexGrow = 1;
@@ -182,6 +203,14 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             public void SetColor(Color color)
             {
                 _label.style.color = color;
+            }
+
+            public void SetFont(FontDefinition fontDefinition, int fontSize)
+            {
+                _label.style.unityFontDefinition = fontDefinition;
+                _label.style.fontSize = fontSize;
+                _copyButton.style.unityFontDefinition = fontDefinition;
+                _copyButton.style.fontSize = fontSize;
             }
 
             public void SetCopyButtonColor(Color color)

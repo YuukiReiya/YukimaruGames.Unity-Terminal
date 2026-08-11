@@ -43,6 +43,7 @@
 
 #log-line {
     flex-direction: row;
+    flex-shrink: 0;
 }
 
 #log-line-message {

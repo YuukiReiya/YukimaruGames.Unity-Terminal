@@ -22,6 +22,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
 
         private bool _isCurrentlyFocused;
         private bool _isImeComposing;
+        private bool _isSyncingFocus;
 
         public event Action<string> OnInputTextChanged;
         public event Action<WindowFocus> OnFocusControlChanged;
@@ -48,6 +49,17 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             // ターミナル側のバインド自体はUpdate()駆動の別経路(IKeyboardInputHandler)で
             // 判定されるため、ここで止めても機能しなくなることはない。
             _textField.RegisterCallback<KeyDownEvent>(OnKeyDownCapture, TrickleDown.TrickleDown);
+
+            // ランタイムパネルではEnter/Escapeキーは(Editor上のKeyDownEventだけでなく)
+            // UIToolkitのナビゲーション入力としてもNavigationSubmitEvent/NavigationCancelEvent
+            // で独立に配信される。KeyDownEvent側の対策(Escape/Tabのみ止める)だけではこちらの
+            // 経路をすり抜け、実機でのみ(Editorでの合成KeyDownEventテストでは再現しない)
+            // コマンド実行のたびにフォーカスが実質的に失われる(focusedElement上は継続と
+            // 判定されるが実際のキー入力を受け付けなくなる)不具合として顕在化した(#122)。
+            // ターミナル側のExecute/Close判定はUpdate()駆動の別経路で行うため、ここでも
+            // 同様に先取りして無効化する.
+            _textField.RegisterCallback<NavigationSubmitEvent>(OnNavigationEventCapture, TrickleDown.TrickleDown);
+            _textField.RegisterCallback<NavigationCancelEvent>(OnNavigationEventCapture, TrickleDown.TrickleDown);
         }
 
         public void Render(InputRenderData data)
@@ -57,6 +69,24 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             if (!string.Equals(_textField.value, data.InputText, StringComparison.Ordinal))
             {
                 _textField.SetValueWithoutNotify(data.InputText);
+
+                // SetValueWithoutNotify()はTextField.valueは書き換えるが、既にネイティブの編集
+                // セッションがアタッチされている(=フィールドが既にフォーカス中の)場合、そのセッションが
+                // 内部に保持しているテキストバッファ(TextEditingUtilitiesの内部状態)は追従しない。
+                // このズレたバッファへ次の実キー入力が届くと、GeneratePreviewString()が古いバッファ長
+                // を基準にString.Insertし、ArgumentOutOfRangeExceptionで失敗する不具合が実機ログ
+                // (Editor.log)から確認された(#122)。これによりネイティブ編集状態が壊れたまま残り、
+                // 「コマンド実行のたびに入力欄が反応しなくなる」症状として現れていた。
+                // Blur→Focusで編集セッションを強制的に張り直し、新しいvalueを基準に内部バッファを
+                // 再構築させることで回避する。このBlur/Focusは論理的なフォーカス状態を変えるための
+                // ものではないため、OnFocusIn/OnFocusOut側のOnFocusControlChanged通知は抑制する.
+                if (_isCurrentlyFocused)
+                {
+                    _isSyncingFocus = true;
+                    _textField.Blur();
+                    _textField.Focus();
+                    _isSyncingFocus = false;
+                }
             }
 
             ApplyFocus(data.Focus);
@@ -85,12 +115,14 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
 
         private void MoveCursorToEnd()
         {
-            // フォーカスが無い状態でcursorIndex/selectIndexを書き換えると、ネイティブ側の
-            // テキスト編集バッファ(TextEditingUtilities)と同期が取れないまま残り、次に実際の
-            // キー入力(IME経由の合成含む)が来た際にUnity内部でArgumentOutOfRangeExceptionが
-            // 発生することがある(実機検証で確認)。フォーカス中のみ、かつ現在のテキスト長で
-            // clampした値を設定する。
-            if (_textField.focusController?.focusedElement != _textField) return;
+            // 以前は「フォーカス中のみ」ガードしていたが、_isCurrentlyFocused(FocusIn/Outイベント
+            // ベースの自前追跡)は「focusedElementが変化しない=FocusOutが飛ばない」ケース
+            // (コマンド実行のたびにSetValueWithoutNotifyで値だけクリアする等)で、実際には
+            // ネイティブの編集セッションが再アタッチされていないのに"フォーカス中"と誤判定し、
+            // このガードでカーソル同期自体がスキップされ続けて症状が自己再生産される不具合が
+            // あった(#122)。フォーカス有無では判定せず、要素がパネルに存在する場合のみ
+            // (破棄処理中の呼び出し等を避けるための最小限のガード)常に同期する.
+            if (_textField.panel == null) return;
 
             var end = _textField.text?.Length ?? 0;
             _textField.cursorIndex = end;
@@ -115,21 +147,42 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
         private void OnFocusIn(FocusInEvent evt)
         {
             _isCurrentlyFocused = true;
+            if (_isSyncingFocus) return;
             OnFocusControlChanged?.Invoke(WindowFocus.Apply);
         }
 
         private void OnFocusOut(FocusOutEvent evt)
         {
             _isCurrentlyFocused = false;
+            if (_isSyncingFocus) return;
             OnFocusControlChanged?.Invoke(WindowFocus.Release);
         }
 
         private void OnKeyDownCapture(KeyDownEvent evt)
         {
+            // Return/KeypadEnterは一時ここでも止めていたが、TextFieldのネイティブな
+            // デフォルト動作(KeyboardTextEditorEventHandler)まで到達させないと、
+            // 編集セッション(IME合成状態・カーソル/選択インデックスの内部管理)が
+            // 正しく確定されないまま残り、次のコマンド実行後にfocusedElement上は
+            // フォーカス継続と判定されるのに実際にはキー入力を受け付けなくなる
+            // (キャレット非表示・入力不可)不具合が実機検証で確認された(#122)。
+            // Escapeが引き起こすクラッシュ(#122で修正済み)はロールバック処理
+            // (直前の値へのReplaceSelection/DeleteSelection)経由で、Returnのコード
+            // パスとは無関係なため、Return/KeypadEnterはネイティブ処理に委ねてよい。
             if (evt.keyCode is KeyCode.Escape or KeyCode.Tab)
             {
                 evt.StopPropagation();
             }
+        }
+
+        private void OnNavigationEventCapture(NavigationSubmitEvent evt)
+        {
+            evt.StopPropagation();
+        }
+
+        private void OnNavigationEventCapture(NavigationCancelEvent evt)
+        {
+            evt.StopPropagation();
         }
 
         void IDisposable.Dispose()
@@ -140,6 +193,8 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
                 _textField.UnregisterCallback<FocusInEvent>(OnFocusIn);
                 _textField.UnregisterCallback<FocusOutEvent>(OnFocusOut);
                 _textField.UnregisterCallback<KeyDownEvent>(OnKeyDownCapture, TrickleDown.TrickleDown);
+                _textField.UnregisterCallback<NavigationSubmitEvent>(OnNavigationEventCapture, TrickleDown.TrickleDown);
+                _textField.UnregisterCallback<NavigationCancelEvent>(OnNavigationEventCapture, TrickleDown.TrickleDown);
             }
 
             OnInputTextChanged = null;

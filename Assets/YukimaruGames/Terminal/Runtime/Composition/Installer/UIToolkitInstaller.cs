@@ -50,7 +50,6 @@ using YukimaruGames.Terminal.Presentation.Models;
 using YukimaruGames.Terminal.Presentation.Presenters;
 using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Composition.Shared;
-using YukimaruGames.Terminal.Composition.Shared.Extensions;
 
 namespace YukimaruGames.Terminal.Composition
 {
@@ -113,15 +112,33 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeReference, SerializeInterface]
         private ITerminalOptions _options = new ImmediateModeOptions();
 
-        [Header("UIToolkit Assets (未指定時はResourcesへフォールバック)")]
+        [Header("UIToolkit Assets (未指定時はコード生成の最小限UIにフォールバック)")]
         [SerializeField] private VisualTreeAsset _visualTreeAsset;
         [SerializeField] private StyleSheet _styleSheet;
         [SerializeField] private PanelSettings _panelSettings;
 
-        private const string VisualTreeAssetResourcePath = "Terminal/UIToolKit/TerminalWindow";
-        private const string StyleSheetResourcePath = "Terminal/UIToolKit/TerminalWindow";
-        private const string PanelSettingsResourcePath = "Terminal/UIToolKit/TerminalPanelSettings";
+        [Header("UIToolkit Options (このバックエンド固有の設定)")]
+        [SerializeField] private UIToolkitOptions _uiToolkitOptions = new();
+
         private const string RootGameObjectName = "Terminal UIToolkit Root";
+
+        /// <summary>
+        /// UIToolkitバックエンド固有の設定。<see cref="ITerminalOptions"/>はIMGUI版と共有の
+        /// 抽象であり、UIToolkitの<see cref="ScrollView"/>固有の値(マウスホイール感度等)を
+        /// 混ぜ込むのは不適切なため、専用のシリアライズ可能な設定ブロックとして分離する(#122).
+        /// </summary>
+        [Serializable]
+        private sealed class UIToolkitOptions
+        {
+            [Tooltip("マウスホイール1クリックあたりのスクロール量(px)。既定はUIToolkitの標準値(18)。")]
+            [SerializeField] private float _scrollSensitivity = 18f;
+
+            [Tooltip("慣性スクロールの減速率。0に近いほど長く滑る。")]
+            [SerializeField] private float _scrollDecelerationRate = 0.135f;
+
+            public float ScrollSensitivity => _scrollSensitivity;
+            public float ScrollDecelerationRate => _scrollDecelerationRate;
+        }
 
         #region runtime-instances
 
@@ -269,7 +286,7 @@ namespace YukimaruGames.Terminal.Composition
 
             _windowAnimationAccessor.Anchor = animation.Anchor;
             _windowAnimationAccessor.Style = animation.WindowStyle;
-            _windowAnimationAccessor.Duration = animation.Duration;
+            _windowAnimationAccessor.Duration = UIToolkitWindowAnimationDuration;
             _windowAnimationAccessor.Scale = animation.CompactScale;
         }
 
@@ -413,6 +430,19 @@ namespace YukimaruGames.Terminal.Composition
             }
         }
 
+        /// <summary>
+        /// <see cref="WindowAnimator"/>はOpen/Close遷移中、アンカーに応じて位置(X/Y)を毎フレーム
+        /// 徐々に変化させるスライド方式で動く。IMGUIは毎フレーム再描画するimmediate-modeのため
+        /// 問題にならないが、UIToolkitでは複数フレームにわたって要素が画面内へ徐々に移動してくる
+        /// 過程で、ランタイム側のクリップ領域キャッシュが不整合を起こし、アニメーション完了後も
+        /// 一部領域(スクロール可能な子要素を持つ場合の兄弟要素など)が描画されなくなる不具合を
+        /// 実機検証で確認した(#122)。<see cref="WindowRoot.ApplyRect"/>側でstyle.translateに
+        /// 逃がしても同様に再現したため、根本原因は「レイアウト vs GPU transform」ではなく
+        /// 「複数フレームにわたる漸次的な位置変化」自体にあると判断し、UIToolkit版では
+        /// Duration=0(瞬時に開閉、スライド演出なし)に固定して回避する。
+        /// </summary>
+        private const float UIToolkitWindowAnimationDuration = 0f;
+
         private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
             _windowAnimationAccessor = new WindowAnimationAccessor
@@ -420,7 +450,7 @@ namespace YukimaruGames.Terminal.Composition
                 State = animation.BootupWindowState,
                 Anchor = animation.Anchor,
                 Style = animation.WindowStyle,
-                Duration = animation.Duration,
+                Duration = UIToolkitWindowAnimationDuration,
                 Scale = animation.CompactScale,
             };
 
@@ -460,12 +490,13 @@ namespace YukimaruGames.Terminal.Composition
                 _windowRoot.Root.styleSheets.Add(styleSheet);
             }
 
-            ApplyThemeColors(theme);
-
             var cursorView = new CursorView();
             var clipboardRenderer = new ClipboardRenderer(_launcherVisibleAccessor);
             var logRenderer = new LogRenderer(_windowRoot.LogScrollView, clipboardRenderer, _colorPaletteAccessor, _launcherVisibleAccessor, theme.CopyButtonColor);
             _logRenderer = logRenderer;
+
+            // _logRenderer代入後に呼ぶ(ApplyThemeColors内でLogRendererのフォントも同期するため).
+            ApplyThemeColors(theme);
             var inputRenderer = new InputRenderer(_windowRoot.InputField, scrollAccessor, cursorView);
             _promptRenderer = new PromptRenderer(_windowRoot.PromptLabel, domain.Service)
             {
@@ -551,16 +582,78 @@ namespace YukimaruGames.Terminal.Composition
         /// UIToolkitのVisualElementへ直接適用する(<see cref="ITerminalTheme"/>のうち
         /// ログ色以外の背景・プロンプト・入力欄・各種ボタン色).
         /// </summary>
+        /// <summary>
+        /// <see cref="ITerminalTheme.FontSize"/>はIMGUI版の<c>GUIStyle.fontSize</c>向けに調整された値
+        /// (既定55)であり、UIToolkitの<c>style.fontSize</c>(素のCSSピクセル相当)にそのまま渡すと
+        /// 極端に巨大化する(#122で判明。両バックエンドで「同じ数値=同じ見た目」という前提自体が誤りだった)。
+        /// フォント"種類"(<see cref="ITerminalTheme.Font"/>)は両バックエンドで共有して問題ないが、
+        /// サイズはUIToolkit独自の既定値を使う.
+        /// </summary>
+        private const int UIToolkitFontSize = 14;
+
         private void ApplyThemeColors(ITerminalTheme theme)
         {
             if (_windowRoot == null || !_windowRoot.IsInitialized) return;
 
+            var fontDefinition = ResolveFontDefinition(theme);
+
             if (_windowRoot.Root != null) _windowRoot.Root.style.backgroundColor = theme.BackgroundColor;
-            if (_windowRoot.PromptLabel != null) _windowRoot.PromptLabel.style.color = theme.PromptColor;
+
+            // ScrollViewの内部クリッピングが、下に配置された兄弟要素(入力欄の行)における
+            // 親(Root)自身の背景描画を阻害する現象を確認した(#122調査。resolvedStyle上は
+            // 正しい値なのに実描画だけ欠落する。ScrollViewを隠すと直る再現性から、原因は
+            // ScrollView側にあると判断)。親の描画に依存せず自己完結するよう、入力欄の行
+            // 自体にも同じ背景色を明示的に持たせることで回避する.
+            if (_windowRoot.InputRow != null) _windowRoot.InputRow.style.backgroundColor = theme.BackgroundColor;
+            ApplyTextElementStyle(_windowRoot.PromptLabel, theme.PromptColor, fontDefinition, UIToolkitFontSize);
             ApplyInputFieldColors(theme);
-            if (_windowRoot.SubmitButton != null) _windowRoot.SubmitButton.style.color = theme.ExecuteButtonColor;
-            if (_windowRoot.LauncherOpenButton != null) _windowRoot.LauncherOpenButton.style.color = theme.ButtonColor;
-            if (_windowRoot.LauncherCloseButton != null) _windowRoot.LauncherCloseButton.style.color = theme.ButtonColor;
+            ApplyTextElementStyle(_windowRoot.InputField, null, fontDefinition, UIToolkitFontSize);
+            ApplyTextElementStyle(_windowRoot.SubmitButton, theme.ExecuteButtonColor, fontDefinition, UIToolkitFontSize);
+            ApplyTextElementStyle(_windowRoot.LauncherOpenButton, theme.ButtonColor, fontDefinition, UIToolkitFontSize);
+            ApplyTextElementStyle(_windowRoot.LauncherCloseButton, theme.ButtonColor, fontDefinition, UIToolkitFontSize);
+
+            if (_logRenderer != null)
+            {
+                _logRenderer.FontDefinition = fontDefinition;
+                _logRenderer.FontSize = UIToolkitFontSize;
+            }
+
+            ApplyUIToolkitOptions();
+        }
+
+        /// <summary>
+        /// <see cref="UIToolkitOptions"/>(このバックエンド固有、Inspectorから調整可能)を
+        /// 実際のUIToolkit要素に反映する.
+        /// </summary>
+        private void ApplyUIToolkitOptions()
+        {
+            if (_windowRoot?.LogScrollView == null) return;
+
+            var options = _uiToolkitOptions ?? new UIToolkitOptions();
+            _windowRoot.LogScrollView.mouseWheelScrollSize = options.ScrollSensitivity;
+            _windowRoot.LogScrollView.scrollDecelerationRate = options.ScrollDecelerationRate;
+        }
+
+        /// <summary>
+        /// テーマにFontSizeを設定しても、実際のフォント(<see cref="FontDefinition"/>)が
+        /// どのVisualElementにも割り当たっていないと、UIToolkitはグリフの計測ができず
+        /// テキストの高さが常に0になる(色・fontSizeは正しく解決されるのに文字が一切
+        /// 表示されない不具合として#122で判明)。<see cref="ITerminalTheme.Font"/>未指定時は
+        /// Resourcesに頼らずUnity組み込みのArialへフォールバックする.
+        /// </summary>
+        private static FontDefinition ResolveFontDefinition(ITerminalTheme theme)
+        {
+            var font = theme.Font != null ? theme.Font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            return FontDefinition.FromFont(font);
+        }
+
+        private static void ApplyTextElementStyle(VisualElement element, Color? color, FontDefinition fontDefinition, int fontSize)
+        {
+            if (element == null) return;
+
+            if (color.HasValue) element.style.color = color.Value;
+            element.style.unityFontDefinition = fontDefinition;
+            element.style.fontSize = fontSize;
         }
 
         /// <summary>
@@ -591,31 +684,43 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <summary>
-        /// UXML/USS/PanelSettingsを明示指定 → Resourcesフォールバックの順で解決する.
-        /// いずれも解決できない場合は例外にせず、ログ警告のうえ最小限のフォールバックを構築する.
+        /// UXML/USS/PanelSettingsをInspectorの明示指定から解決する.
         /// </summary>
+        /// <remarks>
+        /// <c>Resources.Load</c>によるフォールバックは行わない。UIToolkitバックエンドのコード
+        /// (Sample「UI Backend: UIToolkit」)とデフォルトアセット(Sample「UI Backend: UIToolkit
+        /// Default Resources」)は別々に任意インポートされるため、Resources経由のフォールバックは
+        /// 後者を未インポートのままだと機能しない暗黙依存になってしまう(#122で判明)。
+        /// 未指定の場合は例外にせず、警告ログのうえ<see cref="WindowRoot.Initialize"/>側で
+        /// コードのみによる最小限のフォールバックUIを構築する(#129 item1の「例外にせず警告+
+        /// フォールバック」方針はResources非依存の形で維持する).
+        /// </remarks>
         private (VisualTreeAsset visualTreeAsset, StyleSheet styleSheet, PanelSettings panelSettings) ResolveUIToolkitAssets()
         {
-            var visualTreeAsset = _visualTreeAsset.OrResource(VisualTreeAssetResourcePath);
-            var styleSheet = _styleSheet.OrResource(StyleSheetResourcePath);
-            var panelSettings = _panelSettings.OrResource(PanelSettingsResourcePath);
-
-            if (visualTreeAsset == null)
+            if (_visualTreeAsset == null)
             {
                 Debug.LogWarning(
-                    $"[YukimaruGames.Terminal] UIToolkit用のVisualTreeAssetが見つかりませんでした" +
-                    $"(未指定 かつ Resources/{VisualTreeAssetResourcePath} も未検出)。最小限のフォールバックUIを生成します。");
+                    "[YukimaruGames.Terminal] UIToolkit用のVisualTreeAssetが未指定です。" +
+                    "コードのみで構築した最小限のフォールバックUIを使用します。");
             }
 
+            var panelSettings = _panelSettings;
             if (panelSettings == null)
             {
                 Debug.LogWarning(
-                    $"[YukimaruGames.Terminal] UIToolkit用のPanelSettingsが見つかりませんでした" +
-                    $"(未指定 かつ Resources/{PanelSettingsResourcePath} も未検出)。実行時生成のPanelSettingsで代替します。");
+                    "[YukimaruGames.Terminal] UIToolkit用のPanelSettingsが未指定です。" +
+                    "実行時生成のPanelSettingsで代替します。");
                 panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+
+                // 既定値はConstantPhysicalSize(参照DPIに対する実画面DPIの比率で拡大縮小される)。
+                // IMGUI版はDPIスケーリングを一切行わないため、テーマのFontSize等をそのまま
+                // 共有すると環境のDPIによって表示サイズが大きく食い違う(#122で判明。Retina等の
+                // 高DPI環境でテキストが異常に巨大化する形で顕在化した)。IMGUIと同じ「1px=1px」の
+                // 挙動に揃えるため、ピクセル等倍を明示する.
+                panelSettings.scaleMode = PanelScaleMode.ConstantPixelSize;
             }
 
-            return (visualTreeAsset, styleSheet, panelSettings);
+            return (_visualTreeAsset, _styleSheet, panelSettings);
         }
 
         private CoordinatorContext BuildCoordinatorContext(
