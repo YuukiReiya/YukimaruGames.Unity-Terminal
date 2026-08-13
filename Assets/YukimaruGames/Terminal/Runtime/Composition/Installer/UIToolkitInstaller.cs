@@ -511,12 +511,31 @@ namespace YukimaruGames.Terminal.Composition
                 new WindowAnimator(),
                 new ScreenSizeAccessor(),
                 new UnityExceptionLogger());
+
+            // WindowPresenter.Rectは既定でTerminalRectのdefault値(全フィールド0)のままであり、
+            // 実際の(起動時の開閉状態を反映した)Rectは最初のUIToolkitCoordinator.Render()呼び出し
+            // (Update()駆動)まで計算・反映されない。UIDocumentのGameObject自体はAwake()時点で
+            // 既に生成・アクティブ化されているため、その間の1フレーム、WindowRootのRootが
+            // 位置・サイズ未指定のまま(=既定の見た目)で描画されてしまい、PlayMode起動直後に
+            // ウィンドウが一瞬フルサイズ相当で見えてしまう不具合につながっていた。
+            // Refresh()でアニメーションを進めずに現在の状態(起動時の開閉状態)のRectを同期的に
+            // 計算し、Awake()完了前(最初のフレームが描画される前)にWindowRootへ反映しておく.
+            windowPresenter.Refresh();
+            _windowRoot.ApplyRect(windowPresenter.Rect);
             _cursorFlashSpeedAccessor = new CursorFlashSpeedAccessor(theme.CursorFlashSpeed);
             var cursorPresenter = new CursorPresenter(_cursorFlashSpeedAccessor, cursorView);
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var submitPresenter = new SubmitPresenter(submitRenderer, _launcherVisibleAccessor);
             var launcherPresenter = new LauncherPresenter(launcherRenderer, windowPresenter, _launcherVisibleAccessor, _windowAnimationAccessor);
+
+            // ウィンドウ本体(Root)と同じ理由で、ランチャーボタン([-]/[x])と実行ボタンも
+            // 生成直後は表示/位置が未確定(既定でFlex表示・(0,0)相当)のまま最初のUpdate()駆動の
+            // Renderまで残るため、PlayMode起動直後に一瞬変な位置・状態で見えてしまう。
+            // Awake()完了前(最初のフレームが描画される前)に一度、実際の起動時状態で
+            // 同期的にRenderしておく.
+            launcherRenderer.Render(((ILauncherRenderDataProvider)launcherPresenter).RenderData);
+            submitRenderer.Render(((ISubmitRenderDataProvider)submitPresenter).RenderData);
 
             var view = new UIToolkitCoordinator(
                 _windowRoot,
@@ -709,16 +728,16 @@ namespace YukimaruGames.Terminal.Composition
             if (_visualTreeAsset == null)
             {
                 Debug.LogWarning(
-                    "[YukimaruGames.Terminal] UIToolkit用のVisualTreeAssetが未指定です。" +
-                    "コードのみで構築した最小限のフォールバックUIを使用します。");
+                    "[YukimaruGames.Terminal] No VisualTreeAsset assigned for the UIToolkit backend. " +
+                    "Falling back to a minimal code-only UI.");
             }
 
             var panelSettings = _panelSettings;
             if (panelSettings == null)
             {
                 Debug.LogWarning(
-                    "[YukimaruGames.Terminal] UIToolkit用のPanelSettingsが未指定です。" +
-                    "実行時生成のPanelSettingsで代替します。");
+                    "[YukimaruGames.Terminal] No PanelSettings assigned for the UIToolkit backend. " +
+                    "Falling back to a runtime-generated PanelSettings.");
                 panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
 
                 // 既定値はConstantPhysicalSize(参照DPIに対する実画面DPIの比率で拡大縮小される)。
