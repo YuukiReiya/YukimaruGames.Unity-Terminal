@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using YukimaruGames.Terminal.Adapters.UIToolkit;
+using YukimaruGames.Terminal.Composition.Shared.Extensions;
 
 namespace YukimaruGames.Terminal.Composition
 {
@@ -13,7 +14,9 @@ namespace YukimaruGames.Terminal.Composition
     /// UXML/USS/PanelSettingsが未指定のときのフォールバック(警告ログ+実行時生成)もここに閉じる。
     /// 生成に徹し、生成物の寿命は持たない。生成したGameObjectは<see cref="WindowRoot"/>が、
     /// 実行時生成した<see cref="PanelSettings"/>は<see cref="RuntimeGeneratedAsset"/>が
-    /// それぞれ所有し、いずれも<see cref="TerminalRuntimeScope"/>の破棄で解放される(#137).
+    /// それぞれ所有し、いずれも<see cref="TerminalRuntimeScope"/>の破棄で解放される(#137)。
+    /// ただし生成途中で失敗した場合だけは、まだ所有権を誰にも渡せていないため
+    /// <see cref="Create"/>内で後始末する.
     /// </remarks>
     internal static class UIToolkitViewFactory
     {
@@ -47,20 +50,38 @@ namespace YukimaruGames.Terminal.Composition
                     "Falling back to a minimal code-only UI.");
             }
 
-            var rootGameObject = new GameObject(RootGameObjectName);
-            var document = rootGameObject.AddComponent<UIDocument>();
-            document.visualTreeAsset = visualTreeAsset;
-            document.panelSettings = resolvedPanelSettings;
+            GameObject rootGameObject = null;
 
-            var windowRoot = rootGameObject.AddComponent<WindowRoot>();
-            windowRoot.Initialize(document);
-
-            if (styleSheet != null && windowRoot.Root != null)
+            try
             {
-                windowRoot.Root.styleSheets.Add(styleSheet);
-            }
+                rootGameObject = new GameObject(RootGameObjectName);
+                var document = rootGameObject.AddComponent<UIDocument>();
+                document.visualTreeAsset = visualTreeAsset;
+                document.panelSettings = resolvedPanelSettings;
 
-            return (windowRoot, generatedPanelSettings);
+                var windowRoot = rootGameObject.AddComponent<WindowRoot>();
+                windowRoot.Initialize(document);
+
+                if (styleSheet != null && windowRoot.Root != null)
+                {
+                    windowRoot.Root.styleSheets.Add(styleSheet);
+                }
+
+                return (windowRoot, generatedPanelSettings);
+            }
+            catch
+            {
+                // 生成途中で失敗した場合、まだ誰にも所有権を渡せていない(呼び出し元は戻り値を
+                // 受け取れず、ScopeのComponentsにも載らない)ため、ここで後始末してから再スローする。
+                // 平常時の所有はTerminalRuntimeScope側に残す方針は変えない.
+                if (rootGameObject != null)
+                {
+                    rootGameObject.Destroy();
+                }
+
+                generatedPanelSettings?.Dispose();
+                throw;
+            }
         }
 
         /// <summary>
