@@ -37,6 +37,9 @@ frame "<b>Adapters</b>" as AdapterFrame {
   component "Adapters\n(IMGUI)" as Adapters <<Adapter>>
   component "Adapters\n.UIToolkit" as AdaptersUIToolkit <<Adapter>>
   component "Adapters\n.CommandLine" as AdaptersCommandLine <<Adapter>>
+}
+
+frame "<b>Adapters.Input</b>" as AdapterInputFrame {
   component "Adapters.Input\n.InputSystem" as AdaptersInputSystem <<Adapter>>
   component "Adapters.Input\n.LegacyInput" as AdaptersLegacyInput <<Adapter>>
 }
@@ -55,8 +58,11 @@ component "<b>SharedKernel</b>" as SharedKernel <<Core>>
 component "<b>Composition.Shared</b>" as CompositionShared <<Shared>>
 
 note right of AdapterFrame
-  Adapters.UIToolkit は Adapters(IMGUI) を参照する。
-  Adapters.Input.* は Composition からは参照されず、
+  Adapters.UIToolkit は Adapters(IMGUI) を参照する
+end note
+
+note right of AdapterInputFrame
+  Composition からは参照されない。
   利用者のシーンへ直接アタッチして使う
   (autoReferenced/defineConstraints で切り替え)
 end note
@@ -93,6 +99,7 @@ Composition -down-> CompositionInputFrame
 
 AdapterFrame -down-> Presentation
 AdapterFrame -down-> Application
+AdapterInputFrame -down-> Presentation
 CompositionInputFrame -down-> Presentation
 
 Infrastructure -down-> Presentation
