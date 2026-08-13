@@ -78,7 +78,8 @@ namespace YukimaruGames.Terminal.Composition
         /// </summary>
         private void ApplyScrollViewOptions(float scrollSensitivity, float scrollDecelerationRate)
         {
-            if (_windowRoot?.LogScrollView == null) return;
+            // _windowRootはMonoBehaviourのため、破棄済みを検出できる == null で判定する(?.は素通りする).
+            if (_windowRoot == null || _windowRoot.LogScrollView == null) return;
 
             _windowRoot.LogScrollView.mouseWheelScrollSize = scrollSensitivity;
             _windowRoot.LogScrollView.scrollDecelerationRate = scrollDecelerationRate;
@@ -98,7 +99,9 @@ namespace YukimaruGames.Terminal.Composition
         /// どのVisualElementにも割り当たっていないと、UIToolkitはグリフの計測ができず
         /// テキストの高さが常に0になる(色・fontSizeは正しく解決されるのに文字が一切
         /// 表示されない不具合として#122で判明)。<see cref="ITerminalTheme.Font"/>未指定時は
-        /// Resourcesに頼らずUnity組み込みのArialへフォールバックする.
+        /// プロジェクトのResourcesに頼らず、Unity組み込みの<c>LegacyRuntime.ttf</c>へ
+        /// フォールバックする(Arial.ttfはUnity 2022.2で組み込みフォントから外れており、
+        /// 本パッケージのUnity要件は6000.0のため追加のフォールバックは不要).
         /// </summary>
         private static FontDefinition ResolveFontDefinition(ITerminalTheme theme)
         {

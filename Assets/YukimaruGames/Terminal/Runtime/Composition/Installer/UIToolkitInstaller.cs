@@ -61,6 +61,13 @@ namespace YukimaruGames.Terminal.Composition
 
         [NonSerialized] private UIToolkitThemeApplier _themeApplier;
 
+        // 生成したWindowRoot(UIDocumentを載せたGameObjectを所有する)。通常はComponents経由で
+        // TerminalRuntimeScopeが破棄するが、BuildRenderingContext()がここより後で例外を投げると
+        // Componentsが未確定のままスコープ経由の破棄が走らず、GameObjectが取り残される。
+        // 保険としてここでも保持しClearReferences()から破棄する
+        // (WindowRoot.Disposeは破棄済みチェック付きで、二重呼び出しは無害).
+        [NonSerialized] private WindowRoot _windowRoot;
+
         // 実行時生成したPanelSettingsの解放ハンドル。通常はRenderingContextのComponents経由で
         // TerminalRuntimeScopeが破棄するが、BuildRenderingContext()が最後まで到達せずComponentsが
         // 未確定のまま失敗した場合はScope経由の破棄が走らないため、保険としてここでも保持し
@@ -73,6 +80,14 @@ namespace YukimaruGames.Terminal.Composition
         protected override void ClearReferences()
         {
             _themeApplier = null;
+
+            // MonoBehaviourのため == null で判定する(破棄済みを検出できない ?. は使わない).
+            if (_windowRoot != null)
+            {
+                ((IDisposable)_windowRoot).Dispose();
+            }
+
+            _windowRoot = null;
 
             _generatedPanelSettings?.Dispose();
             _generatedPanelSettings = null;
@@ -109,6 +124,7 @@ namespace YukimaruGames.Terminal.Composition
 
             var (windowRoot, generatedPanelSettings) =
                 UIToolkitViewFactory.Create(_visualTreeAsset, _styleSheet, _panelSettings);
+            _windowRoot = windowRoot;
             _generatedPanelSettings = generatedPanelSettings;
 
             var cursorView = new CursorView();
