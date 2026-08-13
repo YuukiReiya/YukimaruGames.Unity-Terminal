@@ -53,24 +53,24 @@ namespace YukimaruGames.Terminal.Composition
             /// <summary>
             /// 構成データ
             /// </summary>
-            public IReadOnlyList<object> Components;
+            public IReadOnlyList<object> Components { get; set; }
 
             /// <inheritdoc cref="ITerminalGUI"/>
-            public ITerminalGUI GUI;
+            public ITerminalGUI GUI { get; set; }
             /// <inheritdoc cref="IScrollMutator"/>
-            public IScrollMutator ScrollMutator;
+            public IScrollMutator ScrollMutator { get; set; }
             /// <inheritdoc cref="IWindowAnimationAccessor"/>
-            public IWindowAnimationAccessor WindowAnimationAccessor;
+            public IWindowAnimationAccessor WindowAnimationAccessor { get; set; }
             /// <inheritdoc cref="IWindowPresenter"/>
-            public IWindowPresenter WindowPresenter;
+            public IWindowPresenter WindowPresenter { get; set; }
             /// <inheritdoc cref="IInputPresenter"/>
-            public IInputPresenter InputPresenter;
+            public IInputPresenter InputPresenter { get; set; }
             /// <inheritdoc cref="ILogPresenter"/>
-            public ILogPresenter LogPresenter;
+            public ILogPresenter LogPresenter { get; set; }
             /// <inheritdoc cref="ISubmitPresenter"/>
-            public ISubmitPresenter SubmitPresenter;
+            public ISubmitPresenter SubmitPresenter { get; set; }
             /// <inheritdoc cref="ILauncherPresenter"/>
-            public ILauncherPresenter LauncherPresenter;
+            public ILauncherPresenter LauncherPresenter { get; set; }
             /// <inheritdoc cref="ITerminalView"/>
             public ITerminalView View { get; set; }
         }
@@ -83,12 +83,12 @@ namespace YukimaruGames.Terminal.Composition
             /// <summary>
             /// 構成データ
             /// </summary>
-            public IReadOnlyList<object> Components;
+            public IReadOnlyList<object> Components { get; set; }
 
             /// <inheritdoc cref="Coordinator"/>
-            public TerminalCoordinator Coordinator;
+            public TerminalCoordinator Coordinator { get; set; }
             /// <inheritdoc cref="IEventListener"/>
-            public IEventListener EventListener;
+            public IEventListener EventListener { get; set; }
         }
 
         #endregion

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Composition
@@ -42,6 +43,12 @@ namespace YukimaruGames.Terminal.Composition
         /// <summary>
         /// 構築に失敗した際、その時点までに生成済みのコンポーネントを破棄する.
         /// </summary>
+        /// <remarks>
+        /// 個々のDisposeで発生した例外はログに留め、送出しない。ここは構築失敗時の後始末経路であり、
+        /// 途中で例外を投げると(1)残りのコンポーネントが破棄されず、(2)呼び出し元の<c>throw;</c>へ
+        /// 到達できず構築失敗の元例外が失われて診断できなくなるため。
+        /// <see cref="TerminalRuntimeScope"/>の同期破棄と同じ方針.
+        /// </remarks>
         internal static void CleanUp(IReadOnlyList<object> components)
         {
             if (components == null)
@@ -52,9 +59,18 @@ namespace YukimaruGames.Terminal.Composition
             // Interface 越しの foreach による GC Alloc を避けるため、for で列挙
             for (var i = 0; i < components.Count; i++)
             {
-                if (components[i] is IDisposable component)
+                if (components[i] is not IDisposable component)
+                {
+                    continue;
+                }
+
+                try
                 {
                     component.Dispose();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[YukimaruGames.Terminal] Failed to dispose '{component.GetType().FullName}' while cleaning up a failed installation: {e}");
                 }
             }
         }
