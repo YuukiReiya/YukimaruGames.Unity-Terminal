@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560" font-family="Helvetica Neue, Helvetica, Hiragino Sans, Arial, sans-serif">
+  <rect x="0" y="0" width="720" height="560" fill="#ffffff"/>
+
+  <g stroke="#3a3a3a" stroke-width="2">
+    <rect x="20" y="20" width="680" height="56" fill="#F5B7B1"/>
+
+    <rect x="20" y="90" width="172" height="74" fill="#FDEBD0"/>
+    <rect x="204" y="90" width="172" height="74" fill="#F2F3F4"/>
+    <rect x="388" y="90" width="172" height="74" fill="#FFFFFF"/>
+    <rect x="572" y="90" width="128" height="354" fill="#E8DAEF"/>
+
+    <rect x="112" y="178" width="356" height="56" fill="#FEF9E7"/>
+    <rect x="112" y="248" width="356" height="56" fill="#D5F5E3"/>
+    <rect x="112" y="318" width="356" height="56" fill="#D6EAF8"/>
+    <rect x="112" y="388" width="356" height="56" fill="#D6EAF8"/>
+
+    <rect x="20" y="458" width="680" height="56" fill="#D6EAF8"/>
+  </g>
+
+  <g fill="#222222" text-anchor="middle" font-size="16">
+    <text x="360" y="45">Composition（Composition Root）</text>
+    <text x="106" y="118">Adapters</text>
+    <text x="290" y="118">Infrastructure</text>
+    <text x="474" y="118">Tests</text>
+    <text x="290" y="203">Presentation</text>
+    <text x="290" y="273">Application</text>
+    <text x="290" y="343">Domain.Services</text>
+    <text x="290" y="413">Domain.Contracts</text>
+    <text x="360" y="483">SharedKernel</text>
+  </g>
+
+  <g fill="#222222" text-anchor="middle" font-size="15">
+    <text x="636" y="258">Composition</text>
+    <text x="636" y="277">.Shared</text>
+  </g>
+
+  <g fill="#666666" text-anchor="middle" font-size="10.5">
+    <text x="360" y="63">Bootstrapper / Installer / Composition.Input</text>
+    <text x="106" y="138">IMGUI・UIToolkit</text>
+    <text x="106" y="153">CommandLine・Input</text>
+    <text x="290" y="138">外部連携の具象実装</text>
+    <text x="474" y="138">EditMode</text>
+    <text x="474" y="153">PlayMode</text>
+    <text x="636" y="297">属性・拡張メソッド</text>
+    <text x="290" y="221">View・Presenter</text>
+    <text x="290" y="291">ユースケース</text>
+    <text x="290" y="361">ドメインロジック実装（Domain.Core）</text>
+    <text x="290" y="431">インターフェース・POCO（Domain.API）</text>
+    <text x="360" y="501">Enum・Interface等の共通型（依存なし）</text>
+  </g>
+
+  <text x="20" y="548" fill="#666666" font-size="12">上にある層ほど外側で、依存の向きは常に上から下（隣接する層とは限らない）。正確な参照関係は Architecture.png を参照。</text>
+</svg>

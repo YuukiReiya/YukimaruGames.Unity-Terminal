@@ -6,60 +6,104 @@ title Terminal Package Architecture
 skinparam component {
   ArrowColor #444444
   BorderColor #444444
-  BackgroundColor<<EntryPoint>> #F5B7B1
+  BackgroundColor<<Root>> #F5B7B1
+  BackgroundColor<<Adapter>> #FDEBD0
   BackgroundColor<<UI>> #FEF9E7
   BackgroundColor<<Infra>> #F2F3F4
   BackgroundColor<<App>> #D5F5E3
   BackgroundColor<<Core>> #D6EAF8
+  BackgroundColor<<Shared>> #E8DAEF
+}
+skinparam frame {
+  BorderColor #888888
 }
 
 ' === Legend ===
 legend top right
   | Color | Layer Type |
-  |<#F5B7B1>| EntryPoint/Runtime |
-  |<#F2F3F4>| Concrete/Infrastructure |
-  |<#FEF9E7>| Presentation/UI Logic |
-  |<#D5F5E3>| Application Logic |
-  |<#D6EAF8>| Core Logic |
+  |<#F5B7B1>| Composition (Composition Root) |
+  |<#FDEBD0>| Adapters (UIバックエンド/入力の具象) |
+  |<#FEF9E7>| Presentation |
+  |<#F2F3F4>| Infrastructure |
+  |<#D5F5E3>| Application |
+  |<#D6EAF8>| Domain / SharedKernel |
+  |<#E8DAEF>| 全レイヤー共通のユーティリティ |
 end legend
 
-' === Components (Layers) ===
-component "<b>Runtime</b>" as Runtime <<EntryPoint>>
-frame "<b>Package.Core</b>" as PackageCore{
-  component "<b>Infrastructure</b>" as Infrastructure <<Infra>>
-  component "<b>Presentation</b>" as Presentation <<UI>>
-  component "<b>RuntimeShared</b>" as RuntimeShared <<Infra>>
-  component "<b>Application</b>" as Application <<App>>
-  component "<b>Domain.Service</b>" as DomainService <<Core>>
-  component "<b>Domain.Model</b>" as DomainModel <<Core>>
-  component "<b>SharedKernel</b>" as SharedKernel <<Core>>
+' === Components (Assemblies) ===
+component "<b>Composition</b>\n(Composition Root)" as Composition <<Root>>
 
-  note bottom of SharedKernel
-  上層レイヤーからの矢印を省いているが
-  全てのレイヤー(パッケージ)から依存される
-  endnote
+frame "<b>Adapters</b>" as AdapterFrame {
+  component "Adapters\n(IMGUI)" as Adapters <<Adapter>>
+  component "Adapters\n.UIToolkit" as AdaptersUIToolkit <<Adapter>>
+  component "Adapters\n.CommandLine" as AdaptersCommandLine <<Adapter>>
+  component "Adapters.Input\n.InputSystem" as AdaptersInputSystem <<Adapter>>
+  component "Adapters.Input\n.LegacyInput" as AdaptersLegacyInput <<Adapter>>
 }
 
+frame "<b>Composition.Input</b>" as CompositionInputFrame {
+  component "Composition.Input\n.InputSystem" as CompositionInputSystem <<Root>>
+  component "Composition.Input\n.LegacyInput" as CompositionLegacyInput <<Root>>
+}
+
+component "<b>Presentation</b>" as Presentation <<UI>>
+component "<b>Infrastructure</b>" as Infrastructure <<Infra>>
+component "<b>Application</b>" as Application <<App>>
+component "<b>Domain.Services</b>\n(Domain.Core)" as DomainServices <<Core>>
+component "<b>Domain.Contracts</b>\n(Domain.API)" as DomainContracts <<Core>>
+component "<b>SharedKernel</b>" as SharedKernel <<Core>>
+component "<b>Composition.Shared</b>" as CompositionShared <<Shared>>
+
+note right of AdapterFrame
+  Adapters.UIToolkit は Adapters(IMGUI) を参照する。
+  Adapters.Input.* は Composition からは参照されず、
+  利用者のシーンへ直接アタッチして使う
+  (autoReferenced/defineConstraints で切り替え)
+end note
+
+note bottom of SharedKernel
+  上層レイヤーからの矢印を省いているが
+  全てのレイヤー(アセンブリ)から依存される
+end note
+
+note bottom of CompositionShared
+  SerializeInterface等の属性を提供する。
+  Composition専用ではなく Infrastructure /
+  Adapters / Composition.Input からも参照される
+  (Infrastructure以外からの矢印は省略)
+end note
+
+note left of Composition
+  図中の矢印は代表例。実際には
+  Presentation / Infrastructure / Application /
+  Domain.Services / Domain.Contracts /
+  SharedKernel / Composition.Shared を
+  すべて直接参照する
+end note
+
+' === Layout hints ===
+Composition -[hidden]down-> AdapterFrame
+AdapterFrame -[hidden]down-> Infrastructure
+DomainServices -[hidden]right-> DomainContracts
+SharedKernel -[hidden]right-> CompositionShared
+
 ' === Primary Relationships ===
-Runtime .down.> PackageCore:全てのレイヤーに依存
+Composition -down-> AdapterFrame : 具象バックエンドを選択・配線
+Composition -down-> CompositionInputFrame
 
-DomainService -[hidden]right-> Infrastructure
-Application -[hidden]right-> RuntimeShared
-Infrastructure -[hidden]down-> Application
-Presentation -[hidden]down-> RuntimeShared
+AdapterFrame -down-> Presentation
+AdapterFrame -down-> Application
+CompositionInputFrame -down-> Presentation
 
-DomainService -down->DomainModel
-Infrastructure -right-> Presentation
-
-Infrastructure -down-> RuntimeShared
-Infrastructure -down-> DomainModel
+Infrastructure -down-> Presentation
+Infrastructure -down-> DomainContracts
+Infrastructure -right-> CompositionShared
 
 Presentation -down-> Application
+Application -down-> DomainContracts
+DomainServices -down-> DomainContracts
 
-Application -left-> DomainModel
-
-Application -down-> SharedKernel
-DomainModel -down-> SharedKernel
-RuntimeShared -down-> SharedKernel
+DomainContracts -down-> SharedKernel
+CompositionShared -down-> SharedKernel
 
 @enduml
