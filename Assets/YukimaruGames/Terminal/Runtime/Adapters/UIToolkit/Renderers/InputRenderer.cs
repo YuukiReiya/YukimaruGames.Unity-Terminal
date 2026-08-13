@@ -68,24 +68,30 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
 
             if (!string.Equals(_textField.value, data.InputText, StringComparison.Ordinal))
             {
-                _textField.SetValueWithoutNotify(data.InputText);
-
                 // SetValueWithoutNotify()はTextField.valueは書き換えるが、既にネイティブの編集
                 // セッションがアタッチされている(=フィールドが既にフォーカス中の)場合、そのセッションが
                 // 内部に保持しているテキストバッファ(TextEditingUtilitiesの内部状態)は追従しない。
                 // このズレたバッファへ次の実キー入力が届くと、GeneratePreviewString()が古いバッファ長
                 // を基準にString.Insertし、ArgumentOutOfRangeExceptionで失敗する不具合が実機ログ
-                // (Editor.log)から確認された(#122)。これによりネイティブ編集状態が壊れたまま残り、
-                // 「コマンド実行のたびに入力欄が反応しなくなる」症状として現れていた。
-                // Blur→Focusで編集セッションを強制的に張り直し、新しいvalueを基準に内部バッファを
-                // 再構築させることで回避する。このBlur/Focusは論理的なフォーカス状態を変えるための
-                // ものではないため、OnFocusIn/OnFocusOut側のOnFocusControlChanged通知は抑制する.
+                // (Editor.log)から確認された(#122)。Blur→Focusで編集セッションを強制的に張り直す
+                // ことで回避しているが、以前は「SetValueWithoutNotify → Blur → Focus」の順序だった
+                // ため、Blur()がネイティブの編集セッション側の(書き換え前の)古いバッファをvalueへ
+                // 書き戻してしまい、コマンド実行後に入力欄がクリアされない不具合を引き起こしていた
+                // (#122)。Blurを先に行い未フォーカスの状態で値を書き換え、その後Focusで新しい値を
+                // 基準にした編集セッションを開かせる順序に修正する。このBlur/Focusは論理的な
+                // フォーカス状態を変えるためのものではないため、OnFocusIn/OnFocusOut側の
+                // OnFocusControlChanged通知は抑制する.
                 if (_isCurrentlyFocused)
                 {
                     _isSyncingFocus = true;
                     _textField.Blur();
+                    _textField.SetValueWithoutNotify(data.InputText);
                     _textField.Focus();
                     _isSyncingFocus = false;
+                }
+                else
+                {
+                    _textField.SetValueWithoutNotify(data.InputText);
                 }
             }
 

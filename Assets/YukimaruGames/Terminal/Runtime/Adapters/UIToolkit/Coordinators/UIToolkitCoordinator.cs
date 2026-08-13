@@ -33,7 +33,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
         private readonly IInputRenderDataProvider _inputRenderDataProvider;
         private readonly ISubmitRenderDataProvider _submitRenderDataProvider;
         private readonly ILauncherRenderDataProvider _launcherRenderDataProvider;
-        private readonly IScrollProvider _scrollProvider;
+        private readonly IScrollAccessor _scrollAccessor;
         private readonly ScrollView _scrollView;
 
         private Vector2Int _size;
@@ -56,7 +56,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
             IInputRenderDataProvider inputRenderDataProvider,
             ISubmitRenderDataProvider submitRenderDataProvider,
             ILauncherRenderDataProvider launcherRenderDataProvider,
-            IScrollProvider scrollProvider)
+            IScrollAccessor scrollAccessor)
         {
             _windowRoot = windowRoot;
             _logRenderer = logRenderer;
@@ -71,7 +71,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
             _inputRenderDataProvider = inputRenderDataProvider;
             _submitRenderDataProvider = submitRenderDataProvider;
             _launcherRenderDataProvider = launcherRenderDataProvider;
-            _scrollProvider = scrollProvider;
+            _scrollAccessor = scrollAccessor;
             _scrollView = _windowRoot != null ? _windowRoot.LogScrollView : null;
 
             if (_clipboardRenderer != null)
@@ -79,9 +79,9 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
                 _clipboardRenderer.OnClickButton += HandleLogCopied;
             }
 
-            if (_scrollProvider != null)
+            if (_scrollAccessor != null)
             {
-                _scrollProvider.OnScrollChanged += HandleScrollChanged;
+                _scrollAccessor.OnScrollChanged += HandleScrollChanged;
             }
         }
 
@@ -106,19 +106,57 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
             _submitRenderer?.Render(_submitRenderDataProvider.RenderData);
             _launcherRenderer?.Render(_launcherRenderDataProvider.RenderData);
 
+            // ScrollAccessor.ScrollToEnd()はセンチネル(float.MaxValue)で「既に末尾スクロール要求済み」
+            // を判定しており、一度到達すると以降呼び出しても早期returnする。IMGUI版
+            // (TerminalIMGUI.cs)はGUILayout.ScrollViewScope経由で実際のスクロール位置を毎フレーム
+            // ScrollAccessorへ書き戻すことでこのセンチネルを都度リセットしているが、UIToolkit版には
+            // その書き戻しが存在しなかったため、最初の1回のScrollToEnd()以降、コマンド実行のたびの
+            // 自動追従が恒久的にno-opになっていた(#122)。ScrollViewの実際の(クランプ済み)
+            // scrollOffsetを毎フレーム書き戻し、IMGUI版と同じくセンチネルを都度リセットさせる.
+            if (_scrollAccessor != null && _scrollView != null)
+            {
+                _scrollAccessor.SyncPosition(_scrollView.scrollOffset);
+            }
+
             OnPostRender?.Invoke();
         }
+
+        private const int ScrollToEndRetryFrames = 20;
 
         private void HandleScrollChanged(Vector2 position)
         {
             if (_scrollView == null) return;
 
-            // ScrollToEnd(float.MaxValue)を、contentContainer.layout.heightを自前計算した値に
-            // 差し替えていたが、新しいログ行が追加された直後はまだレイアウトが再計算されておらず
-            // 1フレーム分古い(短い)高さを参照してしまい、末尾まで届かない不具合が実機検証で
-            // 確認された(#122)。ScrollView.scrollOffsetのセッター自身が現在の有効な最大値へ
-            // 正しくクランプする(verticalScroller.highValueと一致)ため、素通しする.
-            _scrollView.scrollOffset = position;
+            // コマンド実行(新しいログ行の追加)と同じフレーム内でScrollToEnd()が呼ばれるが、
+            // 実際のログ行は非同期のコマンド実行(ExecuteAsync)が完了して初めてScrollViewへ
+            // 追加されるため、追加が完了するまでのフレーム数は可変(コマンドの内容次第)である。
+            // 固定1ティックの遅延(ExecuteLater(0))では、遅延実行時点でまだ新しい行が
+            // ScrollViewへ反映されておらずverticalScroller.highValueが0のまま(実機ログで確認)、
+            // という不具合が起きていた(#122)。実際に新しい行が反映されhighValueが確定するまで
+            // 複数フレームに渡って再試行する.
+            var scrollView = _scrollView;
+            var attempts = 0;
+            IVisualElementScheduledItem item = null;
+            item = scrollView.schedule.Execute(() =>
+            {
+                if (scrollView?.panel == null)
+                {
+                    item?.Pause();
+                    return;
+                }
+
+                scrollView.scrollOffset = position;
+                ++attempts;
+
+                // highValueが0(=まだ新しい行が反映されていない)場合とhighValueに実際に到達した
+                // 場合を、scrollOffsetとhighValueの一致だけでは区別できない(どちらもscrollOffsetが
+                // highValueにクランプされ一致して見える)ため、判定に頼らず固定回数フレーム
+                // 再試行してから止める.
+                if (attempts >= ScrollToEndRetryFrames)
+                {
+                    item?.Pause();
+                }
+            }).Every(0);
         }
 
         private void HandleLogCopied(string copiedText)
@@ -133,9 +171,9 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
                 _clipboardRenderer.OnClickButton -= HandleLogCopied;
             }
 
-            if (_scrollProvider != null)
+            if (_scrollAccessor != null)
             {
-                _scrollProvider.OnScrollChanged -= HandleScrollChanged;
+                _scrollAccessor.OnScrollChanged -= HandleScrollChanged;
             }
 
             OnScreenSizeChanged = null;

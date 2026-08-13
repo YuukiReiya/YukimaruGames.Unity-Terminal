@@ -78,6 +78,11 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit
             // (Resourcesフォールバック時のPanelSettings等)ではクリップが効かず、ログ内容が
             // ウィンドウ枠を越えて描画されてしまう不具合が実機検証で確認された(#122)。
             // テーマの有無に関わらずクリップされるよう明示的に指定する.
+            //
+            // 一時的にScrollView自身へのoverflow:Hidden指定がスクロール可能量(highValue)を
+            // 過小評価させている疑いを検証したが、除去すると本来のクリップ不具合(枠外へのはみ出し)
+            // が再発する一方でスクロール不具合自体は解消しなかったため、この仮説は誤りと判明し
+            // 元に戻した(#122).
             if (LogScrollView != null)
             {
                 LogScrollView.style.overflow = Overflow.Hidden;
@@ -87,6 +92,34 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit
                 {
                     contentViewport.style.overflow = Overflow.Hidden;
                 }
+
+                // ScrollView内部の unity-content-container は、既定テーマUSS側で
+                // flex-shrink:0 が指定されている前提の実装になっている。テーマ未適用の環境
+                // (Resourcesフォールバック時のPanelSettings等)ではこれが適用されず、CSSの既定値
+                // (flex-shrink:1)のまま残るため、ログ行の総高さ(例: 203px)がビューポートの高さ
+                // (例: 100px)まで圧縮されてしまう。子である各log-line行はflex-shrink:0を
+                // 明示しているため実際には縮まず親からはみ出すが、contentContainer.layout.height
+                // 自体は圧縮後の(=ビューポートと同じ)値のまま報告され、verticalScroller.highValue
+                // の算出元であるboundingBox(実際の子の広がり)との間に食い違いが生まれる。この
+                // 結果、末尾までスクロールしても最後の行がビューポートの高さ分しか表示されず、
+                // 実際のログ末尾数十px(概ね1行未満)が常に見切れる不具合の根本原因だった
+                // (#122、Opus協力の上で確認)。テーマの有無に関わらず圧縮されないよう明示指定する.
+                var contentContainer = LogScrollView.contentContainer;
+                if (contentContainer != null)
+                {
+                    contentContainer.style.flexShrink = 0;
+                    contentContainer.style.flexGrow = 0;
+                    contentContainer.style.minHeight = StyleKeyword.Auto;
+                }
+
+                // 縦スクロールバーが既定(Auto)だと、ログ行数がビューポートに収まるかどうかで
+                // ビューポート幅(=WhiteSpace.Normalで折り返すLabelのavailable width)が変動する。
+                // 幅が変わるとテキストの折り返し高さの再計測が必要になり、Yogaのレイアウトパスが
+                // 1回で収束せず、contentContainerの高さ(≒verticalScroller.highValue)が実際の
+                // 子要素の広がりより小さいまま取り残される、行同士が重なって表示される、という
+                // 2つの不具合の一因になっていた(#122、Opus協力の上で確認)。常時表示にして
+                // 幅変動の要因そのものを無くす.
+                LogScrollView.verticalScrollerVisibility = ScrollerVisibility.AlwaysVisible;
             }
 
             IsInitialized = true;
@@ -113,6 +146,13 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit
             LogScrollView = new ScrollView(ScrollViewMode.Vertical) { name = LogScrollViewName };
             LogScrollView.style.flexGrow = 1;
             LogScrollView.style.flexShrink = 1;
+            // flex-basis:auto(既定)のままだと基準サイズが「中身(全ログ行)の高さ」になり、
+            // ログが増えるほどScrollView自身の箱が親の残り領域より背が高くなる(スクロール
+            // コンテナにflex-basis:0とmin-height:0が必須という既知のフレックスボックスの罠)。
+            // これによりverticalScroller.highValueが常に本来より小さく算出され、マウスホイール
+            // 感度に関わらず末尾の数行に到達できなくなる不具合の根本原因だった(#122)。
+            LogScrollView.style.flexBasis = 0;
+            LogScrollView.style.minHeight = 0;
 
             InputRow = new VisualElement { name = InputRowName };
             InputRow.style.flexDirection = FlexDirection.Row;

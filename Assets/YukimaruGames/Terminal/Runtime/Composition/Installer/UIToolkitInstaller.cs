@@ -632,6 +632,15 @@ namespace YukimaruGames.Terminal.Composition
             var options = _uiToolkitOptions ?? new UIToolkitOptions();
             _windowRoot.LogScrollView.mouseWheelScrollSize = options.ScrollSensitivity;
             _windowRoot.LogScrollView.scrollDecelerationRate = options.ScrollDecelerationRate;
+
+            // ScrollViewのtouchScrollBehavior/scrollDecelerationRateはポインタドラッグ
+            // (PointerDown/Move/Up)経由の慣性・弾性(バウンス)専用で、マウスホイール入力
+            // (WheelEvent)の処理には一切関与しない(#122調査、Opus協力の上で確認)。
+            // ログビューはタッチ操作でのドラッグスクロールもバウンス不要なため、慣性なしの
+            // 単純クランプに設定しておく(ホイール由来の「末尾まで届かない」不具合自体の
+            // 対策ではない。そちらの実際の原因は UIToolkitCoordinator の自動追従書き戻し漏れと
+            // LogRenderer側の毎フレーム再描画によるレイアウトのばたつきだった).
+            _windowRoot.LogScrollView.touchScrollBehavior = UnityEngine.UIElements.ScrollView.TouchScrollBehavior.Clamped;
         }
 
         /// <summary>
