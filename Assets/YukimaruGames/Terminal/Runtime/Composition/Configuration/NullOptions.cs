@@ -8,10 +8,10 @@ namespace YukimaruGames.Terminal.Composition
         /// ユーザーが意図的に Options を null にした場合のフォールバック先.
         /// </summary>
         [Serializable, HideInTypeMenu]
-        public sealed class TerminalNullOptions : ITerminalOptions
+        public sealed class NullOptions : ITerminalOptions
         {
                 // 入力を無効化
-                public ITerminalInput Input => new TerminalNullInput();
+                public ITerminalInput Input => new NullInput();
 
                 // 最小限のバッファ
                 public int BufferSize => 0;

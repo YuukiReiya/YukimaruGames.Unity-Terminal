@@ -186,9 +186,9 @@ namespace YukimaruGames.Terminal.Composition
         TerminalRuntimeScope IInstaller.Install()
         {
             // Null Object Pattern: 意図的な null は Null 実装にフォールバック
-            var theme = _theme ?? new TerminalNullTheme();
-            var animation = _animation ?? new TerminalNullAnimation();
-            var options = _options ?? new TerminalNullOptions();
+            var theme = _theme ?? new NullTheme();
+            var animation = _animation ?? new NullAnimation();
+            var options = _options ?? new NullOptions();
 
             DomainContext domainContext = default;
             RenderingContext renderingContext = default;
@@ -247,9 +247,9 @@ namespace YukimaruGames.Terminal.Composition
         {
             if (scope == null) return;
 
-            var theme = _theme ?? new TerminalNullTheme();
-            var animation = _animation ?? new TerminalNullAnimation();
-            var options = _options ?? new TerminalNullOptions();
+            var theme = _theme ?? new NullTheme();
+            var animation = _animation ?? new NullAnimation();
+            var options = _options ?? new NullOptions();
 
             SyncTheme(theme);
             SyncAnimation(animation);

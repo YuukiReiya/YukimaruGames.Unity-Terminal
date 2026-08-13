@@ -11,7 +11,7 @@ using YukimaruGames.Terminal.SharedKernel;
 namespace YukimaruGames.Terminal.Composition
 {
     [Serializable, HideInTypeMenu, AddTypeMenu("None(null)")]
-    public sealed class TerminalNullInstaller : IInstaller
+    public sealed class NullInstaller : IInstaller
     {
         TerminalRuntimeScope IInstaller.Install()
         {

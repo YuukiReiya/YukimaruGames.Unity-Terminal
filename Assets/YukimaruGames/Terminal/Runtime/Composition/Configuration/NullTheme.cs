@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.Composition
     /// ユーザーが意図的に Theme を null にした場合のフォールバック先.
     /// </summary>
     [Serializable, HideInTypeMenu]
-    public sealed class TerminalNullTheme : ITerminalTheme
+    public sealed class NullTheme : ITerminalTheme
     {
         // Font: null (システムフォントにフォールバック)
         public Font Font => null;

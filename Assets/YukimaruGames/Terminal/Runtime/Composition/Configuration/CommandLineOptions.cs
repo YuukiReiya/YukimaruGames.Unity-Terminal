@@ -34,7 +34,7 @@ namespace YukimaruGames.Terminal.Composition
         /// <summary>
         /// 外部ターミナルはOS側のキーボード入力をそのまま使うため、Unity側のキーボード入力方式は不問.
         /// </summary>
-        public ITerminalInput Input => new TerminalNullInput();
+        public ITerminalInput Input => new NullInput();
 
         /// <summary>
         /// 保持するコマンドログの最大数.

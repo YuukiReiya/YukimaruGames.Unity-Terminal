@@ -68,7 +68,7 @@ namespace YukimaruGames.Terminal.Composition
             // Unity Editorの仕様上、SerializeReferenceな_installerフィールドの型をInspector上の
             // 型選択メニューで切り替えた直後は、ネストした_optionsフィールドがユーザーの操作意図に
             // 反してnullのまま復元されることがある(既知のシリアライズ上の癖。実際に検証で再現した)。
-            // TerminalNullOptions(BufferSize=0)へフォールバックするとCommandLoggerの実効バッファが
+            // NullOptions(BufferSize=0)へフォールバックするとCommandLoggerの実効バッファが
             // 1件まで縮んで外部ターミナルとして機能しなくなるため、フォールバック先も
             // 専用設定(CommandLineOptions)の既定値にする.
             var options = _options ?? new CommandLineOptions();

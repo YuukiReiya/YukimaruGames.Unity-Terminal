@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.Composition
     /// ユーザーが意図的に Animation を null にした場合のフォールバック先.
     /// </summary>
     [Serializable, HideInTypeMenu]
-    public sealed class TerminalNullAnimation : ITerminalAnimation
+    public sealed class NullAnimation : ITerminalAnimation
     {
         public WindowState BootupWindowState => WindowState.Close;
         public WindowAnchor Anchor => WindowAnchor.Top;

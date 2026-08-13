@@ -30,7 +30,7 @@ namespace YukimaruGames.Terminal.Composition
         [SerializeField] private string[] _additionalCommandAssemblies = Array.Empty<string>();
 
         /// <inheritdoc/>
-        public ITerminalInput Input => _input ?? new TerminalNullInput();
+        public ITerminalInput Input => _input ?? new NullInput();
 
         /// <inheritdoc/>
         public int BufferSize => _bufferSize;
