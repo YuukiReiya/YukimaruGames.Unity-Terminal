@@ -1,0 +1,26 @@
+{
+    "name": "YukimaruGames.Terminal.Adapters.UIToolkit",
+    "rootNamespace": "YukimaruGames.Terminal.Adapters.UIToolkit",
+    "references": [
+        "YukimaruGames.Terminal.SharedKernel",
+        "YukimaruGames.Terminal.Domain.Contracts",
+        "YukimaruGames.Terminal.Presentation",
+        "YukimaruGames.Terminal.Application",
+        "YukimaruGames.Terminal.Adapters"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.uielements",
+            "expression": "1.0.0",
+            "define": "TERMINAL_UITOOLKIT_AVAILABLE"
+        }
+    ],
+    "noEngineReferences": false
+}

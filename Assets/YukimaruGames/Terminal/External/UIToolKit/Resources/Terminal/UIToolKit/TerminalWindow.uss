@@ -1,0 +1,61 @@
+.terminal-window {
+    position: absolute;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.terminal-log-scroll-view {
+    flex-grow: 1;
+    flex-shrink: 1;
+    /* flex-basisが既定のautoのままだと、この要素の基準サイズが「中身(全ログ行)の高さ」に
+       なってしまい、ログが増えるほどScrollView自身の箱が親(terminal-window)の残り領域より
+       背が高くなる(スクロールコンテナにflex-basis:0とmin-height:0が必須という、
+       CSS/UI Toolkitフレックスボックスの既知の罠)。この結果、verticalScroller.highValueが
+       (箱のはみ出し量ぶん)常に本来より小さく算出され、マウスホイール感度に関わらず末尾の
+       数行に到達できなくなる不具合の根本原因だった(#122、Opus協力の上で確認)。
+       基準サイズを0にし、コンテンツ量に関わらず親の残り領域ぴったりに収める. */
+    flex-basis: 0;
+    min-height: 0;
+}
+
+.terminal-input-row {
+    flex-direction: row;
+    flex-shrink: 0;
+    align-items: center;
+    padding: 2px 4px;
+}
+
+.terminal-prompt-label {
+    color: rgb(0, 255, 0);
+    margin-right: 4px;
+    -unity-text-align: middle-left;
+}
+
+.terminal-input-field {
+    flex-grow: 1;
+}
+
+.terminal-submit-button {
+    margin-left: 4px;
+}
+
+.terminal-launcher-container {
+    position: absolute;
+    flex-direction: row;
+}
+
+.terminal-launcher-button {
+    min-width: 24px;
+}
+
+#log-line {
+    flex-direction: row;
+    flex-shrink: 0;
+}
+
+#log-line-message {
+    flex-grow: 1;
+    white-space: normal;
+}

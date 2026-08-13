@@ -8,6 +8,11 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Accessors
         IScrollMutator
     {
         new Vector2 ScrollPosition { get; set; }
+
+        /// <summary>
+        /// <see cref="IScrollProvider.OnScrollChanged"/>を発火せずに保持値のみを同期する.
+        /// </summary>
+        void SyncPosition(Vector2 position);
     }
 
     public interface IScrollMutator

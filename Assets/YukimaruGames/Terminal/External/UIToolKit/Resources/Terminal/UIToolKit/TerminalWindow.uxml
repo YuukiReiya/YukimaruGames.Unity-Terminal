@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="document-root" style="position: absolute; left: 0; top: 0; right: 0; bottom: 0;">
+        <ui:VisualElement name="terminal-root" class="terminal-window">
+            <ui:ScrollView name="log-scroll-view" class="terminal-log-scroll-view" mode="Vertical" />
+            <ui:VisualElement name="terminal-input-row" class="terminal-input-row">
+                <ui:Label name="prompt-label" text="&gt;" class="terminal-prompt-label" />
+                <ui:TextField name="input-field" class="terminal-input-field" />
+                <ui:Button name="submit-button" text="| exec" class="terminal-submit-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="launcher-container" class="terminal-launcher-container">
+            <ui:Button name="launcher-open-button" text="[-]" class="terminal-launcher-button" />
+            <ui:Button name="launcher-close-button" text="[x]" class="terminal-launcher-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -12,7 +12,8 @@
         "YukimaruGames.Terminal.Composition.Input.LegacyInput",
         "YukimaruGames.Terminal.SharedKernel",
         "YukimaruGames.Terminal.Adapters",
-        "YukimaruGames.Terminal.Adapters.CommandLine"
+        "YukimaruGames.Terminal.Adapters.CommandLine",
+        "YukimaruGames.Terminal.Adapters.UIToolkit"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -21,6 +22,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.uielements",
+            "expression": "1.0.0",
+            "define": "TERMINAL_UITOOLKIT_AVAILABLE"
+        }
+    ],
     "noEngineReferences": false
 }
