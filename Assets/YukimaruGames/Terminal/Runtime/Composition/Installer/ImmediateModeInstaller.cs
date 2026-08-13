@@ -24,13 +24,22 @@ namespace YukimaruGames.Terminal.Composition
     /// </summary>
     /// <remarks>
     /// Domain層・入力・Scopeの構築やInspector設定の再同期といったバックエンド非依存の処理は
-    /// <see cref="InstallerBase"/>にあり、ここではIMGUI固有の描画コンテキストの構築だけを担う(#137).
+    /// <see cref="InstallerBase"/> / <see cref="RenderingInstallerBase"/>にあり、ここでは
+    /// IMGUI固有の描画コンテキストの構築だけを担う(#137 / #145).
+    ///
+    /// <c>_theme</c>を持つのはこのバックエンドがGUIStyleを実行時に組み立てるため。
+    /// アセット側で見た目が決まるバックエンドとは事情が異なるので、基底ではなくここで宣言する.
     /// </remarks>
     [Serializable, AddTypeMenu("IMGUI Installer")]
-    public sealed class ImmediateModeInstaller : InstallerBase
+    public sealed class ImmediateModeInstaller : RenderingInstallerBase
     {
+        [SerializeReference, SerializeInterface]
+        private ITerminalTheme _theme = new ImmediateModeTheme();
+
         #region runtime-instances
 
+        [NonSerialized] private ColorPaletteAccessor _colorPaletteAccessor;
+        [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
         [NonSerialized] private FontAccessor _fontAccessor;
         [NonSerialized] private IWindowRenderer _windowRenderer;
 
@@ -47,6 +56,8 @@ namespace YukimaruGames.Terminal.Composition
         /// <inheritdoc/>
         protected override void ClearReferences()
         {
+            _colorPaletteAccessor = null;
+            _cursorFlashSpeedAccessor = null;
             _fontAccessor = null;
             _windowRenderer = null;
             _logGUIStyleAccessor = null;
@@ -61,30 +72,20 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <inheritdoc/>
-        protected override void SyncTheme(ITerminalTheme theme)
+        protected override void OnResolve()
         {
-            base.SyncTheme(theme);
+            base.OnResolve();
 
-            if (_fontAccessor != null)
-            {
-                _fontAccessor.Font = theme.Font;
-                _fontAccessor.Size = theme.FontSize;
-            }
-
-            _inputGUIStyleAccessor?.SetColor(theme.InputColor);
-            _promptGUIStyleAccessor?.SetColor(theme.PromptColor);
-            _executeButtonsGUIStyleAccessor?.SetColor(theme.ExecuteButtonColor);
-            _launcherGUIStyleAccessor?.SetColor(theme.ButtonColor);
-            _logCopyButtonGUIStyleAccessor?.SetColor(theme.CopyButtonColor);
-
-            _pixelTextureRepository?.SetColor(Definitions.ThemeLabel.Window, theme.BackgroundColor);
+            SyncTheme(_theme ?? new NullTheme());
         }
 
         /// <inheritdoc/>
-        protected override RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
+        protected override RenderingContext BuildRenderingContext(ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
+            var theme = _theme ?? new NullTheme();
+
             var windowAnimationAccessor = CreateWindowAnimationAccessor(animation);
-            var colorPaletteAccessor = CreateColorPaletteAccessor(theme);
+            _colorPaletteAccessor = ThemeSync.CreateColorPalette(theme);
 
             _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };
             _pixelTextureRepository = new PixelTextureRepository();
@@ -101,7 +102,7 @@ namespace YukimaruGames.Terminal.Composition
             // Apply Colors immediately
             SyncTheme(theme);
 
-            var cursorFlashSpeedAccessor = CreateCursorFlashSpeedAccessor(theme);
+            _cursorFlashSpeedAccessor = new CursorFlashSpeedAccessor(theme.CursorFlashSpeed);
             var launcherVisibleAccessor = CreateLauncherVisibleAccessor(options);
 
             // Renderers
@@ -110,8 +111,8 @@ namespace YukimaruGames.Terminal.Composition
             var cursorView = new CursorView();
             var logLinePool = new LogLinePool();
             var clipboardRenderer = new ClipboardRenderer(launcherVisibleAccessor, _logCopyButtonGUIStyleAccessor);
-            var logRenderer = new LogRenderer(clipboardRenderer, _logGUIStyleAccessor, colorPaletteAccessor, logLinePool);
-            var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, colorPaletteAccessor, cursorView);
+            var logRenderer = new LogRenderer(clipboardRenderer, _logGUIStyleAccessor, _colorPaletteAccessor, logLinePool);
+            var inputRenderer = new InputRenderer(scrollAccessor, _inputGUIStyleAccessor, _colorPaletteAccessor, cursorView);
             var promptRenderer = new PromptRenderer(_promptGUIStyleAccessor, domain.Service)
             {
                 ShowLoadingIndicator = options.ShowLoadingIndicator,
@@ -127,7 +128,7 @@ namespace YukimaruGames.Terminal.Composition
                 new WindowAnimator(),
                 new ScreenSizeAccessor(),
                 new UnityExceptionLogger());
-            var cursorPresenter = new CursorPresenter(cursorFlashSpeedAccessor, cursorView);
+            var cursorPresenter = new CursorPresenter(_cursorFlashSpeedAccessor, cursorView);
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var executeButtonPresenter = new SubmitPresenter(executeButtonRenderer, launcherVisibleAccessor);
@@ -170,7 +171,7 @@ namespace YukimaruGames.Terminal.Composition
                 Components = new object[]
                 {
                     windowAnimationAccessor,
-                    colorPaletteAccessor,
+                    _colorPaletteAccessor,
                     _fontAccessor,
                     _pixelTextureRepository,
                     scrollAccessor,
@@ -182,7 +183,7 @@ namespace YukimaruGames.Terminal.Composition
                     _launcherGUIStyleAccessor,
                     _logCopyButtonGUIStyleAccessor,
 
-                    cursorFlashSpeedAccessor,
+                    _cursorFlashSpeedAccessor,
                     launcherVisibleAccessor,
 
                     _windowRenderer,
@@ -207,6 +208,28 @@ namespace YukimaruGames.Terminal.Composition
                     terminalView,
                 },
             };
+        }
+
+        /// <summary>
+        /// テーマ設定を実行時インスタンスへ再適用する.
+        /// </summary>
+        private void SyncTheme(ITerminalTheme theme)
+        {
+            ThemeSync.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+
+            if (_fontAccessor != null)
+            {
+                _fontAccessor.Font = theme.Font;
+                _fontAccessor.Size = theme.FontSize;
+            }
+
+            _inputGUIStyleAccessor?.SetColor(theme.InputColor);
+            _promptGUIStyleAccessor?.SetColor(theme.PromptColor);
+            _executeButtonsGUIStyleAccessor?.SetColor(theme.ExecuteButtonColor);
+            _launcherGUIStyleAccessor?.SetColor(theme.ButtonColor);
+            _logCopyButtonGUIStyleAccessor?.SetColor(theme.CopyButtonColor);
+
+            _pixelTextureRepository?.SetColor(Definitions.ThemeLabel.Window, theme.BackgroundColor);
         }
     }
 }

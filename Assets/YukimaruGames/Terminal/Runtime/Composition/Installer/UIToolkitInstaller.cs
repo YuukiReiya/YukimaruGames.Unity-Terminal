@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 using YukimaruGames.Terminal.Adapters.IMGUI;
+using YukimaruGames.Terminal.Adapters.IMGUI.Accessors;
 using YukimaruGames.Terminal.Adapters.UIToolkit;
 using YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators;
 using YukimaruGames.Terminal.Adapters.UIToolkit.Renderers;
@@ -22,15 +23,21 @@ namespace YukimaruGames.Terminal.Composition
     /// </summary>
     /// <remarks>
     /// <see cref="ImmediateModeInstaller"/>との差分は描画コンテキストの構築(<see cref="BuildRenderingContext"/>)
-    /// のみであり、Domain層・入力・Scopeの構築やInspector設定の再同期は<see cref="InstallerBase"/>と
-    /// 共有する(#122 / #137)。UIToolkit要素の生成は<see cref="UIToolkitViewFactory"/>、
+    /// のみであり、Domain層・入力・Scopeの構築やInspector設定の再同期は<see cref="InstallerBase"/> /
+    /// <see cref="RenderingInstallerBase"/>と
+    /// 共有する(#122 / #137 / #145)。UIToolkit要素の生成は<see cref="UIToolkitViewFactory"/>、
     /// テーマ・フォントの適用は<see cref="UIToolkitThemeApplier"/>に委ねる。
     /// <c>com.unity.modules.uielements</c>が利用できない環境では本クラスごとコンパイル対象外になる
     /// (<c>TERMINAL_UITOOLKIT_AVAILABLE</c> / #125参照)。
     /// </remarks>
     [Serializable, AddTypeMenu("UIToolkit Installer")]
-    public sealed class UIToolkitInstaller : InstallerBase
+    public sealed class UIToolkitInstaller : RenderingInstallerBase
     {
+        // 現状はIMGUI版と同じテーマ設定を共有している。UIToolkitの見た目をUSS駆動へ寄せて
+        // このフィールドを落とすことは別Issueで検討する(#145のスコープ外).
+        [SerializeReference, SerializeInterface]
+        private ITerminalTheme _theme = new ImmediateModeTheme();
+
         [Header("UIToolkit Assets (未指定時はコード生成の最小限UIにフォールバック)")]
         [SerializeField] private VisualTreeAsset _visualTreeAsset;
         [SerializeField] private StyleSheet _styleSheet;
@@ -59,6 +66,8 @@ namespace YukimaruGames.Terminal.Composition
 
         #region runtime-instances
 
+        [NonSerialized] private ColorPaletteAccessor _colorPaletteAccessor;
+        [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
         [NonSerialized] private UIToolkitThemeApplier _themeApplier;
 
         // 生成したWindowRoot(UIDocumentを載せたGameObjectを所有する)。通常はComponents経由で
@@ -79,6 +88,8 @@ namespace YukimaruGames.Terminal.Composition
         /// <inheritdoc/>
         protected override void ClearReferences()
         {
+            _colorPaletteAccessor = null;
+            _cursorFlashSpeedAccessor = null;
             _themeApplier = null;
 
             // MonoBehaviourのため == null で判定する(破棄済みを検出できない ?. は使わない).
@@ -96,9 +107,19 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <inheritdoc/>
-        protected override void SyncTheme(ITerminalTheme theme)
+        protected override void OnResolve()
         {
-            base.SyncTheme(theme);
+            base.OnResolve();
+
+            SyncTheme(_theme ?? new NullTheme());
+        }
+
+        /// <summary>
+        /// テーマ設定を実行時インスタンスへ再適用する.
+        /// </summary>
+        private void SyncTheme(ITerminalTheme theme)
+        {
+            ThemeSync.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
 
             var uiToolkitOptions = _uiToolkitOptions ?? new UIToolkitOptions();
             _themeApplier?.Apply(theme, uiToolkitOptions.ScrollSensitivity, uiToolkitOptions.ScrollDecelerationRate);
@@ -115,10 +136,12 @@ namespace YukimaruGames.Terminal.Composition
         /// 戻す。もし同様の描画崩れが再発する場合は、このコメントを参照のうえDuration=0固定に
         /// 戻すことを検討すること.
         /// </summary>
-        protected override RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
+        protected override RenderingContext BuildRenderingContext(ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
+            var theme = _theme ?? new NullTheme();
+
             var windowAnimationAccessor = CreateWindowAnimationAccessor(animation);
-            var colorPaletteAccessor = CreateColorPaletteAccessor(theme);
+            _colorPaletteAccessor = ThemeSync.CreateColorPalette(theme);
             var launcherVisibleAccessor = CreateLauncherVisibleAccessor(options);
             var scrollAccessor = new ScrollAccessor();
 
@@ -129,7 +152,7 @@ namespace YukimaruGames.Terminal.Composition
 
             var cursorView = new CursorView();
             var clipboardRenderer = new ClipboardRenderer(launcherVisibleAccessor);
-            var logRenderer = new LogRenderer(windowRoot.LogScrollView, clipboardRenderer, colorPaletteAccessor, launcherVisibleAccessor, theme.CopyButtonColor);
+            var logRenderer = new LogRenderer(windowRoot.LogScrollView, clipboardRenderer, _colorPaletteAccessor, launcherVisibleAccessor, theme.CopyButtonColor);
 
             // LogRendererを渡してから適用する(Apply内でLogRendererのフォント・コピーボタン色も同期するため).
             _themeApplier = new UIToolkitThemeApplier(windowRoot) { LogRenderer = logRenderer };
@@ -162,8 +185,8 @@ namespace YukimaruGames.Terminal.Composition
             windowPresenter.Refresh();
             windowRoot.ApplyRect(windowPresenter.Rect);
 
-            var cursorFlashSpeedAccessor = CreateCursorFlashSpeedAccessor(theme);
-            var cursorPresenter = new CursorPresenter(cursorFlashSpeedAccessor, cursorView);
+            _cursorFlashSpeedAccessor = new CursorFlashSpeedAccessor(theme.CursorFlashSpeed);
+            var cursorPresenter = new CursorPresenter(_cursorFlashSpeedAccessor, cursorView);
             var logPresenter = new LogPresenter(domain.Service);
             var inputPresenter = new InputPresenter(inputRenderer, options.BootupCommand);
             var submitPresenter = new SubmitPresenter(submitRenderer, launcherVisibleAccessor);
@@ -209,10 +232,10 @@ namespace YukimaruGames.Terminal.Composition
                 Components = new object[]
                 {
                     windowAnimationAccessor,
-                    colorPaletteAccessor,
+                    _colorPaletteAccessor,
                     scrollAccessor,
                     launcherVisibleAccessor,
-                    cursorFlashSpeedAccessor,
+                    _cursorFlashSpeedAccessor,
 
                     windowRoot,
                     cursorView,
