@@ -20,7 +20,7 @@ namespace YukimaruGames.Terminal.Composition
         public ICommandAutocomplete Autocomplete { get; }
         /// <summary>
         /// ウィンドウ全体の表示制御用View.
-        /// <see cref="TerminalNullInstaller"/>ではNull Objectパターンの実装
+        /// <see cref="NullInstaller"/>ではNull Objectパターンの実装
         /// （<see cref="NullTerminalView"/>）が設定されるため、常に非null.
         /// </summary>
         public ITerminalView View { get; }

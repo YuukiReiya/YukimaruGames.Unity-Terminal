@@ -23,7 +23,7 @@ namespace YukimaruGames.Terminal.Composition
 
         private void Awake()
         {
-            _installer ??= new TerminalNullInstaller();
+            _installer ??= new NullInstaller();
 
             if (Volatile.Read(ref _shutdownState) != 0)
             {

@@ -20,7 +20,7 @@ namespace YukimaruGames.Terminal.Composition
     /// ユーザーが意図的に Input を null にした場合のフォールバック先.
     /// </summary>
     [Serializable, HideInTypeMenu]
-    public sealed class TerminalNullInput : ITerminalInput
+    public sealed class NullInput : ITerminalInput
     {
         // 入力を無効化
         public InputKeyboardType InputKeyboardType => InputKeyboardType.None;
