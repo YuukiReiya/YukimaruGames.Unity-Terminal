@@ -63,8 +63,11 @@ end note
 
 note right of AdapterInputFrame
   Composition からは参照されない。
-  利用者のシーンへ直接アタッチして使う
-  (autoReferenced/defineConstraints で切り替え)
+  autoReferenced により Assembly-CSharp から
+  参照でき、利用者のシーンへ直接アタッチして使う。
+  InputSystem版のみ defineConstraints:
+  ENABLE_INPUT_SYSTEM が指定されている
+  (LegacyInput版は無指定で常にコンパイルされる)
 end note
 
 note bottom of SharedKernel
@@ -97,7 +100,10 @@ SharedKernel -[hidden]right-> CompositionShared
 Composition -down-> AdapterFrame : 具象バックエンドを選択・配線
 Composition -down-> CompositionInputFrame
 
-AdapterFrame -down-> Presentation
+' Adapters.CommandLine は Presentation を参照しない(SharedKernel/Applicationのみ)ため、
+' Presentationへの矢印はフレーム単位ではなくアセンブリ単位で引く.
+Adapters -down-> Presentation
+AdaptersUIToolkit -down-> Presentation
 AdapterFrame -down-> Application
 AdapterInputFrame -down-> Presentation
 CompositionInputFrame -down-> Presentation
