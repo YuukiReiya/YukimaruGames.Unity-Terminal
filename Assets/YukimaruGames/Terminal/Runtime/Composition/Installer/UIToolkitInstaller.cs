@@ -312,7 +312,7 @@ namespace YukimaruGames.Terminal.Composition
 
             _windowAnimationAccessor.Anchor = animation.Anchor;
             _windowAnimationAccessor.Style = animation.WindowStyle;
-            _windowAnimationAccessor.Duration = UIToolkitWindowAnimationDuration;
+            _windowAnimationAccessor.Duration = animation.Duration;
             _windowAnimationAccessor.Scale = animation.CompactScale;
         }
 
@@ -458,17 +458,15 @@ namespace YukimaruGames.Terminal.Composition
 
         /// <summary>
         /// <see cref="WindowAnimator"/>はOpen/Close遷移中、アンカーに応じて位置(X/Y)を毎フレーム
-        /// 徐々に変化させるスライド方式で動く。IMGUIは毎フレーム再描画するimmediate-modeのため
-        /// 問題にならないが、UIToolkitでは複数フレームにわたって要素が画面内へ徐々に移動してくる
-        /// 過程で、ランタイム側のクリップ領域キャッシュが不整合を起こし、アニメーション完了後も
-        /// 一部領域(スクロール可能な子要素を持つ場合の兄弟要素など)が描画されなくなる不具合を
-        /// 実機検証で確認した(#122)。<see cref="WindowRoot.ApplyRect"/>側でstyle.translateに
-        /// 逃がしても同様に再現したため、根本原因は「レイアウト vs GPU transform」ではなく
-        /// 「複数フレームにわたる漸次的な位置変化」自体にあると判断し、UIToolkit版では
-        /// Duration=0(瞬時に開閉、スライド演出なし)に固定して回避する。
+        /// 徐々に変化させるスライド方式で動く。過去の実機検証で、UIToolkit側のクリップ領域キャッシュが
+        /// 不整合を起こし、アニメーション完了後も一部領域が描画されなくなる不具合が確認されたため
+        /// (#122)、一時的にDuration=0(瞬時に開閉、スライド演出なし)へ固定して回避していた。
+        /// その後、当時の不具合と絡んでいた可能性のある別の原因(LogRendererの毎フレーム無条件
+        /// 再描画によるレイアウトの継続的なdirty化、ScrollViewのcontentContainer圧縮等)を修正した
+        /// ため、<see cref="ITerminalAnimation.Duration"/>(IMGUI版と共有の設定)を再び尊重するよう
+        /// 戻す。もし同様の描画崩れが再発する場合は、このコメントを参照のうえDuration=0固定に
+        /// 戻すことを検討すること.
         /// </summary>
-        private const float UIToolkitWindowAnimationDuration = 0f;
-
         private RenderingContext BuildRenderingContext(ITerminalTheme theme, ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
         {
             _windowAnimationAccessor = new WindowAnimationAccessor
@@ -476,7 +474,7 @@ namespace YukimaruGames.Terminal.Composition
                 State = animation.BootupWindowState,
                 Anchor = animation.Anchor,
                 Style = animation.WindowStyle,
-                Duration = UIToolkitWindowAnimationDuration,
+                Duration = animation.Duration,
                 Scale = animation.CompactScale,
             };
 
