@@ -50,6 +50,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             set => _fontDefinition = value;
         }
 
+        /// <summary>ログ行のフォントサイズ.</summary>
         public int FontSize
         {
             set => _fontSize = value;
@@ -90,6 +91,9 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
+        /// <summary>
+        /// ログ行の表示内容を<paramref name="data"/>の内容に同期する.
+        /// </summary>
         public void Render(LogRenderData data)
         {
             if (_scrollView == null) return;
@@ -218,15 +222,25 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
 
             private void ApplyMeasuredHeight()
             {
-                var width = _label.resolvedStyle.width;
-                if (float.IsNaN(width) || width <= 0f)
-                {
-                    return;
-                }
-
                 if (string.IsNullOrEmpty(_label.text))
                 {
                     _label.style.height = StyleKeyword.Auto;
+                    return;
+                }
+
+                var style = _label.resolvedStyle;
+
+                // resolvedStyle.widthはボーダーボックス幅だが、MeasureTextSize()は内容領域幅を
+                // 期待する。TerminalWindow.ussはLabelにpadding/borderを指定していないため現状は
+                // 差が出ないが、利用側のテーマ/StyleSheetでpadding・borderが付与されると、折り返し幅を
+                // 過大に見積もり計測される高さが不足してテキストが欠ける(コードレビューで指摘・確認)。
+                // ボーダーボックス幅からpadding/borderを差し引いた内容領域幅を計測に使う.
+                var width = style.width
+                    - style.paddingLeft - style.paddingRight
+                    - style.borderLeftWidth - style.borderRightWidth;
+
+                if (float.IsNaN(width) || width <= 0f)
+                {
                     return;
                 }
 

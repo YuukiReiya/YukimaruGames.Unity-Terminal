@@ -152,9 +152,14 @@ Package ManagerのSample Importは「`"path"`で指定したフォルダの**中
 - `Resources.Load<T>("Terminal/<Backend>/...")` の文字列パスで解決する
   （`[SerializeField] private VisualTreeAsset _default = ...` のようなGUID直接参照はしない。
   GUIDは利用側プロジェクトの資産更新・Sample再importで壊れやすいため）
-- Installer側のデフォルト値解決は `Composition.Shared.Extensions.UnityObjectExtensions.OrResource<T>()`
-  （`_override.OrResource("Terminal/<Backend>/...")`）を使う。Resources Sample未導入で解決できない場合は
-  例外にせず、ログ警告＋最小限フォールバック、またはユーザーへの明確な導入案内に留める
+- コードSample（`Samples~/<Backend>/`）とデフォルトアセットSample（`Samples~/<Backend>.Resources/`）は
+  独立して任意インポートできる構成のため、**Installer側はResourcesへのフォールバックに依存しない**。
+  Resourcesから解決できない場合（未インポート、またはInspectorで明示的に上書きしていない場合）は、
+  警告ログを出したうえで、そのバックエンド自身がコードのみで構築した最小限のフォールバックUIを使用する
+  （`Resources.Load`による暗黙のフォールバックは、コードのみインポート・アセット未インポートの組み合わせで
+  機能しないため採用しない。[Issue #122](https://github.com/YuukiReiya/YukimaruGames.Unity-Terminal/issues/122)で判明）
+- 各バックエンドは、Resources由来のデフォルトアセットが無い状態でも単体で動作可能な状態を保証すること
+  （UXML/Prefab等の外部アセット参照を前提としないIMGUI版のようなバックエンドは、この規約の対象外）
 - `Resources`フォルダは各バックエンドの「Default Resources」Sample側にのみ置く。コード側Sample・
   コアパッケージ本体には置かない（未Importならプロジェクトに一切含まれないことを保証するため）
 - 複数バックエンドのResources Sampleを同時導入しても、`Resources`フォルダはプロジェクト全体で

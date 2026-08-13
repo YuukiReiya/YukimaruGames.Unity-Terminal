@@ -7,6 +7,9 @@ using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 
 namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
 {
+    /// <summary>
+    /// UIToolkit(<see cref="Label"/>)によるプロンプト表示の描画を行う.
+    /// </summary>
     public sealed class PromptRenderer : IPromptRenderer, IDisposable
     {
         private static readonly string[] DefaultLoadingIndicatorFrames = { "|", "/", "-", "\\" };
@@ -18,8 +21,10 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
         private string[] _loadingIndicatorFrames = DefaultLoadingIndicatorFrames;
         private string _cachedPrompt;
 
+        /// <summary>コマンド実行中にローディングインジケーターを表示するか.</summary>
         public bool ShowLoadingIndicator { private get; set; } = true;
 
+        /// <summary>ローディングインジケーターのアニメーションフレーム文字列.</summary>
         public string[] LoadingIndicatorFrames
         {
             set => _loadingIndicatorFrames = value is { Length: > 0 } ? value : DefaultLoadingIndicatorFrames;
@@ -32,6 +37,9 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             _cachedPrompt = _service?.Prompt ?? string.Empty;
         }
 
+        /// <summary>
+        /// プロンプト表示(コマンド実行中はローディングインジケーター)を更新する.
+        /// </summary>
         public void Render()
         {
             if (_label == null) return;

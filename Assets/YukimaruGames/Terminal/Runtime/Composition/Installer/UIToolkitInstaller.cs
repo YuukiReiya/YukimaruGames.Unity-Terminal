@@ -148,9 +148,21 @@ namespace YukimaruGames.Terminal.Composition
         [NonSerialized] private IPromptRenderer _promptRenderer;
         [NonSerialized] private LogRenderer _logRenderer;
         [NonSerialized] private NormalMode _normalMode;
+
+        // _rootGameObject自体の破棄はここでは行わない。WindowRoot(このGameObjectにアタッチされる
+        // MonoBehaviour)がIDisposableとしてComponents配列経由でDisposeされ、その実装
+        // (WindowRoot.csのIDisposable.Dispose)がDestroy(gameObject)を行うため、結果的にこの
+        // GameObjectも解放される.
         [NonSerialized] private GameObject _rootGameObject;
         [NonSerialized] private WindowRoot _windowRoot;
         [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
+
+        // Inspectorで_panelSettingsが未指定の場合、ResolveUIToolkitAssets()内で
+        // ScriptableObject.CreateInstance<PanelSettings>()により実行時生成する。これは
+        // GameObjectにアタッチされないScriptableObjectのため、_rootGameObjectの破棄(WindowRoot.Dispose
+        // 経由)だけでは解放されず、明示的にDestroyしない限りEditorでのPlay Mode反復のたびに
+        // リークする。生成した場合のみここに保持し、ClearReferences()で破棄する.
+        [NonSerialized] private PanelSettings _runtimeGeneratedPanelSettings;
 
         #endregion
 
@@ -250,6 +262,20 @@ namespace YukimaruGames.Terminal.Composition
             _rootGameObject = null;
             _windowRoot = null;
             _cursorFlashSpeedAccessor = null;
+
+            if (_runtimeGeneratedPanelSettings != null)
+            {
+                if (UnityEngine.Application.isPlaying)
+                {
+                    UnityEngine.Object.Destroy(_runtimeGeneratedPanelSettings);
+                }
+                else
+                {
+                    UnityEngine.Object.DestroyImmediate(_runtimeGeneratedPanelSettings);
+                }
+            }
+
+            _runtimeGeneratedPanelSettings = null;
         }
 
         private void SyncTheme(ITerminalTheme theme)
@@ -597,11 +623,6 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <summary>
-        /// ImmediateModeInstaller(IMGUI)がGUIStyle経由で適用しているテーマ色を、
-        /// UIToolkitのVisualElementへ直接適用する(<see cref="ITerminalTheme"/>のうち
-        /// ログ色以外の背景・プロンプト・入力欄・各種ボタン色).
-        /// </summary>
-        /// <summary>
         /// <see cref="ITerminalTheme.FontSize"/>はIMGUI版の<c>GUIStyle.fontSize</c>向けに調整された値
         /// (既定55)であり、UIToolkitの<c>style.fontSize</c>(素のCSSピクセル相当)にそのまま渡すと
         /// 極端に巨大化する(#122で判明。両バックエンドで「同じ数値=同じ見た目」という前提自体が誤りだった)。
@@ -610,6 +631,11 @@ namespace YukimaruGames.Terminal.Composition
         /// </summary>
         private const int UIToolkitFontSize = 14;
 
+        /// <summary>
+        /// ImmediateModeInstaller(IMGUI)がGUIStyle経由で適用しているテーマ色を、
+        /// UIToolkitのVisualElementへ直接適用する(<see cref="ITerminalTheme"/>のうち
+        /// ログ色以外の背景・プロンプト・入力欄・各種ボタン色).
+        /// </summary>
         private void ApplyThemeColors(ITerminalTheme theme)
         {
             if (_windowRoot == null || !_windowRoot.IsInitialized) return;
@@ -739,6 +765,7 @@ namespace YukimaruGames.Terminal.Composition
                     "[YukimaruGames.Terminal] No PanelSettings assigned for the UIToolkit backend. " +
                     "Falling back to a runtime-generated PanelSettings.");
                 panelSettings = ScriptableObject.CreateInstance<PanelSettings>();
+                _runtimeGeneratedPanelSettings = panelSettings;
 
                 // 既定値はConstantPhysicalSize(参照DPIに対する実画面DPIの比率で拡大縮小される)。
                 // IMGUI版はDPIスケーリングを一切行わないため、テーマのFontSize等をそのまま

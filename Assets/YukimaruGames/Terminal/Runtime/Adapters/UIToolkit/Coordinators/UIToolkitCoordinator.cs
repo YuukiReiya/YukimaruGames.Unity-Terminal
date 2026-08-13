@@ -37,6 +37,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
         private readonly ScrollView _scrollView;
 
         private Vector2Int _size;
+        private IVisualElementScheduledItem _scrollToEndScheduledItem;
 
         public event Action<Vector2Int> OnScreenSizeChanged;
         public event Action<string> OnLogCopiedTriggered;
@@ -134,14 +135,21 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
             // ScrollViewへ反映されておらずverticalScroller.highValueが0のまま(実機ログで確認)、
             // という不具合が起きていた(#122)。実際に新しい行が反映されhighValueが確定するまで
             // 複数フレームに渡って再試行する.
+            //
+            // 短時間に連続でコマンドが実行されると、前回登録した再試行項目がまだ完了していない
+            // うちに次のHandleScrollChangedが呼ばれうる。項目を都度使い捨てのローカル変数のまま
+            // 積み増すと、複数の項目が並行してscrollOffsetへ書き込み続け、Dispose後も実行中の
+            // 項目が残ってしまう(コードレビューで指摘)。コーディネーターで1つだけ保持し、
+            // 新規登録時・Dispose時に必ずPause()する.
+            _scrollToEndScheduledItem?.Pause();
+
             var scrollView = _scrollView;
             var attempts = 0;
-            IVisualElementScheduledItem item = null;
-            item = scrollView.schedule.Execute(() =>
+            _scrollToEndScheduledItem = scrollView.schedule.Execute(() =>
             {
                 if (scrollView?.panel == null)
                 {
-                    item?.Pause();
+                    _scrollToEndScheduledItem?.Pause();
                     return;
                 }
 
@@ -154,7 +162,7 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
                 // 再試行してから止める.
                 if (attempts >= ScrollToEndRetryFrames)
                 {
-                    item?.Pause();
+                    _scrollToEndScheduledItem?.Pause();
                 }
             }).Every(0);
         }
@@ -175,6 +183,9 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Coordinators
             {
                 _scrollAccessor.OnScrollChanged -= HandleScrollChanged;
             }
+
+            _scrollToEndScheduledItem?.Pause();
+            _scrollToEndScheduledItem = null;
 
             OnScreenSizeChanged = null;
             OnLogCopiedTriggered = null;

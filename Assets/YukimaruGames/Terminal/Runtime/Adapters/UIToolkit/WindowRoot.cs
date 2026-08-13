@@ -29,18 +29,39 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit
 
         private UIDocument _document;
 
+        /// <summary>ウィンドウ全体のルート要素.</summary>
         public VisualElement Root { get; private set; }
+
+        /// <summary>入力欄(プロンプト・TextField・実行ボタン)を並べる行.</summary>
         public VisualElement InputRow { get; private set; }
+
+        /// <summary>ログ表示用のスクロールビュー.</summary>
         public ScrollView LogScrollView { get; private set; }
+
+        /// <summary>コマンド入力欄.</summary>
         public TextField InputField { get; private set; }
+
+        /// <summary>コマンド実行ボタン.</summary>
         public Button SubmitButton { get; private set; }
+
+        /// <summary>プロンプト表示用のラベル.</summary>
         public Label PromptLabel { get; private set; }
+
+        /// <summary>ランチャー(開閉)ボタンをまとめるコンテナ.</summary>
         public VisualElement LauncherContainer { get; private set; }
+
+        /// <summary>ウィンドウを開くランチャーボタン.</summary>
         public Button LauncherOpenButton { get; private set; }
+
+        /// <summary>ウィンドウを閉じるランチャーボタン.</summary>
         public Button LauncherCloseButton { get; private set; }
 
+        /// <summary><see cref="Initialize"/>が完了しているか.</summary>
         public bool IsInitialized { get; private set; }
 
+        /// <summary>
+        /// 指定した<see cref="UIDocument"/>のルート要素から各構成要素を解決し、初期化する.
+        /// </summary>
         public void Initialize(UIDocument document)
         {
             _document = document;

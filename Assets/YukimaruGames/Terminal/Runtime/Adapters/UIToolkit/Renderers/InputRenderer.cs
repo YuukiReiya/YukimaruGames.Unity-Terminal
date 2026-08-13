@@ -62,6 +62,9 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
             _textField.RegisterCallback<NavigationCancelEvent>(OnNavigationEventCapture, TrickleDown.TrickleDown);
         }
 
+        /// <summary>
+        /// 入力欄の表示内容・フォーカス状態・カーソル位置を<paramref name="data"/>の内容に同期する.
+        /// </summary>
         public void Render(InputRenderData data)
         {
             if (_textField == null) return;
