@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using YukimaruGames.Terminal.Adapters.IMGUI.Accessors;
@@ -24,8 +25,13 @@ namespace YukimaruGames.Terminal.Composition
         /// <summary>
         /// テーマのログ種別色から<see cref="IColorPaletteAccessor"/>を生成する.
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="theme"/>がnullの場合(値の供給元のため必須).
+        /// </exception>
         public static IColorPaletteAccessor CreateColorPalette(ITerminalTheme theme)
         {
+            if (theme == null) throw new ArgumentNullException(nameof(theme));
+
             return new ColorPaletteAccessor(new Dictionary<string, Color>
             {
                 { Definitions.ThemeLabel.Message, theme.MessageColor },
@@ -44,10 +50,19 @@ namespace YukimaruGames.Terminal.Composition
         /// テーマの現在値をアクセサへ再適用する(Inspectorでの変更を反映する経路).
         /// </summary>
         /// <remarks>
-        /// 構築途中の呼び出しも許容するため、各引数のnullは無視する.
+        /// <paramref name="palette"/> / <paramref name="cursorFlash"/>は、構築途中の呼び出しを
+        /// 許容するためnullを無視する(生成前のアクセサに対しては何もしない)。
+        /// <paramref name="theme"/>は値の供給元なので必須。nullは「設定し忘れ」であって
+        /// 「まだ無い」ではないため、握り潰さず例外にする
+        /// (呼び出し側はNull Object実装(<see cref="NullTheme"/>)へ差し替えてから渡すこと).
         /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="theme"/>がnullの場合.
+        /// </exception>
         public static void Apply(ITerminalTheme theme, IColorPaletteMutator palette, ICursorFlashSpeedMutator cursorFlash)
         {
+            if (theme == null) throw new ArgumentNullException(nameof(theme));
+
             if (palette != null)
             {
                 palette[Definitions.ThemeLabel.Message] = theme.MessageColor;
