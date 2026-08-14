@@ -19,12 +19,12 @@ namespace YukimaruGames.Terminal.Composition
     /// <c>IXxxAccessor : IXxxMutator, IXxxProvider</c>の形で読み書きを分離しており、
     /// 利用側は必要な側だけに依存する).
     /// </remarks>
-    internal static class ThemeBinder
+    public static class ThemeBinder
     {
         /// <summary>
         /// テーマのログ種別色から<see cref="IColorPaletteAccessor"/>を生成する.
         /// </summary>
-        internal static IColorPaletteAccessor CreateColorPalette(ITerminalTheme theme)
+        public static IColorPaletteAccessor CreateColorPalette(ITerminalTheme theme)
         {
             return new ColorPaletteAccessor(new Dictionary<string, Color>
             {
@@ -46,7 +46,7 @@ namespace YukimaruGames.Terminal.Composition
         /// <remarks>
         /// 構築途中の呼び出しも許容するため、各引数のnullは無視する.
         /// </remarks>
-        internal static void Apply(ITerminalTheme theme, IColorPaletteMutator palette, ICursorFlashSpeedMutator cursorFlash)
+        public static void Apply(ITerminalTheme theme, IColorPaletteMutator palette, ICursorFlashSpeedMutator cursorFlash)
         {
             if (palette != null)
             {

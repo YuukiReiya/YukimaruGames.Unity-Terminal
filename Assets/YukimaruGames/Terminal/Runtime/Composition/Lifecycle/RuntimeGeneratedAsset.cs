@@ -17,11 +17,11 @@ namespace YukimaruGames.Terminal.Composition
     /// 構築の途中で例外が発生しComponentsが未確定になる場合に備え、Installerが保険として
     /// 直接<see cref="Dispose"/>することも想定しているため、多重呼び出しに耐えること(冪等).
     /// </remarks>
-    internal sealed class RuntimeGeneratedAsset : IDisposable
+    public sealed class RuntimeGeneratedAsset : IDisposable
     {
         private UnityEngine.Object _asset;
 
-        internal RuntimeGeneratedAsset(UnityEngine.Object asset) => _asset = asset;
+        public RuntimeGeneratedAsset(UnityEngine.Object asset) => _asset = asset;
 
         /// <inheritdoc/>
         public void Dispose()

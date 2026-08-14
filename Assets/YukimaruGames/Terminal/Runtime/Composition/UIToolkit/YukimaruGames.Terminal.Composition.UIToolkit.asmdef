@@ -1,18 +1,16 @@
 {
-    "name": "YukimaruGames.Terminal.Composition",
+    "name": "YukimaruGames.Terminal.Composition.UIToolkit",
     "rootNamespace": "YukimaruGames.Terminal.Composition",
     "references": [
+        "YukimaruGames.Terminal.Composition",
+        "YukimaruGames.Terminal.Composition.Shared",
+        "YukimaruGames.Terminal.Adapters",
+        "YukimaruGames.Terminal.Adapters.UIToolkit",
         "YukimaruGames.Terminal.Presentation",
         "YukimaruGames.Terminal.Infrastructure",
         "YukimaruGames.Terminal.Application",
-        "YukimaruGames.Terminal.Domain.Services",
         "YukimaruGames.Terminal.Domain.Contracts",
-        "YukimaruGames.Terminal.Composition.Shared",
-        "YukimaruGames.Terminal.Composition.Input.InputSystem",
-        "YukimaruGames.Terminal.Composition.Input.LegacyInput",
-        "YukimaruGames.Terminal.SharedKernel",
-        "YukimaruGames.Terminal.Adapters",
-        "YukimaruGames.Terminal.Adapters.CommandLine"
+        "YukimaruGames.Terminal.SharedKernel"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -21,6 +19,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.uielements",
+            "expression": "1.0.0",
+            "define": "TERMINAL_UITOOLKIT_AVAILABLE"
+        }
+    ],
     "noEngineReferences": false
 }
