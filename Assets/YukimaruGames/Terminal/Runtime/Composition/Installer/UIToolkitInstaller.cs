@@ -66,8 +66,8 @@ namespace YukimaruGames.Terminal.Composition
 
         #region runtime-instances
 
-        [NonSerialized] private ColorPaletteAccessor _colorPaletteAccessor;
-        [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
+        [NonSerialized] private IColorPaletteAccessor _colorPaletteAccessor;
+        [NonSerialized] private ICursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
         [NonSerialized] private UIToolkitThemeApplier _themeApplier;
 
         // 生成したWindowRoot(UIDocumentを載せたGameObjectを所有する)。通常はComponents経由で
@@ -119,7 +119,7 @@ namespace YukimaruGames.Terminal.Composition
         /// </summary>
         private void SyncTheme(ITerminalTheme theme)
         {
-            ThemeSync.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+            ThemeBinder.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
 
             var uiToolkitOptions = _uiToolkitOptions ?? new UIToolkitOptions();
             _themeApplier?.Apply(theme, uiToolkitOptions.ScrollSensitivity, uiToolkitOptions.ScrollDecelerationRate);
@@ -141,7 +141,7 @@ namespace YukimaruGames.Terminal.Composition
             var theme = _theme ?? new NullTheme();
 
             var windowAnimationAccessor = CreateWindowAnimationAccessor(animation);
-            _colorPaletteAccessor = ThemeSync.CreateColorPalette(theme);
+            _colorPaletteAccessor = ThemeBinder.CreateColorPalette(theme);
             var launcherVisibleAccessor = CreateLauncherVisibleAccessor(options);
             var scrollAccessor = new ScrollAccessor();
 

@@ -12,6 +12,7 @@ using YukimaruGames.Terminal.Infrastructure.Repositories;
 using YukimaruGames.Terminal.Presentation.Accessors;
 using YukimaruGames.Terminal.Presentation.Animators;
 using YukimaruGames.Terminal.Presentation.Constants;
+using YukimaruGames.Terminal.Presentation.Interfaces.Accessors;
 using YukimaruGames.Terminal.Presentation.Interfaces.Renderers;
 using YukimaruGames.Terminal.Presentation.Interfaces.Repositories;
 using YukimaruGames.Terminal.Presentation.Models;
@@ -38,8 +39,8 @@ namespace YukimaruGames.Terminal.Composition
 
         #region runtime-instances
 
-        [NonSerialized] private ColorPaletteAccessor _colorPaletteAccessor;
-        [NonSerialized] private CursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
+        [NonSerialized] private IColorPaletteAccessor _colorPaletteAccessor;
+        [NonSerialized] private ICursorFlashSpeedAccessor _cursorFlashSpeedAccessor;
         [NonSerialized] private FontAccessor _fontAccessor;
         [NonSerialized] private IWindowRenderer _windowRenderer;
 
@@ -85,7 +86,7 @@ namespace YukimaruGames.Terminal.Composition
             var theme = _theme ?? new NullTheme();
 
             var windowAnimationAccessor = CreateWindowAnimationAccessor(animation);
-            _colorPaletteAccessor = ThemeSync.CreateColorPalette(theme);
+            _colorPaletteAccessor = ThemeBinder.CreateColorPalette(theme);
 
             _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };
             _pixelTextureRepository = new PixelTextureRepository();
@@ -215,7 +216,7 @@ namespace YukimaruGames.Terminal.Composition
         /// </summary>
         private void SyncTheme(ITerminalTheme theme)
         {
-            ThemeSync.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
+            ThemeBinder.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
 
             if (_fontAccessor != null)
             {
