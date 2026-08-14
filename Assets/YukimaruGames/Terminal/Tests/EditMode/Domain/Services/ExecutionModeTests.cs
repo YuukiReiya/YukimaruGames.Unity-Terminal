@@ -298,7 +298,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         [Test]
         public void Id_IsNormal()
         {
-            Assert.AreEqual("normal", _sut.Id);
+            Assert.AreEqual("global", _sut.Id);
         }
 
         [Test]

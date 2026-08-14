@@ -45,8 +45,18 @@ namespace YukimaruGames.Terminal.Domain.Services
             _autocomplete = autocomplete ?? NullCommandAutocomplete.Instance;
         }
 
+        /// <summary>
+        /// モードの識別子.
+        /// </summary>
+        /// <remarks>
+        /// 診断表示(<c>terminal.stack</c>)や<c>ModeId</c>指定でのコマンド束縛に用いる。
+        /// グローバルコマンド(<c>TerminalCommandAttribute</c>)が有効なスコープであることを表す
+        /// (モード専用コマンドしか効かない上位モードとの対比).
+        /// </remarks>
+        private const string ModeIdentifier = "global";
+
         /// <inheritdoc/>
-        public string Id => "normal";
+        public string Id => ModeIdentifier;
 
         /// <inheritdoc/>
         /// <remarks>

@@ -263,7 +263,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
 
             var logs = _scope.Service.Logs;
             var dump = string.Join(" | ", logs.Select(l => $"[{l.MessageType}] {l.Message}"));
-            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message.Contains("normal")), $"logs: {dump}");
+            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message.Contains("global")), $"logs: {dump}");
         }
     }
 }
