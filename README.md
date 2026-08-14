@@ -123,6 +123,55 @@ public class MyPlayer : MonoBehaviour
 }
 ```
 
+## ❓Q&A
+
+### Q. ターミナルの見た目やキーバインドを変えたい
+
+`TerminalBootstrapper` のInspectorから設定できます。Theme（見た目）・Animation（開閉の動き）・
+Options（バッファ長・プロンプト・キーバインド等）はそれぞれ差し替え可能な形になっており、
+同梱の実装を選ぶほか、独自実装を選ぶこともできます。
+
+`ITerminalTheme` / `ITerminalAnimation` / `ITerminalOptions` を実装したクラスに `[Serializable]` を
+付けておくと、Inspectorの型選択メニューに自分の実装が現れます。
+
+### Q. 表示の方法（UIバックエンド）を自分で用意したい
+
+`RenderingInstallerBase` を継承し、`BuildRenderingContext()` を実装してください。Domain層の構築、
+コマンド登録、キー入力の解決、Coordinatorの構築、Scopeの組み立ては基底が行うため、実装するのは
+描画（Renderer / Presenter / View）の組み立てだけです。
+
+```csharp
+[Serializable, AddTypeMenu("My Installer")]
+public sealed class MyInstaller : RenderingInstallerBase
+{
+    protected override RenderingContext BuildRenderingContext(
+        ITerminalAnimation animation, ITerminalOptions options, in DomainContext domain)
+    {
+        // Renderer / Presenter / View を組み立てて RenderingContext を返す
+    }
+}
+```
+
+作成したInstallerは、`TerminalBootstrapper` のInspectorの型選択メニューから選べます。
+
+### Q. 画面には出さず、別の出力先へ流したい
+
+`InstallerBase` を継承し、`BuildBackend()` を実装してください。同梱の `CLI(cmd,zsh)`
+（`CommandLineInstaller`）が、外部ターミナルのプロセスへ中継するこの形の実装です。
+
+### Q. コマンドのログや補完などの実体を、独自実装に差し替えたい
+
+**この用途向けの拡張点は用意していません。** Domain層のコンポーネントは構築時に相互へ
+注入されるため（例: `CommandRegistry` はロガーを、`TerminalService` はロガー・レジストリ・
+補完・ユースケースをそれぞれコンストラクタで受け取る）、生成後に一部だけ差し替えることが
+できないためです。
+
+どうしても差し替えたい場合は、`InstallerBase` を継承するのではなく `IInstaller` を直接実装した
+Installerを自作してください。`IInstaller` の実装クラスも `[Serializable]` を付ければInspectorの
+型選択メニューに現れます。ただしこの場合、Domain層の構築・コマンド登録・Scopeの組み立ては
+すべて自前で書くことになります（同梱の `DomainBuilder` / `ScopeBuilder` はパッケージ内部の
+実装であり、外部からは呼び出せません）。
+
 ## 🤝Contribution
 
 ご意見、ご提案、プルリクエストを歓迎します。

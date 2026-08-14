@@ -1,22 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEngine;
 using YukimaruGames.Terminal.Adapters.CommandLine;
-using YukimaruGames.Terminal.Application.Interfaces;
-using YukimaruGames.Terminal.Application.Services;
-using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
-using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
-using YukimaruGames.Terminal.Domain.Contracts.Modes;
-using YukimaruGames.Terminal.Domain.Repositories;
-using YukimaruGames.Terminal.Domain.Services;
-using YukimaruGames.Terminal.Infrastructure.Diagnostics;
-using YukimaruGames.Terminal.Infrastructure.Discoverer;
-using YukimaruGames.Terminal.Infrastructure.Factories;
-using YukimaruGames.Terminal.Infrastructure.Modes;
-using YukimaruGames.Terminal.SharedKernel;
 using YukimaruGames.Terminal.Composition.Shared;
+using YukimaruGames.Terminal.Presentation.Contracts;
 
 namespace YukimaruGames.Terminal.Composition
 {
@@ -28,220 +13,58 @@ namespace YukimaruGames.Terminal.Composition
     /// TerminalIMGUI)を構築するのに対し、こちらはコマンド実行系(Domain/Application層)のみを構築し、
     /// 描画は行わない(ゲーム内ウィンドウを持たないため<see cref="ITerminalView"/>はNull実装を使う)。
     /// 「どちらのViewを使うか」は<see cref="TerminalBootstrapper"/>の_installerフィールド
-    /// (SerializeReferenceの型選択メニュー)で切り替える想定.
+    /// (SerializeReferenceの型選択メニュー)で切り替える想定。
+    ///
+    /// 描画を持たないため<see cref="GraphicalInstallerBase"/>ではなく<see cref="InstallerBase"/>を
+    /// 直接継承し、<see cref="BuildBackend"/>で外部ターミナルのセッションを開くだけにしている(#145).
     /// </remarks>
     [Serializable, AddTypeMenu("CLI(cmd,zsh)")]
-    public sealed class CommandLineInstaller : IInstaller
+    public sealed class CommandLineInstaller : InstallerBase
     {
+        [NonSerialized] private CommandLineSession _session;
+
         /// <summary>
-        /// ドメイン層のパラメータをとりまとめたContext
+        /// <see cref="CommandLineInstaller"/>を構築する.
         /// </summary>
-        private struct DomainContext
+        /// <remarks>
+        /// 基底の既定値(<see cref="ImmediateModeOptions"/>)ではなく専用設定を既定にする。
+        /// C#はコンストラクタ本体が基底のフィールド初期化子より後に実行されるため、ここでの代入が勝つ.
+        /// </remarks>
+        public CommandLineInstaller() => Options = new CommandLineOptions();
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Unity Editorの仕様上、SerializeReferenceな_installerフィールドの型をInspector上の
+        /// 型選択メニューで切り替えた直後は、ネストした_optionsフィールドがユーザーの操作意図に
+        /// 反してnullのまま復元されることがある(既知のシリアライズ上の癖。実際に検証で再現した)。
+        /// <see cref="NullOptions"/>(BufferSize=0)へフォールバックするとCommandLoggerの実効バッファが
+        /// 1件まで縮んで外部ターミナルとして機能しなくなるため、フォールバック先も
+        /// 専用設定(<see cref="CommandLineOptions"/>)の既定値にする.
+        /// </remarks>
+        protected override ITerminalOptions CreateFallbackOptions() => new CommandLineOptions();
+
+        /// <inheritdoc/>
+        protected override BackendContext BuildBackend(ITerminalOptions options, in DomainContext domain)
         {
-            /// <summary>構築済みの破棄対象コンポーネント一覧.</summary>
-            public IReadOnlyList<object> Components { get; set; }
-            /// <summary>コマンド実行系のファサード.</summary>
-            public ITerminalService Service { get; set; }
-            /// <summary>コマンドログの保持・通知を担うロガー.</summary>
-            public ICommandLogger Logger { get; set; }
-            /// <summary>コマンド入力履歴.</summary>
-            public ICommandHistory History { get; set; }
-            /// <summary>コマンドハンドラの登録先.</summary>
-            public ICommandRegistry Registry { get; set; }
-            /// <summary>Tab補完候補の登録先.</summary>
-            public ICommandAutocomplete Autocomplete { get; set; }
-            /// <summary>アセンブリからのコマンド走査器.</summary>
-            public ICommandDiscoverer Discoverer { get; set; }
-            /// <summary>コマンド実行ユースケース.</summary>
-            public IExecuteCommandUseCase UseCase { get; set; }
-        }
+            var session = new CommandLineSession(domain.Service);
+            session.Open();
+            _session = session;
 
-        private const string DefaultCommandAssembly = "Assembly-CSharp";
-
-        [SerializeReference, SerializeInterface]
-        private ITerminalOptions _options = new CommandLineOptions();
-
-        [NonSerialized] private NormalMode _normalMode;
-
-        TerminalRuntimeScope IInstaller.Install()
-        {
-            // Unity Editorの仕様上、SerializeReferenceな_installerフィールドの型をInspector上の
-            // 型選択メニューで切り替えた直後は、ネストした_optionsフィールドがユーザーの操作意図に
-            // 反してnullのまま復元されることがある(既知のシリアライズ上の癖。実際に検証で再現した)。
-            // NullOptions(BufferSize=0)へフォールバックするとCommandLoggerの実効バッファが
-            // 1件まで縮んで外部ターミナルとして機能しなくなるため、フォールバック先も
-            // 専用設定(CommandLineOptions)の既定値にする.
-            var options = _options ?? new CommandLineOptions();
-
-            DomainContext domainContext = default;
-            CommandLineSession session = null;
-
-            try
+            return new BackendContext
             {
-                domainContext = BuildDomainContext(options);
-                RegisterCommands(in domainContext);
-
-                session = new CommandLineSession(domainContext.Service);
-                session.Open();
-
-                var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), null);
-
-                var instances = domainContext.Components.Append((object)session).ToArray();
-                var asyncDisposables = instances.OfType<IAsyncDisposable>().ToList();
-                var disposables = instances.OfType<IDisposable>().Where(d => d is not IAsyncDisposable).ToList();
-
-                return new TerminalRuntimeScope(
-                    entryPoint,
-                    domainContext.Service,
-                    domainContext.Registry,
-                    domainContext.Autocomplete,
-                    new NullTerminalView(),
-                    disposables,
-                    asyncDisposables,
-                    domainContext.Logger);
-            }
-            catch (Exception)
-            {
-                session?.Dispose();
-
-                if (domainContext.Components != null)
-                {
-                    for (var i = 0; i < domainContext.Components.Count; i++)
-                    {
-                        (domainContext.Components[i] as IDisposable)?.Dispose();
-                    }
-                }
-
-                ClearReferences();
-                throw;
-            }
-        }
-
-        void IInstaller.Uninstall(TerminalRuntimeScope scope)
-        {
-            try
-            {
-                (scope as IDisposable)?.Dispose();
-            }
-            finally
-            {
-                ClearReferences();
-            }
-        }
-
-        async System.Threading.Tasks.ValueTask IInstaller.UninstallAsync(TerminalRuntimeScope scope)
-        {
-            try
-            {
-                if (scope is IAsyncDisposable asyncDisposable)
-                {
-                    await asyncDisposable.DisposeAsync();
-                }
-                else
-                {
-                    (scope as IDisposable)?.Dispose();
-                }
-            }
-            finally
-            {
-                ClearReferences();
-            }
-        }
-
-        void IInstaller.Resolve(TerminalRuntimeScope scope)
-        {
-            if (scope == null) return;
-
-            var options = _options ?? new CommandLineOptions();
-            if (_normalMode != null)
-            {
-                _normalMode.Prompt = options.Prompt;
-            }
-        }
-
-        private void ClearReferences()
-        {
-            _normalMode = null;
-        }
-
-        private DomainContext BuildDomainContext(ITerminalOptions options)
-        {
-            var logger = new CommandLogger(options.BufferSize);
-            var registry = new CommandRegistry(logger);
-            var invoker = new CommandInvoker();
-            var parser = new CommandParser();
-            var history = new CommandHistory();
-            var discover = new CommandDiscoverer(logger, new[] { DefaultCommandAssembly }.Concat(options.AdditionalCommandAssemblies ?? Array.Empty<string>()));
-            var autocomplete = new CommandAutocomplete();
-            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
-            _normalMode = normalMode;
-            var modeCommandBinder = new ModeCommandBinder(discover, () => new CommandRegistry(logger), logger);
-            var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode, modeCommandBinder);
-            var service = new TerminalService(
-                logger,
-                registry,
-                autocomplete,
-                executeCommandUseCase
-            );
-
-            return new DomainContext
-            {
-                Components = new object[] { logger, registry, history, autocomplete, discover, executeCommandUseCase, service },
-                Logger = logger,
-                Registry = registry,
-                History = history,
-                Autocomplete = autocomplete,
-                Discoverer = discover,
-                Service = service,
-                UseCase = executeCommandUseCase,
+                // 描画を持たないため、OnGUIから駆動するGUIは無い.
+                GUI = null,
+                View = new NullTerminalView(),
+                Components = new object[] { session },
             };
         }
 
-        private void RegisterCommands(in DomainContext domain)
+        /// <inheritdoc/>
+        protected override void ClearReferences()
         {
-            var services = new Dictionary<Type, object>
-            {
-                { typeof(IModeStackInspector), domain.UseCase },
-                { typeof(IModeOutput), domain.UseCase.Output },
-                { typeof(IModeTransitionRequestSink), domain.UseCase.Transitions },
-                { typeof(ICommandRegistry), domain.Registry },
-                { typeof(ICommandLogger), domain.Logger },
-            };
-            var bundle = new ModeServiceBundle(services);
+            _session = null;
 
-            var specs = domain.Discoverer.Discover();
-            foreach (var spec in specs)
-            {
-                var handler = CommandFactory.Create(spec.Method, bundle);
-                if (domain.Registry.Add(spec.Meta.Command, handler))
-                {
-                    domain.Autocomplete.Register(spec.Meta.Command);
-                }
-            }
-
-            RegisterBuiltinCommands(domain, bundle);
-        }
-
-        private void RegisterBuiltinCommands(in DomainContext domain, in ModeServiceBundle bundle)
-        {
-            RegisterBuiltinCommandMethods(domain, bundle, BuiltinDiagnosticsCommands.Methods);
-            RegisterBuiltinCommandMethods(domain, bundle, BuiltinGeneralCommands.Methods);
-
-#if UNITY_EDITOR
-            RegisterBuiltinCommandMethods(domain, bundle, BuiltinEditorCommands.Methods);
-#endif
-        }
-
-        private static void RegisterBuiltinCommandMethods(in DomainContext domain, in ModeServiceBundle bundle, MethodInfo[] methods)
-        {
-            foreach (var method in methods)
-            {
-                var handler = CommandFactory.Create(method, bundle);
-                if (domain.Registry.Add(handler.Meta.Command, handler))
-                {
-                    domain.Autocomplete.Register(handler.Meta.Command);
-                }
-            }
+            base.ClearReferences();
         }
     }
 }

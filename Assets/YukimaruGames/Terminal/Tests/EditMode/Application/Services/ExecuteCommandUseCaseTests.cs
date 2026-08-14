@@ -20,7 +20,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Application.Services
     /// (排他ロック・キャンセル/割り込み・モード遷移の適用・破棄処理)を検証するテストクラス。
     /// </summary>
     /// <remarks>
-    /// 「1行の解釈」(パース/履歴/エコー)は <c>NormalModeTests</c> 側で検証済みのため、
+    /// 「1行の解釈」(パース/履歴/エコー)は <c>ExecutionModeTests</c> 側で検証済みのため、
     /// ここでは <see cref="TestMode"/> を使ってディスパッチャ固有の関心事のみを検証する。
     /// </remarks>
     [TestFixture]

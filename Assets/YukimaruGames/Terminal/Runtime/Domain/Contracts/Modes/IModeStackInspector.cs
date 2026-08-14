@@ -12,7 +12,7 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
     public interface IModeStackInspector
     {
         /// <summary>
-        /// 現在の深さ(最下段の<c>NormalMode</c>を含む).
+        /// 現在の深さ(最下段の<c>ExecutionMode</c>を含む).
         /// </summary>
         int Depth { get; }
 

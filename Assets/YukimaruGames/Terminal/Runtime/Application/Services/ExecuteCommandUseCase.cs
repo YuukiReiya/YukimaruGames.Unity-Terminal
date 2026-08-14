@@ -211,7 +211,7 @@ namespace YukimaruGames.Terminal.Application.Services
 
                 if (_stack.Depth <= 1)
                 {
-                    // NormalModeのみ: 抜ける先が無いので何もしない.
+                    // ExecutionModeのみ: 抜ける先が無いので何もしない.
                     return;
                 }
 
@@ -430,7 +430,7 @@ namespace YukimaruGames.Terminal.Application.Services
         {
             if (_stack.Depth <= 1)
             {
-                // 最下段(NormalMode)はReplaceで置き換えられない(常に非空・最下段固定の不変条件).
+                // 最下段(ExecutionMode)はReplaceで置き換えられない(常に非空・最下段固定の不変条件).
                 // mode はまだ入場していないので OnEnterAsync は呼ばない.
                 _logger?.Send(MessageType.Warning, $"Replace was requested at the root frame and is not allowed. Use Push instead. (mode: {mode.GetType().Name})");
                 return;

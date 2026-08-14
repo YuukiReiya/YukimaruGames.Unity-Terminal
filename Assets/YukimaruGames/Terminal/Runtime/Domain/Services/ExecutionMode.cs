@@ -18,7 +18,7 @@ namespace YukimaruGames.Terminal.Domain.Services
     /// パース・履歴登録・エコー・レジストリ解決・実行 のロジックをここに移設する。
     /// モードスタックの最下段に常駐し、Popされることはない.
     /// </remarks>
-    public sealed class NormalMode : ITerminalMode
+    public sealed class ExecutionMode : ITerminalMode
     {
         private readonly ICommandLogger _logger;
         private readonly ICommandRegistry _registry;
@@ -27,7 +27,7 @@ namespace YukimaruGames.Terminal.Domain.Services
         private readonly ICommandHistory _history;
         private readonly ICommandAutocomplete _autocomplete;
 
-        public NormalMode(
+        public ExecutionMode(
             ICommandLogger logger,
             ICommandRegistry registry,
             ICommandInvoker invoker,
@@ -45,8 +45,18 @@ namespace YukimaruGames.Terminal.Domain.Services
             _autocomplete = autocomplete ?? NullCommandAutocomplete.Instance;
         }
 
+        /// <summary>
+        /// モードの識別子.
+        /// </summary>
+        /// <remarks>
+        /// 診断表示(<c>terminal.stack</c>)や<c>ModeId</c>指定でのコマンド束縛に用いる。
+        /// グローバルコマンド(<c>TerminalCommandAttribute</c>)が有効なスコープであることを表す
+        /// (モード専用コマンドしか効かない上位モードとの対比).
+        /// </remarks>
+        private const string ModeIdentifier = "global";
+
         /// <inheritdoc/>
-        public string Id => "normal";
+        public string Id => ModeIdentifier;
 
         /// <inheritdoc/>
         /// <remarks>

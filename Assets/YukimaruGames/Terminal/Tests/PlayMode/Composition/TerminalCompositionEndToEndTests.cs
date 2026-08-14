@@ -254,7 +254,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
         /// 実際の配線(ImmediateModeInstaller)経由で動作することを検証する.
         /// </summary>
         [UnityTest]
-        public IEnumerator ExecuteAsync_TerminalStackCommand_LogsNormalMode()
+        public IEnumerator ExecuteAsync_TerminalStackCommand_LogsExecutionMode()
         {
             yield return null;
 
@@ -263,7 +263,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
 
             var logs = _scope.Service.Logs;
             var dump = string.Join(" | ", logs.Select(l => $"[{l.MessageType}] {l.Message}"));
-            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message.Contains("normal")), $"logs: {dump}");
+            Assert.IsTrue(logs.Any(l => l.MessageType == MessageType.Message && l.Message.Contains("global")), $"logs: {dump}");
         }
     }
 }

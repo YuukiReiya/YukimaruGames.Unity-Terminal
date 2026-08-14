@@ -30,7 +30,7 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
         /// 現在のモードから抜けることを要求する.
         /// </summary>
         /// <param name="count">
-        /// 抜ける段数. 現在の深さでクランプされ、<c>NormalMode</c>より下には絶対に行かない.
+        /// 抜ける段数. 現在の深さでクランプされ、<c>ExecutionMode</c>より下には絶対に行かない.
         /// </param>
         void RequestPop(int count = 1);
     }
