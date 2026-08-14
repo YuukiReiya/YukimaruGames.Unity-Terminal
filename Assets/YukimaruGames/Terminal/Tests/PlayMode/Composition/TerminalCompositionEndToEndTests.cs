@@ -254,7 +254,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition
         /// 実際の配線(ImmediateModeInstaller)経由で動作することを検証する.
         /// </summary>
         [UnityTest]
-        public IEnumerator ExecuteAsync_TerminalStackCommand_LogsNormalMode()
+        public IEnumerator ExecuteAsync_TerminalStackCommand_LogsExecutionMode()
         {
             yield return null;
 

@@ -24,14 +24,14 @@ namespace YukimaruGames.Terminal.Composition
     /// <remarks>
     /// <see cref="ImmediateModeInstaller"/>との差分は描画コンテキストの構築(<see cref="BuildRenderingContext"/>)
     /// のみであり、Domain層・入力・Scopeの構築やInspector設定の再同期は<see cref="InstallerBase"/> /
-    /// <see cref="RenderingInstallerBase"/>と
+    /// <see cref="GraphicalInstallerBase"/>と
     /// 共有する(#122 / #137 / #145)。UIToolkit要素の生成は<see cref="UIToolkitViewFactory"/>、
     /// テーマ・フォントの適用は<see cref="UIToolkitThemeApplier"/>に委ねる。
     /// <c>com.unity.modules.uielements</c>が利用できない環境では本クラスごとコンパイル対象外になる
     /// (<c>TERMINAL_UITOOLKIT_AVAILABLE</c> / #125参照)。
     /// </remarks>
     [Serializable, AddTypeMenu("UIToolkit Installer")]
-    public sealed class UIToolkitInstaller : RenderingInstallerBase
+    public sealed class UIToolkitInstaller : GraphicalInstallerBase
     {
         // 現状はIMGUI版と同じテーマ設定を共有している。UIToolkitの見た目をUSS駆動へ寄せて
         // このフィールドを落とすことは別Issueで検討する(#145のスコープ外).
@@ -111,13 +111,13 @@ namespace YukimaruGames.Terminal.Composition
         {
             base.OnResolve();
 
-            SyncTheme(_theme ?? new NullTheme());
+            ApplyTheme(_theme ?? new NullTheme());
         }
 
         /// <summary>
         /// テーマ設定を実行時インスタンスへ再適用する.
         /// </summary>
-        private void SyncTheme(ITerminalTheme theme)
+        private void ApplyTheme(ITerminalTheme theme)
         {
             ThemeBinder.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
 
@@ -156,7 +156,7 @@ namespace YukimaruGames.Terminal.Composition
 
             // LogRendererを渡してから適用する(Apply内でLogRendererのフォント・コピーボタン色も同期するため).
             _themeApplier = new UIToolkitThemeApplier(windowRoot) { LogRenderer = logRenderer };
-            SyncTheme(theme);
+            ApplyTheme(theme);
 
             var inputRenderer = new InputRenderer(windowRoot.InputField, scrollAccessor, cursorView);
             var promptRenderer = new PromptRenderer(windowRoot.PromptLabel, domain.Service)

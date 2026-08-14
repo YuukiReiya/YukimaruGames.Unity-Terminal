@@ -15,7 +15,7 @@ namespace YukimaruGames.Terminal.Composition
     /// 「どちらのViewを使うか」は<see cref="TerminalBootstrapper"/>の_installerフィールド
     /// (SerializeReferenceの型選択メニュー)で切り替える想定。
     ///
-    /// 描画を持たないため<see cref="RenderingInstallerBase"/>ではなく<see cref="InstallerBase"/>を
+    /// 描画を持たないため<see cref="GraphicalInstallerBase"/>ではなく<see cref="InstallerBase"/>を
     /// 直接継承し、<see cref="BuildBackend"/>で外部ターミナルのセッションを開くだけにしている(#145).
     /// </remarks>
     [Serializable, AddTypeMenu("CLI(cmd,zsh)")]

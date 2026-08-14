@@ -16,7 +16,7 @@ namespace YukimaruGames.Terminal.Composition
     /// <see cref="ScopeBuilder"/>にあり、本クラスは順序と後始末だけを持つ。
     ///
     /// 出力先(UIバックエンド、外部ターミナル等)ごとの差分は<see cref="BuildBackend"/>のみ。
-    /// 描画を持つバックエンドは、さらに<see cref="RenderingInstallerBase"/>を継承して
+    /// 描画を持つバックエンドは、さらに<see cref="GraphicalInstallerBase"/>を継承して
     /// 描画コンテキストの構築だけを実装する(#145)。
     ///
     /// 派生クラスの型名・名前空間・アセンブリは変更しないこと。<c>SerializeReference</c>は
@@ -44,10 +44,10 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <summary>
-        /// 既定モード。<see cref="DomainBuilder"/>が生成し、<see cref="SyncOptions"/>で
+        /// 既定モード。<see cref="DomainBuilder"/>が生成し、<see cref="ApplyOptions"/>で
         /// プロンプト文字列の再適用対象になる.
         /// </summary>
-        protected NormalMode Mode { get; private set; }
+        protected ExecutionMode Mode { get; private set; }
 
         TerminalRuntimeScope IInstaller.Install()
         {
@@ -109,7 +109,7 @@ namespace YukimaruGames.Terminal.Composition
         {
             if (scope == null) return;
 
-            SyncOptions(_options ?? CreateFallbackOptions());
+            ApplyOptions(_options ?? CreateFallbackOptions());
             OnResolve();
         }
 
@@ -132,7 +132,7 @@ namespace YukimaruGames.Terminal.Composition
         /// <summary>
         /// 各種オプションを実行時インスタンスへ再適用する.
         /// </summary>
-        protected virtual void SyncOptions(ITerminalOptions options)
+        protected virtual void ApplyOptions(ITerminalOptions options)
         {
             if (Mode != null)
             {
@@ -141,7 +141,7 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <summary>
-        /// <see cref="IInstaller.Resolve"/>時、<see cref="SyncOptions"/>の後に呼ばれる.
+        /// <see cref="IInstaller.Resolve"/>時、<see cref="ApplyOptions"/>の後に呼ばれる.
         /// </summary>
         /// <remarks>
         /// テーマやアニメーションのように、派生クラス側が持つ設定の再適用に使う.

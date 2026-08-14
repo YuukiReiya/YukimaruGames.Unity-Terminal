@@ -25,14 +25,14 @@ namespace YukimaruGames.Terminal.Composition
     /// </summary>
     /// <remarks>
     /// Domain層・入力・Scopeの構築やInspector設定の再同期といったバックエンド非依存の処理は
-    /// <see cref="InstallerBase"/> / <see cref="RenderingInstallerBase"/>にあり、ここでは
+    /// <see cref="InstallerBase"/> / <see cref="GraphicalInstallerBase"/>にあり、ここでは
     /// IMGUI固有の描画コンテキストの構築だけを担う(#137 / #145).
     ///
     /// <c>_theme</c>を持つのはこのバックエンドがGUIStyleを実行時に組み立てるため。
     /// アセット側で見た目が決まるバックエンドとは事情が異なるので、基底ではなくここで宣言する.
     /// </remarks>
     [Serializable, AddTypeMenu("IMGUI Installer")]
-    public sealed class ImmediateModeInstaller : RenderingInstallerBase
+    public sealed class ImmediateModeInstaller : GraphicalInstallerBase
     {
         [SerializeReference, SerializeInterface]
         private ITerminalTheme _theme = new ImmediateModeTheme();
@@ -77,7 +77,7 @@ namespace YukimaruGames.Terminal.Composition
         {
             base.OnResolve();
 
-            SyncTheme(_theme ?? new NullTheme());
+            ApplyTheme(_theme ?? new NullTheme());
         }
 
         /// <inheritdoc/>
@@ -101,7 +101,7 @@ namespace YukimaruGames.Terminal.Composition
             _logCopyButtonGUIStyleAccessor = new GUIStyleAccessor(_fontAccessor);
 
             // Apply Colors immediately
-            SyncTheme(theme);
+            ApplyTheme(theme);
 
             _cursorFlashSpeedAccessor = new CursorFlashSpeedAccessor(theme.CursorFlashSpeed);
             var launcherVisibleAccessor = CreateLauncherVisibleAccessor(options);
@@ -214,7 +214,7 @@ namespace YukimaruGames.Terminal.Composition
         /// <summary>
         /// テーマ設定を実行時インスタンスへ再適用する.
         /// </summary>
-        private void SyncTheme(ITerminalTheme theme)
+        private void ApplyTheme(ITerminalTheme theme)
         {
             ThemeBinder.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
 

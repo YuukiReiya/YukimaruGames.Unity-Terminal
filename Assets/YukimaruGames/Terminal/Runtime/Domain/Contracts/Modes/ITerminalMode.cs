@@ -10,7 +10,7 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
     /// </summary>
     /// <remarks>
     /// 「通常状態も1つのモード」として統一する設計のため、通常のコマンド実行を担う実装
-    /// (<c>NormalMode</c>)もこのインターフェイスを実装する。モードはスタックの変更権限
+    /// (<c>ExecutionMode</c>)もこのインターフェイスを実装する。モードはスタックの変更権限
     /// (Push/Pop)を持たず、遷移は必ず <see cref="IModeContext.Transitions"/> 経由で要求する.
     /// </remarks>
     public interface ITerminalMode

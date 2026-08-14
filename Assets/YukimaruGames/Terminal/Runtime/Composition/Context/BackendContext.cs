@@ -9,7 +9,7 @@ namespace YukimaruGames.Terminal.Composition
     /// </summary>
     /// <remarks>
     /// <see cref="InstallerBase"/>の唯一の抽象点<c>BuildBackend</c>の戻り値。
-    /// 描画を持つバックエンドは<see cref="RenderingInstallerBase"/>が
+    /// 描画を持つバックエンドは<see cref="GraphicalInstallerBase"/>が
     /// RenderingContextとCoordinatorから合成し、外部ターミナル等の描画を持たない
     /// バックエンドはセッション等をそのまま詰めて返す.
     /// </remarks>

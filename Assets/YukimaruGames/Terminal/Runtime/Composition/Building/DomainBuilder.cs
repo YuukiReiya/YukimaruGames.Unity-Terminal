@@ -38,7 +38,7 @@ namespace YukimaruGames.Terminal.Composition
             var history = new CommandHistory();
             var discover = new CommandDiscoverer(logger, new[] { DefaultCommandAssembly }.Concat(options.AdditionalCommandAssemblies ?? Array.Empty<string>()));
             var autocomplete = new CommandAutocomplete();
-            var normalMode = new NormalMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
+            var normalMode = new ExecutionMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
             var modeCommandBinder = new ModeCommandBinder(discover, () => new CommandRegistry(logger), logger);
             var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode, modeCommandBinder);
             var service = new TerminalService(

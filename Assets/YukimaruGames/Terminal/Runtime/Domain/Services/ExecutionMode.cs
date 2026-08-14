@@ -18,7 +18,7 @@ namespace YukimaruGames.Terminal.Domain.Services
     /// パース・履歴登録・エコー・レジストリ解決・実行 のロジックをここに移設する。
     /// モードスタックの最下段に常駐し、Popされることはない.
     /// </remarks>
-    public sealed class NormalMode : ITerminalMode
+    public sealed class ExecutionMode : ITerminalMode
     {
         private readonly ICommandLogger _logger;
         private readonly ICommandRegistry _registry;
@@ -27,7 +27,7 @@ namespace YukimaruGames.Terminal.Domain.Services
         private readonly ICommandHistory _history;
         private readonly ICommandAutocomplete _autocomplete;
 
-        public NormalMode(
+        public ExecutionMode(
             ICommandLogger logger,
             ICommandRegistry registry,
             ICommandInvoker invoker,

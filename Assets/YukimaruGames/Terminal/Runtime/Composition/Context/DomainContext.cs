@@ -40,8 +40,8 @@ namespace YukimaruGames.Terminal.Composition
         /// </summary>
         /// <remarks>
         /// <c>ITerminalMode.Prompt</c>はget-onlyで、プロンプト文字列を設定できるのは具象の
-        /// <see cref="NormalMode"/>だけのため、インターフェースではなく具象を保持する.
+        /// <see cref="ExecutionMode"/>だけのため、インターフェースではなく具象を保持する.
         /// </remarks>
-        public NormalMode Mode { get; set; }
+        public ExecutionMode Mode { get; set; }
     }
 }

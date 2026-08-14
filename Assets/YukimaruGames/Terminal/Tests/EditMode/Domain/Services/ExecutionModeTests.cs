@@ -14,7 +14,7 @@ using YukimaruGames.Terminal.SharedKernel;
 namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
 {
     /// <summary>
-    /// <see cref="NormalMode"/> のパース・履歴・エコー・実行委譲を検証するテストクラス。
+    /// <see cref="ExecutionMode"/> のパース・履歴・エコー・実行委譲を検証するテストクラス。
     /// </summary>
     /// <remarks>
     /// 旧 <c>ExecuteCommandUseCaseTests</c> が検証していた「1行の解釈」に関するテスト群の移送先。
@@ -22,7 +22,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
     /// <c>ExecuteCommandUseCaseTests</c> 側に残る(Phase4でディスパッチャ化に合わせて更新予定)。
     /// </remarks>
     [TestFixture]
-    public sealed class NormalModeTests
+    public sealed class ExecutionModeTests
     {
         // ─── Mocks ───────────────────────────────────────────────────────────
 
@@ -125,7 +125,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         private MockCommandInvoker _invoker;
         private MockCommandParser _parser;
         private MockCommandHistory _history;
-        private NormalMode _sut;
+        private ExecutionMode _sut;
 
         private static readonly CommandHandler SyncHandler = new(_ => { }, "cmd", 0, 0, "");
         private static readonly CommandHandler AsyncHandler = new((_, _) => default, "cmd", 0, 0, "");
@@ -138,7 +138,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
             _invoker = new MockCommandInvoker();
             _parser = new MockCommandParser();
             _history = new MockCommandHistory();
-            _sut = new NormalMode(_logger, _registry, _invoker, _parser, _history, autocomplete: null);
+            _sut = new ExecutionMode(_logger, _registry, _invoker, _parser, _history, autocomplete: null);
         }
 
         private ValueTask<ModeResult> HandleAsync(string text, CancellationToken cancellationToken = default)
@@ -282,7 +282,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         [Test]
         public void HandleAsync_NullLogger_DoesNotThrow()
         {
-            var sut = new NormalMode(null, _registry, _invoker, _parser, _history, autocomplete: null);
+            var sut = new ExecutionMode(null, _registry, _invoker, _parser, _history, autocomplete: null);
             _parser.CommandName = "cmd";
             _registry.Add("cmd", SyncHandler);
 
@@ -310,14 +310,14 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Domain.Services
         [Test]
         public void Autocomplete_NullInjected_ReturnsNullObject()
         {
-            var sut = new NormalMode(_logger, _registry, _invoker, _parser, _history, autocomplete: null);
+            var sut = new ExecutionMode(_logger, _registry, _invoker, _parser, _history, autocomplete: null);
             Assert.IsNotNull(sut.Autocomplete);
         }
 
         [Test]
         public void History_NullInjected_ReturnsNullObject()
         {
-            var sut = new NormalMode(_logger, _registry, _invoker, _parser, history: null, autocomplete: null);
+            var sut = new ExecutionMode(_logger, _registry, _invoker, _parser, history: null, autocomplete: null);
             Assert.IsNotNull(sut.History);
         }
 

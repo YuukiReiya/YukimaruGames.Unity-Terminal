@@ -21,7 +21,7 @@ namespace YukimaruGames.Terminal.Domain.Contracts.Modes
         public string TypeName { get; }
 
         /// <summary>
-        /// スタックの深さ(最下段の<c>NormalMode</c>が0).
+        /// スタックの深さ(最下段の<c>ExecutionMode</c>が0).
         /// </summary>
         public int Depth { get; }
 

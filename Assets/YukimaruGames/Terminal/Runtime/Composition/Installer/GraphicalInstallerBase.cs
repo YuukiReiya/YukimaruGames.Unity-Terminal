@@ -41,7 +41,7 @@ namespace YukimaruGames.Terminal.Composition
     /// 各自で宣言する(#145).
     /// </remarks>
     [Serializable]
-    public abstract class RenderingInstallerBase : InstallerBase
+    public abstract class GraphicalInstallerBase : InstallerBase
     {
         #region inner-struct
 
@@ -99,17 +99,17 @@ namespace YukimaruGames.Terminal.Composition
         #region runtime-instances
 
         /// <summary>
-        /// ウィンドウ開閉アニメーションの状態。<see cref="SyncAnimation"/>で再適用対象になる.
+        /// ウィンドウ開閉アニメーションの状態。<see cref="ApplyAnimation"/>で再適用対象になる.
         /// </summary>
         protected WindowAnimationAccessor WindowAnimation { get; set; }
 
         /// <summary>
-        /// ランチャーボタンの表示状態。<see cref="SyncOptions"/>で再適用対象になる.
+        /// ランチャーボタンの表示状態。<see cref="ApplyOptions"/>で再適用対象になる.
         /// </summary>
         protected LauncherVisibleAccessor LauncherVisibility { get; set; }
 
         /// <summary>
-        /// プロンプト描画。<see cref="SyncOptions"/>でローディング表示設定の再適用対象になる.
+        /// プロンプト描画。<see cref="ApplyOptions"/>でローディング表示設定の再適用対象になる.
         /// </summary>
         protected IPromptRenderer PromptRenderer { get; set; }
 
@@ -154,13 +154,13 @@ namespace YukimaruGames.Terminal.Composition
         {
             base.OnResolve();
 
-            SyncAnimation(_animation ?? new NullAnimation());
+            ApplyAnimation(_animation ?? new NullAnimation());
         }
 
         /// <inheritdoc/>
-        protected override void SyncOptions(ITerminalOptions options)
+        protected override void ApplyOptions(ITerminalOptions options)
         {
-            base.SyncOptions(options);
+            base.ApplyOptions(options);
 
             if (LauncherVisibility != null)
             {
@@ -178,7 +178,7 @@ namespace YukimaruGames.Terminal.Composition
         /// <summary>
         /// アニメーション設定を実行時インスタンスへ再適用する.
         /// </summary>
-        protected virtual void SyncAnimation(ITerminalAnimation animation)
+        protected virtual void ApplyAnimation(ITerminalAnimation animation)
         {
             if (WindowAnimation == null) return;
 
