@@ -212,6 +212,13 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
 
                 var copyButtonRoot = CreateElement(CopyButtonName, _root);
                 _copyButtonGraphic = copyButtonRoot.gameObject.AddComponent<Image>();
+
+                // 背景は透明にする。Imageの既定色(白)のままだとログ行ごとに白い箱が並び、
+                // テーマの背景色と噛み合わない。Image自体はクリック判定のために残す
+                // (アルファ0でもレイキャストは既定で通る)。ラベルの色はテーマの
+                // CopyButtonColorで別途着色する.
+                _copyButtonGraphic.color = Color.clear;
+
                 _copyButton = copyButtonRoot.gameObject.AddComponent<Button>();
                 _copyButton.targetGraphic = _copyButtonGraphic;
                 _copyButtonLabel = CreateText($"{CopyButtonName}-text", copyButtonRoot);

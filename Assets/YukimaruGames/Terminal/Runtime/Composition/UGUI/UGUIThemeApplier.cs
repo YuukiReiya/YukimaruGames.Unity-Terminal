@@ -77,9 +77,19 @@ namespace YukimaruGames.Terminal.Composition
             if (fontSize > 0) text.fontSize = fontSize;
         }
 
+        /// <summary>
+        /// ボタンへテーマを適用する.
+        /// </summary>
+        /// <remarks>
+        /// 入力欄と同じ理由で背景は透明にする(<see cref="ApplyInputField"/>参照)。
+        /// IMGUI版・UIToolkit版のボタンは<c>[-]</c>・<c>[x]</c>のような文字そのものが
+        /// ボタンであり、独立した背景を持たない。<c>Image</c>自体はクリック判定のために残す.
+        /// </remarks>
         private static void ApplyButton(Button button, Color color, Font font, int fontSize)
         {
             if (button == null) return;
+
+            if (button.image != null) button.image.color = Color.clear;
 
             ApplyText(button.GetComponentInChildren<Text>(true), color, font, fontSize);
         }
