@@ -53,7 +53,11 @@ namespace YukimaruGames.Terminal.Composition
             [Tooltip("Canvasの描画順。他のUIより手前に出したい場合に上げる。")]
             [SerializeField] private int _sortingOrder = short.MaxValue;
 
+            [Tooltip("UI全体の拡大率。1でIMGUI版と同じ「1px = 1px」。画面が狭く文字が大きすぎる場合に下げる。")]
+            [SerializeField] private float _scaleFactor = 1f;
+
             public int SortingOrder => _sortingOrder;
+            public float ScaleFactor => _scaleFactor;
         }
 
         #region runtime-instances
@@ -115,7 +119,7 @@ namespace YukimaruGames.Terminal.Composition
 
             var useInputSystemModule = ResolveKeyboardType(options) == InputKeyboardType.InputSystem;
             var (windowRoot, generatedEventSystem) =
-                UGUIViewFactory.Create(_prefab, uguiOptions.SortingOrder, useInputSystemModule);
+                UGUIViewFactory.Create(_prefab, uguiOptions.SortingOrder, uguiOptions.ScaleFactor, useInputSystemModule);
             _windowRoot = windowRoot;
             _generatedEventSystem = generatedEventSystem;
 

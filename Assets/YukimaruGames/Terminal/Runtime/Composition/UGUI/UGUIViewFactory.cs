@@ -28,6 +28,7 @@ namespace YukimaruGames.Terminal.Composition
         /// Canvas配下のUIツリーを持つPrefab。<c>null</c>の場合はコードのみで最小構成を組み立てる.
         /// </param>
         /// <param name="sortingOrder">Canvasの描画順.</param>
+        /// <param name="scaleFactor">UI全体の拡大率(1でIMGUI版と同じ「1px = 1px」).</param>
         /// <param name="useInputSystemModule">
         /// EventSystemを自前生成する場合に、Input System用の入力モジュールを使うか.
         /// </param>
@@ -39,6 +40,7 @@ namespace YukimaruGames.Terminal.Composition
         internal static (WindowRoot windowRoot, RuntimeGeneratedAsset generatedEventSystem) Create(
             GameObject prefab,
             int sortingOrder,
+            float scaleFactor,
             bool useInputSystemModule)
         {
             var generatedEventSystem = EnsureEventSystem(useInputSystemModule);
@@ -47,7 +49,7 @@ namespace YukimaruGames.Terminal.Composition
 
             try
             {
-                canvasGameObject = CreateCanvas(prefab, sortingOrder, out var canvasRoot);
+                canvasGameObject = CreateCanvas(prefab, sortingOrder, scaleFactor, out var canvasRoot);
 
                 var windowRoot = canvasGameObject.AddComponent<WindowRoot>();
                 windowRoot.Initialize(canvasRoot);
@@ -68,7 +70,7 @@ namespace YukimaruGames.Terminal.Composition
             }
         }
 
-        private static GameObject CreateCanvas(GameObject prefab, int sortingOrder, out RectTransform canvasRoot)
+        private static GameObject CreateCanvas(GameObject prefab, int sortingOrder, float scaleFactor, out RectTransform canvasRoot)
         {
             GameObject canvasGameObject;
 
@@ -93,7 +95,7 @@ namespace YukimaruGames.Terminal.Composition
             // (ConstantPhysicalSize)が高DPI環境で表示サイズを大きく狂わせた(#122).
             var scaler = GetOrAddComponent<CanvasScaler>(canvasGameObject);
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
-            scaler.scaleFactor = 1f;
+            scaler.scaleFactor = scaleFactor > 0f ? scaleFactor : 1f;
 
             GetOrAddComponent<GraphicRaycaster>(canvasGameObject);
 

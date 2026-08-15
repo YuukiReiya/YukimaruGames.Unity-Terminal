@@ -176,6 +176,7 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
             private readonly Button _copyButton;
             private readonly Graphic _copyButtonGraphic;
             private readonly Text _copyButtonLabel;
+            private readonly LayoutElement _copyButtonLayout;
 
             private IClipboardRenderer _clipboardRenderer;
             private string _message;
@@ -200,7 +201,13 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
                 _label = CreateText(MessageName, _root);
+
+                // 希望幅を主張させない(0)。主張すると「メッセージ全文の幅 + コピーボタン幅」を
+                // 確保しようとして行幅を超え、子が行の外へはみ出す(実機で確認)。
+                // 余った幅を受け取って(flexibleWidth=1)折り返させる.
                 var labelLayout = _label.gameObject.AddComponent<LayoutElement>();
+                labelLayout.minWidth = 0f;
+                labelLayout.preferredWidth = 0f;
                 labelLayout.flexibleWidth = 1f;
 
                 var copyButtonRoot = CreateElement(CopyButtonName, _root);
@@ -210,6 +217,10 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 _copyButtonLabel = CreateText($"{CopyButtonName}-text", copyButtonRoot);
                 _copyButtonLabel.text = CopyButtonText;
                 _copyButtonLabel.alignment = TextAnchor.MiddleCenter;
+
+                // ボタン側は伸縮させず、ラベルが収まる幅だけを占める.
+                _copyButtonLayout = copyButtonRoot.gameObject.AddComponent<LayoutElement>();
+                _copyButtonLayout.flexibleWidth = 0f;
 
                 // クリック購読は生成時に1度だけ行う。Apply()のたびに登録すると多重発火する.
                 _copyButton.onClick.AddListener(OnCopyButtonClicked);
@@ -253,6 +264,11 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 _copyButtonLabel.color = copyButtonColor;
                 if (font != null) _copyButtonLabel.font = font;
                 if (fontSize > 0) _copyButtonLabel.fontSize = fontSize;
+
+                // フォントサイズが変わるとラベルの実寸も変わるため、適用後に測り直す.
+                var copyButtonWidth = _copyButtonLabel.preferredWidth;
+                _copyButtonLayout.minWidth = copyButtonWidth;
+                _copyButtonLayout.preferredWidth = copyButtonWidth;
 
                 SetCopyButtonVisible(copyButtonVisible);
 

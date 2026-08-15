@@ -1,5 +1,6 @@
 #if TERMINAL_UGUI_AVAILABLE
 using System;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using YukimaruGames.Terminal.Adapters.IMGUI;
 using YukimaruGames.Terminal.Presentation.Contracts;
@@ -20,9 +21,21 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         private readonly IScrollMutator _scrollMutator;
         private readonly CursorView _cursorView;
 
+        /// <summary>
+        /// IME変換の終了を通知するまで待つフレーム数.
+        /// </summary>
+        /// <remarks>
+        /// 変換確定のEnterは、IMEが確定を処理した後にターミナル側の入力ハンドラ(Update駆動)にも
+        /// 届く。その時点では<c>compositionString</c>が既に空のため「変換中ではない」と判定され、
+        /// 確定のつもりで押したEnterがコマンド送信として誤発火する(実機で確認)。
+        /// 変換終了の通知を数フレーム遅らせ、確定直後のEnterを変換中として扱う.
+        /// </remarks>
+        private const int ImeCompositionGraceFrames = 2;
+
         private bool _isCurrentlyFocused;
         private bool _isImeComposing;
         private bool _isSyncingFocus;
+        private int _imeCompositionGrace;
 
         /// <inheritdoc/>
         public event Action<string> OnInputTextChanged;
@@ -88,7 +101,20 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
             switch (focus)
             {
                 case WindowFocus.Apply:
-                    if (!_inputField.isFocused) _inputField.ActivateInputField();
+                    if (!_inputField.isFocused)
+                    {
+                        // ActivateInputField()だけでは、同フレーム内でEnterによる
+                        // DeactivateInputField()が後から走ると打ち消される。EventSystemの選択も
+                        // 明示して、次のUpdateで確実にフォーカスが戻るようにする(実機で確認).
+                        var eventSystem = EventSystem.current;
+                        if (eventSystem != null && eventSystem.currentSelectedGameObject != _inputField.gameObject)
+                        {
+                            eventSystem.SetSelectedGameObject(_inputField.gameObject);
+                        }
+
+                        _inputField.ActivateInputField();
+                    }
+
                     break;
                 case WindowFocus.Release:
                     if (_inputField.isFocused) _inputField.DeactivateInputField();
@@ -140,14 +166,46 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         private void PollImeComposingState()
         {
             var composing = !string.IsNullOrEmpty(UnityEngine.Input.compositionString);
-            if (_isImeComposing == composing) return;
 
-            _isImeComposing = composing;
-            OnImeComposingStateChanged?.Invoke(composing);
+            if (composing)
+            {
+                _imeCompositionGrace = ImeCompositionGraceFrames;
+
+                if (_isImeComposing) return;
+
+                _isImeComposing = true;
+                OnImeComposingStateChanged?.Invoke(true);
+                return;
+            }
+
+            if (!_isImeComposing) return;
+
+            // 変換が終わっても数フレームは「変換中」として扱う(確定のEnterによる誤送信を防ぐ).
+            if (_imeCompositionGrace > 0)
+            {
+                --_imeCompositionGrace;
+                return;
+            }
+
+            _isImeComposing = false;
+            OnImeComposingStateChanged?.Invoke(false);
         }
 
+        /// <summary>
+        /// 入力欄の値が変化したときの通知.
+        /// </summary>
+        /// <remarks>
+        /// 未フォーカス時の変化は伝播しない。uGUIの<see cref="InputField"/>はEscapeを
+        /// 「キャンセル」として扱い、アクティブ化した時点のテキストへ巻き戻したうえで
+        /// この通知を発火する。そのまま伝播させると、Escapeでウィンドウを閉じただけで
+        /// 入力中の文字列がPresenter側からも消える(実機で確認)。
+        /// 利用者の編集は必ずフォーカス中に起きるため、未フォーカス時の通知は無視してよい
+        /// (コードからの書き換えは<c>SetTextWithoutNotify</c>を使うのでそもそも通知されない).
+        /// </remarks>
         private void OnValueChanged(string value)
         {
+            if (!_inputField.isFocused) return;
+
             OnInputTextChanged?.Invoke(value);
             _scrollMutator?.ScrollToEnd();
         }
