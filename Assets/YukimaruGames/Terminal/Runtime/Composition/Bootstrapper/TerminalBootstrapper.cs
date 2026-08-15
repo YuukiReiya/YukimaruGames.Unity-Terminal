@@ -43,14 +43,6 @@ namespace YukimaruGames.Terminal.Composition
             _scope = scope;
         }
 
-        private void OnValidate()
-        {
-            if (UnityEngine.Application.isPlaying && _scope != null)
-            {
-                _installer?.Resolve(_scope);
-            }
-        }
-
         /// <summary>
         /// 全オブジェクトの<c>OnEnable</c>完了後に1回だけ、<see cref="IStartable"/>を駆動する.
         /// </summary>
@@ -115,6 +107,16 @@ namespace YukimaruGames.Terminal.Composition
             catch (Exception e)
             {
                 Debug.LogException(e, this);
+            }
+        }
+
+        // エディター専用コールバックのため、実行順の並びには含めず末尾にまとめる
+        // (.clinerules/01-coding-style.md).
+        private void OnValidate()
+        {
+            if (UnityEngine.Application.isPlaying && _scope != null)
+            {
+                _installer?.Resolve(_scope);
             }
         }
     }

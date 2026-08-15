@@ -37,6 +37,7 @@ namespace YukimaruGames.Terminal.Composition
 
         private RuntimeGeneratedAsset _generated;
         private bool _started;
+        private bool _disposed;
 
         /// <param name="keyboardType">
         /// 自前生成する場合に、どの入力モジュールを付けるかの判断材料.
@@ -54,7 +55,11 @@ namespace YukimaruGames.Terminal.Composition
         /// <inheritdoc/>
         void IStartable.Start()
         {
-            if (_started) return;
+            // 破棄後の生成を防ぐ。生成してしまうと、そのGameObjectを破棄する経路がもう無い。
+            // 現在の呼び出し経路では起きない(TerminalBootstrapperは_scopeをnullにしてから
+            // 破棄するため、破棄後にEntryPoint.Start()は走らない)が、駆動経路が増えたときの
+            // 防御として持たせておく.
+            if (_started || _disposed) return;
             _started = true;
 
             // 全OnEnable完了後なので、ここでのcurrentは信頼できる.
@@ -113,6 +118,8 @@ namespace YukimaruGames.Terminal.Composition
 
         void IDisposable.Dispose()
         {
+            _disposed = true;
+
             // 自前生成した分だけを破棄する(既存のEventSystemには触らない).
             _generated?.Dispose();
             _generated = null;
