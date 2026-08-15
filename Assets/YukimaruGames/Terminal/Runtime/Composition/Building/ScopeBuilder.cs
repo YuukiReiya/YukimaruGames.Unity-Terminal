@@ -10,9 +10,9 @@ namespace YukimaruGames.Terminal.Composition
     /// 構築済みコンポーネントから<see cref="TerminalRuntimeScope"/>を組み立てる.
     /// </summary>
     /// <remarks>
-    /// 更新対象(<see cref="IUpdatable"/>)・破棄対象(<see cref="IDisposable"/> /
-    /// <see cref="IAsyncDisposable"/>)の振り分けはバックエンドに依存しないため、
-    /// 継承ではなく静的ヘルパーとして切り出してある(#145).
+    /// 初期化対象(<see cref="IStartable"/>)・更新対象(<see cref="IUpdatable"/>)・
+    /// 破棄対象(<see cref="IDisposable"/> / <see cref="IAsyncDisposable"/>)の振り分けは
+    /// バックエンドに依存しないため、継承ではなく静的ヘルパーとして切り出してある(#145).
     /// </remarks>
     internal static class ScopeBuilder
     {
@@ -23,11 +23,12 @@ namespace YukimaruGames.Terminal.Composition
         {
             var instances = domain.Components.Concat(backend.Components).ToArray();
 
+            var startables = instances.OfType<IStartable>().ToList();
             var updatables = instances.OfType<IUpdatable>().ToList();
             var asyncDisposables = instances.OfType<IAsyncDisposable>().ToList();
             var disposables = instances.OfType<IDisposable>().Where(d => d is not IAsyncDisposable).ToList();
 
-            var entryPoint = new TerminalEntryPoint(updatables, backend.GUI);
+            var entryPoint = new TerminalEntryPoint(startables, updatables, backend.GUI);
 
             return new TerminalRuntimeScope(
                 entryPoint,

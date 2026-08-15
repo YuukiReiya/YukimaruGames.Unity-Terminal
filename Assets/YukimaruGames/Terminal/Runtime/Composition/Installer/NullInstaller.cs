@@ -23,7 +23,7 @@ namespace YukimaruGames.Terminal.Composition
             var autocomplete = new CommandAutocomplete();
             var normalMode = new ExecutionMode(logger, registry, invoker, parser, history, autocomplete);
             var executeCommandUseCase = new ExecuteCommandUseCase(logger, normalMode);
-            var entryPoint = new TerminalEntryPoint(Array.Empty<IUpdatable>(), null);
+            var entryPoint = new TerminalEntryPoint(Array.Empty<IStartable>(), Array.Empty<IUpdatable>(), null);
             var components = new object[]
             {
                 logger,

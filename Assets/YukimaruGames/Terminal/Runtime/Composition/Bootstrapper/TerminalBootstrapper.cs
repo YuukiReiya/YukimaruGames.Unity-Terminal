@@ -51,6 +51,20 @@ namespace YukimaruGames.Terminal.Composition
             }
         }
 
+        /// <summary>
+        /// 全オブジェクトの<c>OnEnable</c>完了後に1回だけ、<see cref="IStartable"/>を駆動する.
+        /// </summary>
+        /// <remarks>
+        /// <c>Awake</c>では他コンポーネントの初期化完了を前提にできないため、
+        /// それを必要とする処理はここから走らせる。<c>Install()</c>自体をここへ移すことは
+        /// しない。移すと利用者が<c>Awake</c>/<c>OnEnable</c>からコマンド登録APIを呼んだ場合に、
+        /// <c>_scope</c>がまだnullで<b>無言で失敗</b>するため(#152).
+        /// </remarks>
+        private void Start()
+        {
+            _scope?.EntryPoint.Start();
+        }
+
         private void Update()
         {
             _scope?.EntryPoint.Update();
