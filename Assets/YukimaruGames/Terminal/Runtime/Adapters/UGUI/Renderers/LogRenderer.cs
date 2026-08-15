@@ -171,9 +171,6 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
             private const string CopyButtonName = "log-line-copy-button";
             private const string CopyButtonText = "copy";
 
-            /// <summary>コピーボタンのラベル左右に確保する余白(px).</summary>
-            private const float CopyButtonPadding = 4f;
-
             private readonly RectTransform _root;
             private readonly Text _label;
             private readonly Button _copyButton;
@@ -228,12 +225,6 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 _copyButtonLabel.text = CopyButtonText;
                 _copyButtonLabel.alignment = TextAnchor.MiddleCenter;
 
-                // ボタンのラベルは折り返さない。uGUIのTextはpreferredWidthちょうどの幅を
-                // 与えても丸め誤差で折り返すことがあり、"copy"が"cop"/"y"の2行に割れて
-                // 行の高さを超えて描画が破綻する(実機で確認。幅は一致しているのに行数が2になる)。
-                // 折り返す必要があるのはメッセージ側だけなので、ここはOverflowにする.
-                _copyButtonLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
-
                 // ボタン側は伸縮させず、ラベルが収まる幅だけを占める.
                 _copyButtonLayout = copyButtonRoot.gameObject.AddComponent<LayoutElement>();
                 _copyButtonLayout.flexibleWidth = 0f;
@@ -281,9 +272,8 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 if (font != null) _copyButtonLabel.font = font;
                 if (fontSize > 0) _copyButtonLabel.fontSize = fontSize;
 
-                // フォントサイズが変わるとラベルの実寸も変わるため、適用後に測り直す。
-                // 端数の切り上げと余白を足して、最後の文字が欠けないようにする.
-                var copyButtonWidth = Mathf.Ceil(_copyButtonLabel.preferredWidth) + CopyButtonPadding;
+                // フォントサイズが変わるとラベルの実寸も変わるため、適用後に測り直す.
+                var copyButtonWidth = _copyButtonLabel.preferredWidth;
                 _copyButtonLayout.minWidth = copyButtonWidth;
                 _copyButtonLayout.preferredWidth = copyButtonWidth;
 

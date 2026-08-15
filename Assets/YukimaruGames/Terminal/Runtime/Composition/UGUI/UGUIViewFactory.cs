@@ -28,7 +28,7 @@ namespace YukimaruGames.Terminal.Composition
         /// Canvas配下のUIツリーを持つPrefab。<c>null</c>の場合はコードのみで最小構成を組み立てる.
         /// </param>
         /// <param name="sortingOrder">Canvasの描画順.</param>
-        /// <param name="scale">UI全体の拡大率の決め方.</param>
+        /// <param name="scaleFactor">UI全体の拡大率(1でIMGUI版と同じ「1px = 1px」).</param>
         /// <param name="useInputSystemModule">
         /// EventSystemを自前生成する場合に、Input System用の入力モジュールを使うか.
         /// </param>
@@ -40,7 +40,7 @@ namespace YukimaruGames.Terminal.Composition
         internal static (WindowRoot windowRoot, RuntimeGeneratedAsset generatedEventSystem) Create(
             GameObject prefab,
             int sortingOrder,
-            in CanvasScaleSettings scale,
+            float scaleFactor,
             bool useInputSystemModule)
         {
             var generatedEventSystem = EnsureEventSystem(useInputSystemModule);
@@ -49,7 +49,7 @@ namespace YukimaruGames.Terminal.Composition
 
             try
             {
-                canvasGameObject = CreateCanvas(prefab, sortingOrder, scale, out var canvasRoot);
+                canvasGameObject = CreateCanvas(prefab, sortingOrder, scaleFactor, out var canvasRoot);
 
                 var windowRoot = canvasGameObject.AddComponent<WindowRoot>();
                 windowRoot.Initialize(canvasRoot);
@@ -70,7 +70,7 @@ namespace YukimaruGames.Terminal.Composition
             }
         }
 
-        private static GameObject CreateCanvas(GameObject prefab, int sortingOrder, in CanvasScaleSettings scale, out RectTransform canvasRoot)
+        private static GameObject CreateCanvas(GameObject prefab, int sortingOrder, float scaleFactor, out RectTransform canvasRoot)
         {
             GameObject canvasGameObject;
 
@@ -91,32 +91,16 @@ namespace YukimaruGames.Terminal.Composition
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = sortingOrder;
 
-            // UIToolkit版はPanelSettingsの既定(ConstantPhysicalSize)が高DPI環境で表示サイズを
-            // 大きく狂わせたため(#122)、物理サイズ基準は使わない。
-            // 拡大率の算出はUnity標準のCanvasScalerに任せ、こちらはCanvas.scaleFactorを読むだけにする
-            // (WindowRoot.CanvasScale参照).
+            // IMGUI版の「1px = 1px」に揃える。UIToolkit版はPanelSettingsの既定
+            // (ConstantPhysicalSize)が高DPI環境で表示サイズを大きく狂わせた(#122).
             var scaler = GetOrAddComponent<CanvasScaler>(canvasGameObject);
-            ApplyScaleSettings(scaler, scale);
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+            scaler.scaleFactor = scaleFactor > 0f ? scaleFactor : 1f;
 
             GetOrAddComponent<GraphicRaycaster>(canvasGameObject);
 
             canvasRoot = canvasGameObject.GetComponent<RectTransform>();
             return canvasGameObject;
-        }
-
-        private static void ApplyScaleSettings(CanvasScaler scaler, in CanvasScaleSettings scale)
-        {
-            if (scale.Mode == UGUIScaleMode.AutoFetch)
-            {
-                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-                scaler.referenceResolution = scale.ReferenceResolution;
-                scaler.matchWidthOrHeight = Mathf.Clamp01(scale.MatchWidthOrHeight);
-                return;
-            }
-
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
-            scaler.scaleFactor = scale.ScaleFactor > 0f ? scale.ScaleFactor : 1f;
         }
 
         /// <summary>
