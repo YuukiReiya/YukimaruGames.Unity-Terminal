@@ -35,6 +35,9 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         private bool _isImeComposing;
         private int _imeCompositionGrace;
 
+        /// <summary>直前のフレームで適用済みのフォーカス意図.</summary>
+        private WindowFocus _appliedIntent;
+
         /// <inheritdoc/>
         public event Action<string> OnInputTextChanged;
         /// <inheritdoc/>
@@ -82,7 +85,7 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 MoveCursorToEnd();
             }
 
-            ApplyFocus(data.Focus);
+            SyncFocus(data.Focus);
 
             if (data.IsMoveCursorToEnd)
             {
@@ -90,34 +93,87 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 OnMoveCursorToEndTriggerChanged?.Invoke(false);
             }
 
-            PollFocusState(data.Focus);
             PollImeComposingState();
         }
 
-        private void ApplyFocus(WindowFocus focus)
+        /// <summary>
+        /// Presenter側のフォーカス意図と<see cref="InputField"/>の実状態を突き合わせて同期する.
+        /// </summary>
+        /// <remarks>
+        /// 単純な毎フレーム同期では成立しない。<see cref="InputField.isFocused"/>が<c>false</c>に
+        /// なる原因が2種類あり、扱いが正反対になるため:
+        /// <list type="bullet">
+        /// <item>Enterでの送信・Escapeでのキャンセル時に<see cref="InputField"/>が内部で呼ぶ
+        /// <c>DeactivateInputField()</c>。これを喪失として扱うと、送信のたびに意図が
+        /// <see cref="WindowFocus.Release"/>へ上書きされ、以後入力できないまま復帰しなくなる.</item>
+        /// <item>利用者が他所をクリックして離脱した場合。これを再アクティブ化してしまうと、
+        /// 入力欄からフォーカスを外す手段が無くなる.</item>
+        /// </list>
+        /// <para>
+        /// 判別には<see cref="EventSystem.currentSelectedGameObject"/>を使う。
+        /// <c>DeactivateInputField()</c>はEventSystemの選択をクリアしないため前者では選択が
+        /// 入力欄に残り、後者では<c>null</c>か別のオブジェクトへ移る。
+        /// ただしこの判定は<b>再アクティブ化より先</b>に行う必要がある(先に選択を入力欄へ
+        /// 戻してしまうと、離脱したという証拠を自分で消してしまう).
+        /// </para>
+        /// <para>
+        /// また、意図が指示されたフレーム(<c>isCommand</c>)とその後の維持フレームも区別する。
+        /// 指示フレームはターミナル側の要求として無条件に従い、維持フレームでは利用者の操作
+        /// (クリックでの離脱・再フォーカス)を検出して意図の側を追従させる.
+        /// </para>
+        /// </remarks>
+        private void SyncFocus(WindowFocus intent)
         {
-            switch (focus)
+            var isCommand = intent != _appliedIntent;
+            _appliedIntent = intent;
+
+            if (intent == WindowFocus.Apply)
             {
-                case WindowFocus.Apply:
-                    if (!_inputField.isFocused)
-                    {
-                        // ActivateInputField()だけでは、同フレーム内でEnterによる
-                        // DeactivateInputField()が後から走ると打ち消される。EventSystemの選択も
-                        // 明示して、次のUpdateで確実にフォーカスが戻るようにする(実機で確認).
-                        var eventSystem = EventSystem.current;
-                        if (eventSystem != null && eventSystem.currentSelectedGameObject != _inputField.gameObject)
-                        {
-                            eventSystem.SetSelectedGameObject(_inputField.gameObject);
-                        }
+                if (_inputField.isFocused) return;
 
-                        _inputField.ActivateInputField();
-                    }
+                if (!isCommand && !IsSelectionOurs())
+                {
+                    OnFocusControlChanged?.Invoke(WindowFocus.Release);
+                    return;
+                }
 
-                    break;
-                case WindowFocus.Release:
-                    if (_inputField.isFocused) _inputField.DeactivateInputField();
-                    break;
+                Activate();
+                return;
             }
+
+            if (intent == WindowFocus.Release && isCommand)
+            {
+                if (_inputField.isFocused) _inputField.DeactivateInputField();
+                return;
+            }
+
+            // 意図がRelease/Noneで落ち着いている間に、利用者がクリックで入力欄を掴んだ場合.
+            if (_inputField.isFocused) OnFocusControlChanged?.Invoke(WindowFocus.Apply);
+        }
+
+        /// <summary>
+        /// EventSystemの選択が入力欄に残っているか.
+        /// </summary>
+        private bool IsSelectionOurs()
+        {
+            var eventSystem = EventSystem.current;
+            if (eventSystem == null) return true;
+
+            return eventSystem.currentSelectedGameObject == _inputField.gameObject;
+        }
+
+        private void Activate()
+        {
+            // ActivateInputField()だけでは、同フレーム内でEnterによる
+            // DeactivateInputField()が後から走ると打ち消される。EventSystemの選択も
+            // 明示して、次のUpdateで確実にフォーカスが戻るようにする(実機で確認).
+            var eventSystem = EventSystem.current;
+            if (eventSystem != null && eventSystem.currentSelectedGameObject != _inputField.gameObject)
+            {
+                eventSystem.SetSelectedGameObject(_inputField.gameObject);
+            }
+
+            _inputField.ActivateInputField();
         }
 
         /// <summary>
@@ -133,45 +189,6 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
             _inputField.caretPosition = end;
             _inputField.selectionAnchorPosition = end;
             _inputField.selectionFocusPosition = end;
-        }
-
-        /// <summary>
-        /// 利用者の操作によるフォーカス状態の変化を検出して通知する.
-        /// </summary>
-        /// <remarks>
-        /// uGUIの<see cref="InputField"/>はフォーカス獲得のイベントを持たない
-        /// (<c>onEndEdit</c>は喪失時のみ)。<see cref="Render"/>が毎フレーム呼ばれることを利用し、
-        /// ポーリングで検出する。
-        /// <para>
-        /// <see cref="InputField.isFocused"/>が<c>false</c>になっただけで喪失と見なしてはならない。
-        /// <see cref="InputField"/>はEnterでの送信・Escapeでのキャンセルのたびに内部で
-        /// <c>DeactivateInputField()</c>を呼ぶため、それを通知するとPresenter側の
-        /// 「フォーカスを当てたい」という意図(<paramref name="intent"/>)が<see cref="WindowFocus.Release"/>へ
-        /// 上書きされ、以後<see cref="ApplyFocus"/>が再アクティブ化しなくなって入力不能のまま
-        /// 復帰しなくなる(実機で確認)。
-        /// </para>
-        /// 喪失として扱うのは、選択が<b>別の</b><see cref="Selectable"/>へ移った場合だけに限る.
-        /// </remarks>
-        /// <param name="intent">Presenter側が保持している、当てたいフォーカス状態.</param>
-        private void PollFocusState(WindowFocus intent)
-        {
-            if (_inputField.isFocused)
-            {
-                // 利用者がクリック等で自らフォーカスした場合は、意図をApplyへ揃える.
-                if (intent != WindowFocus.Apply) OnFocusControlChanged?.Invoke(WindowFocus.Apply);
-                return;
-            }
-
-            if (intent != WindowFocus.Apply) return;
-
-            var eventSystem = EventSystem.current;
-            var selected = eventSystem != null ? eventSystem.currentSelectedGameObject : null;
-
-            // 選択が外れているだけ(null)ならInputField内部の一時的な非アクティブ化とみなし、
-            // 次フレームのApplyFocus()による再アクティブ化に任せる.
-            if (selected == null || selected == _inputField.gameObject) return;
-
-            OnFocusControlChanged?.Invoke(WindowFocus.Release);
         }
 
         /// <summary>
