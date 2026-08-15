@@ -30,10 +30,16 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         /// 確定のつもりで押したEnterがコマンド送信として誤発火する(実機で確認)。
         /// 変換終了の通知を数フレーム遅らせ、確定直後のEnterを変換中として扱う.
         /// </remarks>
-        private const int ImeCompositionGraceFrames = 2;
+        private const int ImeCompositionGraceFrames = 3;
 
         private bool _isImeComposing;
-        private int _imeCompositionGrace;
+
+        /// <summary>
+        /// IME変換が終了したことを最初に検出したフレーム番号(未検出時は<see cref="NotComposingEnded"/>).
+        /// </summary>
+        private int _imeCompositionEndFrame = NotComposingEnded;
+
+        private const int NotComposingEnded = -1;
 
         /// <summary>直前のフレームで適用済みのフォーカス意図.</summary>
         private WindowFocus _appliedIntent;
@@ -196,7 +202,14 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         /// </summary>
         /// <remarks>
         /// <c>UnityEngine.Input.compositionString</c>のポーリングで判定する
-        /// (UIToolkit版の<c>InputRenderer</c>と同じ方式).
+        /// (UIToolkit版の<c>InputRenderer</c>と同じ方式)。
+        /// <para>
+        /// 猶予の経過は<b>呼び出し回数ではなくフレーム番号</b>で数える。
+        /// <see cref="Render"/>の駆動元である<c>ITerminalGUI.Render()</c>はUnityの
+        /// <c>OnGUI</c>から呼ばれ、<c>OnGUI</c>はイベント種別ごとに1フレーム内で複数回発生する。
+        /// 呼び出し回数で数えると猶予が同一フレーム内で消費し切られ、確定Enterが届く時点では
+        /// 既に「変換中ではない」状態になってしまう(実機のフレーム単位計測で確認).
+        /// </para>
         /// </remarks>
         private void PollImeComposingState()
         {
@@ -204,7 +217,7 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
 
             if (composing)
             {
-                _imeCompositionGrace = ImeCompositionGraceFrames;
+                _imeCompositionEndFrame = NotComposingEnded;
 
                 if (_isImeComposing) return;
 
@@ -216,12 +229,15 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
             if (!_isImeComposing) return;
 
             // 変換が終わっても数フレームは「変換中」として扱う(確定のEnterによる誤送信を防ぐ).
-            if (_imeCompositionGrace > 0)
+            if (_imeCompositionEndFrame == NotComposingEnded)
             {
-                --_imeCompositionGrace;
+                _imeCompositionEndFrame = UnityEngine.Time.frameCount;
                 return;
             }
 
+            if (UnityEngine.Time.frameCount - _imeCompositionEndFrame < ImeCompositionGraceFrames) return;
+
+            _imeCompositionEndFrame = NotComposingEnded;
             _isImeComposing = false;
             OnImeComposingStateChanged?.Invoke(false);
         }
