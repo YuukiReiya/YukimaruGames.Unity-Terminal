@@ -1,0 +1,32 @@
+{
+    "name": "YukimaruGames.Terminal.Composition.UGUI",
+    "rootNamespace": "YukimaruGames.Terminal.Composition",
+    "references": [
+        "YukimaruGames.Terminal.Composition",
+        "YukimaruGames.Terminal.Composition.Shared",
+        "YukimaruGames.Terminal.Adapters",
+        "YukimaruGames.Terminal.Adapters.UGUI",
+        "YukimaruGames.Terminal.Presentation",
+        "YukimaruGames.Terminal.Infrastructure",
+        "YukimaruGames.Terminal.Application",
+        "YukimaruGames.Terminal.Domain.Contracts",
+        "YukimaruGames.Terminal.SharedKernel",
+        "UnityEngine.UI",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.ugui",
+            "expression": "1.0.0",
+            "define": "TERMINAL_UGUI_AVAILABLE"
+        }
+    ],
+    "noEngineReferences": false
+}

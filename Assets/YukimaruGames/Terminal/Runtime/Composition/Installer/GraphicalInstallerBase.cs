@@ -231,7 +231,16 @@ namespace YukimaruGames.Terminal.Composition
             return LauncherVisibility;
         }
 
-        private InputKeyboardType ResolveKeyboardType(ITerminalOptions options)
+        /// <summary>
+        /// 有効な入力方式を解決する.
+        /// </summary>
+        /// <remarks>
+        /// バックエンド側でも入力方式に応じた分岐が要る場合がある
+        /// (uGUI版はEventSystemの入力モジュールをLegacy/InputSystemで選び分ける必要がある。
+        /// Active Input HandlingがInput System専用の環境でStandaloneInputModuleを使うと
+        /// 実行時例外になるため)。そのためprotectedで公開している.
+        /// </remarks>
+        protected InputKeyboardType ResolveKeyboardType(ITerminalOptions options)
         {
 #if ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
             return options.Input.InputKeyboardType;
