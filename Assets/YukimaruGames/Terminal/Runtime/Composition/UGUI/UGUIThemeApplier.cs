@@ -90,7 +90,14 @@ namespace YukimaruGames.Terminal.Composition
         /// <remarks>
         /// キャレットの点滅は<c>CursorPresenter</c>/<c>CursorView</c>側で管理するため、
         /// <see cref="InputField.caretBlinkRate"/>を0にしてuGUIネイティブの点滅を止める
-        /// (IMGUI版と同じ考え方).
+        /// (IMGUI版と同じ考え方)。
+        /// <para>
+        /// 背景は透明にする。<see cref="InputField"/>の既定の背景(白のUISprite)をそのままにすると
+        /// uGUI版だけ白い箱が浮き、テーマの背景色と噛み合わない。IMGUI版・UIToolkit版は入力欄に
+        /// 独立した背景を持たず、ウィンドウ背景の上にプロンプトと文字が乗るだけの見た目のため、
+        /// そちらへ揃える。<c>Image</c>自体は残す(消すとクリックでフォーカスできなくなる。
+        /// アルファ0でもレイキャストは既定で通る).
+        /// </para>
         /// </remarks>
         private void ApplyInputField(ITerminalTheme theme, Font font, int fontSize)
         {
@@ -98,6 +105,8 @@ namespace YukimaruGames.Terminal.Composition
             if (field == null) return;
 
             ApplyText(field.textComponent, theme.InputColor, font, fontSize);
+
+            if (field.image != null) field.image.color = Color.clear;
 
             field.customCaretColor = true;
             field.caretColor = theme.CaretColor;
