@@ -43,9 +43,13 @@ namespace YukimaruGames.Terminal.Composition
 
             ApplyText(_windowRoot.PromptLabel, theme.PromptColor, font, fontSize);
             ApplyInputField(theme, font, fontSize);
-            ApplyButton(_windowRoot.SubmitButton, theme.ExecuteButtonColor, font, fontSize);
-            ApplyButton(_windowRoot.LauncherOpenButton, theme.ButtonColor, font, fontSize);
-            ApplyButton(_windowRoot.LauncherCloseButton, theme.ButtonColor, font, fontSize);
+
+            // 実行ボタンはウィンドウ内(背景色が敷かれた入力行の上)にあるため透明でよい。
+            // ランチャーの開閉ボタンはウィンドウ矩形の外側に配置されるため、透明にすると
+            // ゲーム画面の上に文字だけが浮いてしまう。背景色を敷いてターミナルの一部に見せる.
+            ApplyButton(_windowRoot.SubmitButton, theme.ExecuteButtonColor, Color.clear, font, fontSize);
+            ApplyButton(_windowRoot.LauncherOpenButton, theme.ButtonColor, theme.BackgroundColor, font, fontSize);
+            ApplyButton(_windowRoot.LauncherCloseButton, theme.ButtonColor, theme.BackgroundColor, font, fontSize);
 
             if (LogRenderer != null)
             {
@@ -81,15 +85,17 @@ namespace YukimaruGames.Terminal.Composition
         /// ボタンへテーマを適用する.
         /// </summary>
         /// <remarks>
-        /// 入力欄と同じ理由で背景は透明にする(<see cref="ApplyInputField"/>参照)。
-        /// IMGUI版・UIToolkit版のボタンは<c>[-]</c>・<c>[x]</c>のような文字そのものが
-        /// ボタンであり、独立した背景を持たない。<c>Image</c>自体はクリック判定のために残す.
+        /// <c>Button</c>の既定の背景(白のUISprite)をそのままにするとuGUI版だけ白い箱が浮くため、
+        /// 呼び出し側が背景色を明示する。<c>Image</c>自体は消さずに色だけ変える
+        /// (消すとクリック判定が無くなる。アルファ0でもレイキャストは既定で通る).
         /// </remarks>
-        private static void ApplyButton(Button button, Color color, Font font, int fontSize)
+        /// <param name="color">ラベルの色.</param>
+        /// <param name="backgroundColor">ボタン背景の色.</param>
+        private static void ApplyButton(Button button, Color color, Color backgroundColor, Font font, int fontSize)
         {
             if (button == null) return;
 
-            if (button.image != null) button.image.color = Color.clear;
+            if (button.image != null) button.image.color = backgroundColor;
 
             ApplyText(button.GetComponentInChildren<Text>(true), color, font, fontSize);
         }
