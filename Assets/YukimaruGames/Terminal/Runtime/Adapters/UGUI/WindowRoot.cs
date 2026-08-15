@@ -107,6 +107,15 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
         public bool IsInitialized { get; private set; }
 
         /// <summary>
+        /// 名前解決の起点(Canvas配下のルート).
+        /// </summary>
+        /// <remarks>
+        /// ランチャーはウィンドウ本体の<b>外側</b>に配置されるため<c>terminal-root</c>の兄弟として
+        /// 存在する。<c>terminal-root</c>配下だけを探すと解決できないので、起点はCanvas側に取る.
+        /// </remarks>
+        private RectTransform _canvasRoot;
+
+        /// <summary>
         /// UIツリーを解決する.
         /// </summary>
         /// <param name="canvasRoot">
@@ -123,6 +132,8 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
                     "Falling back to a minimal code-only UI.");
                 return;
             }
+
+            _canvasRoot = canvasRoot;
 
             Root = ResolveRoot(canvasRoot);
             if (Root == null)
@@ -202,12 +213,13 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
         /// </summary>
         /// <remarks>
         /// <c>GameObject.Find</c>はプロジェクト規約で禁止のため使わない。
-        /// <see cref="Component.GetComponentsInChildren{T}(bool)"/>で自分の配下だけを走査する
-        /// (非アクティブな要素も対象にするため<c>includeInactive: true</c>).
+        /// <see cref="Component.GetComponentsInChildren{T}(bool)"/>で<see cref="_canvasRoot"/>の
+        /// 配下だけを走査する(非アクティブな要素も対象にするため<c>includeInactive: true</c>).
         /// </remarks>
         private T FindChild<T>(string childName) where T : Component
         {
-            var candidates = Root.GetComponentsInChildren<T>(true);
+            var origin = _canvasRoot != null ? _canvasRoot : Root;
+            var candidates = origin.GetComponentsInChildren<T>(true);
             foreach (var candidate in candidates)
             {
                 if (candidate.name == childName) return candidate;
