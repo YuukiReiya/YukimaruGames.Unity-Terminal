@@ -12,6 +12,15 @@ namespace YukimaruGames.Terminal.Composition
     {
         [Header("View Settings")]
         [SerializeField] private Font _font;
+
+        /// <remarks>
+        /// 1920x1080を基準にしたピクセル値。ウィンドウは画面高さの一定比率で開くため、
+        /// 実質的にこの値が決めているのは「ウィンドウ内に何行入るか」であり、絶対的な読みやすさ
+        /// ではない(1080pのウィンドウ高さ378pxに対し、55pxで約6行)。
+        /// 他の解像度へはuGUI版の<c>UGUIScaleMode.AutoFetch</c>が追従させるため、行数は解像度に
+        /// 依らず一定に保たれる。小さくすると行数は増えるが1行あたりのピクセルは減る.
+        /// </remarks>
+        [Tooltip("1920x1080を基準にしたフォントサイズ(px)。小さくするとウィンドウ内に入る行数が増える。")]
         [SerializeField] private int _fontSize = 55;
         [SerializeField] private Color _backgroundColor = Color.black;
         [SerializeField] private Color _messageColor = Color.white;
