@@ -11,11 +11,13 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
     /// </summary>
     public sealed class SubmitRenderer : ISubmitRenderer, IDisposable
     {
+        private const string SubmitButtonText = "| exec";
+
         private readonly Button _button;
         private readonly Text _label;
 
         /// <inheritdoc/>
-        public string DisplayText => "| exec";
+        public string DisplayText => SubmitButtonText;
 
         /// <inheritdoc/>
         public event Action OnClickButton;

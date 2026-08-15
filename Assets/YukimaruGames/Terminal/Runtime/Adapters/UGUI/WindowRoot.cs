@@ -61,6 +61,15 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
         /// <summary>コード生成フォールバック時のランチャーボタンの一辺(px).</summary>
         private const float LauncherButtonSize = 64f;
 
+        /// <summary>
+        /// 名前解決の起点(Canvas配下のルート).
+        /// </summary>
+        /// <remarks>
+        /// ランチャーはウィンドウ本体の<b>外側</b>に配置されるため<c>terminal-root</c>の兄弟として
+        /// 存在する。<c>terminal-root</c>配下だけを探すと解決できないので、起点はCanvas側に取る.
+        /// </remarks>
+        private RectTransform _canvasRoot;
+
         /// <summary>ウィンドウ本体の<see cref="RectTransform"/>.</summary>
         public RectTransform Root { get; private set; }
 
@@ -107,19 +116,14 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
         public bool IsInitialized { get; private set; }
 
         /// <summary>
-        /// 名前解決の起点(Canvas配下のルート).
-        /// </summary>
-        /// <remarks>
-        /// ランチャーはウィンドウ本体の<b>外側</b>に配置されるため<c>terminal-root</c>の兄弟として
-        /// 存在する。<c>terminal-root</c>配下だけを探すと解決できないので、起点はCanvas側に取る.
-        /// </remarks>
-        private RectTransform _canvasRoot;
-
-        /// <summary>
         /// UIツリーを解決する.
         /// </summary>
         /// <param name="canvasRoot">
-        /// Prefabから生成したCanvas配下のルート。<c>null</c>の場合はコードのみで最小構成を組み立てる.
+        /// Prefabから生成したCanvas配下のルート。名前解決の起点であり、<c>null</c>は許容しない
+        /// (最小構成の組み立てにも親となる<see cref="RectTransform"/>が要るため)。
+        /// <c>null</c>を渡した場合は警告を出し、<see cref="IsInitialized"/>を<c>false</c>のまま復帰する。
+        /// コード生成の最小構成へ切り替わるのは、<c>canvasRoot</c>配下から<c>terminal-root</c>を
+        /// 解決できなかった場合(Prefab未指定でCanvasだけ生成された場合など).
         /// </param>
         public void Initialize(RectTransform canvasRoot)
         {

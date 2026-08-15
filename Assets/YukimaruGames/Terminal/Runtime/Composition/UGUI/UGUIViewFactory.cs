@@ -136,10 +136,22 @@ namespace YukimaruGames.Terminal.Composition
             return new RuntimeGeneratedAsset(eventSystemGameObject);
         }
 
+        /// <summary>
+        /// レガシー入力用のモジュールを付ける.
+        /// </summary>
+        /// <remarks>
+        /// Active Input HandlingがInput System専用の環境では<c>StandaloneInputModule</c>が
+        /// 実行時例外になるため付けられない。その場合はInput System用のモジュールへ
+        /// フォールバックする。ここで何も付けずに抜けると、EventSystemに入力モジュールが
+        /// 存在しない状態になり、ボタンのクリックも<see cref="InputField"/>のフォーカスも
+        /// 一切機能しないまま警告も出ず、原因の特定が難しくなる.
+        /// </remarks>
         private static void AddLegacyInputModule(GameObject eventSystemGameObject)
         {
 #if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             eventSystemGameObject.AddComponent<StandaloneInputModule>();
+#else
+            eventSystemGameObject.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
 #endif
         }
 
