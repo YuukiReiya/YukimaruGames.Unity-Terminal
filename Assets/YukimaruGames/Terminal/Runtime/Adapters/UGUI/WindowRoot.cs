@@ -70,6 +70,9 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
         /// </remarks>
         private RectTransform _canvasRoot;
 
+        /// <summary>画面ピクセルとCanvas単位の変換に使う<see cref="Canvas"/>.</summary>
+        private Canvas _canvas;
+
         /// <summary>ウィンドウ本体の<see cref="RectTransform"/>.</summary>
         public RectTransform Root { get; private set; }
 
@@ -138,6 +141,7 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
             }
 
             _canvasRoot = canvasRoot;
+            _canvas = canvasRoot.GetComponentInParent<Canvas>();
 
             Root = ResolveRoot(canvasRoot);
             if (Root == null)
@@ -180,11 +184,38 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
         {
             if (Root == null) return;
 
+            var scale = CanvasScale;
+
             Root.anchorMin = new Vector2(0f, 1f);
             Root.anchorMax = new Vector2(0f, 1f);
             Root.pivot = new Vector2(0f, 1f);
-            Root.anchoredPosition = new Vector2(rect.X, -rect.Y);
-            Root.sizeDelta = new Vector2(rect.Width, rect.Height);
+            Root.anchoredPosition = new Vector2(rect.X / scale, -rect.Y / scale);
+            Root.sizeDelta = new Vector2(rect.Width / scale, rect.Height / scale);
+        }
+
+        /// <summary>
+        /// Canvasの拡大率(1で「1px = 1px」).
+        /// </summary>
+        /// <remarks>
+        /// <see cref="TerminalRect"/>は<c>Screen.width</c>/<c>Screen.height</c>を元に描画ピクセルで
+        /// 計算されるが、<see cref="RectTransform"/>が扱うのはCanvas単位で、両者は
+        /// <c>Canvas.scaleFactor</c>の分だけずれる(Canvas単位 = 描画ピクセル / scaleFactor)。
+        /// <para>
+        /// 割らずにそのまま入れると、Canvasを拡大したぶんウィンドウ自体も一緒に拡大される。
+        /// 例えば拡大率2ではCanvasの座標空間が半分(1920→960)になる一方、ウィンドウは
+        /// 1920単位のまま指定されるため画面からはみ出す(実機で確認)。
+        /// 文字や余白だけを拡大縮小し、ウィンドウは画面に対する比率を保つために変換が要る.
+        /// </para>
+        /// </remarks>
+        public float CanvasScale
+        {
+            get
+            {
+                if (_canvas == null) return 1f;
+
+                var scale = _canvas.scaleFactor;
+                return scale > 0f ? scale : 1f;
+            }
         }
 
         private RectTransform ResolveRoot(RectTransform canvasRoot)

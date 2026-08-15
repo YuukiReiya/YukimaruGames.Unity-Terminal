@@ -24,17 +24,19 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         private readonly RectTransform _container;
         private readonly Button _openButton;
         private readonly Button _closeButton;
+        private readonly WindowRoot _windowRoot;
 
         /// <inheritdoc/>
         public event Action OnClickOpenButton;
         /// <inheritdoc/>
         public event Action OnClickCloseButton;
 
-        public LauncherRenderer(RectTransform container, Button openButton, Button closeButton)
+        public LauncherRenderer(RectTransform container, Button openButton, Button closeButton, WindowRoot windowRoot)
         {
             _container = container;
             _openButton = openButton;
             _closeButton = closeButton;
+            _windowRoot = windowRoot;
 
             if (_container != null)
             {
@@ -96,7 +98,9 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         /// </summary>
         /// <remarks>
         /// <see cref="TerminalRect"/>は左上原点・Y下向き、<see cref="RectTransform"/>はY上向きの
-        /// ため、Y成分の符号を反転して<c>anchoredPosition</c>へ渡す.
+        /// ため、Y成分の符号を反転して<c>anchoredPosition</c>へ渡す。
+        /// あわせて、画面ピクセルで計算された<see cref="TerminalRect"/>をCanvas単位へ変換する
+        /// (<see cref="WindowRoot.CanvasScale"/>参照).
         /// </remarks>
         private void ApplyPosition(WindowAnchor anchor, TerminalRect rect, bool isReverse)
         {
@@ -125,7 +129,8 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                     return;
             }
 
-            _container.anchoredPosition = new Vector2(x, -y);
+            var scale = _windowRoot != null ? _windowRoot.CanvasScale : 1f;
+            _container.anchoredPosition = new Vector2(x / scale, -y / scale);
         }
 
         private static void SetButtonText(Button button, string text)

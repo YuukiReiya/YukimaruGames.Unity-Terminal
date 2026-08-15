@@ -53,10 +53,23 @@ namespace YukimaruGames.Terminal.Composition
             [Tooltip("Canvasの描画順。他のUIより手前に出したい場合に上げる。")]
             [SerializeField] private int _sortingOrder = short.MaxValue;
 
-            [Tooltip("UI全体の拡大率。1でIMGUI版と同じ「1px = 1px」。画面が狭く文字が大きすぎる場合に下げる。")]
+            [Tooltip("UIの拡大率の決め方。AutoFetchは実行時の解像度から自動算出する。")]
+            [SerializeField] private UGUIScaleMode _scaleMode = UGUIScaleMode.AutoFetch;
+
+            [Tooltip("AutoFetch時の基準解像度。この解像度で「1px = 1px」になる。")]
+            [SerializeField] private Vector2 _referenceResolution = new(1920f, 1080f);
+
+            [Tooltip("AutoFetch時、幅と高さのどちらを基準にするか。0で幅、1で高さ。")]
+            [Range(0f, 1f)]
+            [SerializeField] private float _matchWidthOrHeight = 1f;
+
+            [Tooltip("Fixed時の拡大率。1でIMGUI版と同じ「1px = 1px」。")]
             [SerializeField] private float _scaleFactor = 1f;
 
             public int SortingOrder => _sortingOrder;
+            public UGUIScaleMode ScaleMode => _scaleMode;
+            public Vector2 ReferenceResolution => _referenceResolution;
+            public float MatchWidthOrHeight => _matchWidthOrHeight;
             public float ScaleFactor => _scaleFactor;
         }
 
@@ -118,8 +131,13 @@ namespace YukimaruGames.Terminal.Composition
             var scrollAccessor = new ScrollAccessor();
 
             var useInputSystemModule = ResolveKeyboardType(options) == InputKeyboardType.InputSystem;
+            var scaleSettings = new CanvasScaleSettings(
+                uguiOptions.ScaleMode,
+                uguiOptions.ReferenceResolution,
+                uguiOptions.MatchWidthOrHeight,
+                uguiOptions.ScaleFactor);
             var (windowRoot, generatedEventSystem) =
-                UGUIViewFactory.Create(_prefab, uguiOptions.SortingOrder, uguiOptions.ScaleFactor, useInputSystemModule);
+                UGUIViewFactory.Create(_prefab, uguiOptions.SortingOrder, scaleSettings, useInputSystemModule);
             _windowRoot = windowRoot;
             _generatedEventSystem = generatedEventSystem;
 
@@ -147,7 +165,8 @@ namespace YukimaruGames.Terminal.Composition
             var launcherRenderer = new LauncherRenderer(
                 windowRoot.LauncherContainer,
                 windowRoot.LauncherOpenButton,
-                windowRoot.LauncherCloseButton);
+                windowRoot.LauncherCloseButton,
+                windowRoot);
 
             var windowPresenter = new WindowPresenter(
                 windowAnimationAccessor,
