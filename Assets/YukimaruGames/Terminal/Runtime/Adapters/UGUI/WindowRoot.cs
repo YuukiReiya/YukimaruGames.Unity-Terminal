@@ -48,6 +48,19 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
 
         #endregion
 
+        /// <summary>コード生成フォールバック時の内側余白(px).</summary>
+        private const int ContentPadding = 4;
+        /// <summary>コード生成フォールバック時の入力行の高さ(px).</summary>
+        private const float InputRowHeight = 64f;
+        /// <summary>コード生成フォールバック時のプロンプト表示幅(px).</summary>
+        private const float PromptWidth = 48f;
+        /// <summary>コード生成フォールバック時の実行ボタン幅(px).</summary>
+        private const float SubmitButtonWidth = 160f;
+        /// <summary>コード生成フォールバック時のマウスホイール感度.</summary>
+        private const float DefaultScrollSensitivity = 24f;
+        /// <summary>コード生成フォールバック時のランチャーボタンの一辺(px).</summary>
+        private const float LauncherButtonSize = 64f;
+
         /// <summary>ウィンドウ本体の<see cref="RectTransform"/>.</summary>
         public RectTransform Root { get; private set; }
 
@@ -203,53 +216,105 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
             return null;
         }
 
+        /// <summary>
+        /// Prefab未指定時に、コードのみで最小構成のUIツリーを組み立てる.
+        /// </summary>
+        /// <remarks>
+        /// レイアウトはLayoutGroupに委ねる。ウィンドウ本体のサイズは<see cref="ApplyRect"/>が
+        /// 毎フレーム反映するため、ここでは子要素の比率(ログが可変・入力行が固定高さ)だけを決める.
+        /// </remarks>
         private RectTransform BuildMinimalTree(RectTransform parent)
         {
             var root = CreateElement(RootName, parent);
             RootBackground = root.gameObject.AddComponent<Image>();
+            var rootLayout = root.gameObject.AddComponent<VerticalLayoutGroup>();
+            rootLayout.childControlWidth = true;
+            rootLayout.childControlHeight = true;
+            rootLayout.childForceExpandWidth = true;
+            rootLayout.childForceExpandHeight = false;
+            rootLayout.padding = new RectOffset(ContentPadding, ContentPadding, ContentPadding, ContentPadding);
 
             var scrollView = CreateElement(LogScrollViewName, root);
+            var scrollViewLayout = scrollView.gameObject.AddComponent<LayoutElement>();
+            scrollViewLayout.flexibleHeight = 1f;
             LogScrollView = scrollView.gameObject.AddComponent<ScrollRect>();
             LogScrollView.horizontal = false;
             LogScrollView.vertical = true;
             LogScrollView.movementType = ScrollRect.MovementType.Clamped;
+            LogScrollView.scrollSensitivity = DefaultScrollSensitivity;
             scrollView.gameObject.AddComponent<RectMask2D>();
 
             LogContent = CreateElement(LogContentName, scrollView);
             LogContent.anchorMin = new Vector2(0f, 1f);
             LogContent.anchorMax = new Vector2(1f, 1f);
             LogContent.pivot = new Vector2(0f, 1f);
+            LogContent.offsetMin = new Vector2(0f, LogContent.offsetMin.y);
+            LogContent.offsetMax = new Vector2(0f, LogContent.offsetMax.y);
             var contentLayout = LogContent.gameObject.AddComponent<VerticalLayoutGroup>();
             contentLayout.childControlHeight = true;
             contentLayout.childControlWidth = true;
             contentLayout.childForceExpandHeight = false;
+            contentLayout.childForceExpandWidth = true;
             var contentFitter = LogContent.gameObject.AddComponent<ContentSizeFitter>();
             contentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            LogScrollView.content = LogContent;
+
+            // viewportはScrollRect自身(RectMask2Dでクリップする)を使う.
             LogScrollView.viewport = scrollView;
+            LogScrollView.content = LogContent;
 
             InputRow = CreateElement(InputRowName, root);
             InputRowBackground = InputRow.gameObject.AddComponent<Image>();
+            var inputRowLayoutElement = InputRow.gameObject.AddComponent<LayoutElement>();
+            inputRowLayoutElement.minHeight = InputRowHeight;
+            inputRowLayoutElement.preferredHeight = InputRowHeight;
+            inputRowLayoutElement.flexibleHeight = 0f;
             var inputRowLayout = InputRow.gameObject.AddComponent<HorizontalLayoutGroup>();
             inputRowLayout.childControlHeight = true;
             inputRowLayout.childControlWidth = true;
+            inputRowLayout.childForceExpandHeight = true;
             inputRowLayout.childForceExpandWidth = false;
+            inputRowLayout.childAlignment = TextAnchor.MiddleLeft;
 
             PromptLabel = CreateText(PromptLabelName, InputRow);
+            PromptLabel.alignment = TextAnchor.MiddleLeft;
+            var promptLayout = PromptLabel.gameObject.AddComponent<LayoutElement>();
+            promptLayout.preferredWidth = PromptWidth;
+            promptLayout.flexibleWidth = 0f;
 
             var inputFieldElement = CreateElement(InputFieldName, InputRow);
+            var inputFieldLayout = inputFieldElement.gameObject.AddComponent<LayoutElement>();
+            inputFieldLayout.flexibleWidth = 1f;
             var inputFieldImage = inputFieldElement.gameObject.AddComponent<Image>();
             InputField = inputFieldElement.gameObject.AddComponent<InputField>();
             InputField.targetGraphic = inputFieldImage;
-            InputField.textComponent = CreateText($"{InputFieldName}-text", inputFieldElement);
+
+            var inputText = CreateText($"{InputFieldName}-text", inputFieldElement);
+            inputText.alignment = TextAnchor.MiddleLeft;
+            inputText.rectTransform.anchorMin = Vector2.zero;
+            inputText.rectTransform.anchorMax = Vector2.one;
+            inputText.rectTransform.offsetMin = Vector2.zero;
+            inputText.rectTransform.offsetMax = Vector2.zero;
+            InputField.textComponent = inputText;
             InputField.lineType = InputField.LineType.SingleLine;
 
             var submitElement = CreateElement(SubmitButtonName, InputRow);
+            var submitLayout = submitElement.gameObject.AddComponent<LayoutElement>();
+            submitLayout.preferredWidth = SubmitButtonWidth;
+            submitLayout.flexibleWidth = 0f;
             var submitImage = submitElement.gameObject.AddComponent<Image>();
             SubmitButton = submitElement.gameObject.AddComponent<Button>();
             SubmitButton.targetGraphic = submitImage;
-            CreateText($"{SubmitButtonName}-text", submitElement);
+            var submitText = CreateText($"{SubmitButtonName}-text", submitElement);
+            submitText.alignment = TextAnchor.MiddleCenter;
+            submitText.rectTransform.anchorMin = Vector2.zero;
+            submitText.rectTransform.anchorMax = Vector2.one;
+            submitText.rectTransform.offsetMin = Vector2.zero;
+            submitText.rectTransform.offsetMax = Vector2.zero;
 
+            // uGUIのHorizontalLayoutGroupとVerticalLayoutGroupは同一GameObjectに共存できない
+            // (どちらもHorizontalOrVerticalLayoutGroupで、Unityが後勝ちの追加を拒否する)。
+            // ランチャーは要素が2つだけなので、LayoutGroupに頼らずLauncherRenderer側が
+            // アンカーに応じて直接配置する.
             LauncherContainer = CreateElement(LauncherContainerName, parent);
             LauncherOpenButton = CreateLauncherButton(LauncherOpenButtonName, LauncherContainer);
             LauncherCloseButton = CreateLauncherButton(LauncherCloseButtonName, LauncherContainer);
@@ -280,7 +345,18 @@ namespace YukimaruGames.Terminal.Adapters.UGUI
             var image = element.gameObject.AddComponent<Image>();
             var button = element.gameObject.AddComponent<Button>();
             button.targetGraphic = image;
-            CreateText($"{elementName}-text", element);
+
+            element.anchorMin = new Vector2(0f, 1f);
+            element.anchorMax = new Vector2(0f, 1f);
+            element.pivot = new Vector2(0f, 1f);
+            element.sizeDelta = new Vector2(LauncherButtonSize, LauncherButtonSize);
+
+            var label = CreateText($"{elementName}-text", element);
+            label.alignment = TextAnchor.MiddleCenter;
+            label.rectTransform.anchorMin = Vector2.zero;
+            label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = Vector2.zero;
+            label.rectTransform.offsetMax = Vector2.zero;
             return button;
         }
 

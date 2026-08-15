@@ -24,8 +24,6 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         private readonly RectTransform _container;
         private readonly Button _openButton;
         private readonly Button _closeButton;
-        private readonly HorizontalLayoutGroup _horizontalLayout;
-        private readonly VerticalLayoutGroup _verticalLayout;
 
         /// <inheritdoc/>
         public event Action OnClickOpenButton;
@@ -45,8 +43,6 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 _container.anchorMax = new Vector2(0f, 1f);
                 _container.pivot = new Vector2(0f, 1f);
 
-                _horizontalLayout = _container.GetComponent<HorizontalLayoutGroup>();
-                _verticalLayout = _container.GetComponent<VerticalLayoutGroup>();
             }
 
             SetButtonText(_openButton, CompactButtonText);
@@ -68,25 +64,31 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
 
             if (!renderData.IsVisible) return;
 
-            ApplyDirection(renderData.Anchor);
+            ApplyButtonPlacement(renderData.Anchor);
             ApplyPosition(renderData.Anchor, renderData.WindowRect, renderData.IsReverse);
         }
 
         /// <summary>
-        /// ボタンの並び方向を切り替える.
+        /// 2つのボタンをアンカーに応じて縦または横へ並べる.
         /// </summary>
         /// <remarks>
-        /// uGUIは縦横のLayoutGroupが別コンポーネントのため、実行時に型を差し替えられない。
-        /// 両方がアタッチされている場合のみ有効・無効で切り替え、片方しか無い構成
-        /// (Prefab側で固定している場合)はそのまま尊重する.
+        /// uGUIの<see cref="HorizontalLayoutGroup"/>と<see cref="VerticalLayoutGroup"/>は
+        /// 同一GameObjectに共存できず(どちらも<c>HorizontalOrVerticalLayoutGroup</c>で、
+        /// Unityが後勝ちの追加を拒否する)、実行時に型を差し替えることもできない。
+        /// 要素が2つだけなので、LayoutGroupに頼らずここで直接配置する.
         /// </remarks>
-        private void ApplyDirection(WindowAnchor anchor)
+        private void ApplyButtonPlacement(WindowAnchor anchor)
         {
-            if (_horizontalLayout == null || _verticalLayout == null) return;
-
             var vertical = anchor is WindowAnchor.Left or WindowAnchor.Right;
-            _verticalLayout.enabled = vertical;
-            _horizontalLayout.enabled = !vertical;
+
+            var openRect = _openButton != null ? _openButton.GetComponent<RectTransform>() : null;
+            var closeRect = _closeButton != null ? _closeButton.GetComponent<RectTransform>() : null;
+            if (openRect == null || closeRect == null) return;
+
+            openRect.anchoredPosition = Vector2.zero;
+            closeRect.anchoredPosition = vertical
+                ? new Vector2(0f, -openRect.sizeDelta.y)
+                : new Vector2(openRect.sizeDelta.x, 0f);
         }
 
         /// <summary>
