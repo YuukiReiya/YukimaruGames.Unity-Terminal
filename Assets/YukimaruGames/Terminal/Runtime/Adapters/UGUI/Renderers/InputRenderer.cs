@@ -32,9 +32,7 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         /// </remarks>
         private const int ImeCompositionGraceFrames = 2;
 
-        private bool _isCurrentlyFocused;
         private bool _isImeComposing;
-        private bool _isSyncingFocus;
         private int _imeCompositionGrace;
 
         /// <inheritdoc/>
@@ -92,7 +90,7 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
                 OnMoveCursorToEndTriggerChanged?.Invoke(false);
             }
 
-            PollFocusState();
+            PollFocusState(data.Focus);
             PollImeComposingState();
         }
 
@@ -138,22 +136,42 @@ namespace YukimaruGames.Terminal.Adapters.UGUI.Renderers
         }
 
         /// <summary>
-        /// フォーカス状態の変化を検出して通知する.
+        /// 利用者の操作によるフォーカス状態の変化を検出して通知する.
         /// </summary>
         /// <remarks>
         /// uGUIの<see cref="InputField"/>はフォーカス獲得のイベントを持たない
         /// (<c>onEndEdit</c>は喪失時のみ)。<see cref="Render"/>が毎フレーム呼ばれることを利用し、
-        /// <see cref="InputField.isFocused"/>のポーリングで検出する.
+        /// ポーリングで検出する。
+        /// <para>
+        /// <see cref="InputField.isFocused"/>が<c>false</c>になっただけで喪失と見なしてはならない。
+        /// <see cref="InputField"/>はEnterでの送信・Escapeでのキャンセルのたびに内部で
+        /// <c>DeactivateInputField()</c>を呼ぶため、それを通知するとPresenter側の
+        /// 「フォーカスを当てたい」という意図(<paramref name="intent"/>)が<see cref="WindowFocus.Release"/>へ
+        /// 上書きされ、以後<see cref="ApplyFocus"/>が再アクティブ化しなくなって入力不能のまま
+        /// 復帰しなくなる(実機で確認)。
+        /// </para>
+        /// 喪失として扱うのは、選択が<b>別の</b><see cref="Selectable"/>へ移った場合だけに限る.
         /// </remarks>
-        private void PollFocusState()
+        /// <param name="intent">Presenter側が保持している、当てたいフォーカス状態.</param>
+        private void PollFocusState(WindowFocus intent)
         {
-            var focused = _inputField.isFocused;
-            if (_isCurrentlyFocused == focused) return;
+            if (_inputField.isFocused)
+            {
+                // 利用者がクリック等で自らフォーカスした場合は、意図をApplyへ揃える.
+                if (intent != WindowFocus.Apply) OnFocusControlChanged?.Invoke(WindowFocus.Apply);
+                return;
+            }
 
-            _isCurrentlyFocused = focused;
-            if (_isSyncingFocus) return;
+            if (intent != WindowFocus.Apply) return;
 
-            OnFocusControlChanged?.Invoke(focused ? WindowFocus.Apply : WindowFocus.Release);
+            var eventSystem = EventSystem.current;
+            var selected = eventSystem != null ? eventSystem.currentSelectedGameObject : null;
+
+            // 選択が外れているだけ(null)ならInputField内部の一時的な非アクティブ化とみなし、
+            // 次フレームのApplyFocus()による再アクティブ化に任せる.
+            if (selected == null || selected == _inputField.gameObject) return;
+
+            OnFocusControlChanged?.Invoke(WindowFocus.Release);
         }
 
         /// <summary>
