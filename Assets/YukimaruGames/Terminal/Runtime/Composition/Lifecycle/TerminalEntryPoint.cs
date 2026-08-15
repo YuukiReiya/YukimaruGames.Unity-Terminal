@@ -17,20 +17,40 @@ namespace YukimaruGames.Terminal.Composition
     /// </remarks>
     public sealed class TerminalEntryPoint
     {
+        private readonly IReadOnlyList<IStartable> _startables;
         private readonly IReadOnlyList<IUpdatable> _updatables;
         private readonly ITerminalGUI _gui;
 
         /// <summary>
         /// <see cref="TerminalEntryPoint"/>を構築する.
         /// </summary>
+        /// <param name="startables">初期化完了後に1回だけ<see cref="Start"/>から駆動する対象一覧.</param>
         /// <param name="updatables">毎フレーム<see cref="Update"/>から駆動する更新対象一覧.</param>
         /// <param name="gui"><see cref="OnGUI"/>から描画するGUI実装(未使用時はnull許容).</param>
         public TerminalEntryPoint(
+            IReadOnlyList<IStartable> startables,
             IReadOnlyList<IUpdatable> updatables,
             ITerminalGUI gui)
         {
+            _startables = startables;
             _updatables = updatables;
             _gui = gui;
+        }
+
+        /// <summary>
+        /// 初期化完了後に1回だけ呼び出し、登録済みの<see cref="IStartable"/>全てを駆動する.
+        /// </summary>
+        /// <remarks>
+        /// Unityは全オブジェクトの<c>OnEnable</c>が終わってから<c>Start</c>を呼ぶため、
+        /// ここは他コンポーネントの初期化完了を前提にできる最初のタイミングになる
+        /// (<c>Install()</c>が走る<c>Awake</c>では前提にできない).
+        /// </remarks>
+        public void Start()
+        {
+            if (_startables == null) return;
+
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for (var i = 0; i < _startables.Count; ++i) _startables[i]?.Start();
         }
 
         /// <summary>

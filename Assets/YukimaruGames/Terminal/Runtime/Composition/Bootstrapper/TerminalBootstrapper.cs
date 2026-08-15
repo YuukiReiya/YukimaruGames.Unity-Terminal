@@ -43,12 +43,18 @@ namespace YukimaruGames.Terminal.Composition
             _scope = scope;
         }
 
-        private void OnValidate()
+        /// <summary>
+        /// 全オブジェクトの<c>OnEnable</c>完了後に1回だけ、<see cref="IStartable"/>を駆動する.
+        /// </summary>
+        /// <remarks>
+        /// <c>Awake</c>では他コンポーネントの初期化完了を前提にできないため、
+        /// それを必要とする処理はここから走らせる。<c>Install()</c>自体をここへ移すことは
+        /// しない。移すと利用者が<c>Awake</c>/<c>OnEnable</c>からコマンド登録APIを呼んだ場合に、
+        /// <c>_scope</c>がまだnullで<b>無言で失敗</b>するため(#152).
+        /// </remarks>
+        private void Start()
         {
-            if (UnityEngine.Application.isPlaying && _scope != null)
-            {
-                _installer?.Resolve(_scope);
-            }
+            _scope?.EntryPoint.Start();
         }
 
         private void Update()
@@ -101,6 +107,16 @@ namespace YukimaruGames.Terminal.Composition
             catch (Exception e)
             {
                 Debug.LogException(e, this);
+            }
+        }
+
+        // エディター専用コールバックのため、実行順の並びには含めず末尾にまとめる
+        // (.clinerules/01-coding-style.md).
+        private void OnValidate()
+        {
+            if (UnityEngine.Application.isPlaying && _scope != null)
+            {
+                _installer?.Resolve(_scope);
             }
         }
     }

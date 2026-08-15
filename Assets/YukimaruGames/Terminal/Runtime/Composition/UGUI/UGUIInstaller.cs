@@ -56,8 +56,12 @@ namespace YukimaruGames.Terminal.Composition
             [Tooltip("UI全体の拡大率。1でIMGUI版と同じ「1px = 1px」。画面が狭く文字が大きすぎる場合に下げる。")]
             [SerializeField] private float _scaleFactor = 1f;
 
+            [Tooltip("シーンにEventSystemが無い場合に自動生成する。切ると生成せず警告のみになる（意図的に置いていない構成向け）。")]
+            [SerializeField] private bool _createEventSystemIfMissing = true;
+
             public int SortingOrder => _sortingOrder;
             public float ScaleFactor => _scaleFactor;
+            public bool CreateEventSystemIfMissing => _createEventSystemIfMissing;
         }
 
         #region runtime-instances
@@ -72,8 +76,8 @@ namespace YukimaruGames.Terminal.Composition
         // 保険としてここでも保持しClearReferences()から破棄する.
         [NonSerialized] private WindowRoot _windowRoot;
 
-        // 自前生成したEventSystemの解放ハンドル(既存があった場合はnull)。上と同じ理由で保持する.
-        [NonSerialized] private RuntimeGeneratedAsset _generatedEventSystem;
+        // EventSystemの解決役(自前生成した場合はその破棄責務も持つ)。上と同じ理由で保持する.
+        [NonSerialized] private EventSystemProvisioner _eventSystemProvisioner;
 
         #endregion
 
@@ -92,8 +96,8 @@ namespace YukimaruGames.Terminal.Composition
 
             _windowRoot = null;
 
-            _generatedEventSystem?.Dispose();
-            _generatedEventSystem = null;
+            ((IDisposable)_eventSystemProvisioner)?.Dispose();
+            _eventSystemProvisioner = null;
 
             base.ClearReferences();
         }
@@ -117,11 +121,13 @@ namespace YukimaruGames.Terminal.Composition
             var launcherVisibleAccessor = CreateLauncherVisibleAccessor(options);
             var scrollAccessor = new ScrollAccessor();
 
-            var useInputSystemModule = ResolveKeyboardType(options) == InputKeyboardType.InputSystem;
-            var (windowRoot, generatedEventSystem) =
-                UGUIViewFactory.Create(_prefab, uguiOptions.SortingOrder, uguiOptions.ScaleFactor, useInputSystemModule);
+            var windowRoot = UGUIViewFactory.Create(_prefab, uguiOptions.SortingOrder, uguiOptions.ScaleFactor);
             _windowRoot = windowRoot;
-            _generatedEventSystem = generatedEventSystem;
+
+            // EventSystemの用意はAwakeでは判定できないためIStartableへ委ねる(#152).
+            _eventSystemProvisioner = new EventSystemProvisioner(
+                ResolveKeyboardType(options),
+                uguiOptions.CreateEventSystemIfMissing);
 
             var cursorView = new CursorView();
             var clipboardRenderer = new ClipboardRenderer(launcherVisibleAccessor);
@@ -229,7 +235,7 @@ namespace YukimaruGames.Terminal.Composition
                     terminalView,
 
                     // Canvasを載せたGameObject(windowRoot)の破棄より後に解放されるよう末尾に置く.
-                    _generatedEventSystem,
+                    _eventSystemProvisioner,
                 },
             };
         }
