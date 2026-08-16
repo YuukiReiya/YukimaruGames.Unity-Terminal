@@ -1,0 +1,37 @@
+{
+    "name": "YukimaruGames.Terminal.Tests.PlayMode.UGUI",
+    "rootNamespace": "YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI",
+    "references": [
+        "UnityEngine.TestRunner",
+        "YukimaruGames.Terminal.SharedKernel",
+        "YukimaruGames.Terminal.Domain.Contracts",
+        "YukimaruGames.Terminal.Application",
+        "YukimaruGames.Terminal.Presentation",
+        "YukimaruGames.Terminal.Infrastructure",
+        "YukimaruGames.Terminal.Adapters",
+        "YukimaruGames.Terminal.Adapters.UGUI",
+        "YukimaruGames.Terminal.Composition",
+        "YukimaruGames.Terminal.Composition.UGUI",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "TERMINAL_UGUI_AVAILABLE"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.ugui",
+            "expression": "1.0.0",
+            "define": "TERMINAL_UGUI_AVAILABLE"
+        }
+    ],
+    "noEngineReferences": false
+}
