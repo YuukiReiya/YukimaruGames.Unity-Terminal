@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using YukimaruGames.Terminal.Adapters.CommandLine;
 using YukimaruGames.Terminal.Composition.Shared;
 using YukimaruGames.Terminal.Presentation.Contracts;
@@ -46,8 +47,14 @@ namespace YukimaruGames.Terminal.Composition
         /// <inheritdoc/>
         protected override BackendContext BuildBackend(ITerminalOptions options, in DomainContext domain)
         {
-            var session = new CommandLineSession(domain.Service);
+            // 自動起動の設定はCLI専用のため、共通のITerminalOptionsには持たせていない.
+            var launchExternalTerminal = options is not CommandLineOptions commandLineOptions
+                                         || commandLineOptions.LaunchExternalTerminal;
+
+            var session = new CommandLineSession(domain.Service, launchExternalTerminal: launchExternalTerminal);
             session.Open();
+
+            if (!launchExternalTerminal) NotifyConnectionCommand(session.ConnectionCommand);
             _session = session;
 
             return new BackendContext
@@ -57,6 +64,43 @@ namespace YukimaruGames.Terminal.Composition
                 View = new NullTerminalView(),
                 Components = new object[] { session },
             };
+        }
+
+        /// <summary>
+        /// 手動接続用のコマンドラインを、利用者が実行できる形で渡す.
+        /// </summary>
+        /// <remarks>
+        /// 自動起動しない場合、接続前のクライアントにはログが届かず過去ログも送られないため、
+        /// 繋ぐための情報を得る手段が他に無い。長いパスを含む文字列を手で写させないよう
+        /// クリップボードへ入れ、そのまま貼り付けて実行できるようにする。
+        /// <para>
+        /// コンソールへの出力はエディタでのみ行う。ビルドしたプレイヤーではコンソールが無く、
+        /// ログを出しても利用者が読む手段が無いため(クリップボードは実機でも機能する)。
+        /// </para>
+        /// <para>
+        /// <c>Adapters.CommandLine</c>はUnity非依存(<c>noEngineReferences</c>)のため、
+        /// UnityEngineに触れるこの処理はComposition層側で行う(#160).
+        /// </para>
+        /// </remarks>
+        private static void NotifyConnectionCommand(string connectionCommand)
+        {
+            if (string.IsNullOrEmpty(connectionCommand))
+            {
+                // 中継スクリプトを書き出せなかった場合。接続する手段が無いことを知らせる
+                // (エラー経路のため、コンソールが無いプレイヤーでもログへ残す).
+                Debug.LogWarning(
+                    "[YukimaruGames.Terminal] Failed to prepare the relay script. "
+                    + "No external terminal can connect to this session.");
+                return;
+            }
+
+            GUIUtility.systemCopyBuffer = connectionCommand;
+
+#if UNITY_EDITOR
+            Debug.Log(
+                "[YukimaruGames.Terminal] Copied to clipboard. Paste this into your terminal to connect:\n"
+                + connectionCommand);
+#endif
         }
 
         /// <inheritdoc/>

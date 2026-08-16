@@ -21,6 +21,8 @@ namespace YukimaruGames.Terminal.Composition
         private const string ModeSettingsHeader = "Mode Settings";
         private const string AdditionalCommandAssembliesTooltip =
             "コマンド走査に追加するアセンブリ名. 独自asmdefにコマンドやモードを置く場合はここに列挙する.";
+        private const string LaunchExternalTerminalTooltip =
+            "外部ターミナルを自動で起動する。切ると待ち受けのみ行い、接続用のコマンドラインをクリップボードへコピーする（既に開いているターミナルから接続したい場合）.";
 
         [Header(CommandSettingsHeader)]
         [Min(0)]
@@ -30,6 +32,9 @@ namespace YukimaruGames.Terminal.Composition
         [Header(ModeSettingsHeader)]
         [Tooltip(AdditionalCommandAssembliesTooltip)]
         [SerializeField] private string[] _additionalCommandAssemblies = Array.Empty<string>();
+
+        [Tooltip(LaunchExternalTerminalTooltip)]
+        [SerializeField] private bool _launchExternalTerminal = true;
 
         /// <summary>
         /// 外部ターミナルはOS側のキーボード入力をそのまま使うため、Unity側のキーボード入力方式は不問.
@@ -59,5 +64,8 @@ namespace YukimaruGames.Terminal.Composition
 
         /// <inheritdoc/>
         public string[] AdditionalCommandAssemblies => _additionalCommandAssemblies;
+
+        /// <summary>外部ターミナルを自動起動するか.</summary>
+        public bool LaunchExternalTerminal => _launchExternalTerminal;
     }
 }

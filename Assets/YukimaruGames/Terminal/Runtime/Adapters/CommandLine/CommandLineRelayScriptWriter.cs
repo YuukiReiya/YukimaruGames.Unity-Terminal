@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 
 namespace YukimaruGames.Terminal.Adapters.CommandLine
@@ -18,6 +19,10 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         private const string MacRelayFileName = "yukimaru_terminal_relay.sh";
         private const string MacLauncherFileName = "yukimaru_terminal_launcher.applescript";
         private const string TokenFileName = "yukimaru_terminal_token.txt";
+        private const string PortFileName = "yukimaru_terminal_port.txt";
+
+        /// <summary>セッションディレクトリ名の接頭辞(掃除時の判別に使う).</summary>
+        private const string SessionDirectoryPrefix = "yukimaru_terminal_";
 
         // プロンプトを自前でRedraw管理しながら描画するため、標準搭載のPSReadLineには頼らず
         // (スクリプト内蔵ループには効かない)、[Console]::ReadKey()でキー単位に読み取る自前実装で
@@ -29,8 +34,26 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
 
 $ErrorActionPreference = 'Stop'
 
+# 引数は省略できる。省略時はこのスクリプトが置かれたディレクトリから補う。
+# 利用者が手で貼り付けて接続する用途では、長いパスを2つ渡すとコピー事故が起きやすいため.
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+if (-not $Port) {
+    try { $Port = [int]((Get-Content -Path (Join-Path $ScriptDir 'yukimaru_terminal_port.txt') -Raw).Trim()) }
+    catch { $Port = 0 }
+}
+if ([string]::IsNullOrEmpty($TokenPath)) {
+    $TokenPath = Join-Path $ScriptDir 'yukimaru_terminal_token.txt'
+}
+
+if (-not $Port) {
+    Write-Host ""Usage: $($MyInvocation.MyCommand.Name) [-Port <port>] [-TokenPath <token-file>]""
+    exit 1
+}
+
 # セッショントークンは起動引数ではなく一時ファイル経由で受け取る(引数はタスクマネージャー等から
-# 他プロセスに見えてしまうため)。読み取ったら速やかに削除し、露出時間を最小化する.
+# 他プロセスに見えてしまうため)。
+# 読み取り後にここで削除はしない。削除すると2つ目以降のターミナルが接続できなくなるため、
+# 後始末はUnity側(CommandLineSession)がセッションディレクトリごと行う.
 try {
     $Token = (Get-Content -Path $TokenPath -Raw).Trim()
 }
@@ -38,8 +61,6 @@ catch {
     Write-Host ""Failed to read the session token file.""
     exit 1
 }
-
-Remove-Item -Path $TokenPath -Force -ErrorAction SilentlyContinue
 
 if ([string]::IsNullOrEmpty($Token)) {
     Write-Host ""The session token file was empty.""
@@ -230,18 +251,22 @@ $client.Close()
         // 同期ループとし、バックグラウンドでの受信は行わない(非同期に届いた出力が、
         // ユーザーが行編集中の表示と競合して画面が乱れるのを避けるため).
         private const string MacRelayScript = @"#!/bin/bash
-PORT=""$1""
-TOKEN_PATH=""$2""
+# 引数は省略できる。省略時はこのスクリプトが置かれたディレクトリから補う。
+# 利用者が手で貼り付けて接続する用途では、長いパスを2つ渡すとコピー事故が起きやすいため.
+SCRIPT_DIR=$(cd ""$(dirname ""$0"")"" && pwd)
+PORT=""${1:-$(cat ""$SCRIPT_DIR/yukimaru_terminal_port.txt"" 2>/dev/null)}""
+TOKEN_PATH=""${2:-$SCRIPT_DIR/yukimaru_terminal_token.txt}""
 
-if [ -z ""$PORT"" ] || [ -z ""$TOKEN_PATH"" ]; then
-    echo ""Usage: $0 <port> <token-file>""
+if [ -z ""$PORT"" ]; then
+    echo ""Usage: $0 [port] [token-file]""
     exit 1
 fi
 
 # セッショントークンは起動引数ではなく一時ファイル経由で受け取る(引数は`ps`等で
-# 同一マシンの他プロセスから丸見えになるため)。読み取ったら速やかに削除する.
+# 同一マシンの他プロセスから丸見えになるため)。
+# 読み取り後にここで削除はしない。削除すると2つ目以降のターミナルが接続できなくなるため、
+# 後始末はUnity側(CommandLineSession)がセッションディレクトリごと行う.
 TOKEN=$(tr -d '\r\n' < ""$TOKEN_PATH"" 2>/dev/null)
-rm -f ""$TOKEN_PATH"" 2>/dev/null
 
 if [ -z ""$TOKEN"" ]; then
     echo ""Failed to read the session token file.""
@@ -509,9 +534,12 @@ end run
         /// (呼び出しごとに乱数を振ると、スクリプト・トークンファイルが別ディレクトリに
         /// 散らばってしまう).
         /// </summary>
+        /// <summary>自プロセスのPID(セッションディレクトリ名の生成と掃除の判別に使う).</summary>
+        private static readonly int CurrentProcessId = Process.GetCurrentProcess().Id;
+
         private static readonly string ScriptDirectory = Path.Combine(
             Path.GetTempPath(),
-            $"yukimaru_terminal_{Environment.UserName}_{Process.GetCurrentProcess().Id}_{Path.GetRandomFileName().Replace(".", string.Empty)}");
+            $"{SessionDirectoryPrefix}{Environment.UserName}_{CurrentProcessId}_{Path.GetRandomFileName().Replace(".", string.Empty)}");
 
         private static string EnsureScriptDirectory()
         {
@@ -555,6 +583,125 @@ end run
             var path = Path.Combine(EnsureScriptDirectory(), TokenFileName);
             File.WriteAllText(path, token);
             return path;
+        }
+
+        /// <summary>
+        /// 接続先ポートをセッションディレクトリへ書き出す.
+        /// </summary>
+        /// <remarks>
+        /// 中継スクリプトを引数無しで起動できるようにするためのもの(#160)。
+        /// ポート番号は秘密情報ではない(接続の認証はトークンが担う)ため、権限は制限しない.
+        /// </remarks>
+        public static string WritePortFile(int port)
+        {
+            var path = Path.Combine(EnsureScriptDirectory(), PortFileName);
+            File.WriteAllText(path, port.ToString(CultureInfo.InvariantCulture));
+            return path;
+        }
+
+        /// <summary>
+        /// 自身のセッションディレクトリを削除する.
+        /// </summary>
+        /// <remarks>
+        /// トークンファイルの後始末は中継スクリプト側では行わない(削除すると2つ目以降の
+        /// ターミナルが接続できなくなるため)。セッションの終了時にここでまとめて片付ける.
+        /// </remarks>
+        public static void DeleteSessionDirectory()
+        {
+            TryDeleteDirectory(ScriptDirectory);
+        }
+
+        /// <summary>
+        /// 終了済みプロセスが残したセッションディレクトリを掃除する.
+        /// </summary>
+        /// <remarks>
+        /// Unityがクラッシュした場合は<see cref="DeleteSessionDirectory"/>が走らないため、
+        /// 起動時にも掃除する。
+        /// <para>
+        /// ディレクトリ名に含まれるPIDで判別し、<b>生存している他プロセスのものは触らない</b>
+        /// (複数のUnityインスタンスが同時に起動している場合に、他方の作業を壊さないため)。
+        /// PIDが再利用され無関係なプロセスへ割り当てられていた場合は生存扱いとなり残るが、
+        /// 消し過ぎる方向には倒れない。
+        /// </para>
+        /// <para>
+        /// ただし<b>自プロセスのものは、現在のセッション以外なら削除する</b>。
+        /// <see cref="ScriptDirectory"/>はドメインリロードのたびに新しい乱数で作られるため、
+        /// PIDの生存判定だけでは同一プロセスが残した過去のセッションを回収できない
+        /// (実測でPlay Modeの再起動により11件溜まっていた).
+        /// </para>
+        /// </remarks>
+        public static void CleanUpStaleSessionDirectories()
+        {
+            string[] directories;
+
+            try
+            {
+                directories = Directory.GetDirectories(Path.GetTempPath(), SessionDirectoryPrefix + "*");
+            }
+            catch (Exception)
+            {
+                // 一時ディレクトリを列挙できない環境では掃除を諦める(機能自体は続行できる).
+                return;
+            }
+
+            foreach (var directory in directories)
+            {
+                if (string.Equals(directory, ScriptDirectory, StringComparison.Ordinal)) continue;
+                if (!TryParseProcessId(Path.GetFileName(directory), out var processId)) continue;
+
+                // 自プロセスの過去セッション(ドメインリロードで捨てられたもの)は確実に不要.
+                var isOwnProcess = processId == CurrentProcessId;
+                if (!isOwnProcess && IsProcessAlive(processId)) continue;
+
+                TryDeleteDirectory(directory);
+            }
+        }
+
+        /// <summary>
+        /// ディレクトリ名からPIDを取り出す(<c>yukimaru_terminal_{user}_{pid}_{random}</c>).
+        /// </summary>
+        /// <remarks>
+        /// ユーザー名に'_'が含まれうるため、末尾から数えて2番目の要素をPIDとみなす.
+        /// </remarks>
+        private static bool TryParseProcessId(string directoryName, out int processId)
+        {
+            processId = 0;
+
+            var parts = directoryName.Split('_');
+            if (parts.Length < 4) return false;
+
+            return int.TryParse(parts[^2], NumberStyles.Integer, CultureInfo.InvariantCulture, out processId);
+        }
+
+        private static bool IsProcessAlive(int processId)
+        {
+            try
+            {
+                using var process = Process.GetProcessById(processId);
+                return !process.HasExited;
+            }
+            catch (ArgumentException)
+            {
+                // 該当PIDのプロセスが存在しない.
+                return false;
+            }
+            catch (Exception)
+            {
+                // 判定できない場合は生存扱いにして残す(消し過ぎるより安全).
+                return true;
+            }
+        }
+
+        private static void TryDeleteDirectory(string path)
+        {
+            try
+            {
+                if (Directory.Exists(path)) Directory.Delete(path, recursive: true);
+            }
+            catch (Exception)
+            {
+                // 使用中・権限不足等で消せない場合は諦める(次回の掃除で回収される).
+            }
         }
 
         public static string WriteMacLauncherScript()
