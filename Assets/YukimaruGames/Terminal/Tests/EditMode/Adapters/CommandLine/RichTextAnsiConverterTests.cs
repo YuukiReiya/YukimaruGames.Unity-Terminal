@@ -123,6 +123,47 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
             Assert.That(actual, Is.EqualTo("AB"));
         }
 
+        /// <summary>
+        /// 末尾の改行が余計な空行を生まないことを検証します.
+        /// </summary>
+        /// <remarks>
+        /// 送出側は1要素につき改行を1つ付けるため、末尾の区切り文字が生む空要素をそのまま流すと
+        /// 空行が1つ増える。内部の空行と空メッセージそのものは保持する必要がある.
+        /// </remarks>
+        [Test]
+        public void FormatLines_TrailingNewline_DoesNotEmitExtraBlankLine()
+        {
+            Assert.That(CommandLineBridge.FormatLines("a"), Is.EqualTo(new[] { "a" }));
+            Assert.That(CommandLineBridge.FormatLines("a\n"), Is.EqualTo(new[] { "a" }));
+            Assert.That(CommandLineBridge.FormatLines("a\n\n"), Is.EqualTo(new[] { "a", string.Empty }));
+        }
+
+        /// <summary>内部の空行が保持されることを検証します.</summary>
+        [Test]
+        public void FormatLines_InnerBlankLine_IsPreserved()
+        {
+            Assert.That(CommandLineBridge.FormatLines("a\n\nb"), Is.EqualTo(new[] { "a", string.Empty, "b" }));
+        }
+
+        /// <summary>空メッセージが1行として出ることを検証します.</summary>
+        [Test]
+        public void FormatLines_EmptyMessage_EmitsSingleEmptyLine()
+        {
+            Assert.That(CommandLineBridge.FormatLines(string.Empty), Is.EqualTo(new[] { string.Empty }));
+            Assert.That(CommandLineBridge.FormatLines((string)null), Is.EqualTo(new[] { string.Empty }));
+        }
+
+        /// <summary>行ごとにタグが変換されることを検証します.</summary>
+        [Test]
+        public void FormatLines_ConvertsTagsPerLine()
+        {
+            var lines = System.Linq.Enumerable.ToArray(
+                CommandLineBridge.FormatLines("<color=red>a</color>\nplain"));
+
+            Assert.That(lines[0], Does.StartWith(Esc("[38;5;196m")));
+            Assert.That(lines[1], Is.EqualTo("plain"));
+        }
+
         /// <summary><c>null</c>や空文字列が空文字列になることを検証します.</summary>
         [Test]
         public void Convert_NullOrEmpty_ReturnsEmpty([Values(null, "")] string text)

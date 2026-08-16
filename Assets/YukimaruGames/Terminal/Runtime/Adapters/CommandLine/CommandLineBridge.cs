@@ -641,13 +641,22 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// 変換は行ごとに行う(装飾は行末でリセットされるため、行を跨いだ色の持ち越しはしない).
         /// </para>
         /// </remarks>
-        private static IEnumerable<string> FormatLines(LogEntry entry)
-        {
-            var message = entry.Message ?? string.Empty;
+        internal static IEnumerable<string> FormatLines(LogEntry entry) =>
+            FormatLines(entry?.Message);
 
-            foreach (var line in message.Replace("\r\n", "\n").Split('\n', '\r'))
+        /// <inheritdoc cref="FormatLines(LogEntry)"/>
+        internal static IEnumerable<string> FormatLines(string message)
+        {
+            var lines = (message ?? string.Empty).Replace("\r\n", "\n").Split('\n', '\r');
+
+            // 末尾の区切り文字が生む空要素だけを落とす。"a\n"は1行であって空行を伴わない。
+            // 内部の空行(""を挟む形)と、空メッセージそのもの(1行として出す)は保持する.
+            var count = lines.Length;
+            if (count > 1 && lines[count - 1].Length == 0) count--;
+
+            for (var i = 0; i < count; i++)
             {
-                yield return RichTextAnsiConverter.Convert(line);
+                yield return RichTextAnsiConverter.Convert(lines[i]);
             }
         }
 
