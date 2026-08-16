@@ -11,9 +11,11 @@ using YukimaruGames.Terminal.Composition.Input.LegacyInput;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Composition.Shared;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Contracts.Modes;
 using YukimaruGames.Terminal.Infrastructure.Factories;
 using YukimaruGames.Terminal.Presentation.Accessors;
@@ -130,7 +132,7 @@ namespace YukimaruGames.Terminal.Composition
             var rendering = BuildRenderingContext(animation, options, in domain);
             var coordinator = BuildCoordinatorContext(in domain, in rendering, options);
 
-            RegisterInputFocusCommands(in domain, rendering.InputPresenter);
+            RegisterTerminalWindowCommands(in domain, rendering.InputPresenter, coordinator.Coordinator);
 
             return new BackendContext
             {
@@ -141,31 +143,33 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <summary>
-        /// 入力欄のフォーカスを操作する組み込みコマンドを登録する.
+        /// キー操作やボタンに手が届かない構成のための、逃げ道となる組み込みコマンドを登録する.
         /// </summary>
         /// <remarks>
-        /// フォーカス中はキー入力による閉じる操作を抑止しているため(#149)、フォーカスを外す手段が
-        /// 要る。通常は入力欄の外をクリックすればよいが、モバイルなどウィンドウが画面全体を覆う構成では
-        /// クリックできる余白が無い。コマンド実行はフォーカス中でも動くため、確実な逃げ道になる。
-        /// <para>
+        /// 詳細は<see cref="TerminalWindowCommands"/>を参照。
         /// 入力欄を持たないCLIバックエンドには不要なため、ここ(グラフィカルなバックエンドの基底)で
         /// 登録する.
-        /// </para>
         /// </remarks>
-        private static void RegisterInputFocusCommands(in DomainContext domain, IInputPresenter inputPresenter)
+        private static void RegisterTerminalWindowCommands(
+            in DomainContext domain,
+            IInputPresenter inputPresenter,
+            TerminalCoordinator coordinator)
         {
             if (inputPresenter == null || domain.Registry == null) return;
 
-            var commands = new InputFocusCommands(inputPresenter);
-            var handler = CommandFactory.Create(
-                commands,
-                InputFocusCommands.UnfocusMethod,
-                InputFocusCommands.UnfocusMeta,
-                ModeServiceBundle.Empty);
+            var commands = new TerminalWindowCommands(inputPresenter, coordinator);
 
-            if (domain.Registry.Add(InputFocusCommands.UnfocusCommand, handler))
+            Register(in domain, commands, TerminalWindowCommands.UnfocusMethod, TerminalWindowCommands.UnfocusMeta);
+            Register(in domain, commands, TerminalWindowCommands.CloseMethod, TerminalWindowCommands.CloseMeta);
+        }
+
+        private static void Register(in DomainContext domain, object instance, MethodInfo method, in CommandMeta meta)
+        {
+            var handler = CommandFactory.Create(instance, method, meta, ModeServiceBundle.Empty);
+
+            if (domain.Registry.Add(meta.Command, handler))
             {
-                domain.Autocomplete?.Register(InputFocusCommands.UnfocusCommand);
+                domain.Autocomplete?.Register(meta.Command);
             }
         }
 

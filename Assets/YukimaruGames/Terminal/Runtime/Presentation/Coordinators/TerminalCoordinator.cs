@@ -148,6 +148,20 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             OnCloseTriggered();
         }
 
+        /// <summary>
+        /// 閉じるキーやランチャーの閉じるボタンと同じ経路でウィンドウを閉じる.
+        /// </summary>
+        /// <remarks>
+        /// モバイル等、ウィンドウが画面全体を覆ってランチャーボタンに触れられず、
+        /// 物理キーボードが無いため閉じるキーも押せない構成のための逃げ道
+        /// (<c>terminal.close</c>コマンドから呼ばれる)。
+        /// <para>
+        /// フォーカスの解放と入力ガードの解除まで行うため、ウィンドウの表示状態だけを変える
+        /// <c>ITerminalView.SetVisible(false)</c>とは別物.
+        /// </para>
+        /// </remarks>
+        public void RequestClose() => OnCloseTriggered();
+
         private void OnCloseTriggered()
         {
             // IME変換中でも常に閉じられるようにする.
