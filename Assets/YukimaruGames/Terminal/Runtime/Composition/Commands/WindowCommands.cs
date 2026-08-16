@@ -25,10 +25,13 @@ namespace YukimaruGames.Terminal.Composition
     /// (InfrastructureはPresentationを参照できない)。両方を知っているComposition層に置く.
     /// </para>
     /// </remarks>
-    internal sealed class TerminalWindowCommands
+    internal sealed class WindowCommands
     {
         internal const string UnfocusCommand = "terminal.unfocus";
         internal const string CloseCommand = "terminal.close";
+
+        /// <summary>引数を取らないコマンドの引数数.</summary>
+        private const int NoArguments = 0;
 
         private const string UnfocusHelp =
             "Releases focus from the input field. Key bindings such as the close key are suppressed " +
@@ -42,21 +45,21 @@ namespace YukimaruGames.Terminal.Composition
         private readonly IInputPresenter _inputPresenter;
         private readonly TerminalCoordinator _coordinator;
 
-        internal TerminalWindowCommands(IInputPresenter inputPresenter, TerminalCoordinator coordinator)
+        internal WindowCommands(IInputPresenter inputPresenter, TerminalCoordinator coordinator)
         {
             _inputPresenter = inputPresenter;
             _coordinator = coordinator;
         }
 
-        internal static CommandMeta UnfocusMeta { get; } = new(UnfocusCommand, 0, 0, UnfocusHelp);
-        internal static CommandMeta CloseMeta { get; } = new(CloseCommand, 0, 0, CloseHelp);
+        internal static CommandMeta UnfocusMeta { get; } = new(UnfocusCommand, NoArguments, NoArguments, UnfocusHelp);
+        internal static CommandMeta CloseMeta { get; } = new(CloseCommand, NoArguments, NoArguments, CloseHelp);
 
         internal static MethodInfo UnfocusMethod { get; } =
-            typeof(TerminalWindowCommands).GetMethod(
+            typeof(WindowCommands).GetMethod(
                 nameof(Unfocus), BindingFlags.NonPublic | BindingFlags.Instance)!;
 
         internal static MethodInfo CloseMethod { get; } =
-            typeof(TerminalWindowCommands).GetMethod(
+            typeof(WindowCommands).GetMethod(
                 nameof(Close), BindingFlags.NonPublic | BindingFlags.Instance)!;
 
         private void Unfocus() => _inputPresenter?.SetFocus(false);
