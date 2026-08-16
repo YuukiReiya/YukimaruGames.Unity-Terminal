@@ -11,9 +11,13 @@ using YukimaruGames.Terminal.Composition.Input.LegacyInput;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Composition.Shared;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
+using YukimaruGames.Terminal.Domain.Contracts.Modes;
+using YukimaruGames.Terminal.Infrastructure.Factories;
 using YukimaruGames.Terminal.Presentation.Accessors;
 using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Coordinators;
@@ -128,12 +132,45 @@ namespace YukimaruGames.Terminal.Composition
             var rendering = BuildRenderingContext(animation, options, in domain);
             var coordinator = BuildCoordinatorContext(in domain, in rendering, options);
 
+            RegisterWindowCommands(in domain, rendering.InputPresenter, coordinator.Coordinator);
+
             return new BackendContext
             {
                 Components = rendering.Components.Concat(coordinator.Components).ToArray(),
                 GUI = rendering.GUI,
                 View = rendering.View,
             };
+        }
+
+        /// <summary>
+        /// キー操作やボタンに手が届かない構成のための、逃げ道となる組み込みコマンドを登録する.
+        /// </summary>
+        /// <remarks>
+        /// 詳細は<see cref="WindowCommands"/>を参照。
+        /// 入力欄を持たないCLIバックエンドには不要なため、ここ(グラフィカルなバックエンドの基底)で
+        /// 登録する.
+        /// </remarks>
+        private static void RegisterWindowCommands(
+            in DomainContext domain,
+            IInputPresenter inputPresenter,
+            TerminalCoordinator coordinator)
+        {
+            if (inputPresenter == null || domain.Registry == null) return;
+
+            var commands = new WindowCommands(inputPresenter, coordinator);
+
+            Register(in domain, commands, WindowCommands.UnfocusMethod, WindowCommands.UnfocusMeta);
+            Register(in domain, commands, WindowCommands.CloseMethod, WindowCommands.CloseMeta);
+        }
+
+        private static void Register(in DomainContext domain, object instance, MethodInfo method, in CommandMeta meta)
+        {
+            var handler = CommandFactory.Create(instance, method, meta, ModeServiceBundle.Empty);
+
+            if (domain.Registry.Add(meta.Command, handler))
+            {
+                domain.Autocomplete?.Register(meta.Command);
+            }
         }
 
         /// <summary>

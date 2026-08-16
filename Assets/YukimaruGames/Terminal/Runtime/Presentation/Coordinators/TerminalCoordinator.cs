@@ -81,7 +81,7 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _launcherPresenter.OnCloseTriggered += OnCloseTriggered;
             
             _eventListener.OnOpenTriggered += OnOpenTriggered;
-            _eventListener.OnCloseTriggered += OnCloseTriggered;
+            _eventListener.OnCloseTriggered += OnCloseTriggeredByKey;
             _eventListener.OnExecuteTriggered += OnExecuteTriggered;
             _eventListener.OnCancelTriggered += OnCancelTriggered;
             _eventListener.OnPreviousHistoryTriggered += OnPreviousHistoryTriggered;
@@ -100,7 +100,7 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _launcherPresenter.OnCloseTriggered -= OnCloseTriggered;
             
             _eventListener.OnOpenTriggered -= OnOpenTriggered;
-            _eventListener.OnCloseTriggered -= OnCloseTriggered;
+            _eventListener.OnCloseTriggered -= OnCloseTriggeredByKey;
             _eventListener.OnExecuteTriggered -= OnExecuteTriggered;
             _eventListener.OnCancelTriggered -= OnCancelTriggered;
             _eventListener.OnPreviousHistoryTriggered -= OnPreviousHistoryTriggered;
@@ -122,6 +122,45 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
 
             EnterWindowFocusInputGuard();
         }
+
+        /// <summary>
+        /// キー入力による閉じる操作.
+        /// </summary>
+        /// <remarks>
+        /// 入力欄にフォーカスがある間は発火させない。閉じるキーに文字キーが割り当てられていると、
+        /// そのキーを打つたびにウィンドウが閉じてしまい、その文字を入力できなくなるため(#149)。
+        /// <para>
+        /// 判定はキーの種類ではなくフォーカスの有無だけで行う。キーごとに扱いを変えると
+        /// 挙動を追いにくくなるため、一律にしている。
+        /// </para>
+        /// <para>
+        /// フォーカスを外す手段はキー入力側には用意しない(用意すると、そのアクションに
+        /// 文字キーが割り当てられた場合に同じ問題が起きる)。フォーカスの有無に関わらず
+        /// 閉じられる経路として、ランチャーの閉じるボタンと
+        /// <c>ITerminalView.SetVisible(false)</c>が常に残る。
+        /// 入力欄の外をクリックしてフォーカスを外せば、閉じるキーも従来どおり効く.
+        /// </para>
+        /// </remarks>
+        private void OnCloseTriggeredByKey()
+        {
+            if (_inputPresenter.IsFocused) return;
+
+            OnCloseTriggered();
+        }
+
+        /// <summary>
+        /// 閉じるキーやランチャーの閉じるボタンと同じ経路でウィンドウを閉じる.
+        /// </summary>
+        /// <remarks>
+        /// モバイル等、ウィンドウが画面全体を覆ってランチャーボタンに触れられず、
+        /// 物理キーボードが無いため閉じるキーも押せない構成のための逃げ道
+        /// (<c>terminal.close</c>コマンドから呼ばれる)。
+        /// <para>
+        /// フォーカスの解放と入力ガードの解除まで行うため、ウィンドウの表示状態だけを変える
+        /// <c>ITerminalView.SetVisible(false)</c>とは別物.
+        /// </para>
+        /// </remarks>
+        public void RequestClose() => OnCloseTriggered();
 
         private void OnCloseTriggered()
         {
@@ -253,6 +292,14 @@ namespace YukimaruGames.Terminal.Presentation.Coordinators
             _scrollMutator.ScrollToEnd();
         }
 
+        /// <summary>
+        /// 入力欄へフォーカスを当てる.
+        /// </summary>
+        /// <remarks>
+        /// トグルにはしない。トグルにすると、このアクションに文字キーが割り当てられていた場合に
+        /// フォーカス中の入力でフォーカスが外れてしまい、その文字を打てなくなる
+        /// (#149で解決しようとしている問題そのものを再生産する)。当てる一方に留める.
+        /// </remarks>
         private void OnFocusTriggered()
         {
             if (!IsVisible) return;
