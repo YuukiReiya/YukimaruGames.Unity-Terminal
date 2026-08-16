@@ -621,8 +621,24 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             }
         }
 
-        private static string FormatLine(LogEntry entry) =>
-            (entry.Message ?? string.Empty).Replace("\r\n", " ").Replace('\n', ' ').Replace('\r', ' ');
+        /// <summary>
+        /// ログ1件を、外部ターミナルへ流す1行へ整形する.
+        /// </summary>
+        /// <remarks>
+        /// プロトコルが1エントリ=1行のため、本文中の改行は空白へ潰す。
+        /// あわせて、リッチテキストタグをANSIエスケープへ変換する(#156)。
+        /// グラフィカルなバックエンドはタグをそのまま解釈するが、CLIは素のテキストを流すため
+        /// 変換しないとタグが文字として見えてしまう.
+        /// </remarks>
+        private static string FormatLine(LogEntry entry)
+        {
+            var message = (entry.Message ?? string.Empty)
+                .Replace("\r\n", " ")
+                .Replace('\n', ' ')
+                .Replace('\r', ' ');
+
+            return RichTextAnsiConverter.Convert(message);
+        }
 
         public void Dispose()
         {
