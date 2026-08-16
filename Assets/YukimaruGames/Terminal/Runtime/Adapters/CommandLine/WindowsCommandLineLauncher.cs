@@ -1,5 +1,7 @@
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace YukimaruGames.Terminal.Adapters.CommandLine
 {
@@ -13,8 +15,19 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// <inheritdoc/>
         public string BuildConnectionCommand(int port, string token)
         {
-            var (scriptPath, _) = PrepareRelay(token);
-            CommandLineRelayScriptWriter.WritePortFile(port);
+            string scriptPath;
+
+            try
+            {
+                (scriptPath, _) = PrepareRelay(token);
+                CommandLineRelayScriptWriter.WritePortFile(port);
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+            {
+                // 一時ディレクトリへ書けない場合。接続手段を用意できないだけで待ち受け自体は
+                // 続行できるため、契約どおりnullを返して呼び出し側の判断に委ねる.
+                return null;
+            }
 
             // ポートとトークンのパスはスクリプトが自分の隣から読むため、引数は付けない
             // (長いパスを2つ貼り付けさせるとコピー事故が起きやすい).

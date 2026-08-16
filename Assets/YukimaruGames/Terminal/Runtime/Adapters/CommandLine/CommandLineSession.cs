@@ -28,8 +28,8 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// </summary>
         /// <remarks>
         /// 自動起動しない設定のとき、接続前のクライアントにはログが届かず過去ログも送られないため、
-        /// これを見る手段が他に無い。このアセンブリはUnity非依存(<c>noEngineReferences</c>)で
-        /// コンソールへ出力できないため、表示はComposition層に委ねる(#160).
+        /// これを得る手段が他に無い。このアセンブリはUnity非依存(<c>noEngineReferences</c>)で
+        /// クリップボードにもコンソールにも触れないため、利用者への受け渡しはComposition層に委ねる(#160).
         /// </remarks>
         public string ConnectionCommand { get; private set; }
 
