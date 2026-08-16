@@ -31,7 +31,15 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
         public bool IsEditable { get; set; } = true;
 
         /// <inheritdoc/>
-        public bool IsFocused => Focus == WindowFocus.Apply;
+        /// <remarks>
+        /// <see cref="Focus"/>(命令)とは別に保持する。<see cref="WindowFocus"/>の扱いは
+        /// バックエンドによって異なり、IMGUI版は「一度きりの命令」として適用後に自ら
+        /// <see cref="WindowFocus.None"/>へ戻すため、命令のチャンネルから状態を読むと
+        /// 実際にはフォーカスがあるのに<c>false</c>になる(実機で確認)。
+        /// uGUI版・UIToolkit版は実際のフォーカス変化を<see cref="WindowFocus.Apply"/> /
+        /// <see cref="WindowFocus.Release"/>で通知するため、そちらだけを状態の更新に使う.
+        /// </remarks>
+        public bool IsFocused { get; private set; }
 
         private bool _isMoveCursorToEnd;
 
@@ -42,6 +50,7 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
 
         public void SetFocus(bool focus)
         {
+            IsFocused = focus;
             Focus = focus ? WindowFocus.Apply : WindowFocus.Release;
         }
 
@@ -59,6 +68,17 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
         private void HandleFocusChanged(WindowFocus focus)
         {
             Focus = focus;
+
+            // Noneは「命令を消化した」の意味であり、フォーカスを失ったわけではないため状態は変えない.
+            switch (focus)
+            {
+                case WindowFocus.Apply:
+                    IsFocused = true;
+                    break;
+                case WindowFocus.Release:
+                    IsFocused = false;
+                    break;
+            }
         }
 
         private void HandleMoveCursorToEndTriggerChanged(bool moveCursorToEnd)
