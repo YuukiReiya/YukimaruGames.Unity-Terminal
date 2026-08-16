@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -33,33 +34,98 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string CommandsCommand = "commands";
         private const string CommandsHelp = "Lists all registered commands with their help text.";
 
+        /// <summary>領域名とコマンド名を区切る文字.</summary>
+        private const char GroupSeparator = '.';
+
+        /// <summary>領域に属するコマンドの字下げ.</summary>
+        private const string GroupIndent = "  ";
+
+        /// <summary>領域名の表示色.</summary>
+        private const string GroupColor = "#7fdbff";
+
+        /// <summary>コマンド名の表示色.</summary>
+        private const string CommandColor = "#a6e22e";
+
+        /// <summary>
+        /// 登録済みコマンドの一覧を、領域ごとにまとめて表示する.
+        /// </summary>
+        /// <remarks>
+        /// 色はUnityのリッチテキストタグで表現する。グラフィカルなバックエンドはそのまま解釈し、
+        /// CLIバックエンドは出力時にANSIエスケープへ変換する(#156)。
+        /// <para>
+        /// 色はここで定数として持ち、テーマ(<c>ITerminalTheme</c>)には連動させない。
+        /// 診断系の組み込みコマンドであり、Infrastructure層からはテーマを参照できないため.
+        /// </para>
+        /// </remarks>
         [TerminalCommand(CommandsCommand, help: CommandsHelp)]
         private static void ListCommands(ICommandRegistry registry, IModeOutput output)
         {
-            var handlers = registry.All
-                .OrderBy(h => h.Meta.Command, StringComparer.Ordinal)
-                .ToArray();
+            var commands = registry.All.Select(h => h.Meta).ToArray();
 
-            if (handlers.Length == 0)
+            if (commands.Length == 0)
             {
                 output.Message("No commands are registered.");
                 return;
             }
 
-            var builder = new StringBuilder();
-            for (var i = 0; i < handlers.Length; i++)
+            // 領域名の集合。ドットを持つコマンドの接頭辞だけが領域になる.
+            var groups = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var meta in commands)
             {
-                var meta = handlers[i].Meta;
-                builder.Append(meta.Command);
-                if (!string.IsNullOrEmpty(meta.Help))
-                {
-                    builder.Append(" - ").Append(meta.Help);
-                }
-
-                builder.Append(i == handlers.Length - 1 ? string.Empty : "\n");
+                var separatorIndex = meta.Command.IndexOf(GroupSeparator);
+                if (separatorIndex > 0) groups.Add(meta.Command[..separatorIndex]);
             }
 
-            output.Message(builder.ToString());
+            var lines = new List<string>();
+
+            // 無所属のコマンドを先頭にまとめる.
+            foreach (var meta in commands
+                         .Where(m => ResolveGroup(m.Command, groups) == null)
+                         .OrderBy(m => m.Command, StringComparer.Ordinal))
+            {
+                lines.Add(FormatEntry(meta, string.Empty));
+            }
+
+            foreach (var group in groups.OrderBy(g => g, StringComparer.Ordinal))
+            {
+                // ブロック間に空行を挟む(先頭ブロックの前には入れない).
+                if (lines.Count > 0) lines.Add(string.Empty);
+
+                lines.Add($"<color={GroupColor}>{group}</color>");
+
+                foreach (var meta in commands
+                             .Where(m => ResolveGroup(m.Command, groups) == group)
+                             .OrderBy(m => m.Command, StringComparer.Ordinal))
+                {
+                    lines.Add(FormatEntry(meta, GroupIndent));
+                }
+            }
+
+            output.Message(string.Join("\n", lines));
+        }
+
+        /// <summary>
+        /// コマンドが属する領域名を返す。無所属の場合は<c>null</c>.
+        /// </summary>
+        /// <remarks>
+        /// ドットを持つものは接頭辞が領域になる。ドットを持たないものは、同名の領域が存在する場合だけ
+        /// そこへ属させる(<c>fps</c>は<c>fps.set</c>があるため<c>fps</c>領域。<c>echo</c>は無所属)。
+        /// こうしないと<c>fps</c>と<c>fps.set</c>が離れて並び、探しにくくなる.
+        /// </remarks>
+        private static string ResolveGroup(string command, HashSet<string> groups)
+        {
+            var separatorIndex = command.IndexOf(GroupSeparator);
+            if (separatorIndex > 0) return command[..separatorIndex];
+
+            return groups.Contains(command) ? command : null;
+        }
+
+        /// <summary>1コマンド分の行を組み立てる.</summary>
+        private static string FormatEntry(in CommandMeta meta, string indent)
+        {
+            var entry = $"{indent}<color={CommandColor}>{meta.Command}</color>";
+
+            return string.IsNullOrEmpty(meta.Help) ? entry : $"{entry} - {meta.Help}";
         }
 
         private const string TimeScaleCommand = "time.scale";
