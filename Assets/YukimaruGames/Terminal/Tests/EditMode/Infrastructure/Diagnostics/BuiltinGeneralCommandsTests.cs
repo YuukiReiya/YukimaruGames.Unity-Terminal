@@ -105,15 +105,22 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             Assert.That(output.Messages[0], Is.EqualTo(string.Empty));
         }
 
-        /// <summary>登録済みハンドラーがある場合、コマンド名の辞書順で「名前 - ヘルプ」形式に整形されることを検証します.</summary>
+        /// <summary>
+        /// 無所属のコマンドが先頭に、以降は領域ごとにまとめて出力されることを検証します.
+        /// </summary>
+        /// <remarks>
+        /// ドット無しの<c>fps</c>は同名の領域(<c>fps.set</c>が作る)が存在するため、無所属ではなく
+        /// <c>fps</c>領域へ入る。<c>echo</c>は該当領域が無いため無所属.
+        /// </remarks>
         [Test]
-        public void ListCommands_WithRegisteredHandlers_PrintsNameAndHelpSortedOrdinally()
+        public void ListCommands_WithRegisteredHandlers_GroupsByPrefixAndSortsAlphabetically()
         {
             var output = new RecordingOutput();
             var registry = new FixedRegistry
             {
                 All = new[]
                 {
+                    MakeStubHandler("fps.set", "Sets the frame rate."),
                     MakeStubHandler("echo", "Echoes text back."),
                     MakeStubHandler("commands", "Lists all registered commands."),
                     MakeStubHandler("fps", string.Empty),
@@ -124,10 +131,41 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
             handler.Proc(ReadOnlyMemory<CommandArgument>.Empty);
 
             Assert.That(output.Messages, Has.Count.EqualTo(1));
-            Assert.That(
-                output.Messages[0],
-                Is.EqualTo("commands - Lists all registered commands.\necho - Echoes text back.\nfps"));
+
+            var lines = output.Messages[0].Split('\n');
+
+            Assert.That(StripTags(lines[0]), Is.EqualTo("commands - Lists all registered commands."));
+            Assert.That(StripTags(lines[1]), Is.EqualTo("echo - Echoes text back."));
+            Assert.That(lines[2], Is.Empty, "ブロック間に空行が入る");
+            Assert.That(StripTags(lines[3]), Is.EqualTo("fps"), "領域名の見出し");
+            Assert.That(StripTags(lines[4]), Is.EqualTo("  fps"), "ドット無しでも同名領域へ入る");
+            Assert.That(StripTags(lines[5]), Is.EqualTo("  fps.set - Sets the frame rate."));
+            Assert.That(lines, Has.Length.EqualTo(6));
         }
+
+        /// <summary>コマンド名と領域名がリッチテキストタグで色付けされることを検証します.</summary>
+        [Test]
+        public void ListCommands_WithRegisteredHandlers_ColorsGroupAndCommandNames()
+        {
+            var output = new RecordingOutput();
+            var registry = new FixedRegistry
+            {
+                All = new[] { MakeStubHandler("fps.set", "Sets the frame rate."), MakeStubHandler("fps", string.Empty) },
+            };
+            var handler = CreateHandler("ListCommands", output, registry);
+
+            handler.Proc(ReadOnlyMemory<CommandArgument>.Empty);
+
+            var lines = output.Messages[0].Split('\n');
+
+            Assert.That(lines[0], Does.StartWith("<color=").And.Contains("fps</color>"), "領域名に色が付く");
+            Assert.That(lines[1], Does.Contain("<color=").And.Contains("fps</color>"), "コマンド名に色が付く");
+            Assert.That(lines[2], Does.Contain("fps.set</color> - Sets the frame rate."), "説明には色を付けない");
+        }
+
+        /// <summary>アサート用に、リッチテキストタグを取り除きます.</summary>
+        private static string StripTags(string line) =>
+            System.Text.RegularExpressions.Regex.Replace(line, "<.*?>", string.Empty);
 
         /// <summary>登録済みハンドラーが無い場合、プレースホルダーメッセージを出力することを検証します.</summary>
         [Test]
