@@ -27,6 +27,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
         private GameObject _canvasGameObject;
         private WindowRoot _windowRoot;
 
+        /// <summary>画面サイズに依存しない固定サイズのCanvasと<see cref="WindowRoot"/>を用意する.</summary>
         [SetUp]
         public void SetUp()
         {
@@ -42,12 +43,14 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             _windowRoot.Initialize(canvasRect);
         }
 
+        /// <summary>テストが生成したGameObjectを片付ける.</summary>
         [TearDown]
         public void TearDown()
         {
             if (_canvasGameObject != null) Object.DestroyImmediate(_canvasGameObject);
         }
 
+        /// <summary>変換の前提として、アンカーとpivotが左上へ固定されることを検証する.</summary>
         [UnityTest]
         public IEnumerator ApplyRect_アンカーとpivotが左上へ固定される()
         {
@@ -59,6 +62,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             Assert.That(_windowRoot.Root.pivot, Is.EqualTo(new Vector2(0f, 1f)));
         }
 
+        /// <summary><see cref="TerminalRect"/>の幅・高さが<c>sizeDelta</c>へそのまま反映されることを検証する.</summary>
         [UnityTest]
         public IEnumerator ApplyRect_サイズがそのまま反映される()
         {
@@ -68,6 +72,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             Assert.That(_windowRoot.Root.sizeDelta, Is.EqualTo(new Vector2(640f, 360f)));
         }
 
+        /// <summary>左上原点・Y下向きからY上向きへの変換で、Y成分の符号が反転することを検証する.</summary>
         [UnityTest]
         public IEnumerator ApplyRect_Y成分の符号が反転する()
         {

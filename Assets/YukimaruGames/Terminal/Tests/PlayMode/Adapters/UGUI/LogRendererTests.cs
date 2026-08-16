@@ -35,6 +35,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
         private StubClipboardRenderer _clipboard;
         private StubColorPalette _palette;
 
+        /// <summary>ログ行の親となるRectTransformと<see cref="LogRenderer"/>を用意する.</summary>
         [SetUp]
         public void SetUp()
         {
@@ -56,6 +57,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             };
         }
 
+        /// <summary><see cref="LogRenderer"/>を破棄し、テストが生成したGameObjectを片付ける.</summary>
         [TearDown]
         public void TearDown()
         {
@@ -74,6 +76,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             _content.GetComponentsInChildren<Text>(true)
                 .Where(t => t.gameObject.name == MessageName && t.transform.parent.gameObject.activeInHierarchy);
 
+        /// <summary>行数が減ったとき、余剰行がプールへ返却され表示されないことを検証する.</summary>
         [UnityTest]
         public IEnumerator Render_行数が減ると余剰行は表示されない()
         {
@@ -87,6 +90,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             Assert.That(ActiveMessages().Count(), Is.EqualTo(1), "余剰行がプールへ返却されていない");
         }
 
+        /// <summary>プールから再利用した行に前回の内容が残らないことを検証する.</summary>
         [UnityTest]
         public IEnumerator Render_プールから再利用した行に前回の内容が残らない()
         {
@@ -105,6 +109,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             Assert.That(messages, Does.Not.Contain("second"), "再利用した行に前回の内容が残っている");
         }
 
+        /// <summary><see cref="MessageType"/>に応じた色がパレット経由で反映されることを検証する.</summary>
         [UnityTest]
         public IEnumerator Render_MessageTypeに応じた色がパレット経由で反映される(
             [Values(MessageType.Error, MessageType.Warning, MessageType.Message, MessageType.Exception)]
@@ -118,6 +123,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             Assert.That(ActiveMessages().Single().color, Is.EqualTo(expected));
         }
 
+        /// <summary>コピーボタンのクリックが<see cref="IClipboardRenderer"/>へ届くことを検証する.</summary>
         [UnityTest]
         public IEnumerator コピーボタンのクリックでクリップボードへ通知される()
         {
