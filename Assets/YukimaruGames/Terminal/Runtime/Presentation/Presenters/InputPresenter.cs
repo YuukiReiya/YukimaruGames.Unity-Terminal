@@ -29,6 +29,10 @@ namespace YukimaruGames.Terminal.Presentation.Presenters
         public bool IsImeComposing { get; private set; }
 
         public bool IsEditable { get; set; } = true;
+
+        /// <inheritdoc/>
+        public bool IsFocused => Focus == WindowFocus.Apply;
+
         private bool _isMoveCursorToEnd;
 
         public void SetInputField(string inputText)

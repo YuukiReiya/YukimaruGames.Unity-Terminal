@@ -15,6 +15,11 @@ namespace YukimaruGames.Terminal.Presentation.Interfaces.Presenters
         /// </summary>
         bool IsEditable { get; set; }
 
+        /// <summary>
+        /// 入力欄がフォーカスを持っているか(=利用者が文字を打っている最中か).
+        /// </summary>
+        bool IsFocused { get; }
+
         void SetInputField(string inputText);
         void SetFocus(bool focus);
         void SetMoveCursorToEnd();
