@@ -194,12 +194,43 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
 
             if (!TryParseColor(value, out var r, out var g, out var b)) return false;
 
-            var sequence = string.Format(CultureInfo.InvariantCulture, "\x1b[38;2;{0};{1};{2}m", r, g, b);
+            var sequence = string.Format(CultureInfo.InvariantCulture, "\x1b[38;5;{0}m", ToXterm256(r, g, b));
             colorStack.Push(sequence);
 
             if (colored) replacement = sequence;
             return true;
         }
+
+        /// <summary>
+        /// RGBを xterm-256 のカラー番号へ落とす.
+        /// </summary>
+        /// <remarks>
+        /// 24bitカラー(<c>38;2;R;G;B</c>)は対応していない端末があり、macOS標準のTerminal.appが該当する。
+        /// 非対応端末では引数の解釈がずれ、背景が塗られる等の化け方をする(実機で確認)。
+        /// 256色(<c>38;5;N</c>)はほぼ全ての端末が解釈できるため、そちらへ寄せる。
+        /// <para>
+        /// 無彩色はグレースケールランプ(232-255)へ、それ以外は6x6x6のカラーキューブ(16-231)へ
+        /// 最も近い番号を割り当てる.
+        /// </para>
+        /// </remarks>
+        private static int ToXterm256(byte r, byte g, byte b)
+        {
+            if (r == g && g == b)
+            {
+                if (r < 8) return 16;
+                if (r > 248) return 231;
+
+                return 232 + (r - 8) * 24 / 247;
+            }
+
+            return 16
+                   + 36 * Quantize(r)
+                   + 6 * Quantize(g)
+                   + Quantize(b);
+        }
+
+        /// <summary>8bitの成分を、カラーキューブの0-5へ丸める.</summary>
+        private static int Quantize(byte component) => (component * 5 + 127) / 255;
 
         /// <summary>
         /// 色指定を解釈する。<c>#RGB</c> / <c>#RRGGBB</c> / <c>#RRGGBBAA</c> と色名に対応する.

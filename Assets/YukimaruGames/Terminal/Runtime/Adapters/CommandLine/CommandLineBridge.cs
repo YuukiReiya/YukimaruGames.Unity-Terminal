@@ -583,11 +583,14 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
 
             foreach (var entry in entries)
             {
-                var bytes = Encoding.UTF8.GetBytes(FormatLine(entry) + "\n");
-
-                foreach (var client in snapshot)
+                foreach (var line in FormatLines(entry))
                 {
-                    TryWrite(client, bytes);
+                    var bytes = Encoding.UTF8.GetBytes(line + "\n");
+
+                    foreach (var client in snapshot)
+                    {
+                        TryWrite(client, bytes);
+                    }
                 }
             }
         }
@@ -622,22 +625,30 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         }
 
         /// <summary>
-        /// ログ1件を、外部ターミナルへ流す1行へ整形する.
+        /// ログ1件を、外部ターミナルへ流す行へ整形する.
         /// </summary>
         /// <remarks>
-        /// プロトコルが1エントリ=1行のため、本文中の改行は空白へ潰す。
-        /// あわせて、リッチテキストタグをANSIエスケープへ変換する(#156)。
-        /// グラフィカルなバックエンドはタグをそのまま解釈するが、CLIは素のテキストを流すため
-        /// 変換しないとタグが文字として見えてしまう.
+        /// 本文中の改行はそのまま複数行として送る。受信側は行ごとに読んで出力するだけで、
+        /// 制御メッセージはトークンの前置で判別しているため、1エントリが複数行になっても
+        /// プロトコルは壊れない。
+        /// <para>
+        /// 以前は改行を空白へ潰していたが、<c>commands</c>のように構造を持つ出力が
+        /// 1行に連なって判読できなくなっていた(#156)。
+        /// </para>
+        /// <para>
+        /// あわせて、リッチテキストタグをANSIエスケープへ変換する。グラフィカルなバックエンドは
+        /// タグをそのまま解釈するが、CLIは素のテキストを流すため変換しないと文字として見えてしまう。
+        /// 変換は行ごとに行う(装飾は行末でリセットされるため、行を跨いだ色の持ち越しはしない).
+        /// </para>
         /// </remarks>
-        private static string FormatLine(LogEntry entry)
+        private static IEnumerable<string> FormatLines(LogEntry entry)
         {
-            var message = (entry.Message ?? string.Empty)
-                .Replace("\r\n", " ")
-                .Replace('\n', ' ')
-                .Replace('\r', ' ');
+            var message = entry.Message ?? string.Empty;
 
-            return RichTextAnsiConverter.Convert(message);
+            foreach (var line in message.Replace("\r\n", "\n").Split('\n', '\r'))
+            {
+                yield return RichTextAnsiConverter.Convert(line);
+            }
         }
 
         public void Dispose()

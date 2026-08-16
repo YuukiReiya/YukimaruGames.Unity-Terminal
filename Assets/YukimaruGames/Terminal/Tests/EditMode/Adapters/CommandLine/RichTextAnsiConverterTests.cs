@@ -21,7 +21,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         {
             var actual = RichTextAnsiConverter.Convert("<color=#a6e22e>ok</color>");
 
-            Assert.That(actual, Is.EqualTo(Esc("[38;2;166;226;46m") + "ok" + Esc("[39m") + Esc("[0m")));
+            Assert.That(actual, Is.EqualTo(Esc("[38;5;149m") + "ok" + Esc("[39m") + Esc("[0m")));
         }
 
         /// <summary>3桁の16進指定が各桁の複製として展開されることを検証します.</summary>
@@ -30,7 +30,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         {
             var actual = RichTextAnsiConverter.Convert("<color=#f00>x</color>");
 
-            Assert.That(actual, Does.StartWith(Esc("[38;2;255;0;0m")));
+            Assert.That(actual, Does.StartWith(Esc("[38;5;196m")));
         }
 
         /// <summary>色名指定が解釈されることを検証します.</summary>
@@ -39,7 +39,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         {
             var actual = RichTextAnsiConverter.Convert("<color=red>x</color>");
 
-            Assert.That(actual, Does.StartWith(Esc("[38;2;255;0;0m")));
+            Assert.That(actual, Does.StartWith(Esc("[38;5;196m")));
         }
 
         /// <summary>
@@ -54,8 +54,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         {
             var actual = RichTextAnsiConverter.Convert("<color=red>A<color=blue>B</color>C</color>");
 
-            var red = Esc("[38;2;255;0;0m");
-            var blue = Esc("[38;2;0;0;255m");
+            var red = Esc("[38;5;196m");
+            var blue = Esc("[38;5;21m");
 
             Assert.That(actual, Is.EqualTo(red + "A" + blue + "B" + red + "C" + Esc("[39m") + Esc("[0m")));
         }
