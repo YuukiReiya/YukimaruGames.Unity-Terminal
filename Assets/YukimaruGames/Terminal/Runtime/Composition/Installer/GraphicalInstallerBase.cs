@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using YukimaruGames.Terminal.Composition.Shared;
+using YukimaruGames.Terminal.Domain.Contracts.Modes;
+using YukimaruGames.Terminal.Infrastructure.Factories;
 using YukimaruGames.Terminal.Presentation.Accessors;
 using YukimaruGames.Terminal.Presentation.Contracts;
 using YukimaruGames.Terminal.Presentation.Coordinators;
@@ -128,12 +130,43 @@ namespace YukimaruGames.Terminal.Composition
             var rendering = BuildRenderingContext(animation, options, in domain);
             var coordinator = BuildCoordinatorContext(in domain, in rendering, options);
 
+            RegisterInputFocusCommands(in domain, rendering.InputPresenter);
+
             return new BackendContext
             {
                 Components = rendering.Components.Concat(coordinator.Components).ToArray(),
                 GUI = rendering.GUI,
                 View = rendering.View,
             };
+        }
+
+        /// <summary>
+        /// 入力欄のフォーカスを操作する組み込みコマンドを登録する.
+        /// </summary>
+        /// <remarks>
+        /// フォーカス中はキー入力による閉じる操作を抑止しているため(#149)、フォーカスを外す手段が
+        /// 要る。通常は入力欄の外をクリックすればよいが、モバイルなどウィンドウが画面全体を覆う構成では
+        /// クリックできる余白が無い。コマンド実行はフォーカス中でも動くため、確実な逃げ道になる。
+        /// <para>
+        /// 入力欄を持たないCLIバックエンドには不要なため、ここ(グラフィカルなバックエンドの基底)で
+        /// 登録する.
+        /// </para>
+        /// </remarks>
+        private static void RegisterInputFocusCommands(in DomainContext domain, IInputPresenter inputPresenter)
+        {
+            if (inputPresenter == null || domain.Registry == null) return;
+
+            var commands = new InputFocusCommands(inputPresenter);
+            var handler = CommandFactory.Create(
+                commands,
+                InputFocusCommands.UnfocusMethod,
+                InputFocusCommands.UnfocusMeta,
+                ModeServiceBundle.Empty);
+
+            if (domain.Registry.Add(InputFocusCommands.UnfocusCommand, handler))
+            {
+                domain.Autocomplete?.Register(InputFocusCommands.UnfocusCommand);
+            }
         }
 
         /// <summary>
