@@ -258,6 +258,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                         _clients.Add(client);
                     }
 
+                    SendConnectionHintTo(client);
                     SendPromptTo(client);
                     await ClientReadLoopAsync(client, reader, ct).ConfigureAwait(false);
                 }
@@ -471,6 +472,33 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             });
 
             await tcs.Task.ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 接続してきたクライアントへ最初に送る案内文(不要なら<c>null</c>).
+        /// </summary>
+        /// <remarks>
+        /// 「別のターミナルからも接続したい」ときに必要な情報を渡すために使う(#160)。
+        /// 過去ログは接続時に送られないため、セッション開始時にログへ出しても後から繋いだ
+        /// クライアントには届かない。接続のたびにそのクライアントへ送る必要がある.
+        /// </remarks>
+        public string ConnectionHint { get; set; }
+
+        /// <summary>
+        /// 新規接続したクライアントへ<see cref="ConnectionHint"/>を送る.
+        /// </summary>
+        private void SendConnectionHintTo(TcpClient client)
+        {
+            var hint = ConnectionHint;
+            if (string.IsNullOrEmpty(hint)) return;
+
+            RunOnMainThread(() =>
+            {
+                foreach (var line in FormatLines(hint))
+                {
+                    TryWrite(client, Encoding.UTF8.GetBytes(line + "\n"));
+                }
+            });
         }
 
         /// <summary>

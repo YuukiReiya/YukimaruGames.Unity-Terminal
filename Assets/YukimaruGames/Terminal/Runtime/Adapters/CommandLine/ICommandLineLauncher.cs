@@ -24,5 +24,21 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// </param>
         /// <returns>起動したプロセス(起動できなかった場合はnull)</returns>
         Process Launch(int port, string token);
+
+        /// <summary>
+        /// 中継スクリプトとトークンファイルを書き出し、利用者が手で実行できるコマンドラインを返す.
+        /// </summary>
+        /// <remarks>
+        /// 既に開いている別のターミナルから接続したい場合に使う(#160)。
+        /// <see cref="Launch"/>が内部で行っている準備のうち、外部ターミナルの起動だけを行わない。
+        /// <para>
+        /// 戻り値にトークンそのものは含めない。トークンを書いた一時ファイルのパスを示すに留める
+        /// (画面やログに出る文字列であり、そこへ認証情報を載せない).
+        /// </para>
+        /// </remarks>
+        /// <returns>
+        /// そのまま貼り付けて実行できるコマンドライン。準備できなかった場合は<c>null</c>.
+        /// </returns>
+        string BuildConnectionCommand(int port, string token);
     }
 }

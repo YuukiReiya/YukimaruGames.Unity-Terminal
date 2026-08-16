@@ -31,6 +31,9 @@ namespace YukimaruGames.Terminal.Composition
         [Tooltip(AdditionalCommandAssembliesTooltip)]
         [SerializeField] private string[] _additionalCommandAssemblies = Array.Empty<string>();
 
+        [Tooltip("外部ターミナルを自動で起動する。切ると待ち受けのみ行い、接続用のコマンドラインをUnityのコンソールへ出力する（既に開いているターミナルから接続したい場合）。")]
+        [SerializeField] private bool _launchExternalTerminal = true;
+
         /// <summary>
         /// 外部ターミナルはOS側のキーボード入力をそのまま使うため、Unity側のキーボード入力方式は不問.
         /// </summary>
@@ -59,5 +62,8 @@ namespace YukimaruGames.Terminal.Composition
 
         /// <inheritdoc/>
         public string[] AdditionalCommandAssemblies => _additionalCommandAssemblies;
+
+        /// <summary>外部ターミナルを自動起動するか.</summary>
+        public bool LaunchExternalTerminal => _launchExternalTerminal;
     }
 }

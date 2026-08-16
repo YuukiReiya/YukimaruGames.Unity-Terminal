@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using YukimaruGames.Terminal.Adapters.CommandLine;
 using YukimaruGames.Terminal.Composition.Shared;
 using YukimaruGames.Terminal.Presentation.Contracts;
@@ -46,8 +47,20 @@ namespace YukimaruGames.Terminal.Composition
         /// <inheritdoc/>
         protected override BackendContext BuildBackend(ITerminalOptions options, in DomainContext domain)
         {
-            var session = new CommandLineSession(domain.Service);
+            // 自動起動の設定はCLI専用のため、共通のITerminalOptionsには持たせていない.
+            var launchExternalTerminal = options is not CommandLineOptions commandLineOptions
+                                         || commandLineOptions.LaunchExternalTerminal;
+
+            var session = new CommandLineSession(domain.Service, launchExternalTerminal: launchExternalTerminal);
             session.Open();
+
+            // 自動起動しない場合、接続前のクライアントにはログが届かず過去ログも送られないため、
+            // 繋ぐための情報を見る手段が他に無い。Unityのコンソールへ出す。
+            // Adapters.CommandLineはUnity非依存(noEngineReferences)のため、表示はここで行う(#160).
+            if (!launchExternalTerminal && !string.IsNullOrEmpty(session.ConnectionCommand))
+            {
+                Debug.Log($"[YukimaruGames.Terminal] Run this in your terminal to connect:\n{session.ConnectionCommand}");
+            }
             _session = session;
 
             return new BackendContext

@@ -14,17 +14,41 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
     {
         public bool IsSupported => true;
 
-        public Process Launch(int port, string token)
+        /// <inheritdoc/>
+        public string BuildConnectionCommand(int port, string token)
+        {
+            var (relayPath, _) = PrepareRelay(token);
+            CommandLineRelayScriptWriter.WritePortFile(port);
+
+            // ポートとトークンのパスはスクリプトが自分の隣から読むため、引数は付けない
+            // (長いパスを2つ貼り付けさせるとコピー事故が起きやすい).
+            return $"sh \"{relayPath}\"";
+        }
+
+        /// <summary>
+        /// 中継スクリプトとトークンファイルを書き出し、それぞれのパスを返す.
+        /// </summary>
+        /// <remarks>
+        /// トークンそのものではなく、トークンを書いた一時ファイルのパスだけを引数に渡す
+        /// (引数は`ps`等で同一マシンの他プロセスから丸見えになり、認証の意味が薄れるため)。
+        /// TMPDIR未設定で/tmpへフォールバックした場合に備え、ファイル自体も所有者のみ
+        /// 読み書き可能にしておく.
+        /// </remarks>
+        private static (string RelayPath, string TokenPath) PrepareRelay(string token)
         {
             var relayPath = CommandLineRelayScriptWriter.WriteMacRelayScript();
             MakeExecutable(relayPath);
 
-            // トークンそのものではなく、トークンを書いた一時ファイルのパスだけを引数に渡す
-            // (引数は`ps`等で同一マシンの他プロセスから丸見えになり、認証の意味が薄れるため)。
-            // TMPDIR未設定で/tmpへフォールバックした場合に備え、ファイル自体も所有者のみ
-            // 読み書き可能にしておく.
             var tokenPath = CommandLineRelayScriptWriter.WriteTokenFile(token);
             RestrictToOwner(tokenPath);
+
+            return (relayPath, tokenPath);
+        }
+
+        public Process Launch(int port, string token)
+        {
+            var (relayPath, tokenPath) = PrepareRelay(token);
+            CommandLineRelayScriptWriter.WritePortFile(port);
 
             var launcherPath = CommandLineRelayScriptWriter.WriteMacLauncherScript();
 
