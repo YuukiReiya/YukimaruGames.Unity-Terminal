@@ -1,3 +1,9 @@
+// 検証対象のLegacyInputKeyは、Legacy Input Managerが有効なときにだけ存在する
+// (Player SettingsのActive Input HandlingがInput System Package (New)のみだと、
+// 実装ファイル側が#if ENABLE_LEGACY_INPUT_MANAGERで丸ごと除外される)。
+// このガードが無いと、New専用のプロジェクトへ本パッケージを入れた時点で
+// テストアセンブリがコンパイルエラーになる(#162).
+#if ENABLE_LEGACY_INPUT_MANAGER
 using System;
 using NUnit.Framework;
 using UnityEngine;
@@ -62,3 +68,4 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Composition.Input
         }
     }
 }
+#endif
