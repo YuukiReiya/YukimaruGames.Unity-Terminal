@@ -99,36 +99,56 @@ Write-Host ""Connected to Unity Terminal (127.0.0.1:$Port). Type commands below.
 $script:history = New-Object System.Collections.Generic.List[string]
 $script:historyIndex = 0
 
+$script:lastRows = 1
+
 # 入力行を、スクリプトが保持している状態から毎回作り直す。
 # 消した文字数を数えてバックスペースを出す方式だと、スクリプトが把握していない文字が
 # 行に混ざったときに消せず、画面と入力バッファが食い違ったまま復帰できなくなる。
 # 行頭から書き直せば、画面は常にプロンプト+バッファと一致する(#158)。
+#
+# 入力がコンソール幅を超えると表示は複数行へ折り返る。現在行だけを消すと折り返した前の行が
+# 残って二重に見えるため、直前に何行使ったかを覚えておき、その範囲をまとめて消す。
 # ANSIエスケープはコンソールホストの設定によって解釈されないことがあるため、
 # カーソル位置の操作で消す.
 function Redraw([string]$Prompt, [string]$Text) {
     $line = $Prompt + $Text
     try {
-        $top = [Console]::CursorTop
+        $width = [Console]::BufferWidth
+        if ($width -lt 1) { $width = 80 }
+
+        $top = [Console]::CursorTop - ($script:lastRows - 1)
+        if ($top -lt 0) { $top = 0 }
+
+        for ($i = 0; $i -lt $script:lastRows; $i++) {
+            $row = $top + $i
+            if ($row -ge [Console]::BufferHeight) { break }
+            [Console]::SetCursorPosition(0, $row)
+            [Console]::Write("" "" * ($width - 1))
+        }
+
         [Console]::SetCursorPosition(0, $top)
-        [Console]::Write("" "" * ([Console]::BufferWidth - 1))
-        [Console]::SetCursorPosition(0, $top)
+        [Console]::Write($line)
+        $script:lastRows = [Math]::Max(1, [Math]::Ceiling($line.Length / $width))
+        return
     }
     catch {
         # リダイレクト時などカーソルを操作できない環境では、行を消さずに書き直すだけにする.
-        [Console]::Write(""`r"")
+        [Console]::Write(""`r"" + $line)
+        $script:lastRows = 1
     }
-    [Console]::Write($line)
 }
 
 function Read-LineWithHistory([string]$Prompt) {
-    [Console]::Write($Prompt)
+    $script:lastRows = 1
     $buffer = New-Object System.Text.StringBuilder
+    Redraw $Prompt ''
 
     while ($true) {
         $key = [Console]::ReadKey($true)
 
         if ($key.Key -eq [ConsoleKey]::Enter) {
             [Console]::Out.WriteLine()
+            $script:lastRows = 1
             $line = $buffer.ToString()
             if ($line.Length -gt 0) {
                 $script:history.Add($line)
@@ -168,6 +188,7 @@ function Read-LineWithHistory([string]$Prompt) {
                 elseif ($acResponse.StartsWith($candidatesPrefix)) {
                     [Console]::Out.WriteLine()
                     [Console]::Out.WriteLine($acResponse.Substring($candidatesPrefix.Length))
+                    $script:lastRows = 1
                     Redraw $Prompt $buffer.ToString()
                     break
                 }
@@ -184,6 +205,7 @@ function Read-LineWithHistory([string]$Prompt) {
                     # プロンプトと入力中バッファを描き直す(候補一覧の表示と同じ手法).
                     [Console]::Out.WriteLine()
                     [Console]::Out.WriteLine($acResponse)
+                    $script:lastRows = 1
                     Redraw $Prompt $buffer.ToString()
                 }
             }
@@ -339,10 +361,34 @@ HISTORY_INDEX=0
 # 入力行を、スクリプトが保持している状態から毎回作り直す。
 # 消した文字数を数えてバックスペースを出す方式だと、スクリプトが把握していない文字
 # (起動処理中に端末がエコーしたもの等)が行に混ざったときに消せず、画面と入力バッファが
-# 食い違ったまま復帰できなくなる。行頭へ戻して行末まで消してから引き直せば、
-# 画面は常にバッファと一致する(#158).
+# 食い違ったまま復帰できなくなる。行頭へ戻して消してから引き直せば、
+# 画面は常にバッファと一致する(#158)。
+#
+# 入力が端末幅を超えると、表示は複数の物理行へ折り返る。現在の行だけを消すと折り返した
+# 前の行が残って二重に見えるため、直前に何行使ったかを覚えておき、その先頭行まで戻ってから
+# カーソル以降(ESC[J)をまとめて消す.
+TERM_COLS=$(stty size 2>/dev/null | awk '{print $2}')
+[ -z ""$TERM_COLS"" ] && TERM_COLS=80
+LAST_ROWS=1
+
+# 端末の幅が変わったら追従する(readで待っている間に来たシグナルはreadが戻ってから処理される).
+trap 'TERM_COLS=$(stty size 2>/dev/null | awk ""{print \$2}""); [ -z ""$TERM_COLS"" ] && TERM_COLS=80' WINCH
+
 redraw() {
-    printf '\r\033[K%s%s' ""$1"" ""$2""
+    local text=""$1$2""
+    local cols=$TERM_COLS
+    case ""$cols"" in
+        ''|*[!0-9]*) cols=80 ;;
+    esac
+    [ ""$cols"" -lt 1 ] && cols=80
+
+    if [ ""$LAST_ROWS"" -gt 1 ]; then
+        printf '\033[%dA' $((LAST_ROWS - 1))
+    fi
+    printf '\r\033[J%s' ""$text""
+
+    LAST_ROWS=$(( (${#text} + cols - 1) / cols ))
+    [ ""$LAST_ROWS"" -lt 1 ] && LAST_ROWS=1
 }
 
 read_line_with_history() {
@@ -350,7 +396,8 @@ read_line_with_history() {
     local buffer=""""
     local char seq1 seq2
 
-    printf '%s' ""$prompt""
+    LAST_ROWS=1
+    redraw ""$prompt"" ""$buffer""
 
     while true; do
         IFS= read -rsn1 char
@@ -359,6 +406,7 @@ read_line_with_history() {
             # 返す(実測で確認した挙動)。CR/LFのバイト値そのものでは一致しないため、
             # 空文字判定でEnterを検出する.
             printf '\r\n'
+            LAST_ROWS=1
             if [ -n ""$buffer"" ]; then
                 HISTORY+=(""$buffer"")
             fi
@@ -397,6 +445,7 @@ read_line_with_history() {
                         ;;
                     ""$CANDIDATES_PREFIX""*)
                         printf '\r\n%s\r\n' ""${ac_response#$CANDIDATES_PREFIX}""
+                        LAST_ROWS=1
                         redraw ""$prompt"" ""$buffer""
                         break
                         ;;
@@ -412,6 +461,7 @@ read_line_with_history() {
                         # 通常の出力行。入力途中の行を壊さないよう、改行してから出力し、
                         # プロンプトと入力中バッファを描き直す(候補一覧の表示と同じ手法).
                         printf '\r\n%s\r\n' ""$ac_response""
+                        LAST_ROWS=1
                         redraw ""$prompt"" ""$buffer""
                         ;;
                 esac
