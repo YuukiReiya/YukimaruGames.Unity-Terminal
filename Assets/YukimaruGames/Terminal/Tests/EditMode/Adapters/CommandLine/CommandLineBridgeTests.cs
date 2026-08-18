@@ -17,10 +17,17 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
     [TestFixture]
     public sealed class CommandLineBridgeTests
     {
+        /// <summary>送信元が実行中のコマンド.</summary>
         private const string Command = "commands";
 
+        /// <summary>別のターミナルが実行したコマンド(送信元のものと区別するために使う).</summary>
+        private const string OtherCommand = "clear";
+
+        /// <summary>ログの識別子。判定に関与しないため固定値でよい.</summary>
+        private const int LogEntryId = 0;
+
         private static LogEntry Entry(MessageType type, string message) =>
-            new(0, type, DateTimeOffset.UnixEpoch, message);
+            new(LogEntryId, type, DateTimeOffset.UnixEpoch, message);
 
         /// <summary>実行中のコマンドと同じ入力エコーは、送信元への配信対象から外れることを検証します.</summary>
         [Test]
@@ -33,7 +40,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         [Test]
         public void IsInputEcho_別のコマンドのEntryは偽()
         {
-            Assert.That(CommandLineBridge.IsInputEcho(Entry(MessageType.Entry, "clear"), Command), Is.False);
+            Assert.That(CommandLineBridge.IsInputEcho(Entry(MessageType.Entry, OtherCommand), Command), Is.False);
         }
 
         /// <summary>
