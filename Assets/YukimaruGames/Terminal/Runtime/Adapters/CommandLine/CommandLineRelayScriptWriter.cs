@@ -99,22 +99,56 @@ Write-Host ""Connected to Unity Terminal (127.0.0.1:$Port). Type commands below.
 $script:history = New-Object System.Collections.Generic.List[string]
 $script:historyIndex = 0
 
-function Redraw($old, $new) {
-    if ($old.Length -gt 0) {
-        [Console]::Write((""`b"" * $old.Length) + ("" "" * $old.Length) + (""`b"" * $old.Length))
+$script:lastRows = 1
+
+# 入力行を、スクリプトが保持している状態から毎回作り直す。
+# 消した文字数を数えてバックスペースを出す方式だと、スクリプトが把握していない文字が
+# 行に混ざったときに消せず、画面と入力バッファが食い違ったまま復帰できなくなる。
+# 行頭から書き直せば、画面は常にプロンプト+バッファと一致する(#158)。
+#
+# 入力がコンソール幅を超えると表示は複数行へ折り返る。現在行だけを消すと折り返した前の行が
+# 残って二重に見えるため、直前に何行使ったかを覚えておき、その範囲をまとめて消す。
+# ANSIエスケープはコンソールホストの設定によって解釈されないことがあるため、
+# カーソル位置の操作で消す.
+function Redraw([string]$Prompt, [string]$Text) {
+    $line = $Prompt + $Text
+    try {
+        $width = [Console]::BufferWidth
+        if ($width -lt 1) { $width = 80 }
+
+        $top = [Console]::CursorTop - ($script:lastRows - 1)
+        if ($top -lt 0) { $top = 0 }
+
+        for ($i = 0; $i -lt $script:lastRows; $i++) {
+            $row = $top + $i
+            if ($row -ge [Console]::BufferHeight) { break }
+            [Console]::SetCursorPosition(0, $row)
+            [Console]::Write("" "" * ($width - 1))
+        }
+
+        [Console]::SetCursorPosition(0, $top)
+        [Console]::Write($line)
+        $script:lastRows = [Math]::Max(1, [Math]::Ceiling($line.Length / $width))
+        return
     }
-    [Console]::Write($new)
+    catch {
+        # リダイレクト時などカーソルを操作できない環境では、行を消さずに書き直すだけにする.
+        [Console]::Write(""`r"" + $line)
+        $script:lastRows = 1
+    }
 }
 
 function Read-LineWithHistory([string]$Prompt) {
-    [Console]::Write($Prompt)
+    $script:lastRows = 1
     $buffer = New-Object System.Text.StringBuilder
+    Redraw $Prompt ''
 
     while ($true) {
         $key = [Console]::ReadKey($true)
 
         if ($key.Key -eq [ConsoleKey]::Enter) {
             [Console]::Out.WriteLine()
+            $script:lastRows = 1
             $line = $buffer.ToString()
             if ($line.Length -gt 0) {
                 $script:history.Add($line)
@@ -125,8 +159,8 @@ function Read-LineWithHistory([string]$Prompt) {
         elseif ($key.Key -eq [ConsoleKey]::Backspace) {
             if ($buffer.Length -gt 0) {
                 $buffer.Length = $buffer.Length - 1
-                [Console]::Write(""`b `b"")
             }
+            Redraw $Prompt $buffer.ToString()
         }
         elseif ($key.Key -eq [ConsoleKey]::Tab) {
             # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
@@ -146,16 +180,16 @@ function Read-LineWithHistory([string]$Prompt) {
                 if ($null -eq $acResponse) { break }
 
                 if ($acResponse.StartsWith($completePrefix)) {
-                    $old = $buffer.ToString()
                     $buffer.Clear() | Out-Null
                     $buffer.Append($acResponse.Substring($completePrefix.Length)) | Out-Null
-                    Redraw $old $buffer.ToString()
+                    Redraw $Prompt $buffer.ToString()
                     break
                 }
                 elseif ($acResponse.StartsWith($candidatesPrefix)) {
                     [Console]::Out.WriteLine()
                     [Console]::Out.WriteLine($acResponse.Substring($candidatesPrefix.Length))
-                    [Console]::Write($Prompt + $buffer.ToString())
+                    $script:lastRows = 1
+                    Redraw $Prompt $buffer.ToString()
                     break
                 }
                 elseif ($acResponse -eq $noMatchResponse) {
@@ -171,36 +205,36 @@ function Read-LineWithHistory([string]$Prompt) {
                     # プロンプトと入力中バッファを描き直す(候補一覧の表示と同じ手法).
                     [Console]::Out.WriteLine()
                     [Console]::Out.WriteLine($acResponse)
-                    [Console]::Write($Prompt + $buffer.ToString())
+                    $script:lastRows = 1
+                    Redraw $Prompt $buffer.ToString()
                 }
             }
         }
         elseif ($key.Key -eq [ConsoleKey]::UpArrow) {
             if ($script:historyIndex -gt 0) {
                 $script:historyIndex--
-                $old = $buffer.ToString()
                 $buffer.Clear() | Out-Null
                 $buffer.Append($script:history[$script:historyIndex]) | Out-Null
-                Redraw $old $buffer.ToString()
+                Redraw $Prompt $buffer.ToString()
             }
         }
         elseif ($key.Key -eq [ConsoleKey]::DownArrow) {
-            $old = $buffer.ToString()
             if ($script:historyIndex -lt $script:history.Count - 1) {
                 $script:historyIndex++
                 $buffer.Clear() | Out-Null
                 $buffer.Append($script:history[$script:historyIndex]) | Out-Null
-                Redraw $old $buffer.ToString()
+                Redraw $Prompt $buffer.ToString()
             }
             elseif ($script:historyIndex -eq $script:history.Count - 1) {
                 $script:historyIndex++
                 $buffer.Clear() | Out-Null
-                Redraw $old """"
+                Redraw $Prompt """"
             }
         }
         elseif ($key.KeyChar -and -not [char]::IsControl($key.KeyChar)) {
             $buffer.Append($key.KeyChar) | Out-Null
-            [Console]::Write($key.KeyChar)
+            # 1文字ずつ足すのではなく行ごと引き直す(bash版と同じ理由。#158).
+            Redraw $Prompt $buffer.ToString()
             $script:historyIndex = $script:history.Count
         }
     }
@@ -257,38 +291,10 @@ SCRIPT_DIR=$(cd ""$(dirname ""$0"")"" && pwd)
 PORT=""${1:-$(cat ""$SCRIPT_DIR/yukimaru_terminal_port.txt"" 2>/dev/null)}""
 TOKEN_PATH=""${2:-$SCRIPT_DIR/yukimaru_terminal_token.txt}""
 
-if [ -z ""$PORT"" ]; then
-    echo ""Usage: $0 [port] [token-file]""
-    exit 1
-fi
-
-# セッショントークンは起動引数ではなく一時ファイル経由で受け取る(引数は`ps`等で
-# 同一マシンの他プロセスから丸見えになるため)。
-# 読み取り後にここで削除はしない。削除すると2つ目以降のターミナルが接続できなくなるため、
-# 後始末はUnity側(CommandLineSession)がセッションディレクトリごと行う.
-TOKEN=$(tr -d '\r\n' < ""$TOKEN_PATH"" 2>/dev/null)
-
-if [ -z ""$TOKEN"" ]; then
-    echo ""Failed to read the session token file.""
-    exit 1
-fi
-
-# サーバーからの制御行の目印。トークンを前置することで、コマンドの実行結果が偶然
-# 'PROMPT'等で始まっても制御行と誤認されない(トークンは予測不可能なため).
-PROMPT_SENTINEL=""${TOKEN}PROMPT""
-COMPLETE_PREFIX=""${TOKEN}COMPLETE:""
-CANDIDATES_PREFIX=""${TOKEN}CANDIDATES:""
-NOMATCH_RESPONSE=""${TOKEN}NOMATCH""
-
-exec 3<>""/dev/tcp/127.0.0.1/$PORT"" || {
-    echo ""Failed to connect to Unity Terminal on port $PORT""
-    exit 1
-}
-
-# 接続後の最初の1行としてトークンを送る。これが一致しない接続はサーバー側で
-# 何も送られないまま即座に閉じられる.
-printf '%s\n' ""$TOKEN"" >&3
-
+# 端末モードの確定は、画面へ何かを出すより前・接続より前に済ませる。
+# ここより後ろで確定していると、起動処理の最中(接続メッセージの表示中など)に打鍵された
+# 文字を端末が自前でエコーしてしまい、スクリプトの入力バッファには入っていないのに
+# 画面にだけ残る(バックスペースでも消せない)という食い違いが起きる(#158).
 ORIGINAL_STTY=$(stty -g 2>/dev/null)
 
 cleanup() {
@@ -298,11 +304,6 @@ cleanup() {
     fi
 }
 trap cleanup EXIT
-
-# ウィンドウは(Terminal.appの仕様上)前回セッションのものを使い回すことがあり、
-# 前回の表示が画面に残ったままだと新しいセッションの出力と混ざって見えるため、
-# セッション開始時に必ず画面をクリアしてから始める.
-printf '\033[2J\033[H'
 
 # read -n1 は呼び出しごとに端末モードを一時的に切り替えて1文字読むが、矢印キーの
 # 高速な連打(OSのキーリピート等)でこれを繰り返すと、切り替えの往復コストが入力の
@@ -314,19 +315,80 @@ if [ -n ""$ORIGINAL_STTY"" ]; then
     stty raw -echo
 fi
 
+# raw modeでは改行だけでは行頭へ戻らないため、以降のメッセージはCRを伴わせる.
+if [ -z ""$PORT"" ]; then
+    printf 'Usage: %s [port] [token-file]\r\n' ""$0""
+    exit 1
+fi
+
+# セッショントークンは起動引数ではなく一時ファイル経由で受け取る(引数は`ps`等で
+# 同一マシンの他プロセスから丸見えになるため)。
+# 読み取り後にここで削除はしない。削除すると2つ目以降のターミナルが接続できなくなるため、
+# 後始末はUnity側(CommandLineSession)がセッションディレクトリごと行う.
+TOKEN=$(tr -d '\r\n' < ""$TOKEN_PATH"" 2>/dev/null)
+
+if [ -z ""$TOKEN"" ]; then
+    printf 'Failed to read the session token file.\r\n'
+    exit 1
+fi
+
+# サーバーからの制御行の目印。トークンを前置することで、コマンドの実行結果が偶然
+# 'PROMPT'等で始まっても制御行と誤認されない(トークンは予測不可能なため).
+PROMPT_SENTINEL=""${TOKEN}PROMPT""
+COMPLETE_PREFIX=""${TOKEN}COMPLETE:""
+CANDIDATES_PREFIX=""${TOKEN}CANDIDATES:""
+NOMATCH_RESPONSE=""${TOKEN}NOMATCH""
+
+exec 3<>""/dev/tcp/127.0.0.1/$PORT"" || {
+    printf 'Failed to connect to Unity Terminal on port %s\r\n' ""$PORT""
+    exit 1
+}
+
+# 接続後の最初の1行としてトークンを送る。これが一致しない接続はサーバー側で
+# 何も送られないまま即座に閉じられる.
+printf '%s\n' ""$TOKEN"" >&3
+
+# ウィンドウは(Terminal.appの仕様上)前回セッションのものを使い回すことがあり、
+# 前回の表示が画面に残ったままだと新しいセッションの出力と混ざって見えるため、
+# セッション開始時に必ず画面をクリアしてから始める.
+printf '\033[2J\033[H'
+
 printf 'Connected to Unity Terminal (127.0.0.1:%s). Type commands below. Close this window or Ctrl+D to disconnect.\r\n' ""$PORT""
 
 HISTORY=()
 HISTORY_INDEX=0
 
+# 入力行を、スクリプトが保持している状態から毎回作り直す。
+# 消した文字数を数えてバックスペースを出す方式だと、スクリプトが把握していない文字
+# (起動処理中に端末がエコーしたもの等)が行に混ざったときに消せず、画面と入力バッファが
+# 食い違ったまま復帰できなくなる。行頭へ戻して消してから引き直せば、
+# 画面は常にバッファと一致する(#158)。
+#
+# 入力が端末幅を超えると、表示は複数の物理行へ折り返る。現在の行だけを消すと折り返した
+# 前の行が残って二重に見えるため、直前に何行使ったかを覚えておき、その先頭行まで戻ってから
+# カーソル以降(ESC[J)をまとめて消す.
+TERM_COLS=$(stty size 2>/dev/null | awk '{print $2}')
+[ -z ""$TERM_COLS"" ] && TERM_COLS=80
+LAST_ROWS=1
+
+# 端末の幅が変わったら追従する(readで待っている間に来たシグナルはreadが戻ってから処理される).
+trap 'TERM_COLS=$(stty size 2>/dev/null | awk ""{print \$2}""); [ -z ""$TERM_COLS"" ] && TERM_COLS=80' WINCH
+
 redraw() {
-    local old_len=$1
-    local new_text=$2
-    local i
-    for ((i = 0; i < old_len; i++)); do
-        printf '\b \b'
-    done
-    printf '%s' ""$new_text""
+    local text=""$1$2""
+    local cols=$TERM_COLS
+    case ""$cols"" in
+        ''|*[!0-9]*) cols=80 ;;
+    esac
+    [ ""$cols"" -lt 1 ] && cols=80
+
+    if [ ""$LAST_ROWS"" -gt 1 ]; then
+        printf '\033[%dA' $((LAST_ROWS - 1))
+    fi
+    printf '\r\033[J%s' ""$text""
+
+    LAST_ROWS=$(( (${#text} + cols - 1) / cols ))
+    [ ""$LAST_ROWS"" -lt 1 ] && LAST_ROWS=1
 }
 
 read_line_with_history() {
@@ -334,7 +396,8 @@ read_line_with_history() {
     local buffer=""""
     local char seq1 seq2
 
-    printf '%s' ""$prompt""
+    LAST_ROWS=1
+    redraw ""$prompt"" ""$buffer""
 
     while true; do
         IFS= read -rsn1 char
@@ -343,6 +406,7 @@ read_line_with_history() {
             # 返す(実測で確認した挙動)。CR/LFのバイト値そのものでは一致しないため、
             # 空文字判定でEnterを検出する.
             printf '\r\n'
+            LAST_ROWS=1
             if [ -n ""$buffer"" ]; then
                 HISTORY+=(""$buffer"")
             fi
@@ -360,8 +424,8 @@ read_line_with_history() {
         elif [ ""$char"" = $'\x7f' ] || [ ""$char"" = $'\x08' ]; then
             if [ -n ""$buffer"" ]; then
                 buffer=""${buffer%?}""
-                printf '\b \b'
             fi
+            redraw ""$prompt"" ""$buffer""
         elif [ ""$char"" = $'\t' ]; then
             # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
             # 応答を待つ(fd3はターミナルのstty raw設定と独立したソケットの読み書きなので、
@@ -375,13 +439,14 @@ read_line_with_history() {
             while IFS= read -r ac_response <&3; do
                 case ""$ac_response"" in
                     ""$COMPLETE_PREFIX""*)
-                        local old_len=${#buffer}
                         buffer=""${ac_response#$COMPLETE_PREFIX}""
-                        redraw ""$old_len"" ""$buffer""
+                        redraw ""$prompt"" ""$buffer""
                         break
                         ;;
                     ""$CANDIDATES_PREFIX""*)
-                        printf '\r\n%s\r\n%s%s' ""${ac_response#$CANDIDATES_PREFIX}"" ""$prompt"" ""$buffer""
+                        printf '\r\n%s\r\n' ""${ac_response#$CANDIDATES_PREFIX}""
+                        LAST_ROWS=1
+                        redraw ""$prompt"" ""$buffer""
                         break
                         ;;
                     ""$NOMATCH_RESPONSE"")
@@ -395,7 +460,9 @@ read_line_with_history() {
                     *)
                         # 通常の出力行。入力途中の行を壊さないよう、改行してから出力し、
                         # プロンプトと入力中バッファを描き直す(候補一覧の表示と同じ手法).
-                        printf '\r\n%s\r\n%s%s' ""$ac_response"" ""$prompt"" ""$buffer""
+                        printf '\r\n%s\r\n' ""$ac_response""
+                        LAST_ROWS=1
+                        redraw ""$prompt"" ""$buffer""
                         ;;
                 esac
             done
@@ -441,27 +508,27 @@ read_line_with_history() {
             if [ ""$esc_seq"" = ""[A"" ]; then
                 if [ ""$HISTORY_INDEX"" -gt 0 ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX - 1))
-                    local old_len=${#buffer}
                     buffer=""${HISTORY[$HISTORY_INDEX]}""
-                    redraw ""$old_len"" ""$buffer""
+                    redraw ""$prompt"" ""$buffer""
                 fi
             elif [ ""$esc_seq"" = ""[B"" ]; then
-                local old_len=${#buffer}
                 if [ ""$HISTORY_INDEX"" -lt $((${#HISTORY[@]} - 1)) ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX + 1))
                     buffer=""${HISTORY[$HISTORY_INDEX]}""
-                    redraw ""$old_len"" ""$buffer""
+                    redraw ""$prompt"" ""$buffer""
                 elif [ ""$HISTORY_INDEX"" -eq $((${#HISTORY[@]} - 1)) ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX + 1))
                     buffer=""""
-                    redraw ""$old_len"" """"
+                    redraw ""$prompt"" """"
                 fi
             fi
             # それ以外の未知のシーケンス(Left/Right/Delete/Home/End等)は読み切った上で破棄する
             # (現状は上下矢印による履歴呼び出しのみ対応).
         else
             buffer=""${buffer}${char}""
-            printf '%s' ""$char""
+            # 1文字ずつ足すのではなく行ごと引き直す。起動直後に紛れ込んだ文字が
+            # 行頭側に残っていても、最初の打鍵で必ず消える(#158).
+            redraw ""$prompt"" ""$buffer""
             HISTORY_INDEX=${#HISTORY[@]}
         fi
     done
