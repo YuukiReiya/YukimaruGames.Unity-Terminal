@@ -17,15 +17,6 @@ namespace YukimaruGames.Terminal.Composition
     /// </remarks>
     internal sealed class UIToolkitThemeApplier
     {
-        /// <summary>
-        /// <see cref="ITerminalTheme.FontSize"/>はIMGUI版の<c>GUIStyle.fontSize</c>向けに調整された値
-        /// (既定55)であり、UIToolkitの<c>style.fontSize</c>(素のCSSピクセル相当)にそのまま渡すと
-        /// 極端に巨大化する(#122で判明。両バックエンドで「同じ数値=同じ見た目」という前提自体が誤りだった)。
-        /// フォント"種類"(<see cref="ITerminalTheme.Font"/>)は両バックエンドで共有して問題ないが、
-        /// サイズはUIToolkit独自の既定値を使う.
-        /// </summary>
-        private const int FontSize = 14;
-
         private readonly WindowRoot _windowRoot;
 
         /// <summary>
@@ -48,6 +39,15 @@ namespace YukimaruGames.Terminal.Composition
 
             var fontDefinition = ResolveFontDefinition(theme);
 
+            // フォントサイズはIMGUI版・uGUI版と同じくテーマの値をそのまま使う。
+            // かつては「IMGUI向けに調整された値をUIToolkitへ渡すと巨大化する」として固有の固定値
+            // (14)を持っていたが、実際の原因はPanelSettingsの既定スケール(ConstantPhysicalSize)に
+            // よる高DPI環境での拡大であり、ピクセル等倍(ConstantPixelSize)を明示した時点で
+            // 解消していた。同一解像度で3バックエンドの表示が一致することを実機で確認済み(#157)。
+            // なお利用者がPanelSettingsを明示指定する場合、そのスケールモードがピクセル等倍で
+            // なければ表示サイズはDPIに応じて変わる(UIToolkit側の設定であり、ここでは介入しない).
+            var fontSize = theme.FontSize;
+
             if (_windowRoot.Root != null) _windowRoot.Root.style.backgroundColor = theme.BackgroundColor;
 
             // ScrollViewの内部クリッピングが、下に配置された兄弟要素(入力欄の行)における
@@ -56,18 +56,18 @@ namespace YukimaruGames.Terminal.Composition
             // ScrollView側にあると判断)。親の描画に依存せず自己完結するよう、入力欄の行
             // 自体にも同じ背景色を明示的に持たせることで回避する.
             if (_windowRoot.InputRow != null) _windowRoot.InputRow.style.backgroundColor = theme.BackgroundColor;
-            ApplyTextElementStyle(_windowRoot.PromptLabel, theme.PromptColor, fontDefinition);
+            ApplyTextElementStyle(_windowRoot.PromptLabel, theme.PromptColor, fontDefinition, fontSize);
             ApplyInputFieldColors(theme);
-            ApplyTextElementStyle(_windowRoot.InputField, null, fontDefinition);
-            ApplyTextElementStyle(_windowRoot.SubmitButton, theme.ExecuteButtonColor, fontDefinition);
-            ApplyTextElementStyle(_windowRoot.LauncherOpenButton, theme.ButtonColor, fontDefinition);
-            ApplyTextElementStyle(_windowRoot.LauncherCloseButton, theme.ButtonColor, fontDefinition);
+            ApplyTextElementStyle(_windowRoot.InputField, null, fontDefinition, fontSize);
+            ApplyTextElementStyle(_windowRoot.SubmitButton, theme.ExecuteButtonColor, fontDefinition, fontSize);
+            ApplyTextElementStyle(_windowRoot.LauncherOpenButton, theme.ButtonColor, fontDefinition, fontSize);
+            ApplyTextElementStyle(_windowRoot.LauncherCloseButton, theme.ButtonColor, fontDefinition, fontSize);
 
             if (LogRenderer != null)
             {
                 LogRenderer.CopyButtonColor = theme.CopyButtonColor;
                 LogRenderer.FontDefinition = fontDefinition;
-                LogRenderer.FontSize = FontSize;
+                LogRenderer.FontSize = fontSize;
             }
 
             ApplyScrollViewOptions(scrollSensitivity, scrollDecelerationRate);
@@ -109,13 +109,13 @@ namespace YukimaruGames.Terminal.Composition
             return FontDefinition.FromFont(font);
         }
 
-        private static void ApplyTextElementStyle(VisualElement element, Color? color, FontDefinition fontDefinition)
+        private static void ApplyTextElementStyle(VisualElement element, Color? color, FontDefinition fontDefinition, int fontSize)
         {
             if (element == null) return;
 
             if (color.HasValue) element.style.color = color.Value;
             element.style.unityFontDefinition = fontDefinition;
-            element.style.fontSize = FontSize;
+            element.style.fontSize = fontSize;
         }
 
         /// <summary>
