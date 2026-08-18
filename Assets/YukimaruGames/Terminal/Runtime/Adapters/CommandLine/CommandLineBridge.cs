@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YukimaruGames.Terminal.Application.Interfaces;
 using YukimaruGames.Terminal.Application.Models;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Adapters.CommandLine
 {
@@ -116,6 +117,21 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// (閉じないと、ソケットの読み取り待ちが解けずに接続がリークし続ける).
         /// </remarks>
         private readonly List<TcpClient> _pendingClients = new();
+
+        /// <summary>
+        /// 実行中のコマンドを、それを送ってきたクライアントごとに保持する.
+        /// </summary>
+        /// <remarks>
+        /// コマンド実行時、Unity側は入力文字列を<see cref="MessageType.Entry"/>としてログへ積む。
+        /// これをそのまま全クライアントへ配信すると、送信した本人のターミナルには
+        /// 自分が打った入力行が既に表示されているため二重に見える(#165)。
+        /// <para>
+        /// 実行の前後でのみ保持し、<see cref="HandleLogAdded"/>で送信元だけを配信対象から外す。
+        /// クライアントごとに持つのは、複数のターミナルが同時にコマンドを送った場合に
+        /// 取り違えないため.
+        /// </para>
+        /// </remarks>
+        private readonly Dictionary<TcpClient, string> _executingLines = new();
 
         private readonly object _clientsLock = new();
         private readonly SynchronizationContext _mainThreadContext;
@@ -363,7 +379,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                     continue;
                 }
 
-                await ExecuteOnMainThreadAsync(line, ct).ConfigureAwait(false);
+                await ExecuteOnMainThreadAsync(client, line, ct).ConfigureAwait(false);
             }
         }
 
@@ -378,13 +394,13 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// ctのキャンセルでも完了するようにし、ClientReadLoopAsyncのawaitが永久に返らない
         /// (=接続がリークし続ける)事態を避ける.
         /// </remarks>
-        private async Task ExecuteOnMainThreadAsync(string line, CancellationToken ct)
+        private async Task ExecuteOnMainThreadAsync(TcpClient origin, string line, CancellationToken ct)
         {
             if (_mainThreadContext == null)
             {
                 // メインスレッドのコンテキストを取得できなかった場合のフォールバック
                 // (本来は起こらない想定だが、呼び出し元を巻き込まないようその場で処理する).
-                await ExecuteAndLogAsync(line, ct).ConfigureAwait(false);
+                await ExecuteAndLogAsync(origin, line, ct).ConfigureAwait(false);
                 return;
             }
 
@@ -395,7 +411,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             {
                 try
                 {
-                    await ExecuteAndLogAsync(line, ct).ConfigureAwait(true);
+                    await ExecuteAndLogAsync(origin, line, ct).ConfigureAwait(true);
                 }
                 finally
                 {
@@ -406,8 +422,10 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             await tcs.Task.ConfigureAwait(false);
         }
 
-        private async Task ExecuteAndLogAsync(string line, CancellationToken ct)
+        private async Task ExecuteAndLogAsync(TcpClient origin, string line, CancellationToken ct)
         {
+            BeginExecution(origin, line);
+
             try
             {
                 await _service.ExecuteAsync(line, ct).ConfigureAwait(true);
@@ -422,6 +440,8 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             }
             finally
             {
+                EndExecution(origin);
+
                 // コマンド完了後、実行結果のログ出力(HandleLogAdded)より後にプロンプトを送ることで
                 // 「出力の下に次のプロンプトが来る」通常のシェルの見た目に合わせる.
                 SendPromptToAll();
@@ -617,10 +637,62 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
 
                     foreach (var client in snapshot)
                     {
+                        // 自分が打った入力行は、そのターミナルに既に表示されている(#165).
+                        if (IsSelfEcho(entry, client)) continue;
+
                         TryWrite(client, bytes);
                     }
                 }
             }
+        }
+
+        /// <summary>コマンドの実行開始を、送信元とともに記録する.</summary>
+        private void BeginExecution(TcpClient origin, string line)
+        {
+            if (origin == null) return;
+
+            lock (_clientsLock)
+            {
+                _executingLines[origin] = line;
+            }
+        }
+
+        /// <summary>コマンドの実行終了を記録する(以降は通常どおり配信する).</summary>
+        private void EndExecution(TcpClient origin)
+        {
+            if (origin == null) return;
+
+            lock (_clientsLock)
+            {
+                _executingLines.Remove(origin);
+            }
+        }
+
+        /// <summary>
+        /// そのログが、<paramref name="client"/>自身が打った入力行のエコーか.
+        /// </summary>
+        private bool IsSelfEcho(LogEntry entry, TcpClient client)
+        {
+            lock (_clientsLock)
+            {
+                return _executingLines.TryGetValue(client, out var executing)
+                       && IsInputEcho(entry, executing);
+            }
+        }
+
+        /// <summary>
+        /// ログが「実行中のコマンドの入力エコー」かを判定する.
+        /// </summary>
+        /// <remarks>
+        /// 実行中のコマンドと同じ文字列の<see cref="MessageType.Entry"/>だけを対象にする。
+        /// 実行結果や他の種別のログは、送信元であっても配信する必要がある.
+        /// </remarks>
+        internal static bool IsInputEcho(LogEntry entry, string executingLine)
+        {
+            if (entry == null || executingLine == null) return false;
+            if (entry.MessageType != MessageType.Entry) return false;
+
+            return string.Equals(entry.Message, executingLine, StringComparison.Ordinal);
         }
 
         private static void TryWrite(TcpClient client, byte[] bytes)
