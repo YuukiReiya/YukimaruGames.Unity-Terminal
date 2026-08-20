@@ -9,84 +9,93 @@ namespace YukimaruGames.Terminal.Editor
     /// <summary>
     /// <see cref="ImmediateModeAnimation"/>のInspector表示用PropertyDrawer.
     /// </summary>
+    /// <remarks>
+    /// 描画は<see cref="DrawerLayout"/>による矩形ベース。<c>EditorGUILayout</c>を使うと
+    /// Drawerが確保した位置ではなくInspectorの末尾へ流れてしまう(#147).
+    /// </remarks>
     [CustomPropertyDrawer(typeof(ImmediateModeAnimation))]
     public sealed class ImmediateModeAnimationDrawer : PropertyDrawer
     {
-        private static GUIStyle _toolbarStyle;
-        private static readonly Lazy<GUIStyle> _popupStyle = new(() => new GUIStyle(EditorStyles.popup)
+        private const float SectionSpace = 6f;
+        private const float GroupInnerSpace = 2f;
+
+        private static readonly Lazy<GUIStyle> PopupStyle = new(() => new GUIStyle(EditorStyles.popup)
         {
             alignment = TextAnchor.MiddleCenter,
             fontStyle = FontStyle.Bold,
         });
 
+        private static readonly GUIContent[] BootupStateOptions = ToOptions(typeof(WindowState));
+        private static readonly GUIContent[] AnchorOptions = ToOptions(typeof(WindowAnchor));
+        private static readonly GUIContent[] WindowStyleOptions = ToOptions(typeof(WindowStyle));
+
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
 
-            InitStyles();
-
             label = EditorGUI.BeginProperty(position, label, property);
 
-            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
-
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                EditorGUILayout.Space(4f);
-                RenderWindowStyle(property);
-
-                EditorGUILayout.Space(6f);
-                RenderParameters(property);
-                EditorGUILayout.Space(4f);
-            }
+            Build(new DrawerLayout(position, true), property, label);
 
             EditorGUI.EndProperty();
         }
 
-        private void RenderWindowStyle(SerializedProperty property)
-        {
-            EditorGUILayout.LabelField("Window Style", EditorStyles.boldLabel);
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                EditorGUILayout.Space(2f);
-                DrawPopup(property.FindPropertyRelative("_bootupWindowState"), typeof(WindowState), "Bootup State");
-                DrawPopup(property.FindPropertyRelative("_anchor"), typeof(WindowAnchor), "Anchor");
-                DrawPopup(property.FindPropertyRelative("_windowStyle"), typeof(WindowStyle), "Style");
-                EditorGUILayout.Space(2f);
-            }
-        }
-
-        private void RenderParameters(SerializedProperty property)
-        {
-            EditorGUILayout.LabelField("Parameters", EditorStyles.boldLabel);
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                EditorGUILayout.Slider(property.FindPropertyRelative("_duration"), 0f, 3f);
-                EditorGUILayout.Slider(property.FindPropertyRelative("_compactScale"), 0.1f, 1f);
-            }
-        }
-
-        private void DrawPopup(SerializedProperty prop, Type enumType, string label)
-        {
-            prop.enumValueIndex = EditorGUILayout.Popup(
-                new GUIContent(label),
-                prop.enumValueIndex,
-                Array.ConvertAll(Enum.GetNames(enumType), s => new GUIContent(s)),
-                _popupStyle.Value);
-        }
-
-        private void InitStyles()
-        {
-            if (_toolbarStyle != null) return;
-            _toolbarStyle = new GUIStyle(GUI.skin.button)
-            {
-                fixedHeight = 25,
-                fontStyle = FontStyle.Bold
-            };
-        }
-
+        /// <inheritdoc/>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return 0f;
+            if (property == null || property.serializedObject.targetObject == null) return 0f;
+
+            var layout = new DrawerLayout(new Rect(0f, 0f, EditorGUIUtility.currentViewWidth, 0f), false);
+            Build(layout, property, label);
+
+            return layout.Height;
         }
+
+        /// <summary>
+        /// 描画と高さ計算で共有する組み立て処理.
+        /// </summary>
+        private static void Build(DrawerLayout layout, SerializedProperty property, GUIContent label)
+        {
+            layout.Label(label, EditorStyles.boldLabel);
+            layout.BoxedGroup(box =>
+            {
+                box.Space(GroupInnerSpace);
+                BuildWindowStyle(box, property);
+
+                box.Space(SectionSpace);
+                BuildParameters(box, property);
+            });
+        }
+
+        private static void BuildWindowStyle(DrawerLayout layout, SerializedProperty property)
+        {
+            layout.Label("Window Style", EditorStyles.boldLabel);
+            layout.BoxedGroup(box =>
+            {
+                box.EnumPopup(
+                    property.FindPropertyRelative("_bootupWindowState"),
+                    new GUIContent("Bootup State"), BootupStateOptions, PopupStyle.Value);
+                box.EnumPopup(
+                    property.FindPropertyRelative("_anchor"),
+                    new GUIContent("Anchor"), AnchorOptions, PopupStyle.Value);
+                box.EnumPopup(
+                    property.FindPropertyRelative("_windowStyle"),
+                    new GUIContent("Style"), WindowStyleOptions, PopupStyle.Value);
+            });
+        }
+
+        private static void BuildParameters(DrawerLayout layout, SerializedProperty property)
+        {
+            layout.Label("Parameters", EditorStyles.boldLabel);
+            layout.BoxedGroup(box =>
+            {
+                box.Slider(property.FindPropertyRelative("_duration"), 0f, 3f);
+                box.Slider(property.FindPropertyRelative("_compactScale"), 0.1f, 1f);
+            });
+        }
+
+        private static GUIContent[] ToOptions(Type enumType) =>
+            Array.ConvertAll(Enum.GetNames(enumType), name => new GUIContent(name));
     }
 }

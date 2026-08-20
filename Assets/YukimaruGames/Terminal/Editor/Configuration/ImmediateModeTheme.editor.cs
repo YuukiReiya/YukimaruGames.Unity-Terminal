@@ -1,4 +1,3 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 using YukimaruGames.Terminal.Composition;
@@ -8,28 +7,90 @@ namespace YukimaruGames.Terminal.Editor
     /// <summary>
     /// <see cref="ImmediateModeTheme"/>のInspector表示用PropertyDrawer.
     /// </summary>
+    /// <remarks>
+    /// 描画は<see cref="DrawerLayout"/>による矩形ベース。<c>EditorGUILayout</c>を使うと
+    /// Drawerが確保した位置ではなくInspectorの末尾へ流れてしまう(#147).
+    /// </remarks>
     [CustomPropertyDrawer(typeof(ImmediateModeTheme))]
     public sealed class ImmediateModeThemeDrawer : PropertyDrawer
     {
         private const string ZeroReferenceHeightMessage =
             "Reference Resolution の高さが0のため、拡縮は行われません。";
 
+        private const float SectionSpace = 6f;
+        private const float GroupInnerSpace = 4f;
+        private const float ResetButtonWidth = 60f;
+        private const float DefaultCursorFlashSpeed = 1.886792f;
+
+        private static readonly GUIContent SizeLabel = new("Size");
+        private static readonly GUIContent ScaleWithScreenLabel = new("Scale With Screen");
+        private static readonly GUIContent ReferenceResolutionLabel = new("Reference Resolution");
+        private static readonly GUIContent CursorFlashSpeedLabel = new("Cursor Flash Speed");
+
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
-            
+
             label = EditorGUI.BeginProperty(position, label, property);
-            
-            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
-            
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                EditorGUILayout.Space(4f);
-                RenderViewCategory(property);
-                EditorGUILayout.Space(4f);
-            }
+
+            Build(new DrawerLayout(position, true), property, label);
 
             EditorGUI.EndProperty();
+        }
+
+        /// <inheritdoc/>
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            if (property == null || property.serializedObject.targetObject == null) return 0f;
+
+            var layout = new DrawerLayout(new Rect(0f, 0f, EditorGUIUtility.currentViewWidth, 0f), false);
+            Build(layout, property, label);
+
+            return layout.Height;
+        }
+
+        /// <summary>
+        /// 描画と高さ計算で共有する組み立て処理.
+        /// </summary>
+        private static void Build(DrawerLayout layout, SerializedProperty property, GUIContent label)
+        {
+            layout.Label(label, EditorStyles.boldLabel);
+            layout.BoxedGroup(box =>
+            {
+                box.Space(GroupInnerSpace);
+                BuildFont(box, property);
+
+                box.Space(SectionSpace);
+                BuildColors(box, property);
+
+                box.Space(SectionSpace);
+                BuildLogColors(box, property);
+
+                box.Space(SectionSpace);
+                BuildButtonColors(box, property);
+            });
+        }
+
+        private static void BuildFont(DrawerLayout layout, SerializedProperty property)
+        {
+            layout.Label("Font", EditorStyles.boldLabel);
+            layout.BoxedGroup(box =>
+            {
+                box.PropertyField(property.FindPropertyRelative("_font"));
+
+                var fontSize = property.FindPropertyRelative("_fontSize");
+                box.PropertyField(fontSize, SizeLabel);
+
+                var scaleWithScreen = property.FindPropertyRelative("_scaleFontWithScreen");
+                box.PropertyField(scaleWithScreen, ScaleWithScreenLabel);
+
+                if (!scaleWithScreen.boolValue) return;
+
+                var reference = property.FindPropertyRelative("_referenceResolution");
+                box.PropertyField(reference, ReferenceResolutionLabel);
+                BuildEffectiveFontSize(box, fontSize.intValue, reference.vector2IntValue.y);
+            });
         }
 
         /// <summary>
@@ -39,11 +100,11 @@ namespace YukimaruGames.Terminal.Editor
         /// 拡縮が有効な間、Sizeの値は「基準解像度での大きさ」であって実際の描画サイズではない。
         /// 入力した値と見えている大きさが食い違って見えるため、実効値をその場に出す.
         /// </remarks>
-        private static void RenderEffectiveFontSize(int fontSize, int referenceHeight)
+        private static void BuildEffectiveFontSize(DrawerLayout layout, int fontSize, int referenceHeight)
         {
             if (referenceHeight <= 0)
             {
-                EditorGUILayout.HelpBox(ZeroReferenceHeightMessage, MessageType.Warning);
+                layout.HelpBox(ZeroReferenceHeightMessage, MessageType.Warning);
                 return;
             }
 
@@ -55,74 +116,46 @@ namespace YukimaruGames.Terminal.Editor
             var effective = ThemeBinder.ResolveFontSize(
                 fontSize, scaleFontWithScreen: true, referenceHeight, (int)height);
 
-            EditorGUILayout.LabelField(
-                " ",
-                $"実効 {effective}px（Game View {width}x{height}）",
-                EditorStyles.miniLabel);
+            layout.Label($"実効 {effective}px（Game View {width}x{height}）", EditorStyles.miniLabel);
         }
 
-        private void RenderViewCategory(SerializedProperty property)
+        private static void BuildColors(DrawerLayout layout, SerializedProperty property)
         {
-            EditorGUILayout.LabelField("Font", EditorStyles.boldLabel);
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            layout.Label("Colors", EditorStyles.boldLabel);
+
+            layout.PropertyField(property.FindPropertyRelative("_backgroundColor"));
+            layout.PropertyField(property.FindPropertyRelative("_promptColor"));
+            layout.PropertyField(property.FindPropertyRelative("_inputColor"));
+            layout.PropertyField(property.FindPropertyRelative("_caretColor"));
+            layout.PropertyField(property.FindPropertyRelative("_selectionColor"));
+
+            var flashSpeed = property.FindPropertyRelative("_cursorFlashSpeed");
+            if (layout.SliderWithButton(flashSpeed, 0f, 3f, CursorFlashSpeedLabel, "RESET", ResetButtonWidth))
             {
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("_font"));
-
-                var fontSize = property.FindPropertyRelative("_fontSize");
-                EditorGUILayout.PropertyField(fontSize, new GUIContent("Size"));
-
-                var scaleWithScreen = property.FindPropertyRelative("_scaleFontWithScreen");
-                EditorGUILayout.PropertyField(scaleWithScreen, new GUIContent("Scale With Screen"));
-
-                if (scaleWithScreen.boolValue)
-                {
-                    var reference = property.FindPropertyRelative("_referenceResolution");
-                    EditorGUILayout.PropertyField(reference, new GUIContent("Reference Resolution"));
-                    RenderEffectiveFontSize(fontSize.intValue, reference.vector2IntValue.y);
-                }
+                flashSpeed.floatValue = DefaultCursorFlashSpeed;
             }
-
-            EditorGUILayout.Space(6f);
-            EditorGUILayout.LabelField("Colors", EditorStyles.boldLabel);
-            
-            // 背景・プロンプト・入力
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_backgroundColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_promptColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_inputColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_caretColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_selectionColor"));
-
-            // カーソル速度（リセットボタン付き）
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                var flashSpeedProp = property.FindPropertyRelative("_cursorFlashSpeed");
-                EditorGUILayout.Slider(flashSpeedProp, 0f, 3f, new GUIContent("Cursor Flash Speed"));
-                if (GUILayout.Button("RESET", EditorStyles.miniButton, GUILayout.Width(60f)))
-                {
-                    flashSpeedProp.floatValue = 1.886792f;
-                }
-            }
-
-            EditorGUILayout.Space(6f);
-            EditorGUILayout.LabelField("Log Colors", EditorStyles.miniBoldLabel);
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_messageColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_entryColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_warningColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_errorColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_assertColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_exceptionColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_systemColor"));
-
-            EditorGUILayout.Space(6f);
-            EditorGUILayout.LabelField("Buttons", EditorStyles.miniBoldLabel);
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_executeButtonColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_buttonColor"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_copyButtonColor"));
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        private static void BuildLogColors(DrawerLayout layout, SerializedProperty property)
         {
-            return 0f; 
+            layout.Label("Log Colors", EditorStyles.miniBoldLabel);
+
+            layout.PropertyField(property.FindPropertyRelative("_messageColor"));
+            layout.PropertyField(property.FindPropertyRelative("_entryColor"));
+            layout.PropertyField(property.FindPropertyRelative("_warningColor"));
+            layout.PropertyField(property.FindPropertyRelative("_errorColor"));
+            layout.PropertyField(property.FindPropertyRelative("_assertColor"));
+            layout.PropertyField(property.FindPropertyRelative("_exceptionColor"));
+            layout.PropertyField(property.FindPropertyRelative("_systemColor"));
+        }
+
+        private static void BuildButtonColors(DrawerLayout layout, SerializedProperty property)
+        {
+            layout.Label("Buttons", EditorStyles.miniBoldLabel);
+
+            layout.PropertyField(property.FindPropertyRelative("_executeButtonColor"));
+            layout.PropertyField(property.FindPropertyRelative("_buttonColor"));
+            layout.PropertyField(property.FindPropertyRelative("_copyButtonColor"));
         }
     }
 }

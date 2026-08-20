@@ -21,7 +21,9 @@ namespace YukimaruGames.Terminal.Composition
             "Sizeが想定している基準の解像度。この解像度のときSizeがそのまま使われる。" +
             "拡縮は高さに連動するため、現状は高さのみ参照する（Scale Font With Screenがオンのときのみ有効）。";
 
-        [Header("View Settings")]
+        // [Header]はDrawerが確保した矩形の外に描かれ、EditorGUI.GetPropertyHeightにも含まれない。
+        // 矩形ベースのDrawer(ImmediateModeThemeDrawer)が独自に"Font"の見出しを描くため、
+        // ここでの見出しは重複するうえ高さがずれる原因になる(#147).
         [SerializeField] private Font _font;
 
         /// <remarks>
