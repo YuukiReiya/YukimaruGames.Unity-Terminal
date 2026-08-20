@@ -8,175 +8,154 @@ namespace YukimaruGames.Terminal.Editor
     /// <summary>
     /// <see cref="ImmediateModeOptions"/>のInspector表示用PropertyDrawer.
     /// </summary>
+    /// <remarks>
+    /// 描画は<see cref="DrawerLayout"/>による矩形ベース。<c>EditorGUILayout</c>を使うと
+    /// Drawerが確保した位置ではなくInspectorの末尾へ流れてしまう(#147).
+    /// </remarks>
     [CustomPropertyDrawer(typeof(ImmediateModeOptions))]
     public sealed class ImmediateModeOptionsDrawer : PropertyDrawer
     {
         private enum Tab { Input, System } // 分割された責務に合わせる
+
+        private const float ToolbarHeight = 25f;
+        private const float PostToolbarSpace = 5f;
+        private const float SectionSpace = 5f;
+
+        private static readonly string[] TabNames = Enum.GetNames(typeof(Tab));
+        private static readonly GUIContent VisibleContent = new("Visible");
+        private static readonly GUIContent ReverseContent = new("Reverse");
+        private static readonly GUIContent InputContent = new("Input");
+        private static readonly GUIContent LoadingIndicatorContent =
+            new("Show Loading Indicator", "コマンド実行中、プロンプトの代わりにローディング表現を表示します.");
+        private static readonly GUIContent LoadingIndicatorFramesContent =
+            new("Frames", "ローディング表現として順番に表示するフレーム文字列群.");
+
+        private static GUIStyle _toolbarStyle;
+
         private Tab _tab = Tab.Input;
 
-        // スタイル類（PropertyDrawerは静的に持つのが一般的）
-        private static GUIStyle _toolbarStyle;
-        private static readonly GUIContent _visibleContent = new GUIContent("Visible");
-        private static readonly GUIContent _reverseContent = new GUIContent("Reverse");
-        private static readonly GUIContent _loadingIndicatorContent = new GUIContent("Show Loading Indicator", "コマンド実行中、プロンプトの代わりにローディング表現を表示します.");
-        private static readonly GUIContent _loadingIndicatorFramesContent = new GUIContent("Frames", "ローディング表現として順番に表示するフレーム文字列群.");
+        /// <summary>直前の描画で受け取った幅(px). 高さの計算に使う.</summary>
+        private float _lastWidth;
 
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
-            
+
             InitStyles();
 
-            // PropertyDrawerの基本：一つのRectの中で描画していく
-            // ただし、複雑なレイアウトの場合はGUILayout系を使いたいので
-            // BeginProperty/EndPropertyで囲みつつ、VerticalScope等を利用します
-            label = EditorGUI.BeginProperty(position, label, property);
-            
-            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
-            
-            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
-            {
-                // 1. タブ切り替え（Toolbar）
-                _tab = (Tab)GUILayout.Toolbar((int)_tab, Enum.GetNames(typeof(Tab)), _toolbarStyle);
-                
-                EditorGUILayout.Space(5f);
+            _lastWidth = position.width;
 
-                // 2. カテゴリ別の描画
-                switch (_tab)
-                {
-                    case Tab.Input:
-                        RenderInputCategory(property);
-                        break;
-                    case Tab.System:
-                        RenderSystemCategory(property);
-                        break;
-                }
-            }
+            label = EditorGUI.BeginProperty(position, label, property);
+
+            Build(new DrawerLayout(position, true), property, label);
 
             EditorGUI.EndProperty();
         }
 
-        private void RenderInputCategory(SerializedProperty property)
-        {
-            // Key/Modifiers/Trigger Timing/Priorityのアクション別グルーピング表示は
-            // ImmediateModeInputDrawer(_inputフィールドの[SerializeInterface]経由で自動的に使用される)に委譲する.
-            var inputProp = property.FindPropertyRelative("_input");
-            if (inputProp == null) return;
-            EditorGUILayout.PropertyField(inputProp, new GUIContent("Input"), true);
-        }
-
-        private void RenderSystemCategory(SerializedProperty property)
-        {
-            EditorGUILayout.LabelField("Buffer", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_bufferSize"));
-
-            EditorGUILayout.Space(5f);
-
-            EditorGUILayout.LabelField("Command", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_prompt"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_bootupCommand"));
-
-            EditorGUILayout.Space(5f);
-
-            EditorGUILayout.LabelField("UI Controls", EditorStyles.boldLabel);
-            var visibleProp = property.FindPropertyRelative("_buttonVisible");
-            var reverseProp = property.FindPropertyRelative("_buttonReverse");
-            visibleProp.boolValue = EditorGUILayout.ToggleLeft(_visibleContent, visibleProp.boolValue);
-            reverseProp.boolValue = EditorGUILayout.ToggleLeft(_reverseContent, reverseProp.boolValue);
-
-            EditorGUILayout.Space(5f);
-
-            EditorGUILayout.LabelField("Execution", EditorStyles.boldLabel);
-            var loadingIndicatorProp = property.FindPropertyRelative("_showLoadingIndicator");
-            loadingIndicatorProp.boolValue = EditorGUILayout.ToggleLeft(_loadingIndicatorContent, loadingIndicatorProp.boolValue);
-
-            using (new EditorGUI.DisabledScope(!loadingIndicatorProp.boolValue))
-            {
-                var loadingIndicatorFramesProp = property.FindPropertyRelative("_loadingIndicatorFrames");
-                EditorGUILayout.PropertyField(loadingIndicatorFramesProp, _loadingIndicatorFramesContent, true);
-            }
-        }
-
-        private void InitStyles()
-        {
-            if (_toolbarStyle != null) return;
-            _toolbarStyle = new GUIStyle(GUI.skin.button) { fixedHeight = 25 };
-        }
-
-        /// <summary>
-        /// OnGUIの実際の描画内容（タブ・トグルの開閉状態を含む）に応じた高さを返す.
-        /// </summary>
+        /// <inheritdoc/>
         /// <remarks>
-        /// GUILayoutで描画される中身をここでも辿って積算するため、OnGUI側の描画順を変更した場合は
-        /// あわせて本メソッドも更新すること.
+        /// 描画と同じ組み立て処理を「計算のみ」で通すため、タブやトグルの開閉状態による
+        /// 高さの違いも自動的に反映される(以前は高さの積算を別に持っていた).
         /// </remarks>
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if (property == null) return 0f;
+            if (property == null || property.serializedObject.targetObject == null) return 0f;
 
-            const float boxPadding = 8f; // EditorStyles.helpBoxの上下パディング概算
-            const float toolbarHeight = 25f;
-            const float postToolbarSpace = 5f;
+            // InitStylesはGUI.skinへ触れるため計測時には呼ばない(ツールバーの高さは定数で持つ).
+            var layout = new DrawerLayout(DrawerLayout.MeasureRect(_lastWidth), false);
+            Build(layout, property, label);
 
-            var height = EditorGUIUtility.singleLineHeight; // 見出しラベル
-            height += boxPadding;
-            height += toolbarHeight + postToolbarSpace;
-            height += _tab switch
-            {
-                Tab.Input => CalcInputTabHeight(property),
-                Tab.System => CalcSystemTabHeight(property),
-                _ => 0f,
-            };
-
-            return height;
+            return layout.Height;
         }
 
-        private static float CalcInputTabHeight(SerializedProperty property)
+        /// <summary>
+        /// 描画と高さ計算で共有する組み立て処理.
+        /// </summary>
+        private void Build(DrawerLayout layout, SerializedProperty property, GUIContent label)
+        {
+            layout.Label(label, EditorStyles.boldLabel);
+            layout.BoxedGroup(box =>
+            {
+                var selected = (Tab)box.Toolbar((int)_tab, TabNames, _toolbarStyle, ToolbarHeight);
+                if (selected != _tab)
+                {
+                    _tab = selected;
+
+                    // 確保済みの高さは切り替え前のタブで計算されている。この描画を打ち切り、
+                    // 次のLayoutイベントで測り直させる(でないと1フレームだけ内容が矩形からはみ出す).
+                    GUIUtility.ExitGUI();
+                }
+
+                box.Space(PostToolbarSpace);
+
+                switch (_tab)
+                {
+                    case Tab.Input:
+                        BuildInputCategory(box, property);
+                        break;
+                    case Tab.System:
+                        BuildSystemCategory(box, property);
+                        break;
+                }
+            });
+        }
+
+        /// <summary>
+        /// アクション別のキー設定は<see cref="ImmediateModeInputDrawer"/>へ委譲する.
+        /// </summary>
+        /// <remarks>
+        /// Key/Modifiers/Trigger Timing/Priorityのグルーピング表示は、
+        /// <c>_input</c>フィールドの<c>[SerializeInterface]</c>経由で自動的に使われる.
+        /// </remarks>
+        private static void BuildInputCategory(DrawerLayout layout, SerializedProperty property)
         {
             var inputProp = property.FindPropertyRelative("_input");
-            return inputProp != null ? EditorGUI.GetPropertyHeight(inputProp, true) : 0f;
+            if (inputProp == null) return;
+
+            layout.PropertyField(inputProp, InputContent);
         }
 
-        private float CalcSystemTabHeight(SerializedProperty property)
+        private static void BuildSystemCategory(DrawerLayout layout, SerializedProperty property)
         {
-            var lineHeight = EditorGUIUtility.singleLineHeight;
-            var spacing = EditorGUIUtility.standardVerticalSpacing;
-            const float sectionSpace = 5f;
+            layout.Label("Buffer", EditorStyles.boldLabel);
+            layout.PropertyField(property.FindPropertyRelative("_bufferSize"));
 
-            var height = 0f;
+            layout.Space(SectionSpace);
 
-            // Buffer
-            height += lineHeight + spacing; // "Buffer" 見出し
-            height += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("_bufferSize")) + spacing;
-            height += sectionSpace;
+            layout.Label("Command", EditorStyles.boldLabel);
+            layout.PropertyField(property.FindPropertyRelative("_prompt"));
+            layout.PropertyField(property.FindPropertyRelative("_bootupCommand"));
 
-            // Command
-            height += lineHeight + spacing; // "Command" 見出し
-            height += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("_prompt")) + spacing;
-            height += EditorGUI.GetPropertyHeight(property.FindPropertyRelative("_bootupCommand")) + spacing;
-            height += sectionSpace;
+            layout.Space(SectionSpace);
 
-            // UI Controls
-            height += lineHeight + spacing; // "UI Controls" 見出し
-            height += lineHeight + spacing; // Visible トグル
-            height += lineHeight + spacing; // Reverse トグル
-            height += sectionSpace;
+            layout.Label("UI Controls", EditorStyles.boldLabel);
+            layout.ToggleLeft(property.FindPropertyRelative("_buttonVisible"), VisibleContent);
+            layout.ToggleLeft(property.FindPropertyRelative("_buttonReverse"), ReverseContent);
 
-            // Execution
-            height += lineHeight + spacing; // "Execution" 見出し
-            height += lineHeight + spacing; // Show Loading Indicator トグル
+            layout.Space(SectionSpace);
 
-            var showLoadingIndicatorProp = property.FindPropertyRelative("_showLoadingIndicator");
-            if (showLoadingIndicatorProp is { boolValue: true })
+            layout.Label("Execution", EditorStyles.boldLabel);
+
+            var loadingIndicatorProp = property.FindPropertyRelative("_showLoadingIndicator");
+            var showLoadingIndicator = loadingIndicatorProp is { boolValue: true };
+            layout.ToggleLeft(loadingIndicatorProp, LoadingIndicatorContent);
+
+            // ONにするとフレーム設定の行が増える(=高さが変わる)ため、変わったらこの描画は打ち切る.
+            if (loadingIndicatorProp is { boolValue: var current } && current != showLoadingIndicator)
             {
-                var framesProp = property.FindPropertyRelative("_loadingIndicatorFrames");
-                if (framesProp != null)
-                {
-                    height += EditorGUI.GetPropertyHeight(framesProp, _loadingIndicatorFramesContent, true) + spacing;
-                }
+                GUIUtility.ExitGUI();
             }
 
-            return height;
+            if (loadingIndicatorProp is not { boolValue: true }) return;
+
+            layout.PropertyField(
+                property.FindPropertyRelative("_loadingIndicatorFrames"), LoadingIndicatorFramesContent);
+        }
+
+        private static void InitStyles()
+        {
+            _toolbarStyle ??= new GUIStyle(GUI.skin.button) { fixedHeight = ToolbarHeight };
         }
     }
 }

@@ -54,6 +54,14 @@ namespace YukimaruGames.Terminal.Editor
         private const float BorderLineThickness = 1f;
         private const int ModifierValueFontSize = 10;
 
+        private const string AllowKeyInputOnMessage =
+            "推奨設定です。入力欄フォーカス中もReturn/Escape等のキー入力を検知できます。" +
+            "ウィンドウ表示中はホスト側のレガシーキーバインドにも影響する点に注意してください。";
+
+        private const string AllowKeyInputOffMessage =
+            "入力欄がフォーカスを持っている間、Return/Escape等のキー入力が検知されません。" +
+            "Execute/Close等の操作ができなくなる場合があります。";
+
         private static readonly Color ProSkinBorderColor = new(0.12f, 0.12f, 0.12f);
         private static readonly Color PersonalSkinBorderColor = new(0.55f, 0.55f, 0.55f);
 
@@ -73,39 +81,60 @@ namespace YukimaruGames.Terminal.Editor
         private string _activeKeySuffix;
         private string _activeModifierSuffix;
 
+        /// <summary>直前の描画で受け取った幅(px). 高さの計算に使う.</summary>
+        private float _lastWidth;
+
+        /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
 
             InitStyles();
 
+            _lastWidth = position.width;
+
             label = EditorGUI.BeginProperty(position, label, property);
 
+            Build(new DrawerLayout(position, true), property);
+
+            EditorGUI.EndProperty();
+        }
+
+        /// <inheritdoc/>
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            if (property == null || property.serializedObject.targetObject == null) return 0f;
+
+            var layout = new DrawerLayout(DrawerLayout.MeasureRect(_lastWidth), false);
+            Build(layout, property);
+
+            return layout.Height;
+        }
+
+        /// <summary>
+        /// 描画と高さ計算で共有する組み立て処理.
+        /// </summary>
+        /// <remarks>
+        /// アクション一覧(<see cref="ReorderableList"/>)の中身は元から矩形ベースで描いており、
+        /// ここではその手前までを<see cref="DrawerLayout"/>で組み立てる.
+        /// </remarks>
+        private void Build(DrawerLayout layout, SerializedProperty property)
+        {
             var keyboardTypeProp = property.FindPropertyRelative("_inputKeyboardType");
             var keyboardType = (InputKeyboardType)keyboardTypeProp.intValue;
 
-            EditorGUILayout.LabelField("Keyboard Type", EditorStyles.boldLabel);
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                foreach (InputKeyboardType type in Enum.GetValues(typeof(InputKeyboardType)))
-                {
-                    var isSelected = GUILayout.Toggle(keyboardType == type, type.ToString(), _typeStyle);
-                    if (isSelected && keyboardType != type)
-                    {
-                        keyboardTypeProp.intValue = (int)type;
-                    }
-                }
-            }
+            layout.Label("Keyboard Type", EditorStyles.boldLabel);
+            BuildKeyboardTypeSelector(layout, keyboardTypeProp, keyboardType);
 
-            EditorGUILayout.Space(KeyboardTypeSpacing);
+            layout.Space(KeyboardTypeSpacing);
 
             if (keyboardType is InputKeyboardType.Legacy)
             {
                 var allowKeyInputProp = property.FindPropertyRelative("_allowKeyInputWhileTextFieldFocused");
                 if (allowKeyInputProp != null)
                 {
-                    DrawAllowKeyInputToggle(allowKeyInputProp);
-                    EditorGUILayout.Space(KeyboardTypeSpacing);
+                    BuildAllowKeyInputToggle(layout, allowKeyInputProp);
+                    layout.Space(KeyboardTypeSpacing);
                 }
             }
 
@@ -122,65 +151,84 @@ namespace YukimaruGames.Terminal.Editor
             var priorityProp = property.FindPropertyRelative("_priority");
             var orderProp = priorityProp?.FindPropertyRelative("_order");
 
-            if (keyboardType is InputKeyboardType.Legacy)
-            {
-                DrawSectionSeparator();
-            }
+            if (keyboardType is InputKeyboardType.Legacy) BuildSectionSeparator(layout);
 
-            EditorGUILayout.LabelField("Actions", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField("優先度: 上ほど高い(ドラッグで並び替え)", EditorStyles.miniLabel);
+            layout.Label("Actions", EditorStyles.boldLabel);
+            layout.Label("優先度: 上ほど高い(ドラッグで並び替え)", EditorStyles.miniLabel);
 
-            if (orderProp != null)
-            {
-                GetOrCreateActionList(orderProp).DoLayoutList();
-            }
+            if (orderProp == null) return;
 
-            EditorGUI.EndProperty();
+            var list = GetOrCreateActionList(orderProp);
+            var listRect = layout.Next(list.GetHeight());
+            if (layout.IsDrawing) list.DoList(listRect);
         }
 
-        private static void DrawAllowKeyInputToggle(SerializedProperty allowKeyInputProp)
+        /// <summary>キーボード入力方式の選択を、横に並べたトグルとして描く.</summary>
+        private static void BuildKeyboardTypeSelector(
+            DrawerLayout layout, SerializedProperty keyboardTypeProp, InputKeyboardType keyboardType)
         {
-            DrawSectionSeparator();
+            // 高さの計算はGUIスタイルに触れずに済ませる。GetPropertyHeightはOnGUIの外から
+            // 呼ばれることがあり、GUI.skin等へ触れると「GUI functions...」の例外になる.
+            var types = (InputKeyboardType[])Enum.GetValues(typeof(InputKeyboardType));
+            var rect = layout.NextLine();
 
-            EditorGUILayout.LabelField("Allow Key Input While Text Field Focused", EditorStyles.boldLabel);
+            if (!layout.IsDrawing) return;
 
-            var current = allowKeyInputProp.boolValue;
-            using (new EditorGUILayout.HorizontalScope())
+            var width = rect.width / types.Length;
+            for (var i = 0; i < types.Length; i++)
             {
-                var onSelected = GUILayout.Toggle(current, "ON", EditorStyles.miniButtonLeft);
-                var offSelected = GUILayout.Toggle(!current, "OFF", EditorStyles.miniButtonRight);
+                var type = types[i];
+                var cell = new Rect(rect.x + width * i, rect.y, width, rect.height);
+                var isSelected = GUI.Toggle(cell, keyboardType == type, type.ToString(), _typeStyle);
 
-                if (onSelected && !current)
-                {
-                    allowKeyInputProp.boolValue = true;
-                }
-                else if (offSelected && current)
-                {
-                    allowKeyInputProp.boolValue = false;
-                }
+                if (!isSelected || keyboardType == type) continue;
+
+                keyboardTypeProp.intValue = (int)type;
+
+                // 確保済みの高さは切り替え前の内容で計算されている(Legacyでは
+                // Allow Key Inputの分だけ高くなる)。この描画を打ち切り、次のLayoutで測り直させる.
+                GUIUtility.ExitGUI();
+            }
+        }
+
+        private static void BuildAllowKeyInputToggle(DrawerLayout layout, SerializedProperty allowKeyInputProp)
+        {
+            BuildSectionSeparator(layout);
+
+            layout.Label("Allow Key Input While Text Field Focused", EditorStyles.boldLabel);
+
+            var toggleRect = layout.NextLine();
+            if (layout.IsDrawing)
+            {
+                var current = allowKeyInputProp.boolValue;
+                var half = toggleRect.width * 0.5f;
+                var onRect = new Rect(toggleRect.x, toggleRect.y, half, toggleRect.height);
+                var offRect = new Rect(toggleRect.x + half, toggleRect.y, toggleRect.width - half, toggleRect.height);
+
+                var onSelected = GUI.Toggle(onRect, current, "ON", EditorStyles.miniButtonLeft);
+                var offSelected = GUI.Toggle(offRect, !current, "OFF", EditorStyles.miniButtonRight);
+
+                if (onSelected && !current) allowKeyInputProp.boolValue = true;
+                else if (offSelected && current) allowKeyInputProp.boolValue = false;
+
+                // ON/OFFでヘルプボックスの文言(=高さ)が変わるため、変わったらこの描画は打ち切る.
+                if (allowKeyInputProp.boolValue != current) GUIUtility.ExitGUI();
             }
 
-            var message = allowKeyInputProp.boolValue
-                ? "推奨設定です。入力欄フォーカス中もReturn/Escape等のキー入力を検知できます。" +
-                  "ウィンドウ表示中はホスト側のレガシーキーバインドにも影響する点に注意してください。"
-                : "入力欄がフォーカスを持っている間、Return/Escape等のキー入力が検知されません。" +
-                  "Execute/Close等の操作ができなくなる場合があります。";
+            var message = allowKeyInputProp.boolValue ? AllowKeyInputOnMessage : AllowKeyInputOffMessage;
             var messageType = allowKeyInputProp.boolValue ? MessageType.Info : MessageType.Warning;
 
-            // EditorGUILayout.HelpBoxは"HelpBox"スタイル自体のmarginにより左右が内側に
-            // 詰まって見える(ON/OFFトグル行と面が揃わない)ため、marginを持たないRectへ
-            // 手動で描画し、上のトグル行と同じ幅で端まで揃える.
-            var widthProbeRect = EditorGUILayout.GetControlRect(false, 0f);
-            var helpBoxHeight = GetHelpBoxHeight(message, widthProbeRect.width);
-            var helpBoxRect = EditorGUILayout.GetControlRect(false, helpBoxHeight);
-            EditorGUI.HelpBox(helpBoxRect, message, messageType);
+            // HelpBoxは上のトグル行と同じ幅の矩形へ描く("HelpBox"スタイルのmarginで左右が
+            // 内側に詰まって見えるのを避け、面を揃えるため).
+            var helpBoxRect = layout.Next(GetHelpBoxHeight(message, toggleRect.width));
+            if (layout.IsDrawing) EditorGUI.HelpBox(helpBoxRect, message, messageType);
         }
 
         // 「Actions」テーブル(DrawTableChrome)と同じ罫線色で、セクション間の境界を手描きの横線1本として表す.
-        private static void DrawSectionSeparator()
+        private static void BuildSectionSeparator(DrawerLayout layout)
         {
-            var rect = EditorGUILayout.GetControlRect(false, BorderLineThickness);
-            if (Event.current.type != EventType.Repaint) return;
+            var rect = layout.Next(BorderLineThickness);
+            if (!layout.IsDrawing || Event.current.type != EventType.Repaint) return;
 
             var borderColor = EditorGUIUtility.isProSkin ? ProSkinBorderColor : PersonalSkinBorderColor;
             EditorGUI.DrawRect(rect, borderColor);
@@ -295,10 +343,20 @@ namespace YukimaruGames.Terminal.Editor
             return null;
         }
 
+        /// <summary>
+        /// ヘルプボックスの高さを求める.
+        /// </summary>
+        /// <remarks>
+        /// <b><c>GUI.skin</c>を使ってはならない。</b>この計算は<see cref="GetPropertyHeight"/>から
+        /// 呼ばれ、<c>GUI.skin</c>は<c>OnGUI</c>の外から触ると例外になる(実測で確認)。
+        /// <see cref="EditorStyles.helpBox"/>は<c>OnGUI</c>の外でも使え、
+        /// <see cref="EditorGUI.HelpBox"/>が実際に使うスタイルでもある.
+        /// </remarks>
         private static float GetHelpBoxHeight(string text, float width)
         {
-            var style = GUI.skin.GetStyle("helpbox");
-            return Mathf.Max(style.CalcHeight(new GUIContent(text), width), EditorGUIUtility.singleLineHeight * 2f);
+            var height = EditorStyles.helpBox.CalcHeight(new GUIContent(text), width);
+
+            return Mathf.Max(height, EditorGUIUtility.singleLineHeight * 2f);
         }
 
         private static string GetCombinedKeySummary(SerializedProperty keyProp, SerializedProperty modifiersProp)
@@ -520,9 +578,5 @@ namespace YukimaruGames.Terminal.Editor
             }
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return 0f; // GUILayoutを使う場合は0を返して隙間を詰めさせることが多いです
-        }
     }
 }
