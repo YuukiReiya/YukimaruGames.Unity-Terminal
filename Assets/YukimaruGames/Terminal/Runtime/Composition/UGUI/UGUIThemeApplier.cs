@@ -31,12 +31,15 @@ namespace YukimaruGames.Terminal.Composition
         /// <summary>
         /// テーマ色・フォントをuGUI要素へ適用する.
         /// </summary>
-        internal void Apply(ITerminalTheme theme)
+        internal void Apply(ITerminalTheme theme, int screenHeight)
         {
             if (_windowRoot == null || !_windowRoot.IsInitialized) return;
 
             var font = ResolveFont(theme);
-            var fontSize = theme.FontSize;
+            // 解像度が変わっても1画面に入る行数を保つため、基準解像度に対する比率で拡縮する。
+            // 画面の高さは呼び出し側から受け取る(Screenを直接読むと、Inspectorでの変更時に
+            // Game Viewではなくエディタウィンドウのサイズを拾ってしまう).
+            var fontSize = ThemeBinder.ResolveFontSize(theme, screenHeight);
 
             if (_windowRoot.RootBackground != null) _windowRoot.RootBackground.color = theme.BackgroundColor;
             if (_windowRoot.InputRowBackground != null) _windowRoot.InputRowBackground.color = theme.BackgroundColor;

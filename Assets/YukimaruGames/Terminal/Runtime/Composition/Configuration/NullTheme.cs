@@ -17,6 +17,13 @@ namespace YukimaruGames.Terminal.Composition
         // 最小限のサイズ
         public int FontSize => 0;
 
+        /// <inheritdoc/>
+        /// <remarks>Null Objectのため拡縮も行わない.</remarks>
+        public bool ScaleFontWithScreen => false;
+
+        /// <inheritdoc/>
+        public Vector2Int ReferenceResolution => default;
+
         // モノクロームな配色
         public Color BackgroundColor => Color.clear;
         public Color MessageColor => Color.clear;

@@ -88,7 +88,7 @@ namespace YukimaruGames.Terminal.Composition
             var windowAnimationAccessor = CreateWindowAnimationAccessor(animation);
             _colorPaletteAccessor = ThemeBinder.CreateColorPalette(theme);
 
-            _fontAccessor = new FontAccessor(theme.Font) { Size = theme.FontSize };
+            _fontAccessor = new FontAccessor(theme.Font) { Size = ThemeBinder.ResolveFontSize(theme, ScreenHeight) };
             _pixelTextureRepository = new PixelTextureRepository();
             var scrollAccessor = new ScrollAccessor();
 
@@ -221,7 +221,7 @@ namespace YukimaruGames.Terminal.Composition
             if (_fontAccessor != null)
             {
                 _fontAccessor.Font = theme.Font;
-                _fontAccessor.Size = theme.FontSize;
+                _fontAccessor.Size = ThemeBinder.ResolveFontSize(theme, ScreenHeight);
             }
 
             _inputGUIStyleAccessor?.SetColor(theme.InputColor);

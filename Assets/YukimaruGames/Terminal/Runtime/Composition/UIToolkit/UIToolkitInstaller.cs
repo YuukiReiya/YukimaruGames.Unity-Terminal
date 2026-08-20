@@ -122,7 +122,7 @@ namespace YukimaruGames.Terminal.Composition
             ThemeBinder.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
 
             var uiToolkitOptions = _uiToolkitOptions ?? new UIToolkitOptions();
-            _themeApplier?.Apply(theme, uiToolkitOptions.ScrollSensitivity, uiToolkitOptions.ScrollDecelerationRate);
+            _themeApplier?.Apply(theme, ScreenHeight, uiToolkitOptions.ScrollSensitivity, uiToolkitOptions.ScrollDecelerationRate);
         }
 
         /// <summary>

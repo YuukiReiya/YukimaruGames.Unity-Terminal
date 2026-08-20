@@ -246,7 +246,7 @@ namespace YukimaruGames.Terminal.Composition
         private void ApplyTheme(ITerminalTheme theme)
         {
             ThemeBinder.Apply(theme, _colorPaletteAccessor, _cursorFlashSpeedAccessor);
-            _themeApplier?.Apply(theme);
+            _themeApplier?.Apply(theme, ScreenHeight);
         }
     }
 }
