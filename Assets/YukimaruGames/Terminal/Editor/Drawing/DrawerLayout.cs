@@ -23,6 +23,22 @@ namespace YukimaruGames.Terminal.Editor
         /// <summary>ボックス(<see cref="EditorStyles.helpBox"/>)の内側に取る余白(px).</summary>
         private const float BoxPadding = 4f;
 
+        /// <summary>幅が分からないときに使う既定幅(px).</summary>
+        private const float FallbackWidth = 300f;
+
+        /// <summary>
+        /// 高さの計算だけを行うための矩形を作る.
+        /// </summary>
+        /// <remarks>
+        /// <b><see cref="EditorGUIUtility.currentViewWidth"/>を使ってはならない。</b>
+        /// <see cref="PropertyDrawer.GetPropertyHeight"/>は<c>OnGUI</c>の外から呼ばれることがあり、
+        /// このプロパティはそこで例外になる(実測で確認)。直前の描画で受け取った幅を渡すこと。
+        /// まだ一度も描いていない場合は既定幅で代用し、最初の描画以降は実際の幅で測り直される.
+        /// </remarks>
+        /// <param name="lastKnownWidth">直前の描画で受け取った幅(px)。未描画なら0</param>
+        internal static Rect MeasureRect(float lastKnownWidth) =>
+            new(0f, 0f, lastKnownWidth > 0f ? lastKnownWidth : FallbackWidth, 0f);
+
         private readonly bool _isDrawing;
         private readonly float _x;
         private readonly float _width;

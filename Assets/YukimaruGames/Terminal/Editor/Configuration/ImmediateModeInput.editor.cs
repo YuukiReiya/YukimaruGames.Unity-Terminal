@@ -81,12 +81,17 @@ namespace YukimaruGames.Terminal.Editor
         private string _activeKeySuffix;
         private string _activeModifierSuffix;
 
+        /// <summary>直前の描画で受け取った幅(px). 高さの計算に使う.</summary>
+        private float _lastWidth;
+
         /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
 
             InitStyles();
+
+            _lastWidth = position.width;
 
             label = EditorGUI.BeginProperty(position, label, property);
 
@@ -100,7 +105,7 @@ namespace YukimaruGames.Terminal.Editor
         {
             if (property == null || property.serializedObject.targetObject == null) return 0f;
 
-            var layout = new DrawerLayout(new Rect(0f, 0f, EditorGUIUtility.currentViewWidth, 0f), false);
+            var layout = new DrawerLayout(DrawerLayout.MeasureRect(_lastWidth), false);
             Build(layout, property);
 
             return layout.Height;
@@ -176,7 +181,13 @@ namespace YukimaruGames.Terminal.Editor
                 var cell = new Rect(rect.x + width * i, rect.y, width, rect.height);
                 var isSelected = GUI.Toggle(cell, keyboardType == type, type.ToString(), _typeStyle);
 
-                if (isSelected && keyboardType != type) keyboardTypeProp.intValue = (int)type;
+                if (!isSelected || keyboardType == type) continue;
+
+                keyboardTypeProp.intValue = (int)type;
+
+                // 確保済みの高さは切り替え前の内容で計算されている(Legacyでは
+                // Allow Key Inputの分だけ高くなる)。この描画を打ち切り、次のLayoutで測り直させる.
+                GUIUtility.ExitGUI();
             }
         }
 
@@ -199,6 +210,9 @@ namespace YukimaruGames.Terminal.Editor
 
                 if (onSelected && !current) allowKeyInputProp.boolValue = true;
                 else if (offSelected && current) allowKeyInputProp.boolValue = false;
+
+                // ON/OFFでヘルプボックスの文言(=高さ)が変わるため、変わったらこの描画は打ち切る.
+                if (allowKeyInputProp.boolValue != current) GUIUtility.ExitGUI();
             }
 
             var message = allowKeyInputProp.boolValue ? AllowKeyInputOnMessage : AllowKeyInputOffMessage;
@@ -329,10 +343,20 @@ namespace YukimaruGames.Terminal.Editor
             return null;
         }
 
+        /// <summary>
+        /// ヘルプボックスの高さを求める.
+        /// </summary>
+        /// <remarks>
+        /// <b><c>GUI.skin</c>を使ってはならない。</b>この計算は<see cref="GetPropertyHeight"/>から
+        /// 呼ばれ、<c>GUI.skin</c>は<c>OnGUI</c>の外から触ると例外になる(実測で確認)。
+        /// <see cref="EditorStyles.helpBox"/>は<c>OnGUI</c>の外でも使え、
+        /// <see cref="EditorGUI.HelpBox"/>が実際に使うスタイルでもある.
+        /// </remarks>
         private static float GetHelpBoxHeight(string text, float width)
         {
-            var style = GUI.skin.GetStyle("helpbox");
-            return Mathf.Max(style.CalcHeight(new GUIContent(text), width), EditorGUIUtility.singleLineHeight * 2f);
+            var height = EditorStyles.helpBox.CalcHeight(new GUIContent(text), width);
+
+            return Mathf.Max(height, EditorGUIUtility.singleLineHeight * 2f);
         }
 
         private static string GetCombinedKeySummary(SerializedProperty keyProp, SerializedProperty modifiersProp)

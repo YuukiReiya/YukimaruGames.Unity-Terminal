@@ -34,12 +34,17 @@ namespace YukimaruGames.Terminal.Editor
 
         private Tab _tab = Tab.Input;
 
+        /// <summary>直前の描画で受け取った幅(px). 高さの計算に使う.</summary>
+        private float _lastWidth;
+
         /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
 
             InitStyles();
+
+            _lastWidth = position.width;
 
             label = EditorGUI.BeginProperty(position, label, property);
 
@@ -58,7 +63,7 @@ namespace YukimaruGames.Terminal.Editor
             if (property == null || property.serializedObject.targetObject == null) return 0f;
 
             // InitStylesはGUI.skinへ触れるため計測時には呼ばない(ツールバーの高さは定数で持つ).
-            var layout = new DrawerLayout(new Rect(0f, 0f, EditorGUIUtility.currentViewWidth, 0f), false);
+            var layout = new DrawerLayout(DrawerLayout.MeasureRect(_lastWidth), false);
             Build(layout, property, label);
 
             return layout.Height;
@@ -72,7 +77,15 @@ namespace YukimaruGames.Terminal.Editor
             layout.Label(label, EditorStyles.boldLabel);
             layout.BoxedGroup(box =>
             {
-                _tab = (Tab)box.Toolbar((int)_tab, TabNames, _toolbarStyle, ToolbarHeight);
+                var selected = (Tab)box.Toolbar((int)_tab, TabNames, _toolbarStyle, ToolbarHeight);
+                if (selected != _tab)
+                {
+                    _tab = selected;
+
+                    // 確保済みの高さは切り替え前のタブで計算されている。この描画を打ち切り、
+                    // 次のLayoutイベントで測り直させる(でないと1フレームだけ内容が矩形からはみ出す).
+                    GUIUtility.ExitGUI();
+                }
 
                 box.Space(PostToolbarSpace);
 
@@ -125,7 +138,14 @@ namespace YukimaruGames.Terminal.Editor
             layout.Label("Execution", EditorStyles.boldLabel);
 
             var loadingIndicatorProp = property.FindPropertyRelative("_showLoadingIndicator");
+            var showLoadingIndicator = loadingIndicatorProp is { boolValue: true };
             layout.ToggleLeft(loadingIndicatorProp, LoadingIndicatorContent);
+
+            // ONにするとフレーム設定の行が増える(=高さが変わる)ため、変わったらこの描画は打ち切る.
+            if (loadingIndicatorProp is { boolValue: var current } && current != showLoadingIndicator)
+            {
+                GUIUtility.ExitGUI();
+            }
 
             if (loadingIndicatorProp is not { boolValue: true }) return;
 

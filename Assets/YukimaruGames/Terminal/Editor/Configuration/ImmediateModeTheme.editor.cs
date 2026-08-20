@@ -34,10 +34,15 @@ namespace YukimaruGames.Terminal.Editor
         private static readonly GUIContent ReferenceResolutionLabel = new("Reference Resolution");
         private static readonly GUIContent CursorFlashSpeedLabel = new("Cursor Flash Speed");
 
+        /// <summary>直前の描画で受け取った幅(px). 高さの計算に使う.</summary>
+        private float _lastWidth;
+
         /// <inheritdoc/>
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
+
+            _lastWidth = position.width;
 
             label = EditorGUI.BeginProperty(position, label, property);
 
@@ -51,7 +56,7 @@ namespace YukimaruGames.Terminal.Editor
         {
             if (property == null || property.serializedObject.targetObject == null) return 0f;
 
-            var layout = new DrawerLayout(new Rect(0f, 0f, EditorGUIUtility.currentViewWidth, 0f), false);
+            var layout = new DrawerLayout(DrawerLayout.MeasureRect(_lastWidth), false);
             Build(layout, property, label);
 
             return layout.Height;
