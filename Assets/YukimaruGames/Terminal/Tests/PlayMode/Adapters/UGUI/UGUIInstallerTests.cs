@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEngine;
@@ -25,11 +26,20 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
         private TerminalRuntimeScope _scope;
         private readonly List<GameObject> _sceneObjects = new();
 
+        /// <summary>このテストのInstallで生成された<see cref="WindowRoot"/>.</summary>
+        /// <remarks>
+        /// 種類で検索すると、他のテストや読み込み済みシーンが持つ別のインスタンスを掴みうる。
+        /// その場合、生成の検証は<b>別物で成功し</b>、破棄の検証は<b>残っている別物で失敗する</b>。
+        /// Installの前後の差分から自分が作ったものを特定する(#173のレビュー指摘).
+        /// </remarks>
+        private WindowRoot _windowRoot;
+
         /// <summary>各テスト前に<see cref="UGUIInstaller"/>を用意する.</summary>
         [SetUp]
         public void SetUp()
         {
             _installer = new UGUIInstaller();
+            _windowRoot = null;
         }
 
         /// <summary>各テスト後にScopeを破棄し、テストが生成したGameObjectを片付ける.</summary>
@@ -63,9 +73,21 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
 
         private void InstallAndStart()
         {
+            var before = new HashSet<WindowRoot>(FindAllWindowRoots());
+
             _scope = _installer.Install();
             _scope.EntryPoint.Start();
+
+            // 差分は1件であるべき。複数あれば重複生成であり、先頭だけを見ると見逃す.
+            var created = FindAllWindowRoots().Where(root => !before.Contains(root)).ToArray();
+
+            Assert.That(created.Length, Is.EqualTo(1), "Installで生成されたWindowRootが1つではない");
+
+            _windowRoot = created[0];
         }
+
+        private static WindowRoot[] FindAllWindowRoots() =>
+            Object.FindObjectsByType<WindowRoot>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         /// <summary>Installにより<see cref="Canvas"/>と<see cref="WindowRoot"/>が生成されることを検証する.</summary>
         [UnityTest]
@@ -74,11 +96,8 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             InstallAndStart();
             yield return null;
 
-            var windowRoot = Object.FindFirstObjectByType<WindowRoot>();
-
-            Assert.That(windowRoot, Is.Not.Null, "WindowRootが生成されていない");
-            Assert.That(windowRoot.GetComponent<Canvas>(), Is.Not.Null, "Canvasが生成されていない");
-            Assert.That(windowRoot.IsInitialized, Is.True, "UI要素の解決に失敗している");
+            Assert.That(_windowRoot.GetComponent<Canvas>(), Is.Not.Null, "Canvasが生成されていない");
+            Assert.That(_windowRoot.IsInitialized, Is.True, "UI要素の解決に失敗している");
         }
 
         /// <summary>
@@ -97,13 +116,11 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             InstallAndStart();
             yield return null;
 
-            var windowRoot = Object.FindFirstObjectByType<WindowRoot>();
-
-            Assert.That(windowRoot.IsInitialized, Is.True);
-            Assert.That(windowRoot.InputField, Is.Not.Null);
-            Assert.That(windowRoot.SubmitButton, Is.Not.Null);
-            Assert.That(windowRoot.LauncherOpenButton, Is.Not.Null);
-            Assert.That(windowRoot.LauncherCloseButton, Is.Not.Null);
+            Assert.That(_windowRoot.IsInitialized, Is.True);
+            Assert.That(_windowRoot.InputField, Is.Not.Null);
+            Assert.That(_windowRoot.SubmitButton, Is.Not.Null);
+            Assert.That(_windowRoot.LauncherOpenButton, Is.Not.Null);
+            Assert.That(_windowRoot.LauncherCloseButton, Is.Not.Null);
         }
 
         /// <summary>シーンに<see cref="EventSystem"/>が無い場合、入力モジュール付きで生成されることを検証する.</summary>
@@ -148,7 +165,8 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UGUI
             _scope = null;
             yield return null;
 
-            Assert.That(Object.FindFirstObjectByType<WindowRoot>(), Is.Null, "Canvasが残っている");
+            // Unityのオブジェクトは破棄後もnull比較でtrueになる(偽装null).
+            Assert.That(_windowRoot == null, Is.True, "Installで生成したCanvasが残っている");
             Assert.That(EventSystem.current, Is.Null, "自前生成したEventSystemが残っている");
         }
 

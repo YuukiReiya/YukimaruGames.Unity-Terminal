@@ -67,9 +67,12 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UIToolkit
             _scope = _installer.Install();
             _scope.EntryPoint.Start();
 
-            _windowRoot = FindAllWindowRoots().FirstOrDefault(root => !before.Contains(root));
+            // 差分は1件であるべき。複数あれば重複生成であり、先頭だけを見ると見逃す.
+            var created = FindAllWindowRoots().Where(root => !before.Contains(root)).ToArray();
 
-            Assert.That(_windowRoot, Is.Not.Null, "Installで生成されたWindowRootを特定できない");
+            Assert.That(created.Length, Is.EqualTo(1), "Installで生成されたWindowRootが1つではない");
+
+            _windowRoot = created[0];
         }
 
         private static WindowRoot[] FindAllWindowRoots() =>
