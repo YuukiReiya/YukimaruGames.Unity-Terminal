@@ -22,12 +22,21 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 
         private bool _isCurrentlyFocused;
         private bool _isMoveCursorToEnd;
+
+        /// <summary>
+        /// フォーカスを戻した結果の全選択を解除する必要があるか.
+        /// </summary>
+        /// <remarks>
+        /// IMGUIのTextFieldはフォーカスを得た瞬間に<b>テキスト全体を選択する</b>。
+        /// フォーカスを戻す処理を入れている都合上、そのままではTabやEnterのたびに
+        /// 入力中の文字列が選択状態になり、次の1文字で全消えする(#16)。
+        /// 選択を解除してキャレットを末尾へ戻すため、描画側へ持ち越す.
+        /// </remarks>
+        private bool _selectionResetRequested;
         private string _inputField;
         private WindowFocus _focus = WindowFocus.None;
-        private EventType _evt;
         private bool _isImeComposing;
 
-        private int _id;
         private const string ControlName = "COMMAND_INPUT_CONTROL";
 
         public event Action<string> OnInputTextChanged;
@@ -99,20 +108,35 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
             if (UsedInputEvent(evt.type))
             {
                 // Tabキー入力されると他のTextFieldにフォーカスが移ってしまうためフォーカスをコントロールする.
-                if (evt.keyCode is KeyCode.Tab) UnityEngine.GUI.FocusControl(ControlName);
-
-                // Enterキーが入力されSubmitされると履歴のTextFieldにフォーカスが移ってしまうためフォーカスを補正する.
-                if (evt.keyCode is KeyCode.Return) UnityEngine.GUI.FocusControl(ControlName);
+                // Tab/EnterはIMGUIのTextField側で処理されず素通しされるため、
+                // ネイティブのフォーカス巡回へ流れて入力欄からフォーカスが外れる。
+                // 外れたフォーカスを戻すと、TextFieldはフォーカス取得時にテキスト全体を
+                // 選択する(TextEditor.OnFocus → SelectAll。IMGUIにこれを無効化するAPIは無い)ため、
+                // 入力中の文字列が選択状態になる(#16)。描画前に食ってしまえばフォーカスが
+                // 外れず、選択も起きない。
+                // ターミナル側のTab=補完 / Enter=実行はUpdate駆動の別経路
+                // (IKeyboardInputHandler)で判定するため、ここで止めても機能しなくならない。
+                // UIToolkit版が同じ理由でTrickleDownにより先取りしているのと同じ方針.
+                if (IsFocusTraversalKey(evt)) evt.Use();
 
                 // 入力テキストの折り返しを考慮しキー入力がされたらスクロール位置を終端へ補正する.
                 _scrollMutator.ScrollToEnd();
             }
         }
 
+        /// <summary>
+        /// フォーカス巡回を引き起こすキーか.
+        /// </summary>
+        /// <remarks>
+        /// keyCodeだけでなく文字も見る。IMGUIはTabや改行を文字としても
+        /// 配信するため、片方だけだとすり抜ける.
+        /// </remarks>
+        private static bool IsFocusTraversalKey(Event evt) =>
+            evt.keyCode is KeyCode.Tab or KeyCode.Return or KeyCode.KeypadEnter
+            || evt.character is '\t' or '\n' or '\r';
+
         public void Render(InputRenderData data)
         {
-            _id = GUIUtility.GetControlID(FocusType.Keyboard);
-            _evt = Event.current.GetTypeForControl(_id);
             UnityEngine.GUI.SetNextControlName(ControlName);
             _isCurrentlyFocused = UnityEngine.GUI.GetNameOfFocusedControl() == ControlName;
 
@@ -144,7 +168,10 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
             }
 
             _focus = data.Focus;
-            _isMoveCursorToEnd = data.IsMoveCursorToEnd;
+
+            // キー入力でフォーカスを戻した場合も、選択解除のためにキャレットを末尾へ動かす。
+            // dataの値で上書きすると、その要求が消えてしまう.
+            _isMoveCursorToEnd = data.IsMoveCursorToEnd || _selectionResetRequested;
 
             FocusControlIfNeeded();
             CursorToEnd();
@@ -161,7 +188,9 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
                 case WindowFocus.Apply:
                     if (!_isCurrentlyFocused)
                     {
+                        // フォーカスを得た次の描画でTextFieldが全選択するため、その解除を予約する(#16).
                         UnityEngine.GUI.FocusControl(ControlName);
+                        _selectionResetRequested = true;
                     }
 
                     break;
@@ -178,16 +207,35 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
             Focus = WindowFocus.None;
         }
 
+        /// <summary>
+        /// キャレットを末尾へ移し、選択状態を解除する.
+        /// </summary>
+        /// <remarks>
+        /// <b>フォーカスの判定は描画後に行うこと。</b>描画前の値では、そのフレームで
+        /// フォーカスを得た場合(=まさに全選択が起きた場合)を取りこぼす。
+        /// フォーカス名で判定するのは、<see cref="GUIUtility.GetStateObject"/>が
+        /// IDに対応する状態を持たない場合でもnullではなく<b>空のTextEditorを新規生成して返す</b>
+        /// ためで、対象がズレていても例外にならず静かに空振りするのを避ける.
+        /// </remarks>
         private void CursorToEnd()
         {
-            if (!_isCurrentlyFocused || !IsMoveCursorToEndTrigger) return;
+            if (!IsMoveCursorToEndTrigger) return;
 
-            if (!UsedInputEvent(_evt)) return;
+            // IME変換中にキャレットを動かすと変換途中の状態を壊すため触らない.
+            if (_isImeComposing) return;
 
-            var textEditor = GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl) as TextEditor;
-            textEditor!.MoveTextEnd();
+            if (UnityEngine.GUI.GetNameOfFocusedControl() != ControlName) return;
+
+            if (GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl) is not TextEditor textEditor)
+            {
+                return;
+            }
+
+            // MoveTextEndはキャレットと選択の開始位置を揃えるため、これで全選択が解除される.
+            textEditor.MoveTextEnd();
             UnityEngine.GUI.changed = true;
             IsMoveCursorToEndTrigger = false;
+            _selectionResetRequested = false;
         }
 
         private void SendImeComposingState()
