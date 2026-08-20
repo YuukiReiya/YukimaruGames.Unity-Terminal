@@ -1,0 +1,36 @@
+{
+    "name": "YukimaruGames.Terminal.Tests.PlayMode.UIToolkit",
+    "rootNamespace": "YukimaruGames.Terminal.Tests.PlayMode.Adapters.UIToolkit",
+    "references": [
+        "UnityEngine.TestRunner",
+        "YukimaruGames.Terminal.SharedKernel",
+        "YukimaruGames.Terminal.Domain.Contracts",
+        "YukimaruGames.Terminal.Application",
+        "YukimaruGames.Terminal.Presentation",
+        "YukimaruGames.Terminal.Infrastructure",
+        "YukimaruGames.Terminal.Adapters",
+        "YukimaruGames.Terminal.Adapters.UIToolkit",
+        "YukimaruGames.Terminal.Composition",
+        "YukimaruGames.Terminal.Composition.UIToolkit"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "TERMINAL_UITOOLKIT_AVAILABLE"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.uielements",
+            "expression": "1.0.0",
+            "define": "TERMINAL_UITOOLKIT_AVAILABLE"
+        }
+    ],
+    "noEngineReferences": false
+}
