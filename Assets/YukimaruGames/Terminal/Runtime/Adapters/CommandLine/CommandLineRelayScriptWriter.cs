@@ -639,17 +639,28 @@ end run
         /// <c>FileSystemInfo.LinkTarget</c>はUnityのランタイムでは利用できないため
         /// (実測でプロパティ自体が存在しないことを確認)、属性で判定する。
         /// macOS/Windowsのいずれでもシンボリックリンクには
-        /// <see cref="FileAttributes.ReparsePoint"/>が立つ(実測で確認).
+        /// <see cref="FileAttributes.ReparsePoint"/>が立つ(実測で確認)。
+        /// <para>
+        /// <b>属性を取得できなかった場合は握り潰さない。</b>「確認できなかった」を「リンクではない」
+        /// として扱うと、権限不足などで検証できないパスへそのまま書き込んでしまい、この検証自体が
+        /// 意味を失う。存在しない場合(=まだ何も無い)のみ<c>false</c>とし、それ以外は呼び出し側へ委ねる.
+        /// </para>
         /// </remarks>
+        /// <exception cref="UnauthorizedAccessException">属性を読む権限が無い場合.</exception>
+        /// <exception cref="IOException">その他の理由で属性を取得できない場合.</exception>
         internal static bool IsSymbolicLink(string path)
         {
             try
             {
                 return File.GetAttributes(path).HasFlag(FileAttributes.ReparsePoint);
             }
-            catch (Exception)
+            catch (FileNotFoundException)
             {
-                // 属性を取得できない場合(存在しない・権限不足)はリンクと断定しない.
+                // まだ何も無いパスはリンクではない.
+                return false;
+            }
+            catch (DirectoryNotFoundException)
+            {
                 return false;
             }
         }
@@ -811,6 +822,9 @@ end run
             try
             {
                 if (!Directory.Exists(path)) return;
+
+                // リンクかどうかを確認できない場合もここで例外になり、削除せずに抜ける
+                // (確認できないものを再帰削除しない).
                 if (IsSymbolicLink(path)) return;
 
                 Directory.Delete(path, recursive: true);

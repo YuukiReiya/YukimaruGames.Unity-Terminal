@@ -20,13 +20,28 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
     [TestFixture]
     public sealed class RelayScriptDirectoryTests
     {
+        /// <summary>テスト用ディレクトリの接頭辞(片付け漏れがあっても由来が分かるようにする).</summary>
+        private const string TestDirectoryPrefix = "yukimaru_terminal_test_";
+
+        private const string LinkName = "link";
+        private const string PlainDirectoryName = "plain";
+        private const string LinkTargetName = "target";
+        private const string MissingName = "missing";
+
+        /// <summary>シンボリックリンクを作る外部コマンド(ランタイムに作成APIが無いため).</summary>
+        private const string LinkCommand = "/bin/ln";
+        private const string LinkCommandArgumentsFormat = "-s \"{0}\" \"{1}\"";
+
+        /// <summary>リンク作成APIが無いためコマンドに頼る。管理者権限が要る環境を避けて実行する.</summary>
+        private const string SymbolicLinkPlatforms = "MacOSX,Linux";
+
         private string _root;
 
         /// <summary>テスト用の作業ディレクトリを用意する.</summary>
         [SetUp]
         public void SetUp()
         {
-            _root = Path.Combine(Path.GetTempPath(), "yukimaru_terminal_test_" + Path.GetRandomFileName());
+            _root = Path.Combine(Path.GetTempPath(), TestDirectoryPrefix + Path.GetRandomFileName());
             Directory.CreateDirectory(_root);
         }
 
@@ -41,13 +56,13 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
             if (Directory.Exists(_root)) Directory.Delete(_root, recursive: true);
         }
 
-        private string LinkPath => Path.Combine(_root, "link");
+        private string LinkPath => Path.Combine(_root, LinkName);
 
         /// <summary>通常のディレクトリはリンクと判定されないことを検証します.</summary>
         [Test]
         public void IsSymbolicLink_通常のディレクトリは偽()
         {
-            var directory = Path.Combine(_root, "plain");
+            var directory = Path.Combine(_root, PlainDirectoryName);
             Directory.CreateDirectory(directory);
 
             Assert.That(CommandLineRelayScriptWriter.IsSymbolicLink(directory), Is.False);
@@ -57,7 +72,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         [Test]
         public void IsSymbolicLink_存在しないパスは偽()
         {
-            Assert.That(CommandLineRelayScriptWriter.IsSymbolicLink(Path.Combine(_root, "missing")), Is.False);
+            Assert.That(CommandLineRelayScriptWriter.IsSymbolicLink(Path.Combine(_root, MissingName)), Is.False);
         }
 
         /// <summary>
@@ -68,10 +83,10 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         /// (Windowsではリンク作成に管理者権限が要る場合があるため、このテストはUnix系のみ).
         /// </remarks>
         [Test]
-        [Platform(Include = "MacOSX,Linux")]
+        [Platform(Include = SymbolicLinkPlatforms)]
         public void IsSymbolicLink_ディレクトリへのリンクは真()
         {
-            var target = Path.Combine(_root, "target");
+            var target = Path.Combine(_root, LinkTargetName);
             Directory.CreateDirectory(target);
 
             CreateSymbolicLink(target, LinkPath);
@@ -84,8 +99,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Adapters.CommandLine
         {
             using var process = Process.Start(new ProcessStartInfo
             {
-                FileName = "/bin/ln",
-                Arguments = $"-s \"{target}\" \"{link}\"",
+                FileName = LinkCommand,
+                Arguments = string.Format(LinkCommandArgumentsFormat, target, link),
                 UseShellExecute = false,
                 CreateNoWindow = true,
             });
