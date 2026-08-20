@@ -11,6 +11,9 @@ namespace YukimaruGames.Terminal.Editor
     [CustomPropertyDrawer(typeof(ImmediateModeTheme))]
     public sealed class ImmediateModeThemeDrawer : PropertyDrawer
     {
+        private const string ZeroReferenceHeightMessage =
+            "Reference Resolution の高さが0のため、拡縮は行われません。";
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
@@ -40,14 +43,17 @@ namespace YukimaruGames.Terminal.Editor
         {
             if (referenceHeight <= 0)
             {
-                EditorGUILayout.HelpBox("Reference Resolution の高さが0のため、拡縮は行われません。", MessageType.Warning);
+                EditorGUILayout.HelpBox(ZeroReferenceHeightMessage, MessageType.Warning);
                 return;
             }
 
             PlayModeWindow.GetRenderingResolution(out var width, out var height);
             if (height == 0) return;
 
-            var effective = Mathf.Max(1, Mathf.RoundToInt(fontSize * (height / (float)referenceHeight)));
+            // 実行時とまったく同じ計算を使う。ここで計算を再実装すると、
+            // 一方だけ変更されたときにInspectorの表示と実際の描画サイズがずれる.
+            var effective = ThemeBinder.ResolveFontSize(
+                fontSize, scaleFontWithScreen: true, referenceHeight, (int)height);
 
             EditorGUILayout.LabelField(
                 " ",

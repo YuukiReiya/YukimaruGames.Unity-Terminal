@@ -23,6 +23,14 @@ namespace YukimaruGames.Terminal.Composition
     public static class ThemeBinder
     {
         /// <summary>
+        /// 拡縮後のフォントサイズの下限(px).
+        /// </summary>
+        /// <remarks>
+        /// 0は「描画しない」と区別がつかず、原因の追いにくい不具合になるため1で止める.
+        /// </remarks>
+        public const int MinimumFontSize = 1;
+
+        /// <summary>
         /// 画面の高さに合わせて、実際に描画へ渡すフォントサイズを求める.
         /// </summary>
         /// <remarks>
@@ -43,18 +51,33 @@ namespace YukimaruGames.Terminal.Composition
         {
             if (theme == null) throw new ArgumentNullException(nameof(theme));
 
-            // 拡縮しない設定なら、Inspectorに入れた値がそのまま描画サイズになる(既定).
-            if (!theme.ScaleFontWithScreen) return theme.FontSize;
+            return ResolveFontSize(
+                theme.FontSize, theme.ScaleFontWithScreen, theme.ReferenceResolution.y, screenHeight);
+        }
 
-            var referenceHeight = theme.ReferenceResolution.y;
+        /// <summary>
+        /// <inheritdoc cref="ResolveFontSize(ITerminalTheme, int)" path="/summary"/>
+        /// </summary>
+        /// <remarks>
+        /// テーマを組み立てられない場所(Inspectorの描画等、SerializedPropertyしか手元に無い場合)
+        /// から使うための値渡し版。<b>計算はこのメソッドに一本化する</b>
+        /// (Inspectorの表示と実際の描画サイズがずれるのを防ぐため).
+        /// </remarks>
+        /// <param name="fontSize">テーマに設定されたフォントサイズ(px)</param>
+        /// <param name="scaleFontWithScreen">画面サイズに合わせて拡縮するか</param>
+        /// <param name="referenceHeight">基準解像度の高さ(px)</param>
+        /// <param name="screenHeight">現在の画面の高さ(px)</param>
+        public static int ResolveFontSize(int fontSize, bool scaleFontWithScreen, int referenceHeight, int screenHeight)
+        {
+            // 拡縮しない設定なら、Inspectorに入れた値がそのまま描画サイズになる(既定).
+            if (!scaleFontWithScreen) return fontSize;
 
             // 基準・現在のいずれかが取得できない状況(初期化順・未設定)では拡縮せずに済ませる.
-            if (referenceHeight <= 0 || screenHeight <= 0) return theme.FontSize;
+            if (referenceHeight <= 0 || screenHeight <= 0) return fontSize;
 
-            var scaled = Mathf.RoundToInt(theme.FontSize * (screenHeight / (float)referenceHeight));
+            var scaled = Mathf.RoundToInt(fontSize * (screenHeight / (float)referenceHeight));
 
-            // 小さな画面でも0にはしない(0は「描画しない」と区別がつかず、原因の追いにくい不具合になる).
-            return Mathf.Max(1, scaled);
+            return Mathf.Max(MinimumFontSize, scaled);
         }
 
         /// <summary>

@@ -84,6 +84,24 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Composition
             Assert.That(ThemeBinder.ResolveFontSize(noReference, 540), Is.EqualTo(FontSize), "基準解像度の高さが0");
         }
 
+        /// <summary>
+        /// 値渡し版がテーマ版と同じ結果を返すことを検証します.
+        /// </summary>
+        /// <remarks>
+        /// Inspectorの実効サイズ表示はテーマを組み立てられないため値渡し版を使う。
+        /// 両者がずれると、表示と実際の描画サイズが食い違う.
+        /// </remarks>
+        [Test]
+        public void ResolveFontSize_値渡し版がテーマ版と一致する([Values(540, 1080, 2160)] int screenHeight)
+        {
+            var theme = new StubTheme { ScaleFontWithScreen = true };
+
+            var fromTheme = ThemeBinder.ResolveFontSize(theme, screenHeight);
+            var fromValues = ThemeBinder.ResolveFontSize(FontSize, true, ReferenceHeight, screenHeight);
+
+            Assert.That(fromValues, Is.EqualTo(fromTheme));
+        }
+
         /// <summary>テーマが無い場合に例外となることを検証します(値の供給元のため必須).</summary>
         [Test]
         public void ResolveFontSize_テーマがnullなら例外()
@@ -92,30 +110,73 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Composition
         }
 
         /// <summary>フォントサイズと拡縮設定だけを持つテスト用のテーマ.</summary>
+        /// <remarks>
+        /// 検証に関与しない色やフォントは既定値を返す。テスト側から差し替えたいのは
+        /// 拡縮の有無と基準解像度だけのため、その2つだけをsetterで開けている.
+        /// </remarks>
         private sealed class StubTheme : ITerminalTheme
         {
+            /// <inheritdoc/>
             public bool ScaleFontWithScreen { get; set; }
+
+            /// <summary>テストから差し替える基準解像度(<see cref="ReferenceResolution"/>として返す).</summary>
             public Vector2Int Reference { get; set; } = new(1920, ReferenceHeight);
 
+            /// <inheritdoc/>
             public Vector2Int ReferenceResolution => Reference;
+
+            /// <inheritdoc/>
             public int FontSize => ThemeBinderFontSizeTests.FontSize;
 
+            /// <inheritdoc/>
             public Font Font => null;
+
+            /// <inheritdoc/>
             public Color BackgroundColor => default;
+
+            /// <inheritdoc/>
             public Color MessageColor => default;
+
+            /// <inheritdoc/>
             public Color EntryColor => default;
+
+            /// <inheritdoc/>
             public Color WarningColor => default;
+
+            /// <inheritdoc/>
             public Color ErrorColor => default;
+
+            /// <inheritdoc/>
             public Color AssertColor => default;
+
+            /// <inheritdoc/>
             public Color ExceptionColor => default;
+
+            /// <inheritdoc/>
             public Color SystemColor => default;
+
+            /// <inheritdoc/>
             public Color InputColor => default;
+
+            /// <inheritdoc/>
             public Color CaretColor => default;
+
+            /// <inheritdoc/>
             public Color SelectionColor => default;
+
+            /// <inheritdoc/>
             public Color PromptColor => default;
+
+            /// <inheritdoc/>
             public Color ExecuteButtonColor => default;
+
+            /// <inheritdoc/>
             public Color ButtonColor => default;
+
+            /// <inheritdoc/>
             public Color CopyButtonColor => default;
+
+            /// <inheritdoc/>
             public float CursorFlashSpeed => default;
         }
     }
