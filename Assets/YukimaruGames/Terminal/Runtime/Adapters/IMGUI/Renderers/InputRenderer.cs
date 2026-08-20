@@ -22,6 +22,17 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 
         private bool _isCurrentlyFocused;
         private bool _isMoveCursorToEnd;
+
+        /// <summary>
+        /// このフレームでキー入力を受けて入力欄へフォーカスを戻したか.
+        /// </summary>
+        /// <remarks>
+        /// IMGUIのTextFieldはフォーカスを得た瞬間に<b>テキスト全体を選択する</b>。
+        /// フォーカスを戻す処理を入れている都合上、そのままではTabやEnterのたびに
+        /// 入力中の文字列が選択状態になり、次の1文字で全消えする(#16)。
+        /// 選択を解除してキャレットを末尾へ戻すため、描画側へ持ち越す.
+        /// </remarks>
+        private bool _refocusedByKeyInput;
         private string _inputField;
         private WindowFocus _focus = WindowFocus.None;
         private EventType _evt;
@@ -99,14 +110,27 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
             if (UsedInputEvent(evt.type))
             {
                 // Tabキー入力されると他のTextFieldにフォーカスが移ってしまうためフォーカスをコントロールする.
-                if (evt.keyCode is KeyCode.Tab) UnityEngine.GUI.FocusControl(ControlName);
+                if (evt.keyCode is KeyCode.Tab) RefocusControl();
 
                 // Enterキーが入力されSubmitされると履歴のTextFieldにフォーカスが移ってしまうためフォーカスを補正する.
-                if (evt.keyCode is KeyCode.Return) UnityEngine.GUI.FocusControl(ControlName);
+                if (evt.keyCode is KeyCode.Return) RefocusControl();
 
                 // 入力テキストの折り返しを考慮しキー入力がされたらスクロール位置を終端へ補正する.
                 _scrollMutator.ScrollToEnd();
             }
+        }
+
+        /// <summary>
+        /// 入力欄へフォーカスを戻し、選択状態の解除を予約する.
+        /// </summary>
+        /// <remarks>
+        /// フォーカスを戻すだけだと、IMGUIの仕様で入力中の文字列が全選択された状態になる。
+        /// 描画後にキャレットを末尾へ移して選択を解除する(#16).
+        /// </remarks>
+        private void RefocusControl()
+        {
+            UnityEngine.GUI.FocusControl(ControlName);
+            _refocusedByKeyInput = true;
         }
 
         public void Render(InputRenderData data)
@@ -144,7 +168,10 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
             }
 
             _focus = data.Focus;
-            _isMoveCursorToEnd = data.IsMoveCursorToEnd;
+
+            // キー入力でフォーカスを戻した場合も、選択解除のためにキャレットを末尾へ動かす。
+            // dataの値で上書きすると、その要求が消えてしまう.
+            _isMoveCursorToEnd = data.IsMoveCursorToEnd || _refocusedByKeyInput;
 
             FocusControlIfNeeded();
             CursorToEnd();
@@ -184,10 +211,12 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 
             if (!UsedInputEvent(_evt)) return;
 
+            // MoveTextEndはキャレットと選択の開始位置を揃えるため、これで全選択が解除される.
             var textEditor = GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl) as TextEditor;
             textEditor!.MoveTextEnd();
             UnityEngine.GUI.changed = true;
             IsMoveCursorToEndTrigger = false;
+            _refocusedByKeyInput = false;
         }
 
         private void SendImeComposingState()
