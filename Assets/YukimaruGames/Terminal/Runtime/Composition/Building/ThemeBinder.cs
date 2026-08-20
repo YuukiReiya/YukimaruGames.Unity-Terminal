@@ -23,6 +23,64 @@ namespace YukimaruGames.Terminal.Composition
     public static class ThemeBinder
     {
         /// <summary>
+        /// 拡縮後のフォントサイズの下限(px).
+        /// </summary>
+        /// <remarks>
+        /// 0は「描画しない」と区別がつかず、原因の追いにくい不具合になるため1で止める.
+        /// </remarks>
+        public const int MinimumFontSize = 1;
+
+        /// <summary>
+        /// 画面の高さに合わせて、実際に描画へ渡すフォントサイズを求める.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="ITerminalTheme.ScaleFontWithScreen"/>が無効なら<see cref="ITerminalTheme.FontSize"/>を
+        /// そのまま返す。有効な場合、テーマの値は絶対ピクセル値のため、そのまま使うと
+        /// 画面が大きいほど「文字の大きさは同じで行数だけ増える」挙動になる。ウィンドウ自体は
+        /// 画面サイズに対する比率で開くため、解像度によって1画面に入る行数が変わってしまう。
+        /// <para>
+        /// <see cref="ITerminalTheme.ReferenceResolution"/>に対する比率で拡縮することで、どの解像度でも
+        /// 「ウィンドウに入る行数」と見た目の比率を一定に保つ。3バックエンドで同じ計算を使う
+        /// ことで、解像度が変わっても表示が揃ったままになる.
+        /// </para>
+        /// </remarks>
+        /// <param name="theme">フォントサイズと拡縮設定の供給元</param>
+        /// <param name="screenHeight">現在の画面の高さ(px)</param>
+        /// <exception cref="ArgumentNullException"><paramref name="theme"/>がnullの場合.</exception>
+        public static int ResolveFontSize(ITerminalTheme theme, int screenHeight)
+        {
+            if (theme == null) throw new ArgumentNullException(nameof(theme));
+
+            return ResolveFontSize(
+                theme.FontSize, theme.ScaleFontWithScreen, theme.ReferenceResolution.y, screenHeight);
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="ResolveFontSize(ITerminalTheme, int)" path="/summary"/>
+        /// </summary>
+        /// <remarks>
+        /// テーマを組み立てられない場所(Inspectorの描画等、SerializedPropertyしか手元に無い場合)
+        /// から使うための値渡し版。<b>計算はこのメソッドに一本化する</b>
+        /// (Inspectorの表示と実際の描画サイズがずれるのを防ぐため).
+        /// </remarks>
+        /// <param name="fontSize">テーマに設定されたフォントサイズ(px)</param>
+        /// <param name="scaleFontWithScreen">画面サイズに合わせて拡縮するか</param>
+        /// <param name="referenceHeight">基準解像度の高さ(px)</param>
+        /// <param name="screenHeight">現在の画面の高さ(px)</param>
+        public static int ResolveFontSize(int fontSize, bool scaleFontWithScreen, int referenceHeight, int screenHeight)
+        {
+            // 拡縮しない設定なら、Inspectorに入れた値がそのまま描画サイズになる(既定).
+            if (!scaleFontWithScreen) return fontSize;
+
+            // 基準・現在のいずれかが取得できない状況(初期化順・未設定)では拡縮せずに済ませる.
+            if (referenceHeight <= 0 || screenHeight <= 0) return fontSize;
+
+            var scaled = Mathf.RoundToInt(fontSize * (screenHeight / (float)referenceHeight));
+
+            return Mathf.Max(MinimumFontSize, scaled);
+        }
+
+        /// <summary>
         /// テーマのログ種別色から<see cref="IColorPaletteAccessor"/>を生成する.
         /// </summary>
         /// <exception cref="ArgumentNullException">

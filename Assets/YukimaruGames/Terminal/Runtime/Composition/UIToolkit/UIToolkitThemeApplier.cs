@@ -33,7 +33,7 @@ namespace YukimaruGames.Terminal.Composition
         /// <param name="theme">適用するテーマ</param>
         /// <param name="scrollSensitivity">マウスホイール1クリックあたりのスクロール量(px)</param>
         /// <param name="scrollDecelerationRate">慣性スクロールの減速率</param>
-        internal void Apply(ITerminalTheme theme, float scrollSensitivity, float scrollDecelerationRate)
+        internal void Apply(ITerminalTheme theme, int screenHeight, float scrollSensitivity, float scrollDecelerationRate)
         {
             if (_windowRoot == null || !_windowRoot.IsInitialized) return;
 
@@ -46,7 +46,9 @@ namespace YukimaruGames.Terminal.Composition
             // 解消していた。同一解像度で3バックエンドの表示が一致することを実機で確認済み(#157)。
             // なお利用者がPanelSettingsを明示指定する場合、そのスケールモードがピクセル等倍で
             // なければ表示サイズはDPIに応じて変わる(UIToolkit側の設定であり、ここでは介入しない).
-            var fontSize = theme.FontSize;
+            // 画面の高さは呼び出し側から受け取る(Screenを直接読むと、Inspectorでの変更時に
+            // Game Viewではなくエディタウィンドウのサイズを拾ってしまう).
+            var fontSize = ThemeBinder.ResolveFontSize(theme, screenHeight);
 
             if (_windowRoot.Root != null) _windowRoot.Root.style.backgroundColor = theme.BackgroundColor;
 

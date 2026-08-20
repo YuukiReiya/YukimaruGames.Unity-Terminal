@@ -11,6 +11,9 @@ namespace YukimaruGames.Terminal.Editor
     [CustomPropertyDrawer(typeof(ImmediateModeTheme))]
     public sealed class ImmediateModeThemeDrawer : PropertyDrawer
     {
+        private const string ZeroReferenceHeightMessage =
+            "Reference Resolution の高さが0のため、拡縮は行われません。";
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (property == null || property.serializedObject.targetObject == null) return;
@@ -29,13 +32,54 @@ namespace YukimaruGames.Terminal.Editor
             EditorGUI.EndProperty();
         }
 
+        /// <summary>
+        /// 拡縮を有効にしたとき、現在のGame Viewで実際に描画されるサイズを併記する.
+        /// </summary>
+        /// <remarks>
+        /// 拡縮が有効な間、Sizeの値は「基準解像度での大きさ」であって実際の描画サイズではない。
+        /// 入力した値と見えている大きさが食い違って見えるため、実効値をその場に出す.
+        /// </remarks>
+        private static void RenderEffectiveFontSize(int fontSize, int referenceHeight)
+        {
+            if (referenceHeight <= 0)
+            {
+                EditorGUILayout.HelpBox(ZeroReferenceHeightMessage, MessageType.Warning);
+                return;
+            }
+
+            PlayModeWindow.GetRenderingResolution(out var width, out var height);
+            if (height == 0) return;
+
+            // 実行時とまったく同じ計算を使う。ここで計算を再実装すると、
+            // 一方だけ変更されたときにInspectorの表示と実際の描画サイズがずれる.
+            var effective = ThemeBinder.ResolveFontSize(
+                fontSize, scaleFontWithScreen: true, referenceHeight, (int)height);
+
+            EditorGUILayout.LabelField(
+                " ",
+                $"実効 {effective}px（Game View {width}x{height}）",
+                EditorStyles.miniLabel);
+        }
+
         private void RenderViewCategory(SerializedProperty property)
         {
             EditorGUILayout.LabelField("Font", EditorStyles.boldLabel);
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 EditorGUILayout.PropertyField(property.FindPropertyRelative("_font"));
-                EditorGUILayout.PropertyField(property.FindPropertyRelative("_fontSize"), new GUIContent("Size"));
+
+                var fontSize = property.FindPropertyRelative("_fontSize");
+                EditorGUILayout.PropertyField(fontSize, new GUIContent("Size"));
+
+                var scaleWithScreen = property.FindPropertyRelative("_scaleFontWithScreen");
+                EditorGUILayout.PropertyField(scaleWithScreen, new GUIContent("Scale With Screen"));
+
+                if (scaleWithScreen.boolValue)
+                {
+                    var reference = property.FindPropertyRelative("_referenceResolution");
+                    EditorGUILayout.PropertyField(reference, new GUIContent("Reference Resolution"));
+                    RenderEffectiveFontSize(fontSize.intValue, reference.vector2IntValue.y);
+                }
             }
 
             EditorGUILayout.Space(6f);

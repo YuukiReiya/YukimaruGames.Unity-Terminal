@@ -8,7 +8,8 @@
         "YukimaruGames.Terminal.Domain.Services",
         "YukimaruGames.Terminal.Application",
         "YukimaruGames.Terminal.Presentation",
-        "YukimaruGames.Terminal.Adapters.CommandLine"
+        "YukimaruGames.Terminal.Adapters.CommandLine",
+        "YukimaruGames.Terminal.Composition"
     ],
     "includePlatforms": [
         "Editor"

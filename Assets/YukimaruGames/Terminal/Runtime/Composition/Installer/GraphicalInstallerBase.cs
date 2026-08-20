@@ -134,6 +134,12 @@ namespace YukimaruGames.Terminal.Composition
 
             RegisterWindowCommands(in domain, rendering.InputPresenter, coordinator.Coordinator);
 
+            // フォントサイズは画面の高さに対する比率で決まるため(ThemeBinder.ResolveFontSize)、
+            // 解像度やウィンドウサイズが変わったら再適用する。ウィンドウ矩形側は
+            // TerminalCoordinatorが同じ通知でRefreshしており、そちらと歩調を合わせる.
+            _gui = rendering.GUI;
+            if (_gui != null) _gui.OnScreenSizeChanged += HandleScreenSizeChanged;
+
             return new BackendContext
             {
                 Components = rendering.Components.Concat(coordinator.Components).ToArray(),
@@ -226,8 +232,53 @@ namespace YukimaruGames.Terminal.Composition
         }
 
         /// <inheritdoc/>
+        /// <summary>画面サイズの変化を受け取るために保持する(解除のため).</summary>
+        [NonSerialized] private ITerminalGUI _gui;
+
+        /// <summary>描画側が観測した画面の高さ(px). 0は「未観測」.</summary>
+        [NonSerialized] private int _observedScreenHeight;
+
+        /// <summary>
+        /// フォントサイズの算出に使う画面の高さ(px).
+        /// </summary>
+        /// <remarks>
+        /// <b><see cref="Screen"/>を直接読んではならない。</b>Inspectorでの変更(OnValidate)のように
+        /// エディタ側のコンテキストから呼ばれた場合、<see cref="Screen"/>は<b>Game Viewではなく
+        /// その時アクティブなエディタウィンドウのサイズ</b>を返す(実測で40や782など、無関係な値が
+        /// 返ることを確認)。そのまま拡縮に使うと、実行中にInspectorでフォントサイズを変えた瞬間に
+        /// 別の倍率が適用され、拡縮が外れたように見える。
+        /// <para>
+        /// 描画側(<see cref="ITerminalGUI"/>)が実際のレンダリング中に観測した値を使う。
+        /// 観測前(初期化直後)だけは<see cref="Screen"/>にフォールバックするが、
+        /// 最初の描画で通知が来た時点で正しい値へ置き換わる.
+        /// </para>
+        /// </remarks>
+        protected int ScreenHeight => _observedScreenHeight > 0 ? _observedScreenHeight : Screen.height;
+
+        /// <summary>
+        /// 画面サイズが変わったら、テーマ・設定一式を再適用する.
+        /// </summary>
+        /// <remarks>
+        /// 再適用の経路は<see cref="OnResolve"/>(Inspectorでの変更を反映する経路)と同じものを使う。
+        /// フォントサイズだけを更新する専用経路を増やすと、バックエンドごとに更新漏れが起きるため.
+        /// </remarks>
+        private void HandleScreenSizeChanged(Vector2Int size)
+        {
+            _observedScreenHeight = size.y;
+            OnResolve();
+        }
+
+        /// <inheritdoc/>
         protected override void ClearReferences()
         {
+            if (_gui != null)
+            {
+                _gui.OnScreenSizeChanged -= HandleScreenSizeChanged;
+                _gui = null;
+            }
+
+            _observedScreenHeight = 0;
+
             WindowAnimation = null;
             LauncherVisibility = null;
             PromptRenderer = null;

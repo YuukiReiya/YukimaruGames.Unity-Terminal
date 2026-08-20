@@ -10,6 +10,17 @@ namespace YukimaruGames.Terminal.Composition
     [Serializable, AddTypeMenu("IMGUI Theme")]
     public sealed class ImmediateModeTheme : ITerminalTheme
     {
+        private const int DefaultReferenceWidth = 1920;
+        private const int DefaultReferenceHeight = 1080;
+
+        private const string ScaleFontWithScreenTooltip =
+            "画面サイズに合わせてフォントサイズを拡縮する。オンにすると、どの解像度でもウィンドウに入る行数が一定になる。" +
+            "オフの場合はSizeの値がそのまま描画サイズになる（従来の挙動）。";
+
+        private const string ReferenceResolutionTooltip =
+            "Sizeが想定している基準の解像度。この解像度のときSizeがそのまま使われる。" +
+            "拡縮は高さに連動するため、現状は高さのみ参照する（Scale Font With Screenがオンのときのみ有効）。";
+
         [Header("View Settings")]
         [SerializeField] private Font _font;
 
@@ -26,6 +37,12 @@ namespace YukimaruGames.Terminal.Composition
         /// </remarks>
         [Tooltip("1920x1080を基準にしたフォントサイズ(px)。小さくするとウィンドウ内に入る行数が増える。")]
         [SerializeField] private int _fontSize = 55;
+
+        [Tooltip(ScaleFontWithScreenTooltip)]
+        [SerializeField] private bool _scaleFontWithScreen;
+
+        [Tooltip(ReferenceResolutionTooltip)]
+        [SerializeField] private Vector2Int _referenceResolution = new(DefaultReferenceWidth, DefaultReferenceHeight);
         [SerializeField] private Color _backgroundColor = Color.black;
         [SerializeField] private Color _messageColor = Color.white;
         [SerializeField] private Color _entryColor = Color.white;
@@ -45,6 +62,12 @@ namespace YukimaruGames.Terminal.Composition
 
         public Font Font => _font;
         public int FontSize => _fontSize;
+
+        /// <inheritdoc/>
+        public bool ScaleFontWithScreen => _scaleFontWithScreen;
+
+        /// <inheritdoc/>
+        public Vector2Int ReferenceResolution => _referenceResolution;
         public Color BackgroundColor => _backgroundColor;
         public Color MessageColor => _messageColor;
         public Color EntryColor => _entryColor;
