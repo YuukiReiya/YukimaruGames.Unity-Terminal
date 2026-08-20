@@ -19,6 +19,14 @@ namespace YukimaruGames.Terminal.Editor
         private const float SectionSpace = 6f;
         private const float GroupInnerSpace = 2f;
 
+        /// <summary>開閉アニメーションの尺(秒)として指定できる範囲.</summary>
+        private const float DurationMin = 0f;
+        private const float DurationMax = 3f;
+
+        /// <summary>Compactスタイル時のウィンドウ比率として指定できる範囲.</summary>
+        private const float CompactScaleMin = 0.1f;
+        private const float CompactScaleMax = 1f;
+
         private static readonly Lazy<GUIStyle> PopupStyle = new(() => new GUIStyle(EditorStyles.popup)
         {
             alignment = TextAnchor.MiddleCenter,
@@ -90,8 +98,8 @@ namespace YukimaruGames.Terminal.Editor
             layout.Label("Parameters", EditorStyles.boldLabel);
             layout.BoxedGroup(box =>
             {
-                box.Slider(property.FindPropertyRelative("_duration"), 0f, 3f);
-                box.Slider(property.FindPropertyRelative("_compactScale"), 0.1f, 1f);
+                box.Slider(property.FindPropertyRelative("_duration"), DurationMin, DurationMax);
+                box.Slider(property.FindPropertyRelative("_compactScale"), CompactScaleMin, CompactScaleMax);
             });
         }
 

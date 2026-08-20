@@ -20,6 +20,13 @@ namespace YukimaruGames.Terminal.Editor
         private const float SectionSpace = 6f;
         private const float GroupInnerSpace = 4f;
         private const float ResetButtonWidth = 60f;
+        private const string ResetButtonText = "RESET";
+
+        /// <summary>キャレットの点滅速度として指定できる範囲.</summary>
+        private const float CursorFlashSpeedMin = 0f;
+        private const float CursorFlashSpeedMax = 3f;
+
+        /// <summary>RESETボタンで戻す点滅速度(<see cref="ImmediateModeTheme"/>の既定値).</summary>
         private const float DefaultCursorFlashSpeed = 1.886792f;
 
         private static readonly GUIContent SizeLabel = new("Size");
@@ -130,7 +137,9 @@ namespace YukimaruGames.Terminal.Editor
             layout.PropertyField(property.FindPropertyRelative("_selectionColor"));
 
             var flashSpeed = property.FindPropertyRelative("_cursorFlashSpeed");
-            if (layout.SliderWithButton(flashSpeed, 0f, 3f, CursorFlashSpeedLabel, "RESET", ResetButtonWidth))
+            if (layout.SliderWithButton(
+                    flashSpeed, CursorFlashSpeedMin, CursorFlashSpeedMax,
+                    CursorFlashSpeedLabel, ResetButtonText, ResetButtonWidth))
             {
                 flashSpeed.floatValue = DefaultCursorFlashSpeed;
             }
