@@ -608,10 +608,61 @@ end run
             Path.GetTempPath(),
             $"{SessionDirectoryPrefix}{Environment.UserName}_{CurrentProcessId}_{Path.GetRandomFileName().Replace(".", string.Empty)}");
 
+        /// <summary>
+        /// セッションディレクトリを用意する.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Directory.CreateDirectory(string)"/>は、そのパスに既にシンボリックリンクが
+        /// 存在してもそれを検証せずに使う。同一マシンの別ユーザーがパスを推測して先にリンクを
+        /// 仕込んでいた場合、中継スクリプトやセッショントークンをリンク先へ書き込んでしまう(#119)。
+        /// 作成後にリンクでないことを確かめ、リンクだった場合は使わずに失敗させる
+        /// (消して作り直すとリンクを張り直される競合になりうるため、リンク自体には触れない).
+        /// </remarks>
+        /// <exception cref="IOException">用意したパスがシンボリックリンクだった場合.</exception>
         private static string EnsureScriptDirectory()
         {
             Directory.CreateDirectory(ScriptDirectory);
+
+            if (IsSymbolicLink(ScriptDirectory))
+            {
+                throw new IOException(
+                    $"The session directory is a symbolic link and cannot be trusted: {ScriptDirectory}");
+            }
+
             return ScriptDirectory;
+        }
+
+        /// <summary>
+        /// そのパスがシンボリックリンク(Windowsのリパースポイントを含む)か.
+        /// </summary>
+        /// <remarks>
+        /// <c>FileSystemInfo.LinkTarget</c>はUnityのランタイムでは利用できないため
+        /// (実測でプロパティ自体が存在しないことを確認)、属性で判定する。
+        /// macOS/Windowsのいずれでもシンボリックリンクには
+        /// <see cref="FileAttributes.ReparsePoint"/>が立つ(実測で確認)。
+        /// <para>
+        /// <b>属性を取得できなかった場合は握り潰さない。</b>「確認できなかった」を「リンクではない」
+        /// として扱うと、権限不足などで検証できないパスへそのまま書き込んでしまい、この検証自体が
+        /// 意味を失う。存在しない場合(=まだ何も無い)のみ<c>false</c>とし、それ以外は呼び出し側へ委ねる.
+        /// </para>
+        /// </remarks>
+        /// <exception cref="UnauthorizedAccessException">属性を読む権限が無い場合.</exception>
+        /// <exception cref="IOException">その他の理由で属性を取得できない場合.</exception>
+        internal static bool IsSymbolicLink(string path)
+        {
+            try
+            {
+                return File.GetAttributes(path).HasFlag(FileAttributes.ReparsePoint);
+            }
+            catch (FileNotFoundException)
+            {
+                // まだ何も無いパスはリンクではない.
+                return false;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -759,11 +810,24 @@ end run
             }
         }
 
+        /// <summary>
+        /// ディレクトリを中身ごと削除する(失敗しても無視する).
+        /// </summary>
+        /// <remarks>
+        /// シンボリックリンクは<b>再帰削除の対象にしない</b>。リンクを辿って削除すると、
+        /// 自分が作ったわけではないリンク先の中身まで消してしまう(#119).
+        /// </remarks>
         private static void TryDeleteDirectory(string path)
         {
             try
             {
-                if (Directory.Exists(path)) Directory.Delete(path, recursive: true);
+                if (!Directory.Exists(path)) return;
+
+                // リンクかどうかを確認できない場合もここで例外になり、削除せずに抜ける
+                // (確認できないものを再帰削除しない).
+                if (IsSymbolicLink(path)) return;
+
+                Directory.Delete(path, recursive: true);
             }
             catch (Exception)
             {
