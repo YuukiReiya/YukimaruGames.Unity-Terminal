@@ -36,6 +36,7 @@ namespace YukimaruGames.Terminal.Tests.PlayMode.Adapters.UIToolkit
         /// <summary>テストが要素を差し込む先.</summary>
         internal VisualElement Root { get; }
 
+        /// <inheritdoc/>
         public void Dispose()
         {
             if (_gameObject != null) UnityEngine.Object.DestroyImmediate(_gameObject);
