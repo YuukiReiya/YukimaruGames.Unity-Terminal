@@ -233,6 +233,14 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
 
             // MoveTextEndはキャレットと選択の開始位置を揃えるため、これで全選択が解除される.
             textEditor.MoveTextEnd();
+
+            // キャレットを動かしただけでは表示のスクロール位置は追従しない。オートコンプリートで
+            // 入力欄の幅を超える文字列に置き換わったとき、表示が前の位置に取り残されて
+            // 文字が見えなくなる(矢印キーを押すと追従して見えるようになる)。
+            // showCursorを立てると、次の描画でキャレットが見える位置までスクロールされる
+            // (旧revealCursorはUnity 6で非推奨。showCursorが後継).
+            textEditor.showCursor = true;
+
             UnityEngine.GUI.changed = true;
             IsMoveCursorToEndTrigger = false;
             _selectionResetRequested = false;
