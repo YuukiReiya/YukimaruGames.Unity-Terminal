@@ -221,6 +221,13 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
         {
             if (!IsMoveCursorToEndTrigger) return;
 
+            // レイアウト計算中(Layoutパス)はTextEditorのpositionが未確定で、GUILayoutが割り当てる前の
+            // 1x1のダミー矩形になっている。その状態でキャレットを動かすと「1x1の枠に末尾を収める」
+            // 計算になり、scrollOffsetが桁違いの値へ飛んで文字が表示範囲の外へ消える
+            // (実測: 8文字の入力に対しscrollOffset.y=182.52)。矢印キーで直るのは、矩形が確定した
+            // 状態で再計算されるため。矩形が確定するRepaintパスでのみ行う(#16).
+            if (Event.current.type != EventType.Repaint) return;
+
             // IME変換中にキャレットを動かすと変換途中の状態を壊すため触らない.
             if (_isImeComposing) return;
 
