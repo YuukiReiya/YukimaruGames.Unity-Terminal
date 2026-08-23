@@ -7,6 +7,7 @@ using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Models.Entities;
 using YukimaruGames.Terminal.Infrastructure.Discoverer;
 using YukimaruGames.Terminal.SharedKernel;
+using YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery;
 
 namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
 {
@@ -42,20 +43,14 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
             public void Send(MessageType msgType, string message) => Sent.Add((msgType, message));
         }
 
-        [TerminalCommand("discoverertest.sample", maxArgCount: 1, minArgCount: 0, help: "sample")]
-        private static void SampleCommand(string arg)
-        {
-        }
+        // このテストクラス自体はテストアセンブリ(nunit参照を持つ)に属しており、Discoverer は
+        // その内部の[TerminalCommand]を意図的に除外する(下記Discover_ExcludesMethodsDeclaredInTestAssembly
+        // 参照)。そのため「発見される」系のテストは、テストアセンブリではない独立asmdef
+        // (Tests/Fixtures/CommandDiscovery)に置いたフィクスチャを使う.
 
         // ReSharper disable once UnusedMember.Local
-        [TerminalCommand("")]
-        private static void EmptyCommandName()
-        {
-        }
-
-        // ReSharper disable once UnusedMember.Local
-        [TerminalCommand("discoverertest.instance")]
-        private void InstanceCommand()
+        [TerminalCommand("discoverertest.excluded-because-test-assembly")]
+        private static void ExcludedBecauseTestAssembly()
         {
         }
 
@@ -64,9 +59,10 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         /// メタ情報とメソッド情報が正しく取得できることを検証します。
         /// </summary>
         /// <remarks>
-        /// このテストクラス自体が(Assembly-CSharpではなく)独自asmdef
-        /// <c>YukimaruGames.Terminal.Tests.EditMode</c> に属しているため、手動でのアセンブリ指定
-        /// 無しに独自asmdef配下のコマンドが発見できることも同時に検証している(#176).
+        /// フィクスチャは(Assembly-CSharpでもテストアセンブリでもない)独立asmdef
+        /// <c>YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery</c> に属しているため、
+        /// 手動でのアセンブリ指定無しに独自asmdef配下のコマンドが発見できることも
+        /// 同時に検証している(#176).
         /// </remarks>
         [Test]
         public void Discover_FindsStaticMethodWithAttribute()
@@ -80,7 +76,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
 
             var found = specs.First(s => s.Meta.Command == "discoverertest.sample");
             Assert.That(found.Meta.Command, Is.EqualTo("discoverertest.sample"));
-            Assert.That(found.Method.Name, Is.EqualTo(nameof(SampleCommand)));
+            Assert.That(found.Method.Name, Is.EqualTo(nameof(CommandDiscoveryFixtureCommands.SampleCommand)));
         }
 
         /// <summary>
@@ -94,7 +90,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
 
             var specs = discoverer.Discover().ToArray();
 
-            Assert.That(specs.Any(s => s.Method.Name == nameof(EmptyCommandName)), Is.False);
+            Assert.That(specs.Any(s => s.Method.Name == nameof(CommandDiscoveryFixtureCommands.EmptyCommandName)), Is.False);
         }
 
         /// <summary>
@@ -108,7 +104,26 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
 
             var specs = discoverer.Discover().ToArray();
 
-            Assert.That(specs.Any(s => s.Method.Name == nameof(InstanceCommand)), Is.False);
+            Assert.That(specs.Any(s => s.Method.Name == nameof(CommandDiscoveryInstanceFixture.InstanceCommand)), Is.False);
+        }
+
+        /// <summary>
+        /// Unityのテストアセンブリ(nunit.framework等を参照するもの)に属するメソッドは、
+        /// [TerminalCommand]が付与されていても検出結果から除外されることを検証します。
+        /// </summary>
+        /// <remarks>
+        /// #176の自動探索拡張により、テスト用の検証専用メソッド(意図的に不正な形状のもの等)が
+        /// 実際のターミナルへ混入する不具合が発生したため、その回帰防止として追加した.
+        /// </remarks>
+        [Test]
+        public void Discover_ExcludesMethodsDeclaredInTestAssembly()
+        {
+            var logger = new MockCommandLogger();
+            var discoverer = new CommandDiscoverer(logger);
+
+            var specs = discoverer.Discover().ToArray();
+
+            Assert.That(specs.Any(s => s.Method.Name == nameof(ExcludedBecauseTestAssembly)), Is.False);
         }
 
         /// <summary>

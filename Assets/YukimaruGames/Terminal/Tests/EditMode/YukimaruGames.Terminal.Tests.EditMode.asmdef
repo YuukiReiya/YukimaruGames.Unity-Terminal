@@ -9,7 +9,8 @@
         "YukimaruGames.Terminal.Application",
         "YukimaruGames.Terminal.Presentation",
         "YukimaruGames.Terminal.Adapters.CommandLine",
-        "YukimaruGames.Terminal.Composition"
+        "YukimaruGames.Terminal.Composition",
+        "YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery"
     ],
     "includePlatforms": [
         "Editor"
