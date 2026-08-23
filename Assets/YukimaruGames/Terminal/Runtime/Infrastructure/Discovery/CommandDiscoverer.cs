@@ -26,17 +26,21 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
             BindingFlags.Instance | BindingFlags.Public |
             BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
+        private const string NUnitFrameworkAssemblyName = "nunit.framework";
+        private const string UnityEngineTestRunnerAssemblyName = "UnityEngine.TestRunner";
+        private const string UnityEditorTestRunnerAssemblyName = "UnityEditor.TestRunner";
+
         /// <summary>
         /// Unityのテストアセンブリ(EditMode/PlayMode)が(明示的な参照指定の有無に関わらず)
         /// 自動的に付与される参照名. これらを参照しているアセンブリはテスト専用と判断して
         /// 走査対象から除外する(#176フォローアップ: テスト用の検証専用メソッドが実際の
         /// ターミナルへ混入していた不具合の修正).
         /// </summary>
-        private static readonly string[] TestAssemblyMarkerNames =
+        private static readonly string[] _testAssemblyMarkerNames =
         {
-            "nunit.framework",
-            "UnityEngine.TestRunner",
-            "UnityEditor.TestRunner",
+            NUnitFrameworkAssemblyName,
+            UnityEngineTestRunnerAssemblyName,
+            UnityEditorTestRunnerAssemblyName,
         };
 
         public CommandDiscoverer(ICommandLogger logger)
@@ -51,7 +55,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
         /// 自動的に対象とする。これにより Assembly-CSharp 直下・独自asmdef配下のどちらに
         /// コマンドを置いても(属性を使う以上必ずこのアセンブリを参照するため)手動設定なしに
         /// 発見できる(#176)。ただしUnityのテストアセンブリ(EditMode/PlayMode)は
-        /// <see cref="TestAssemblyMarkerNames"/>への参照を目印に除外する
+        /// <see cref="_testAssemblyMarkerNames"/>への参照を目印に除外する
         /// (テスト専用の検証用メソッドが実際のターミナルへ混入するのを防ぐため).
         /// </remarks>
         public IEnumerable<CommandSpecification> Discover()
@@ -117,7 +121,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
         }
 
         private static bool IsTestAssembly(IEnumerable<string> referencedNames) =>
-            referencedNames.Any(n => TestAssemblyMarkerNames.Contains(n, StringComparer.Ordinal));
+            referencedNames.Any(n => _testAssemblyMarkerNames.Contains(n, StringComparer.Ordinal));
 
         private string[] GetReferencedAssemblyNamesSafely(Assembly assembly)
         {

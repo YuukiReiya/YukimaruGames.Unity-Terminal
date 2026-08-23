@@ -12,11 +12,17 @@ namespace YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery
     /// </remarks>
     public static class CommandDiscoveryFixtureCommands
     {
+        /// <summary>
+        /// 独自asmdef配下の静的メソッドが発見されることを検証するためのサンプルコマンド.
+        /// </summary>
         [TerminalCommand("discoverertest.sample", maxArgCount: 1, minArgCount: 0, help: "sample")]
         public static void SampleCommand(string arg)
         {
         }
 
+        /// <summary>
+        /// コマンド名が空のメソッドが検出結果から除外されることを検証するためのサンプルコマンド.
+        /// </summary>
         // ReSharper disable once UnusedMember.Global
         [TerminalCommand("")]
         public static void EmptyCommandName()
@@ -29,6 +35,9 @@ namespace YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery
     /// </summary>
     public sealed class CommandDiscoveryInstanceFixture
     {
+        /// <summary>
+        /// インスタンスメソッドが検出結果から除外されることを検証するためのサンプルコマンド.
+        /// </summary>
         // ReSharper disable once UnusedMember.Global
         [TerminalCommand("discoverertest.instance")]
         public void InstanceCommand()
