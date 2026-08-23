@@ -19,11 +19,5 @@ namespace YukimaruGames.Terminal.Composition
         /// ローディング表現として順番に表示するフレーム文字列群.
         /// </summary>
         string[] LoadingIndicatorFrames { get; }
-
-        /// <summary>
-        /// コマンド走査に追加するアセンブリ名. 既定は空(=Assembly-CSharpとその参照のみ)。
-        /// 独自asmdefにコマンドやモードを置く場合はここに列挙する.
-        /// </summary>
-        string[] AdditionalCommandAssemblies { get; }
     }
 }
