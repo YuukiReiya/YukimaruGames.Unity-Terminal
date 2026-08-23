@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
-using YukimaruGames.Terminal.Domain.Contracts.Attributes;
+using UnityEngine.Scripting;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Contracts.Modes;
 
 namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
@@ -13,10 +14,11 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
     /// モードの内部状態には一切触れない、型名・識別子・深さのみのメタ情報を表示する.
     /// </p>
     /// <p>
-    /// パッケージ内蔵コマンドは <see cref="Infrastructure.Discoverer.CommandDiscoverer"/> による
-    /// アセンブリ走査(既定では利用者の <c>Assembly-CSharp</c>とその参照先のみ)に乗らない場合がある
-    /// (利用者コードがこのアセンブリの型を実際に参照していないと、コンパイル後の参照メタデータに
-    /// このアセンブリが現れないため)。そのため<see cref="Methods"/>経由でComposition層から直接登録する.
+    /// パッケージ内蔵コマンドは<c>[TerminalCommand]</c>属性を付与しない。自動探索
+    /// (<c>CommandDiscoverer</c>)の走査範囲拡張(#176/#177)後、属性を付けると利用者コードの
+    /// 明示登録(<see cref="Commands"/>経由、Composition層)と二重登録になるため。
+    /// リフレクションでのみ参照されるため、コード剥離(IL2CPPストリッピング)で消えないよう
+    /// <see cref="PreserveAttribute"/>を付与している.
     /// </p>
     /// </remarks>
     public static class BuiltinDiagnosticsCommands
@@ -24,7 +26,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string StackCommand = "terminal.stack";
         private const string StackHelp = "Prints the current terminal mode stack.";
 
-        [TerminalCommand(StackCommand, help: StackHelp)]
+        [Preserve]
         private static void PrintModeStack(IModeStackInspector stack, IModeOutput output)
         {
             var frames = stack.Snapshot();
@@ -42,12 +44,15 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         }
 
         /// <summary>
-        /// このクラスが提供するコマンドメソッド一覧.
+        /// このクラスが提供するコマンドメソッドとメタ情報の一覧.
         /// </summary>
-        public static MethodInfo[] Methods { get; } =
+        public static (MethodInfo Method, CommandMeta Meta)[] Commands { get; } =
         {
-            typeof(BuiltinDiagnosticsCommands).GetMethod(
-                nameof(PrintModeStack), BindingFlags.NonPublic | BindingFlags.Static)!,
+            (
+                typeof(BuiltinDiagnosticsCommands).GetMethod(
+                    nameof(PrintModeStack), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(StackCommand, maxArgCount: 0, minArgCount: -1, help: StackHelp)
+            ),
         };
     }
 }

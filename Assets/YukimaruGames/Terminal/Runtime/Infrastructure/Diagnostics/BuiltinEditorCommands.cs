@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using System.Reflection;
 using UnityEditor;
-using YukimaruGames.Terminal.Domain.Contracts.Attributes;
+using UnityEngine.Scripting;
 using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Contracts.Modes;
 
@@ -13,14 +13,16 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
     /// <remarks>
     /// クラス全体を<c>UNITY_EDITOR</c>シンボルで囲むことで、シンボルが定義されない実機ビルドでは
     /// 型ごとコンパイル対象から除外される。登録側(<c>ImmediateModeInstaller</c>)の呼び出し箇所も
-    /// 同様に<c>#if UNITY_EDITOR</c>で囲い、実機ビルドにこの型への参照自体が残らないようにする.
+    /// 同様に<c>#if UNITY_EDITOR</c>で囲い、実機ビルドにこの型への参照自体が残らないようにする。
+    /// <c>[TerminalCommand]</c>属性は付与しない(自動探索との二重登録を避けるため、
+    /// <see cref="Commands"/>経由でComposition層から直接登録する).
     /// </remarks>
     public static class BuiltinEditorCommands
     {
         private const string PauseCommand = "editor.pause";
         private const string PauseHelp = "Toggles EditorApplication.isPaused.";
 
-        [TerminalCommand(PauseCommand, help: PauseHelp)]
+        [Preserve]
         private static void TogglePause(IModeOutput output)
         {
             EditorApplication.isPaused = !EditorApplication.isPaused;
@@ -31,7 +33,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string PingHelp = "Pings (selects and highlights) an asset in the Project window. Usage: editor.ping <assetPath>";
         private const int PingArgCount = 1;
 
-        [TerminalCommand(PingCommand, maxArgCount: PingArgCount, minArgCount: PingArgCount, help: PingHelp)]
+        [Preserve]
         private static void PingAsset(CommandArgument[] args, IModeOutput output)
         {
             if (args.Length < PingArgCount)
@@ -53,12 +55,18 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         }
 
         /// <summary>
-        /// このクラスが提供するコマンドメソッド一覧.
+        /// このクラスが提供するコマンドメソッドとメタ情報の一覧.
         /// </summary>
-        public static MethodInfo[] Methods { get; } =
+        public static (MethodInfo Method, CommandMeta Meta)[] Commands { get; } =
         {
-            typeof(BuiltinEditorCommands).GetMethod(nameof(TogglePause), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinEditorCommands).GetMethod(nameof(PingAsset), BindingFlags.NonPublic | BindingFlags.Static)!,
+            (
+                typeof(BuiltinEditorCommands).GetMethod(nameof(TogglePause), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(PauseCommand, maxArgCount: 0, minArgCount: -1, help: PauseHelp)
+            ),
+            (
+                typeof(BuiltinEditorCommands).GetMethod(nameof(PingAsset), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(PingCommand, maxArgCount: PingArgCount, minArgCount: PingArgCount, help: PingHelp)
+            ),
         };
     }
 }

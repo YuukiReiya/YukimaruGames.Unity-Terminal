@@ -107,33 +107,35 @@ namespace YukimaruGames.Terminal.Composition
                 }
             }
 
-            // terminal.stack等のパッケージ内蔵コマンドは、Assembly-CSharpの参照グラフ次第で
-            // 属性発見(ICommandDiscoverer.Discover)に乗らない場合がある(利用者コードが実際に
-            // 型を参照していないアセンブリはAssemblyRefに現れないため)。Composition層は
-            // Infrastructureを直接知っているので、確実性のためここで直接登録する.
+            // terminal.stack等のパッケージ内蔵コマンドには[TerminalCommand]属性を付与していない
+            // (#176フォローアップ)。自動探索の走査範囲がAssembly-CSharp限定から拡張されたことで
+            // Infrastructureアセンブリも対象に入るようになり、属性を付けたままだと明示登録との
+            // 二重登録エラーになるため。リフレクション呼び出しコストの観点からも、ビルトイン
+            // コマンドは自動探索を経由させず、ここで直接登録する.
             RegisterBuiltinCommands(in domain, in bundle);
         }
 
         private static void RegisterBuiltinCommands(in DomainContext domain, in ModeServiceBundle bundle)
         {
-            RegisterBuiltinCommandMethods(domain, bundle, BuiltinDiagnosticsCommands.Methods);
-            RegisterBuiltinCommandMethods(domain, bundle, BuiltinGeneralCommands.Methods);
+            RegisterBuiltinCommandMethods(domain, bundle, BuiltinDiagnosticsCommands.Commands);
+            RegisterBuiltinCommandMethods(domain, bundle, BuiltinGeneralCommands.Commands);
 
 #if UNITY_EDITOR
             // Editor限定コマンドは実機ビルド(UNITY_EDITOR未定義)では型ごとコンパイル対象外になる
             // ため、この呼び出し自体も#if UNITY_EDITORで囲い、実機ビルドに参照を残さない.
-            RegisterBuiltinCommandMethods(domain, bundle, BuiltinEditorCommands.Methods);
+            RegisterBuiltinCommandMethods(domain, bundle, BuiltinEditorCommands.Commands);
 #endif
         }
 
-        private static void RegisterBuiltinCommandMethods(in DomainContext domain, in ModeServiceBundle bundle, MethodInfo[] methods)
+        private static void RegisterBuiltinCommandMethods(
+            in DomainContext domain, in ModeServiceBundle bundle, (MethodInfo Method, CommandMeta Meta)[] commands)
         {
-            foreach (var method in methods)
+            foreach (var (method, meta) in commands)
             {
-                var handler = CommandFactory.Create(method, bundle);
-                if (domain.Registry.Add(handler.Meta.Command, handler))
+                var handler = CommandFactory.Create(null, method, meta, bundle);
+                if (domain.Registry.Add(meta.Command, handler))
                 {
-                    domain.Autocomplete.Register(handler.Meta.Command);
+                    domain.Autocomplete.Register(meta.Command);
                 }
             }
         }
