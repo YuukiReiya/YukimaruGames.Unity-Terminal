@@ -37,6 +37,13 @@ namespace YukimaruGames.Terminal.Adapters.UIToolkit.Renderers
 
             if (_textField == null) return;
 
+            // TextFieldはフォーカスを得たときにテキスト全体を選択する(selectAllOnFocusの既定はtrue)。
+            // ターミナルの入力欄では、Tabによるオートコンプリートや実行後の値の同期でフォーカスを
+            // 張り直すたびに入力中の文字列が選択状態になり、次の1文字で全消えする(#16)。
+            // クリック時の全選択も同様に、端末の入力欄としては期待されない挙動のため無効化する.
+            _textField.selectAllOnFocus = false;
+            _textField.selectAllOnMouseUp = false;
+
             _textField.RegisterValueChangedCallback(OnValueChanged);
             _textField.RegisterCallback<FocusInEvent>(OnFocusIn);
             _textField.RegisterCallback<FocusOutEvent>(OnFocusOut);
