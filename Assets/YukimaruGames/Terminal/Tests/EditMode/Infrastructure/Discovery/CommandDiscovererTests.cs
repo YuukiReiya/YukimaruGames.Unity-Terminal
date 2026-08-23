@@ -16,8 +16,6 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
     [TestFixture]
     public sealed class CommandDiscovererTests
     {
-        private const string TestAssemblyName = "YukimaruGames.Terminal.Tests.EditMode";
-
         private sealed class MockCommandLogger : ICommandLogger
         {
             public int MaxLogs => 100;
@@ -65,11 +63,16 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         /// 静的メソッドに付与された <see cref="TerminalCommandAttribute"/> が検出され、
         /// メタ情報とメソッド情報が正しく取得できることを検証します。
         /// </summary>
+        /// <remarks>
+        /// このテストクラス自体が(Assembly-CSharpではなく)独自asmdef
+        /// <c>YukimaruGames.Terminal.Tests.EditMode</c> に属しているため、手動でのアセンブリ指定
+        /// 無しに独自asmdef配下のコマンドが発見できることも同時に検証している(#176).
+        /// </remarks>
         [Test]
         public void Discover_FindsStaticMethodWithAttribute()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.Discover().ToArray();
 
@@ -87,7 +90,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void Discover_SkipsMethodWithEmptyCommandName()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.Discover().ToArray();
 
@@ -101,7 +104,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void Discover_SkipsInstanceMethod()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.Discover().ToArray();
 
@@ -109,28 +112,17 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         }
 
         /// <summary>
-        /// 存在しないアセンブリを指定した場合、例外がログ出力された上で再送出されることを検証します。
+        /// <see cref="TerminalCommandAttribute"/>の定義アセンブリを参照していないアセンブリ
+        /// (例: mscorlib/System等)が混ざっていても、例外を送出せず動作することを検証します。
         /// </summary>
         [Test]
-        public void Discover_UnknownAssembly_LogsExceptionAndRethrows()
-        {
-            var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { "NonExistentAssembly.DoesNotExist" });
-
-            Assert.Throws<System.IO.FileNotFoundException>(() => discoverer.Discover().ToArray());
-            Assert.That(logger.Sent.Any(s => s.type == MessageType.Exception), Is.True);
-        }
-
-        /// <summary>
-        /// デフォルトコンストラクタが "Assembly-CSharp" を対象として例外なく動作することを検証します。
-        /// </summary>
-        [Test]
-        public void DefaultConstructor_UsesAssemblyCSharp()
+        public void Discover_IgnoresAssembliesNotReferencingAttributeAssembly()
         {
             var logger = new MockCommandLogger();
             var discoverer = new CommandDiscoverer(logger);
 
             Assert.DoesNotThrow(() => discoverer.Discover().ToArray());
+            Assert.That(logger.Sent.Any(s => s.type == MessageType.Exception), Is.False);
         }
 
         // ─── DiscoverModeCommands ────────────────────────────────────────────
@@ -176,7 +168,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void DiscoverModeCommands_FindsCommandsDeclaredOnBaseClass()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.DiscoverModeCommands(typeof(DerivedMode), "derived");
 
@@ -190,7 +182,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void DiscoverModeCommands_FindsCommandsDeclaredOnDerivedClass()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.DiscoverModeCommands(typeof(DerivedMode), "derived");
 
@@ -204,7 +196,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void DiscoverModeCommands_OverriddenMethod_PrefersDerivedDeclaration()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.DiscoverModeCommands(typeof(DerivedMode), "derived");
 
@@ -220,7 +212,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void DiscoverModeCommands_BaseTypeOnly_DoesNotIncludeDerivedOnlyCommand()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.DiscoverModeCommands(typeof(BaseMode), "base");
 
@@ -234,7 +226,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void DiscoverModeCommands_StringId_MatchesOnlyWhenIdEqual()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var matched = discoverer.DiscoverModeCommands(typeof(UnrelatedMode), "string-id-mode");
             var unmatched = discoverer.DiscoverModeCommands(typeof(UnrelatedMode), "different-id");
@@ -250,7 +242,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Discovery
         public void DiscoverModeCommands_UnrelatedType_DoesNotMatch()
         {
             var logger = new MockCommandLogger();
-            var discoverer = new CommandDiscoverer(logger, new[] { TestAssemblyName });
+            var discoverer = new CommandDiscoverer(logger);
 
             var specs = discoverer.DiscoverModeCommands(typeof(UnrelatedMode), "unrelated");
 

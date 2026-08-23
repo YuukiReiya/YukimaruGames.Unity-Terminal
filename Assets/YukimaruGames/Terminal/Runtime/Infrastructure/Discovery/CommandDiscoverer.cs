@@ -15,7 +15,6 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
     public sealed class CommandDiscoverer : ICommandDiscoverer
     {
         private readonly ICommandLogger _logger;
-        private readonly IEnumerable<string> _assemblyNames;
 
         // ReSharper disable once InconsistentNaming
         private const BindingFlags kBindingFlags =
@@ -28,108 +27,87 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
             BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
         public CommandDiscoverer(ICommandLogger logger)
-            : this(logger, new[] { "Assembly-CSharp" })
-        {
-        }
-
-        public CommandDiscoverer(ICommandLogger logger, IEnumerable<string> assemblyNames)
         {
             _logger = logger;
-            _assemblyNames = (assemblyNames ?? Array.Empty<string>())
-                .Where(n => !string.IsNullOrWhiteSpace(n))
-                .Distinct(StringComparer.Ordinal)
-                .ToArray();
         }
 
         /// <inheritdoc/>
+        /// <remarks>
+        /// 走査対象アセンブリは固定リストではなく、<see cref="TerminalCommandAttribute"/>の
+        /// 定義アセンブリを直接・間接に参照している <see cref="AppDomain"/> 上の全アセンブリを
+        /// 自動的に対象とする。これにより Assembly-CSharp 直下・独自asmdef配下のどちらに
+        /// コマンドを置いても(属性を使う以上必ずこのアセンブリを参照するため)手動設定なしに
+        /// 発見できる(#176).
+        /// </remarks>
         public IEnumerable<CommandSpecification> Discover()
         {
-            // 名前レベルの重複だけでなく、推移参照による実体レベルの重複も
-            // ここで一元的に排除する(呼び出し元が重複を渡さない前提には依存しない).
-            var visited = new HashSet<string>(StringComparer.Ordinal);
             var specs = new List<CommandSpecification>();
-            foreach (var name in _assemblyNames)
+
+            foreach (var assembly in GetCandidateAssemblies())
             {
-                CollectInto(name, visited, specs);
+                foreach (var type in GetTypesSafely(assembly))
+                {
+                    foreach (var method in GetMethodsSafely(type, kBindingFlags))
+                    {
+                        if (!TryGetAttribute(method, out var attribute))
+                        {
+                            continue;
+                        }
+
+                        if (!IsDiscoverable(method, attribute))
+                        {
+                            continue;
+                        }
+
+                        specs.Add(new CommandSpecification(method, attribute.Meta));
+                    }
+                }
             }
 
             return specs;
         }
 
         /// <summary>
-        /// アセンブリ名からコマンドのハンドラーを検出.
+        /// <see cref="TerminalCommandAttribute"/>の定義アセンブリ自身、および
+        /// それを直接参照しているアセンブリを走査対象として列挙する.
         /// </summary>
-        /// <param name="assemblyName">スキャン対象のAssembly名</param>
-        /// <returns>取得した設計データを返す</returns>
-        public IEnumerable<CommandSpecification> Discover(string assemblyName)
+        private IEnumerable<Assembly> GetCandidateAssemblies()
         {
-            var specs = new List<CommandSpecification>();
-            CollectInto(assemblyName, new HashSet<string>(StringComparer.Ordinal), specs);
-            return specs;
+            var markerAssemblyName = typeof(TerminalCommandAttribute).Assembly.GetName().Name;
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.IsDynamic)
+                {
+                    continue;
+                }
+
+                if (string.Equals(assembly.GetName().Name, markerAssemblyName, StringComparison.Ordinal))
+                {
+                    yield return assembly;
+                    continue;
+                }
+
+                if (ReferencesMarkerAssembly(assembly, markerAssemblyName))
+                {
+                    yield return assembly;
+                }
+            }
         }
 
-        private void CollectInto(string assemblyName, HashSet<string> visited, List<CommandSpecification> sink)
+        private bool ReferencesMarkerAssembly(Assembly assembly, string markerAssemblyName)
         {
-            AssemblyName referencedAssemblyName = null;
-
             try
             {
-                referencedAssemblyName = new AssemblyName(assemblyName);
-                var assembly = Assembly.Load(assemblyName);
-                if (assembly is null)
-                {
-                    _logger?.Send(MessageType.Error, $"Failed to load assembly: {assemblyName}. Assembly.Load returned null.");
-                    return;
-                }
-
-                var toScan = new List<Assembly>();
-                if (visited.Add(assembly.FullName))
-                {
-                    toScan.Add(assembly);
-                }
-
-                var referencedAssembliesNames = assembly.GetReferencedAssemblies();
-                foreach (var name in referencedAssembliesNames)
-                {
-                    if (!visited.Add(name.FullName))
-                    {
-                        continue;
-                    }
-
-                    var referenced = Assembly.Load(name);
-                    if (referenced != null)
-                    {
-                        toScan.Add(referenced);
-                    }
-                }
-
-                foreach (var scanned in toScan)
-                {
-                    foreach (var type in GetTypesSafely(scanned))
-                    {
-                        foreach (var method in GetMethodsSafely(type, kBindingFlags))
-                        {
-                            if (!TryGetAttribute(method, out var attribute))
-                            {
-                                continue;
-                            }
-
-                            if (!IsDiscoverable(method, attribute))
-                            {
-                                continue;
-                            }
-
-                            sink.Add(new CommandSpecification(method, attribute.Meta));
-                        }
-                    }
-                }
+                return assembly.GetReferencedAssemblies()
+                    .Any(n => string.Equals(n.Name, markerAssemblyName, StringComparison.Ordinal));
             }
             catch (Exception e)
             {
                 _logger?.Send(
                     MessageType.Exception,
-                    $"Referenced assembly '{referencedAssemblyName}' from assembly '{assemblyName}' could not be loaded: {e.GetType()}{Environment.NewLine}{e.Message}");
-                throw;
+                    $"Failed to inspect references of assembly '{assembly.FullName}'.{Environment.NewLine}{e.GetType()}:{e.Message}");
+                return false;
             }
         }
 

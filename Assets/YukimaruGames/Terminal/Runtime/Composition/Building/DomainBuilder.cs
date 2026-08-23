@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using YukimaruGames.Terminal.Application.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Repositories;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Modes;
+using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Repositories;
 using YukimaruGames.Terminal.Domain.Services;
 using YukimaruGames.Terminal.Infrastructure.Diagnostics;
 using YukimaruGames.Terminal.Infrastructure.Discoverer;
 using YukimaruGames.Terminal.Infrastructure.Factories;
 using YukimaruGames.Terminal.Infrastructure.Modes;
+using YukimaruGames.Terminal.SharedKernel;
 
 namespace YukimaruGames.Terminal.Composition
 {
@@ -24,8 +25,6 @@ namespace YukimaruGames.Terminal.Composition
     /// </remarks>
     internal static class DomainBuilder
     {
-        private const string DefaultCommandAssembly = "Assembly-CSharp";
-
         /// <summary>
         /// ドメイン層のコンポーネント一式を構築する.
         /// </summary>
@@ -36,7 +35,7 @@ namespace YukimaruGames.Terminal.Composition
             var invoker = new CommandInvoker();
             var parser = new CommandParser();
             var history = new CommandHistory();
-            var discover = new CommandDiscoverer(logger, new[] { DefaultCommandAssembly }.Concat(options.AdditionalCommandAssemblies ?? Array.Empty<string>()));
+            var discover = new CommandDiscoverer(logger);
             var autocomplete = new CommandAutocomplete();
             var normalMode = new ExecutionMode(logger, registry, invoker, parser, history, autocomplete) { Prompt = options.Prompt };
             var modeCommandBinder = new ModeCommandBinder(discover, () => new CommandRegistry(logger), logger);
@@ -80,10 +79,28 @@ namespace YukimaruGames.Terminal.Composition
             };
             var bundle = new ModeServiceBundle(services);
 
+            // NOTE: 走査範囲がAssembly-CSharp限定ではなくなった(#176)ため、Editorプロセスでは
+            // Test用asmdef(EditMode/PlayMode)に属する検証専用の不正な形状のメソッド
+            // (非同期voidメソッド等、CommandFactoryTestsが意図的に用意しているもの)も
+            // 発見対象に含まれうる。1件のCommandFactory.Create失敗が全体のInstall()を
+            // 巻き添えで落とさないよう、ここで個別に捕捉してログに残し読み飛ばす.
             var specs = domain.Discoverer.Discover();
             foreach (var spec in specs)
             {
-                var handler = CommandFactory.Create(spec.Method, bundle);
+                CommandHandler handler;
+                try
+                {
+                    handler = CommandFactory.Create(spec.Method, bundle);
+                }
+                catch (Exception e)
+                {
+                    domain.Logger?.Send(
+                        MessageType.Warning,
+                        $"Failed to create command handler for '{spec.Meta.Command}' " +
+                        $"({spec.Method.DeclaringType?.FullName}.{spec.Method.Name}). Skipped.{Environment.NewLine}{e.GetType().Name}:{e.Message}");
+                    continue;
+                }
+
                 if (domain.Registry.Add(spec.Meta.Command, handler))
                 {
                     domain.Autocomplete.Register(spec.Meta.Command);
