@@ -296,24 +296,39 @@ namespace YukimaruGames.Terminal.Infrastructure.Discoverer
         /// <summary>
         /// 発見可能か.
         /// </summary>
+        /// <remarks>
+        /// <see cref="SuppressCommandDiscoveryWarningAttribute"/>が付与されている場合、判定結果
+        /// (発見不可)自体は変えず、警告ログの出力だけを抑制する
+        /// (意図的に不正な形状のテストフィクスチャ用).
+        /// </remarks>
         private bool IsDiscoverable(MethodInfo methodInfo, TerminalCommandAttribute attribute)
         {
+            var suppressWarning = methodInfo.GetCustomAttribute<SuppressCommandDiscoveryWarningAttribute>() != null;
+
             // NOTE:
             // kBindingFlagsでInstanceメソッドを取りのぞいているので基本的には通らないはず.
             if (!methodInfo.IsStatic)
             {
-                _logger?.Send(
-                    MessageType.Warning,
-                    $"Skipping non-static method '{methodInfo.Name}' in type '{methodInfo.DeclaringType!.FullName}'. Only static methods can be registered.");
+                if (!suppressWarning)
+                {
+                    _logger?.Send(
+                        MessageType.Warning,
+                        $"Skipping non-static method '{methodInfo.Name}' in type '{methodInfo.DeclaringType!.FullName}'. Only static methods can be registered.");
+                }
+
                 return false;
             }
 
             var commandName = attribute.Meta.Command;
             if (string.IsNullOrWhiteSpace(commandName))
             {
-                _logger?.Send(
-                    MessageType.Warning,
-                    $"Command name is null or empty for method '{methodInfo.Name}' in type '{methodInfo.DeclaringType!.FullName}'.");
+                if (!suppressWarning)
+                {
+                    _logger?.Send(
+                        MessageType.Warning,
+                        $"Command name is null or empty for method '{methodInfo.Name}' in type '{methodInfo.DeclaringType!.FullName}'.");
+                }
+
                 return false;
             }
 

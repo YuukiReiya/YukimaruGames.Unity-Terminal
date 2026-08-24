@@ -1,4 +1,5 @@
 using YukimaruGames.Terminal.Domain.Contracts.Attributes;
+using YukimaruGames.Terminal.Infrastructure.Discoverer;
 
 namespace YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery
 {
@@ -23,8 +24,14 @@ namespace YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery
         /// <summary>
         /// コマンド名が空のメソッドが検出結果から除外されることを検証するためのサンプルコマンド.
         /// </summary>
+        /// <remarks>
+        /// このアセンブリはEditor上で常時ロードされる(#178フォローアップで判明)ため、
+        /// <see cref="SuppressCommandDiscoveryWarningAttribute"/>で発見不可の警告ログだけを
+        /// 抑制している。除外判定(<c>IsDiscoverable</c>)自体はこれまで通り実行される.
+        /// </remarks>
         // ReSharper disable once UnusedMember.Global
         [TerminalCommand("")]
+        [SuppressCommandDiscoveryWarning]
         public static void EmptyCommandName()
         {
         }
@@ -38,8 +45,15 @@ namespace YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery
         /// <summary>
         /// インスタンスメソッドが検出結果から除外されることを検証するためのサンプルコマンド.
         /// </summary>
+        /// <remarks>
+        /// <c>CommandDiscoverer</c>の走査は<c>BindingFlags.Static</c>のみを対象とするため、
+        /// インスタンスメソッドである本メソッドはそもそも列挙されず警告も発生しない。
+        /// 将来の走査対象変更に備えた保険として<see cref="SuppressCommandDiscoveryWarningAttribute"/>
+        /// を付与している.
+        /// </remarks>
         // ReSharper disable once UnusedMember.Global
         [TerminalCommand("discoverertest.instance")]
+        [SuppressCommandDiscoveryWarning]
         public void InstanceCommand()
         {
         }

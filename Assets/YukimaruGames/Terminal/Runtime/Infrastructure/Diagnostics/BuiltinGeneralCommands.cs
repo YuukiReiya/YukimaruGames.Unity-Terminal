@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using YukimaruGames.Terminal.Domain.Contracts.Attributes;
+using UnityEngine.Scripting;
 using YukimaruGames.Terminal.Domain.Contracts.Interfaces.Services;
 using YukimaruGames.Terminal.Domain.Contracts.Models.ValueObjects;
 using YukimaruGames.Terminal.Domain.Contracts.Modes;
@@ -16,8 +16,9 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
     /// </summary>
     /// <remarks>
     /// <see cref="BuiltinDiagnosticsCommands"/>と同様、パッケージ内蔵コマンドは
-    /// <c>CommandDiscoverer</c>によるアセンブリ走査に乗らない場合があるため、
-    /// Composition層から<see cref="Methods"/>経由で直接登録する.
+    /// <c>[TerminalCommand]</c>属性を付与しない(自動探索との二重登録を避けるため)。
+    /// <see cref="Commands"/>経由でComposition層から直接登録し、
+    /// <see cref="PreserveAttribute"/>でコード剥離から保護する.
     /// </remarks>
     public static class BuiltinGeneralCommands
     {
@@ -25,7 +26,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const int EchoMaxArgCount = 64;
         private const string EchoHelp = "Echoes the given arguments back. Usage: echo [text...]";
 
-        [TerminalCommand(EchoCommand, maxArgCount: EchoMaxArgCount, minArgCount: 0, help: EchoHelp)]
+        [Preserve]
         private static void Echo(CommandArgument[] args, IModeOutput output)
         {
             output.Message(args.Length == 0 ? string.Empty : string.Join(' ', args.Select(a => a.String)));
@@ -57,7 +58,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         /// 診断系の組み込みコマンドであり、Infrastructure層からはテーマを参照できないため.
         /// </para>
         /// </remarks>
-        [TerminalCommand(CommandsCommand, help: CommandsHelp)]
+        [Preserve]
         private static void ListCommands(ICommandRegistry registry, IModeOutput output)
         {
             var commands = registry.All.Select(h => h.Meta).ToArray();
@@ -131,7 +132,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string TimeScaleCommand = "time.scale";
         private const string TimeScaleHelp = "Gets or sets Time.timeScale. Usage: time.scale [value]";
 
-        [TerminalCommand(TimeScaleCommand, maxArgCount: 1, minArgCount: 0, help: TimeScaleHelp)]
+        [Preserve]
         private static void TimeScale(CommandArgument[] args, IModeOutput output)
         {
             if (args.Length == 0)
@@ -155,7 +156,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string FpsHelp = "Prints the current frame rate.";
         private const float MillisecondsPerSecond = 1000f;
 
-        [TerminalCommand(FpsCommand, help: FpsHelp)]
+        [Preserve]
         private static void PrintFps(IModeOutput output)
         {
             var deltaTime = Time.unscaledDeltaTime;
@@ -167,7 +168,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string FpsSetHelp = "Sets Application.targetFrameRate. Usage: fps.set <value> (-1 = unlimited)";
         private const int UnlimitedFrameRate = -1;
 
-        [TerminalCommand(FpsSetCommand, maxArgCount: 1, minArgCount: 1, help: FpsSetHelp)]
+        [Preserve]
         private static void SetTargetFrameRate(CommandArgument[] args, IModeOutput output)
         {
             if (args.Length < 1)
@@ -190,7 +191,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string QualityListCommand = "quality.list";
         private const string QualityListHelp = "Lists the available QualitySettings levels.";
 
-        [TerminalCommand(QualityListCommand, help: QualityListHelp)]
+        [Preserve]
         private static void ListQualityLevels(IModeOutput output)
         {
             var names = QualitySettings.names;
@@ -210,7 +211,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string QualitySetCommand = "quality.set";
         private const string QualitySetHelp = "Sets the QualitySettings level by index. Usage: quality.set <index>";
 
-        [TerminalCommand(QualitySetCommand, maxArgCount: 1, minArgCount: 1, help: QualitySetHelp)]
+        [Preserve]
         private static void SetQualityLevel(CommandArgument[] args, IModeOutput output)
         {
             if (args.Length < 1)
@@ -234,7 +235,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string ClearCommand = "clear";
         private const string ClearHelp = "Clears all terminal logs.";
 
-        [TerminalCommand(ClearCommand, help: ClearHelp)]
+        [Preserve]
         private static void Clear(ICommandLogger logger)
         {
             logger.Clear();
@@ -244,7 +245,7 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         private const string GcCollectHelp = "Forces an immediate garbage collection.";
         private const float BytesPerKilobyte = 1024f;
 
-        [TerminalCommand(GcCollectCommand, help: GcCollectHelp)]
+        [Preserve]
         private static void ForceGarbageCollect(IModeOutput output)
         {
             var before = GC.GetTotalMemory(forceFullCollection: false);
@@ -254,19 +255,46 @@ namespace YukimaruGames.Terminal.Infrastructure.Diagnostics
         }
 
         /// <summary>
-        /// このクラスが提供するコマンドメソッド一覧.
+        /// このクラスが提供するコマンドメソッドとメタ情報の一覧.
         /// </summary>
-        public static MethodInfo[] Methods { get; } =
+        public static (MethodInfo Method, CommandMeta Meta)[] Commands { get; } =
         {
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(Echo), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(ListCommands), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(TimeScale), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(PrintFps), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(SetTargetFrameRate), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(ListQualityLevels), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(SetQualityLevel), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(Clear), BindingFlags.NonPublic | BindingFlags.Static)!,
-            typeof(BuiltinGeneralCommands).GetMethod(nameof(ForceGarbageCollect), BindingFlags.NonPublic | BindingFlags.Static)!,
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(Echo), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(EchoCommand, maxArgCount: EchoMaxArgCount, minArgCount: 0, help: EchoHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(ListCommands), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(CommandsCommand, maxArgCount: 0, minArgCount: -1, help: CommandsHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(TimeScale), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(TimeScaleCommand, maxArgCount: 1, minArgCount: 0, help: TimeScaleHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(PrintFps), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(FpsCommand, maxArgCount: 0, minArgCount: -1, help: FpsHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(SetTargetFrameRate), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(FpsSetCommand, maxArgCount: 1, minArgCount: 1, help: FpsSetHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(ListQualityLevels), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(QualityListCommand, maxArgCount: 0, minArgCount: -1, help: QualityListHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(SetQualityLevel), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(QualitySetCommand, maxArgCount: 1, minArgCount: 1, help: QualitySetHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(Clear), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(ClearCommand, maxArgCount: 0, minArgCount: -1, help: ClearHelp)
+            ),
+            (
+                typeof(BuiltinGeneralCommands).GetMethod(nameof(ForceGarbageCollect), BindingFlags.NonPublic | BindingFlags.Static)!,
+                new CommandMeta(GcCollectCommand, maxArgCount: 0, minArgCount: -1, help: GcCollectHelp)
+            ),
         };
     }
 }

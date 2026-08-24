@@ -60,9 +60,8 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
 
         private static CommandHandler CreateHandler(string methodName, RecordingOutput output, FixedRegistry registry)
         {
-            var method = typeof(BuiltinGeneralCommands).GetMethod(
-                methodName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-            Assert.That(method, Is.Not.Null, $"Method '{methodName}' was not found.");
+            var entry = Array.Find(BuiltinGeneralCommands.Commands, c => c.Method.Name == methodName);
+            Assert.That(entry.Method, Is.Not.Null, $"Method '{methodName}' was not found.");
 
             var services = new Dictionary<Type, object>
             {
@@ -70,7 +69,7 @@ namespace YukimaruGames.Terminal.Tests.EditMode.Infrastructure.Diagnostics
                 { typeof(ICommandRegistry), registry },
             };
 
-            return CommandFactory.Create(method, new ModeServiceBundle(services));
+            return CommandFactory.Create(null, entry.Method, entry.Meta, new ModeServiceBundle(services));
         }
 
         private static CommandHandler CreateHandler(string methodName, RecordingOutput output) =>
