@@ -24,6 +24,17 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
         private bool _isMoveCursorToEnd;
 
         /// <summary>
+        /// 直近で<see cref="OnFocusControlChanged"/>へ通知したフォーカス状態.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Focus"/>(命令チャンネル)は外部からの命令を一度きり適用して
+        /// <see cref="WindowFocus.None"/>へ戻すだけで、物理クリック等でIMGUI側が自発的に
+        /// フォーカスを失った場合を一切通知しない(#154のフォローアップ)。<see cref="_isCurrentlyFocused"/>
+        /// を毎フレーム比較し、命令経由か自発的な変化かを問わず実際の状態変化を通知する.
+        /// </remarks>
+        private bool _lastNotifiedFocused;
+
+        /// <summary>
         /// フォーカスを戻した結果の全選択を解除する必要があるか.
         /// </summary>
         /// <remarks>
@@ -139,6 +150,16 @@ namespace YukimaruGames.Terminal.Adapters.IMGUI.Renderers
         {
             UnityEngine.GUI.SetNextControlName(ControlName);
             _isCurrentlyFocused = UnityEngine.GUI.GetNameOfFocusedControl() == ControlName;
+
+            // 命令(Focus)経由かどうかに関わらず、実際のフォーカス状態が変化していれば通知する。
+            // 物理クリックで入力欄の外へフォーカスが移った場合、命令チャンネルは何も変化しないため
+            // ここで検知しないと呼び出し側(InputPresenter.IsFocused)が古い状態のまま固定される(#154).
+            // Layout/Repaint等、1フレームに複数回呼ばれるパスがあるため、通知はRepaintの時だけに絞る.
+            if (Event.current.type == EventType.Repaint && _isCurrentlyFocused != _lastNotifiedFocused)
+            {
+                _lastNotifiedFocused = _isCurrentlyFocused;
+                OnFocusControlChanged?.Invoke(_isCurrentlyFocused ? WindowFocus.Apply : WindowFocus.Release);
+            }
 
             var cursorColor = UnityEngine.GUI.skin.settings.cursorColor;
             var selectionColor = UnityEngine.GUI.skin.settings.selectionColor;
