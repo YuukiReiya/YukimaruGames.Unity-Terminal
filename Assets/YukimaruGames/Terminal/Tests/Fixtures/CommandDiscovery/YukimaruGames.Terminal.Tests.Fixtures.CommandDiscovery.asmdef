@@ -2,7 +2,8 @@
     "name": "YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery",
     "rootNamespace": "YukimaruGames.Terminal.Tests.Fixtures.CommandDiscovery",
     "references": [
-        "YukimaruGames.Terminal.Domain.Contracts"
+        "YukimaruGames.Terminal.Domain.Contracts",
+        "YukimaruGames.Terminal.Infrastructure"
     ],
     "includePlatforms": [
         "Editor"
