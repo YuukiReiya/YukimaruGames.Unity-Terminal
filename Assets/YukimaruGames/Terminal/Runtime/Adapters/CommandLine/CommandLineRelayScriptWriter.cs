@@ -573,9 +573,14 @@ read_line_with_history() {
                 done
             elif [ ""$esc_next"" = ""O"" ]; then
                 # SS3: 導入バイト""O""の直後の1文字で確定する(例: ESC O A).
+                # アプリケーションカーソルモードではSS3形式(ESC O A等)で矢印キー等が
+                # 送られてくるため、以降の分岐と一致するCSI形式(""[A""等)へ正規化する.
                 local ss3_next
                 read -rsn1 -t 1 ss3_next
-                esc_seq=""O${ss3_next}""
+                case ""$ss3_next"" in
+                    A|B|C|D|H|F) esc_seq=""[${ss3_next}"" ;;
+                    *) esc_seq=""O${ss3_next}"" ;;
+                esac
             else
                 # Option+キー等のMeta修飾はESCの直後の1文字だけで確定する.
                 esc_seq=""$esc_next""
