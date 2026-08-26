@@ -675,12 +675,22 @@ done
 printf 'Disconnected from Unity Terminal.\r\n'
 ";
 
+        // 常に専用の新規ウィンドウを作る方式(window指定なしのdo script / make new window)を
+        // 実機で検証したが、いずれもTerminal.appのフォーカス状態等に応じて既存ウィンドウの
+        // 既存タブへ意図せず相乗りし、利用者の既存セッションを上書きしてしまう事故を複数回
+        // 再現した(do scriptにwindow指定を省略した場合、"常に新規ウィンドウ"にはならない。
+        // make new windowも直後のdo scriptとの組み合わせで対象ウィンドウが安定しない)。
+        // データ破壊のリスクがあるため採用を見送り、以下の明示的な分岐に戻している.
+        //
         // 'tell application "Terminal"' はTerminal.app未起動時にそれ自体が起動のトリガーとなり、
         // 起動直後は既定の空ウィンドウが1枚自動で開く。ここで無条件に"do script"を呼ぶと
         // (既定ウィンドウとは別に)新規ウィンドウがもう1枚開いてしまい、ウィンドウが2枚になる
         // (かつ中継スクリプトが実行されるのは新規ウィンドウ側だけで、既定ウィンドウは未接続のまま
         // 残るため、そちらへ入力しても無反応に見える)。既存ウィンドウの有無を確認し、
         // あれば流用(in window 1)することで常に1枚に抑える.
+        // なお、既存ウィンドウを流用した場合にそこへ他のタブが同居していると、
+        // CloseLaunchedTerminal側の「ウィンドウ内で唯一のタブのときだけ閉じる」ガードにより
+        // 自動クローズは働かない(既知の制約。他タブを巻き込まないための安全側の挙動).
         private const string MacLauncherScriptTemplate = @"on run argv
     set relayPath to item 1 of argv
     set thePort to item 2 of argv
@@ -722,9 +732,20 @@ end run
         // 見えるため、確認シート自体が最初から出ない(実機で確認済み。killしない場合、
         // closeで一瞬でも確認シートが描画されうる).
         // 万一kill後もbusyが解けない場合(SIGTERMを無視するプロセスがいた等)に備え、
-        // 確認シートが出た場合はSystem Events経由で「キャンセル」以外のボタン
-        // (ロケール非依存にするため名前で決め打ちしない)を自動でクリックするフォールバックも残す.
-        private const string MacCloserScriptTemplate = @"on run argv
+        // 確認シートが出た場合はSystem Events経由で自動的にボタンをクリックするフォールバックも
+        // 残す。ボタンの判別は名前一致を第一優先とし、既知のCancel名のどちらとも一致しない
+        // (未知のロケール等の)場合のみ、位置(Cancelは左・実行アクションは右というmacOSの
+        // 標準的なダイアログ配置)にフォールバックする。Accessibility APIにはCancel/既定ボタンを
+        // 区別する属性が存在しないことを実機で確認済み(sheetのbuttonsのfocusedプロパティは、
+        // むしろCancel側がtrueになっていた。which自体は当てにならない)ため、位置は
+        // 「名前で判別できない場合の次善のフォールバック」として使うに留める.
+        private const string MacCloserScriptTemplate = @"property KillMaxAttempts : 25
+property KillRetryDelaySeconds : 0.15
+property SheetPollMaxAttempts : 20
+property SheetPollDelaySeconds : 0.2
+property CancelButtonNames : {""Cancel"", ""キャンセル""}
+
+on run argv
     set sessionMarker to item 1 of argv
     tell application ""Terminal""
         repeat with theWindow in windows
@@ -738,13 +759,13 @@ end run
                             -- 「killした直後にフックが新規起動して busy に戻る」ことがある(実機で
                             -- 確認済み)。busyが解けるか一定回数試すまで、都度その時点で動いている
                             -- (ログインシェル自身を除く)プロセスへSIGTERMを送り続ける.
-                            repeat 25 times
+                            repeat KillMaxAttempts times
                                 if not busy of theTab then exit repeat
                                 try
                                     set theTty to tty of theTab
                                     do shell script ""ps -t "" & (quoted form of theTty) & "" -o pid=,comm= | tail -n +2 | awk '{print $1}' | xargs -I{} kill -TERM {} > /dev/null 2>&1; true""
                                 end try
-                                delay 0.15
+                                delay KillRetryDelaySeconds
                             end repeat
                             close theWindow
                             -- killが効かなかった場合の保険。closeの直後は確認シートの描画が
@@ -752,7 +773,7 @@ end run
                             -- 「シートが見つかる」か「ウィンドウ自体が無くなる(=確認なしで
                             -- 閉じ切った)」まで短い間隔でポーリングする(実機検証で、
                             -- 固定0.3秒待機だと確認シートを取りこぼすケースを確認済み).
-                            repeat 20 times
+                            repeat SheetPollMaxAttempts times
                                 set sheetHandled to false
                                 set windowGone to true
                                 tell application ""System Events""
@@ -762,13 +783,36 @@ end run
                                                 if name of sysWindow is theWindowName then
                                                     set windowGone to false
                                                     if exists sheet 1 of sysWindow then
-                                                        repeat with theButton in (buttons of sheet 1 of sysWindow)
-                                                            if (name of theButton) is not in {""Cancel"", ""キャンセル""} then
-                                                                click theButton
-                                                                set sheetHandled to true
-                                                                exit repeat
+                                                        set sheetButtons to buttons of sheet 1 of sysWindow
+                                                        set targetButton to missing value
+                                                        if (count of sheetButtons) is 2 then
+                                                            set button1 to item 1 of sheetButtons
+                                                            set button2 to item 2 of sheetButtons
+                                                            set isCancel1 to (name of button1) is in CancelButtonNames
+                                                            set isCancel2 to (name of button2) is in CancelButtonNames
+                                                            if isCancel1 and not isCancel2 then
+                                                                set targetButton to button2
+                                                            else if isCancel2 and not isCancel1 then
+                                                                set targetButton to button1
+                                                            else if (not isCancel1) and (not isCancel2) then
+                                                                if (item 1 of (position of button1)) > (item 1 of (position of button2)) then
+                                                                    set targetButton to button1
+                                                                else
+                                                                    set targetButton to button2
+                                                                end if
                                                             end if
-                                                        end repeat
+                                                        else
+                                                            repeat with theButton in sheetButtons
+                                                                if (name of theButton) is not in CancelButtonNames then
+                                                                    set targetButton to theButton
+                                                                    exit repeat
+                                                                end if
+                                                            end repeat
+                                                        end if
+                                                        if targetButton is not missing value then
+                                                            click targetButton
+                                                            set sheetHandled to true
+                                                        end if
                                                     end if
                                                     exit repeat
                                                 end if
@@ -777,7 +821,7 @@ end run
                                     end if
                                 end tell
                                 if windowGone or sheetHandled then exit repeat
-                                delay 0.2
+                                delay SheetPollDelaySeconds
                             end repeat
                         end if
                         return
@@ -1041,6 +1085,10 @@ end run
             return path;
         }
 
+        /// <summary>
+        /// <see cref="WriteMacLauncherScript"/>が起動したウィンドウをセッション終了時に
+        /// 閉じるためのAppleScriptを一時ディレクトリへ書き出し、そのパスを返す.
+        /// </summary>
         public static string WriteMacCloserScript()
         {
             var path = Path.Combine(EnsureScriptDirectory(), MacCloserFileName);
