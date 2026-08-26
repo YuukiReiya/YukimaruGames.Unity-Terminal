@@ -110,7 +110,7 @@ $script:lastRows = 1
 # 残って二重に見えるため、直前に何行使ったかを覚えておき、その範囲をまとめて消す。
 # ANSIエスケープはコンソールホストの設定によって解釈されないことがあるため、
 # カーソル位置の操作で消す.
-function Redraw([string]$Prompt, [string]$Text) {
+function Redraw([string]$Prompt, [string]$Text, [int]$CursorPos) {
     $line = $Prompt + $Text
     try {
         $width = [Console]::BufferWidth
@@ -129,6 +129,14 @@ function Redraw([string]$Prompt, [string]$Text) {
         [Console]::SetCursorPosition(0, $top)
         [Console]::Write($line)
         $script:lastRows = [Math]::Max(1, [Math]::Ceiling($line.Length / $width))
+
+        # キャレットを行末ではなく、実際の編集位置(プロンプト分を含めた文字オフセット)へ戻す.
+        $caretOffset = $Prompt.Length + $CursorPos
+        $caretRow = $top + [Math]::Floor($caretOffset / $width)
+        $caretCol = $caretOffset % $width
+        if ($caretRow -lt [Console]::BufferHeight) {
+            [Console]::SetCursorPosition($caretCol, $caretRow)
+        }
         return
     }
     catch {
@@ -141,7 +149,8 @@ function Redraw([string]$Prompt, [string]$Text) {
 function Read-LineWithHistory([string]$Prompt) {
     $script:lastRows = 1
     $buffer = New-Object System.Text.StringBuilder
-    Redraw $Prompt ''
+    $cursorPos = 0
+    Redraw $Prompt '' 0
 
     while ($true) {
         $key = [Console]::ReadKey($true)
@@ -157,10 +166,33 @@ function Read-LineWithHistory([string]$Prompt) {
             return $line
         }
         elseif ($key.Key -eq [ConsoleKey]::Backspace) {
-            if ($buffer.Length -gt 0) {
-                $buffer.Length = $buffer.Length - 1
+            if ($cursorPos -gt 0) {
+                $buffer.Remove($cursorPos - 1, 1) | Out-Null
+                $cursorPos--
             }
-            Redraw $Prompt $buffer.ToString()
+            Redraw $Prompt $buffer.ToString() $cursorPos
+        }
+        elseif ($key.Key -eq [ConsoleKey]::Delete) {
+            if ($cursorPos -lt $buffer.Length) {
+                $buffer.Remove($cursorPos, 1) | Out-Null
+            }
+            Redraw $Prompt $buffer.ToString() $cursorPos
+        }
+        elseif ($key.Key -eq [ConsoleKey]::LeftArrow) {
+            if ($cursorPos -gt 0) { $cursorPos-- }
+            Redraw $Prompt $buffer.ToString() $cursorPos
+        }
+        elseif ($key.Key -eq [ConsoleKey]::RightArrow) {
+            if ($cursorPos -lt $buffer.Length) { $cursorPos++ }
+            Redraw $Prompt $buffer.ToString() $cursorPos
+        }
+        elseif ($key.Key -eq [ConsoleKey]::Home) {
+            $cursorPos = 0
+            Redraw $Prompt $buffer.ToString() $cursorPos
+        }
+        elseif ($key.Key -eq [ConsoleKey]::End) {
+            $cursorPos = $buffer.Length
+            Redraw $Prompt $buffer.ToString() $cursorPos
         }
         elseif ($key.Key -eq [ConsoleKey]::Tab) {
             # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
@@ -182,14 +214,15 @@ function Read-LineWithHistory([string]$Prompt) {
                 if ($acResponse.StartsWith($completePrefix)) {
                     $buffer.Clear() | Out-Null
                     $buffer.Append($acResponse.Substring($completePrefix.Length)) | Out-Null
-                    Redraw $Prompt $buffer.ToString()
+                    $cursorPos = $buffer.Length
+                    Redraw $Prompt $buffer.ToString() $cursorPos
                     break
                 }
                 elseif ($acResponse.StartsWith($candidatesPrefix)) {
                     [Console]::Out.WriteLine()
                     [Console]::Out.WriteLine($acResponse.Substring($candidatesPrefix.Length))
                     $script:lastRows = 1
-                    Redraw $Prompt $buffer.ToString()
+                    Redraw $Prompt $buffer.ToString() $cursorPos
                     break
                 }
                 elseif ($acResponse -eq $noMatchResponse) {
@@ -206,7 +239,7 @@ function Read-LineWithHistory([string]$Prompt) {
                     [Console]::Out.WriteLine()
                     [Console]::Out.WriteLine($acResponse)
                     $script:lastRows = 1
-                    Redraw $Prompt $buffer.ToString()
+                    Redraw $Prompt $buffer.ToString() $cursorPos
                 }
             }
         }
@@ -215,7 +248,8 @@ function Read-LineWithHistory([string]$Prompt) {
                 $script:historyIndex--
                 $buffer.Clear() | Out-Null
                 $buffer.Append($script:history[$script:historyIndex]) | Out-Null
-                Redraw $Prompt $buffer.ToString()
+                $cursorPos = $buffer.Length
+                Redraw $Prompt $buffer.ToString() $cursorPos
             }
         }
         elseif ($key.Key -eq [ConsoleKey]::DownArrow) {
@@ -223,18 +257,21 @@ function Read-LineWithHistory([string]$Prompt) {
                 $script:historyIndex++
                 $buffer.Clear() | Out-Null
                 $buffer.Append($script:history[$script:historyIndex]) | Out-Null
-                Redraw $Prompt $buffer.ToString()
+                $cursorPos = $buffer.Length
+                Redraw $Prompt $buffer.ToString() $cursorPos
             }
             elseif ($script:historyIndex -eq $script:history.Count - 1) {
                 $script:historyIndex++
                 $buffer.Clear() | Out-Null
-                Redraw $Prompt """"
+                $cursorPos = 0
+                Redraw $Prompt """" $cursorPos
             }
         }
         elseif ($key.KeyChar -and -not [char]::IsControl($key.KeyChar)) {
-            $buffer.Append($key.KeyChar) | Out-Null
+            $buffer.Insert($cursorPos, $key.KeyChar) | Out-Null
+            $cursorPos++
             # 1文字ずつ足すのではなく行ごと引き直す(bash版と同じ理由。#158).
-            Redraw $Prompt $buffer.ToString()
+            Redraw $Prompt $buffer.ToString() $cursorPos
             $script:historyIndex = $script:history.Count
         }
     }
@@ -353,6 +390,10 @@ printf '%s\n' ""$TOKEN"" >&3
 # セッション開始時に必ず画面をクリアしてから始める.
 printf '\033[2J\033[H'
 
+# カーソル形状を縦棒(I-beam)へ変更する(DECSCUSR)。既定のブロック型だと、行の途中へ
+# キャレットを戻した際に文字の上へ重なって表示され、上書き入力のように見えてしまうため.
+printf '\033[6 q'
+
 printf 'Connected to Unity Terminal (127.0.0.1:%s). Type commands below. Close this window or Ctrl+D to disconnect.\r\n' ""$PORT""
 
 HISTORY=()
@@ -376,6 +417,7 @@ trap 'TERM_COLS=$(stty size 2>/dev/null | awk ""{print \$2}""); [ -z ""$TERM_COL
 
 redraw() {
     local text=""$1$2""
+    local cursor=$3
     local cols=$TERM_COLS
     case ""$cols"" in
         ''|*[!0-9]*) cols=80 ;;
@@ -389,15 +431,33 @@ redraw() {
 
     LAST_ROWS=$(( (${#text} + cols - 1) / cols ))
     [ ""$LAST_ROWS"" -lt 1 ] && LAST_ROWS=1
+
+    # カーソルを行末ではなく、実際の編集位置(プロンプト分を含めた文字オフセット)へ戻す。
+    # 描画したブロックの左上まで一旦戻り、そこから目的位置まで進める.
+    if [ ""$LAST_ROWS"" -gt 1 ]; then
+        printf '\033[%dA' $((LAST_ROWS - 1))
+    fi
+    printf '\r'
+
+    local target=$((${#1} + cursor))
+    local down=$((target / cols))
+    local right=$((target % cols))
+    if [ ""$down"" -gt 0 ]; then
+        printf '\033[%dB' ""$down""
+    fi
+    if [ ""$right"" -gt 0 ]; then
+        printf '\033[%dC' ""$right""
+    fi
 }
 
 read_line_with_history() {
     local prompt=$1
     local buffer=""""
+    local cursor=0
     local char seq1 seq2
 
     LAST_ROWS=1
-    redraw ""$prompt"" ""$buffer""
+    redraw ""$prompt"" ""$buffer"" 0
 
     while true; do
         IFS= read -rsn1 char
@@ -422,10 +482,11 @@ read_line_with_history() {
             __DISCONNECT_REQUESTED=1
             return 0
         elif [ ""$char"" = $'\x7f' ] || [ ""$char"" = $'\x08' ]; then
-            if [ -n ""$buffer"" ]; then
-                buffer=""${buffer%?}""
+            if [ ""$cursor"" -gt 0 ]; then
+                buffer=""${buffer:0:cursor-1}${buffer:cursor}""
+                cursor=$((cursor - 1))
             fi
-            redraw ""$prompt"" ""$buffer""
+            redraw ""$prompt"" ""$buffer"" ""$cursor""
         elif [ ""$char"" = $'\t' ]; then
             # IMGUI版のTabキー自動補完に相当する機能。ソケットへ直接リクエストを送り、
             # 応答を待つ(fd3はターミナルのstty raw設定と独立したソケットの読み書きなので、
@@ -440,13 +501,14 @@ read_line_with_history() {
                 case ""$ac_response"" in
                     ""$COMPLETE_PREFIX""*)
                         buffer=""${ac_response#$COMPLETE_PREFIX}""
-                        redraw ""$prompt"" ""$buffer""
+                        cursor=${#buffer}
+                        redraw ""$prompt"" ""$buffer"" ""$cursor""
                         break
                         ;;
                     ""$CANDIDATES_PREFIX""*)
                         printf '\r\n%s\r\n' ""${ac_response#$CANDIDATES_PREFIX}""
                         LAST_ROWS=1
-                        redraw ""$prompt"" ""$buffer""
+                        redraw ""$prompt"" ""$buffer"" ""$cursor""
                         break
                         ;;
                     ""$NOMATCH_RESPONSE"")
@@ -462,7 +524,7 @@ read_line_with_history() {
                         # プロンプトと入力中バッファを描き直す(候補一覧の表示と同じ手法).
                         printf '\r\n%s\r\n' ""$ac_response""
                         LAST_ROWS=1
-                        redraw ""$prompt"" ""$buffer""
+                        redraw ""$prompt"" ""$buffer"" ""$cursor""
                         ;;
                 esac
             done
@@ -509,26 +571,51 @@ read_line_with_history() {
                 if [ ""$HISTORY_INDEX"" -gt 0 ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX - 1))
                     buffer=""${HISTORY[$HISTORY_INDEX]}""
-                    redraw ""$prompt"" ""$buffer""
+                    cursor=${#buffer}
+                    redraw ""$prompt"" ""$buffer"" ""$cursor""
                 fi
             elif [ ""$esc_seq"" = ""[B"" ]; then
                 if [ ""$HISTORY_INDEX"" -lt $((${#HISTORY[@]} - 1)) ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX + 1))
                     buffer=""${HISTORY[$HISTORY_INDEX]}""
-                    redraw ""$prompt"" ""$buffer""
+                    cursor=${#buffer}
+                    redraw ""$prompt"" ""$buffer"" ""$cursor""
                 elif [ ""$HISTORY_INDEX"" -eq $((${#HISTORY[@]} - 1)) ]; then
                     HISTORY_INDEX=$((HISTORY_INDEX + 1))
                     buffer=""""
-                    redraw ""$prompt"" """"
+                    cursor=0
+                    redraw ""$prompt"" """" ""$cursor""
                 fi
+            elif [ ""$esc_seq"" = ""[C"" ]; then
+                if [ ""$cursor"" -lt ""${#buffer}"" ]; then
+                    cursor=$((cursor + 1))
+                fi
+                redraw ""$prompt"" ""$buffer"" ""$cursor""
+            elif [ ""$esc_seq"" = ""[D"" ]; then
+                if [ ""$cursor"" -gt 0 ]; then
+                    cursor=$((cursor - 1))
+                fi
+                redraw ""$prompt"" ""$buffer"" ""$cursor""
+            elif [ ""$esc_seq"" = ""[H"" ] || [ ""$esc_seq"" = ""[1~"" ]; then
+                cursor=0
+                redraw ""$prompt"" ""$buffer"" ""$cursor""
+            elif [ ""$esc_seq"" = ""[F"" ] || [ ""$esc_seq"" = ""[4~"" ]; then
+                cursor=${#buffer}
+                redraw ""$prompt"" ""$buffer"" ""$cursor""
+            elif [ ""$esc_seq"" = ""[3~"" ]; then
+                # Delete(前方削除).
+                if [ ""$cursor"" -lt ""${#buffer}"" ]; then
+                    buffer=""${buffer:0:cursor}${buffer:cursor+1}""
+                fi
+                redraw ""$prompt"" ""$buffer"" ""$cursor""
             fi
-            # それ以外の未知のシーケンス(Left/Right/Delete/Home/End等)は読み切った上で破棄する
-            # (現状は上下矢印による履歴呼び出しのみ対応).
+            # それ以外の未知のシーケンスは読み切った上で破棄する.
         else
-            buffer=""${buffer}${char}""
+            buffer=""${buffer:0:cursor}${char}${buffer:cursor}""
+            cursor=$((cursor + 1))
             # 1文字ずつ足すのではなく行ごと引き直す。起動直後に紛れ込んだ文字が
             # 行頭側に残っていても、最初の打鍵で必ず消える(#158).
-            redraw ""$prompt"" ""$buffer""
+            redraw ""$prompt"" ""$buffer"" ""$cursor""
             HISTORY_INDEX=${#HISTORY[@]}
         fi
     done
