@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using YukimaruGames.Terminal.Composition.Shared;
 
 
 namespace YukimaruGames.Terminal.Editor
@@ -88,12 +89,13 @@ namespace YukimaruGames.Terminal.Editor
         internal static object SetManagedReferenceValue(this SerializedProperty property, Type type)
         {
             object result = null;
-            
+
 #if SUPPORTS_MANAGED_REFERENCE_VALUE
             if (type != null && property.managedReferenceValue != null)
             {
                 var json = JsonUtility.ToJson(property.managedReferenceValue);
                 result = JsonUtility.FromJson(json, type);
+                ResetTypeMismatchedFields(result, type);
             }
 #endif
 
@@ -113,6 +115,67 @@ namespace YukimaruGames.Terminal.Editor
 
             property.managedReferenceValue = result;
             return result;
+        }
+
+        /// <summary>
+        /// 型切り替え時の値引き継ぎによって<see cref="ResetOnTypeMismatchAttribute"/>付きの
+        /// フィールドの型が食い違った場合に、新しい型の既定値へ差し替える.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="SetManagedReferenceValue"/>はJSON経由で切り替え前の値を引き継ぐが、
+        /// 「所有者の型ごとに既定の実装型が異なるフィールド」では古い型のまま引き継がれてしまう。
+        /// <para>
+        /// <b>型が一致する場合は何もしない。</b>引き継ぎ自体は共通フィールドの設定を維持するための
+        /// 意図的な挙動であり、既定型が同じ所有者どうしの切り替えでは従来の値を保つ必要があるため
+        /// (属性が付いていないフィールドはそもそも判定対象にならず、一切影響を受けない).
+        /// </para>
+        /// </remarks>
+        private static void ResetTypeMismatchedFields(object target, Type type)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            // 既定値の取得にはパラメータレスコンストラクタが要る。持たない型は
+            // そもそもSetManagedReferenceValueが生成できないため、ここでは静かに諦める.
+            if (type.GetConstructor(Type.EmptyTypes) == null)
+            {
+                return;
+            }
+
+            object defaults = null;
+
+            for (var current = type; current != null; current = current.BaseType)
+            {
+                const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+
+                foreach (var field in current.GetFields(flags))
+                {
+                    if (field.GetCustomAttribute<ResetOnTypeMismatchAttribute>() == null)
+                    {
+                        continue;
+                    }
+
+                    // 既定値は属性付きフィールドが1つでもあったときだけ生成する
+                    // (対象が無いのに毎回インスタンスを作らないため).
+                    defaults ??= Activator.CreateInstance(type);
+
+                    var expected = field.GetValue(defaults);
+                    if (expected == null)
+                    {
+                        continue;
+                    }
+
+                    var inherited = field.GetValue(target);
+                    if (inherited != null && inherited.GetType() == expected.GetType())
+                    {
+                        continue;
+                    }
+
+                    field.SetValue(target, expected);
+                }
+            }
         }
     }
 }
