@@ -733,14 +733,19 @@ end run
                     if (custom title of theTab) is sessionMarker then
                         if (count of tabs of theWindow) is 1 then
                             set theWindowName to name of theWindow
-                            try
-                                set theTty to tty of theTab
-                                do shell script ""ps -t "" & (quoted form of theTty) & "" -o pid=,comm= | tail -n +2 | awk '{print $1}' | xargs -I{} kill -TERM {} > /dev/null 2>&1; true""
-                                -- killからプロセス終了・Terminal.app側のbusy状態更新までの
-                                -- 短いラグを吸収する(実機で、直後にcloseすると稀に確認シートが
-                                -- 一瞬だけ描画されることがあったための猶予).
+                            -- mise/direnv/starship等、プロンプト描画のたびにフック用の子プロセスを
+                            -- 一瞬だけ起動するシェル拡張が入っている環境では、1回killしただけでは
+                            -- 「killした直後にフックが新規起動して busy に戻る」ことがある(実機で
+                            -- 確認済み)。busyが解けるか一定回数試すまで、都度その時点で動いている
+                            -- (ログインシェル自身を除く)プロセスへSIGTERMを送り続ける.
+                            repeat 25 times
+                                if not busy of theTab then exit repeat
+                                try
+                                    set theTty to tty of theTab
+                                    do shell script ""ps -t "" & (quoted form of theTty) & "" -o pid=,comm= | tail -n +2 | awk '{print $1}' | xargs -I{} kill -TERM {} > /dev/null 2>&1; true""
+                                end try
                                 delay 0.15
-                            end try
+                            end repeat
                             close theWindow
                             -- killが効かなかった場合の保険。closeの直後は確認シートの描画が
                             -- まだ間に合っていないことがあるため、固定delayではなく
