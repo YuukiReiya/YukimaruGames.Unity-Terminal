@@ -18,6 +18,13 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// <summary>タブを閉じるosascriptの完了待ち上限(後始末処理をこれ以上引き延ばさないため).</summary>
         private const int CloseTimeoutMilliseconds = 3000;
 
+        /// <summary>
+        /// 起動用osascriptの完了待ち上限。Terminal.appのactivate・custom title設定まで含めて
+        /// 完了させることを優先し、通常想定される起動時間より十分長く取る(TCC権限ダイアログ等で
+        /// 万一応答が返らない場合の無限ハング防止のための上限であり、通常経路では超えない想定).
+        /// </summary>
+        private const int LaunchTimeoutMilliseconds = 15000;
+
         private string _launchedSessionMarker;
 
         public bool IsSupported => true;
@@ -78,7 +85,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             CommandLineRelayScriptWriter.WritePortFile(port);
 
             var launcherPath = CommandLineRelayScriptWriter.WriteMacLauncherScript();
-            var sessionMarker = CommandLineRelayScriptWriter.SessionMarker;
+            var sessionMarker = CommandLineRelayScriptWriter.CreateSessionMarker();
 
             var startInfo = new ProcessStartInfo
             {
@@ -88,11 +95,15 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                 CreateNoWindow = true,
             };
 
-            // sessionMarkerは起動前に確定しているため、osascriptの完了を待たずに記録できる
-            // (Launch呼び出し直後にCloseLaunchedTerminalが呼ばれる極端なケースでは、
-            // osascript側のcustom title書き込みがまだ終わっておらず閉じ損なう可能性はあるが、
-            // Terminal.appのactivateを待って毎回メインスレッドを止めるより実害が小さい).
             var process = Process.Start(startInfo);
+
+            // osascript(launcherスクリプト)はTerminal.appのactivate・do script・custom title設定まで
+            // 完了してから終了する。ここで完了を待たずに戻ると、直後にCloseLaunchedTerminalが
+            // 呼ばれた場合(起動直後に接続が切れた等)、まだ目印が付いていないタブを探しに行って
+            // 見つけられず、ウィンドウが残ってしまう。これを確実に避けるため完了を待つ
+            // (Terminal.appの起動が遅い環境ではその分Openの呼び出し元をブロックするが、
+            // 「閉じ忘れうる」より「起動が少し遅い」方を選ぶ).
+            process?.WaitForExit(LaunchTimeoutMilliseconds);
             _launchedSessionMarker = sessionMarker;
 
             return process;

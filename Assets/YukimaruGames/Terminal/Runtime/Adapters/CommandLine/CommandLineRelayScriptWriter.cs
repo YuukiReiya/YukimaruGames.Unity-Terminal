@@ -990,9 +990,14 @@ end run
         }
 
         /// <summary>
-        /// 現在のセッションディレクトリ名(プロセス毎に一意)。
-        /// Launch時に開いたウィンドウ/タブを後から識別するための目印として使う.
+        /// Launch時に開いたウィンドウ/タブを後から識別するための目印を新規生成する.
         /// </summary>
-        public static string SessionMarker => Path.GetFileName(ScriptDirectory);
+        /// <remarks>
+        /// <see cref="ScriptDirectory"/>はプロセス生存中固定(ドメインリロードのたびに新しくなるのみ)のため、
+        /// それをそのまま目印に使うと、同一プロセス内で複数の<c>CommandLineSession</c>が並行して
+        /// 外部ターミナルを起動した場合に全セッションが同じ目印を持ってしまい、closerスクリプトが
+        /// 別セッションの窓を誤って閉じかねない。呼び出しごとに一意な値を生成することでこれを避ける.
+        /// </remarks>
+        public static string CreateSessionMarker() => Guid.NewGuid().ToString("N");
     }
 }
