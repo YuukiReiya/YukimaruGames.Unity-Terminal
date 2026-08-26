@@ -27,7 +27,10 @@ namespace YukimaruGames.Terminal.Composition
     [Serializable]
     public abstract class InstallerBase : IInstaller
     {
-        [SerializeReference, SerializeInterface]
+        // 既定の実装型が派生クラスごとに異なる(CommandLineInstallerのみCommandLineOptions、
+        // 他はImmediateModeOptions)ため、Inspectorでの型切り替え時に古い型のまま
+        // 引き継がれないようResetOnTypeMismatchを付ける(詳細は属性のドキュメント参照).
+        [SerializeReference, SerializeInterface, ResetOnTypeMismatch]
         private ITerminalOptions _options = new ImmediateModeOptions();
 
         /// <summary>
