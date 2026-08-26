@@ -103,7 +103,10 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// <see cref="Launch"/>が起動するosascriptプロセス自体はTerminal.appへ<c>do script</c>を
         /// 依頼した直後に終了するため(Terminal.appのウィンドウそのものではない)、Killしても
         /// ウィンドウには影響しない。代わりに<see cref="Launch"/>がタブのcustom titleへ
-        /// 書き込んだ目印を頼りに、別のosascriptで対象タブだけを検索して閉じる.
+        /// 書き込んだ目印を頼りに、別のosascriptで対象タブを探して閉じる。
+        /// Terminal.appの仕様上タブ単体は閉じられないため、そのタブがウィンドウ内で唯一の
+        /// タブの場合のみウィンドウごと閉じる(詳細は<see cref="CommandLineRelayScriptWriter"/>の
+        /// MacCloserScriptTemplateを参照)。
         /// </remarks>
         public void CloseLaunchedTerminal()
         {

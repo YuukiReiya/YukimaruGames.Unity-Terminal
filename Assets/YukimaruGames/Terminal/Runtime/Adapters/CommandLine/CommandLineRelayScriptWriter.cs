@@ -702,10 +702,15 @@ printf 'Disconnected from Unity Terminal.\r\n'
 end run
 ";
 
-        // MacLauncherScriptTemplateがcustom titleへ書き込んだ目印を頼りに、該当タブだけを
+        // MacLauncherScriptTemplateがcustom titleへ書き込んだ目印を頼りに、該当ウィンドウを
         // 閉じる。手動で(BuildConnectionCommandの案内から)別ターミナルを繋いだタブには
         // この目印が付かないため、誤って閉じることはない。目印が見つからない場合
         // (利用者が既にウィンドウを閉じていた場合等)は何もしない.
+        // Terminal.appのAppleScript辞書には""tab""単体を閉じるコマンドが無く(closeは
+        // windowにしか効かない。実機で-1708 "".. can't understand the close message""を確認済み)、
+        // 該当タブが所属するウィンドウをまるごと閉じるしかない。そのウィンドウに利用者が
+        // 追加した他のタブが同居している場合にそれらまで巻き込まないよう、対象タブが
+        // ウィンドウ内で唯一のタブのとき(=起動時に作り出した専用ウィンドウのとき)に限って閉じる.
         private const string MacCloserScriptTemplate = @"on run argv
     set sessionMarker to item 1 of argv
     tell application ""Terminal""
@@ -713,7 +718,9 @@ end run
             repeat with theTab in tabs of theWindow
                 try
                     if (custom title of theTab) is sessionMarker then
-                        close theTab
+                        if (count of tabs of theWindow) is 1 then
+                            close theWindow
+                        end if
                         return
                     end if
                 end try
