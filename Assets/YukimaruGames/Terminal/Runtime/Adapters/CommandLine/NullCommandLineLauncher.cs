@@ -13,5 +13,10 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
 
         /// <inheritdoc/>
         public string BuildConnectionCommand(int port, string token) => null;
+
+        /// <inheritdoc/>
+        public void CloseLaunchedTerminal()
+        {
+        }
     }
 }

@@ -121,16 +121,45 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                 : $"To open another terminal, run:\n  {connectionCommand}";
 
         /// <summary>
-        /// 中継を終了する. 外部ターミナルのウィンドウ自体は(ユーザーの作業を強制的に
-        /// 奪わないよう)強制終了しない。接続が切れた中継スクリプトは自然に入力待ちへ戻る.
+        /// 中継を終了する. <see cref="Open"/>で自動起動した外部ターミナルのウィンドウは
+        /// ここで閉じる。<see cref="ConnectionCommand"/>の案内から利用者が手動で開いた
+        /// ターミナルは対象外(<see cref="ICommandLineLauncher.CloseLaunchedTerminal"/>参照).
         /// </summary>
+        /// <remarks>
+        /// 破棄順序に意味がある。
+        /// <list type="number">
+        /// <item>
+        /// 先に<see cref="_bridge"/>を破棄してソケットを閉じる。中継スクリプト(bash)は
+        /// プロンプト応答後、次のユーザー入力を標準入力から待つため(ソケットとは別fd)、
+        /// ソケットを閉じただけでは中継スクリプトが気づけない場合が多く(=実行中扱いのまま)、
+        /// Terminal.appは「実行中のプロセスを終了しますか?」という確認ダイアログを出す。
+        /// これ自体は<see cref="ICommandLineLauncher"/>実装側(<c>MacCommandLineLauncher</c>)が
+        /// 確認ダイアログを自動で処理するため必須の前提ではないが、ソケットを閉じておくことで
+        /// 中継スクリプトの状態を極力早くクリーンな側へ寄せておく意味はある(実機で確認済み).
+        /// </item>
+        /// <item>
+        /// 次に<see cref="ICommandLineLauncher.CloseLaunchedTerminal"/>を呼ぶ。
+        /// <c>WindowsCommandLineLauncher</c>は<see cref="Launch"/>が返したのと同じ
+        /// <see cref="Process"/>参照(<see cref="_process"/>)を保持していて、これの
+        /// <c>HasExited</c>判定・<c>Kill()</c>に使う。<see cref="_process"/>を先に
+        /// <c>Dispose()</c>してしまうと、破棄済みリソースへアクセスすることになり
+        /// 正しく終了できなくなる(<c>cmd.exe</c>が残ったままになる)ため、必ずこれより後で
+        /// <see cref="_process"/>を破棄する.
+        /// </item>
+        /// <item>
+        /// 最後に<see cref="_process"/>を破棄する.
+        /// </item>
+        /// </list>
+        /// </remarks>
         public void Close()
         {
-            _process?.Dispose();
-            _process = null;
-
             _bridge?.Dispose();
             _bridge = null;
+
+            _launcher.CloseLaunchedTerminal();
+
+            _process?.Dispose();
+            _process = null;
 
             // トークンファイルの後始末は中継スクリプト側では行わない(削除すると2つ目以降の
             // ターミナルが接続できなくなるため)。ここでセッションディレクトリごと片付ける.

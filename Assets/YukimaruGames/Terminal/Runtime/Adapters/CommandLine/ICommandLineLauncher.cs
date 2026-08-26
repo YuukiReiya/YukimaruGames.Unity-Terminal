@@ -40,5 +40,16 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// そのまま貼り付けて実行できるコマンドライン。準備できなかった場合は<c>null</c>.
         /// </returns>
         string BuildConnectionCommand(int port, string token);
+
+        /// <summary>
+        /// <see cref="Launch"/>で自動起動した外部ターミナルのウィンドウを閉じる.
+        /// <see cref="Launch"/>を呼んでいない場合、または既にウィンドウが閉じられている場合は
+        /// 何もしない.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="BuildConnectionCommand"/>の案内から利用者が手動で開いたターミナルは
+        /// 対象外(このメソッドが握っているのは自動起動した分のみ)。
+        /// </remarks>
+        void CloseLaunchedTerminal();
     }
 }

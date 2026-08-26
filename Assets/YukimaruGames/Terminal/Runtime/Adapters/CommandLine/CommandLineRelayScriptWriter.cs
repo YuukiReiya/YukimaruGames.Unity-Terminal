@@ -18,6 +18,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         private const string WindowsRelayFileName = "yukimaru_terminal_relay.ps1";
         private const string MacRelayFileName = "yukimaru_terminal_relay.sh";
         private const string MacLauncherFileName = "yukimaru_terminal_launcher.applescript";
+        private const string MacCloserFileName = "yukimaru_terminal_closer.applescript";
         private const string TokenFileName = "yukimaru_terminal_token.txt";
         private const string PortFileName = "yukimaru_terminal_port.txt";
 
@@ -674,24 +675,169 @@ done
 printf 'Disconnected from Unity Terminal.\r\n'
 ";
 
-        // 'tell application "Terminal"' はTerminal.app未起動時にそれ自体が起動のトリガーとなり、
-        // 起動直後は既定の空ウィンドウが1枚自動で開く。ここで無条件に"do script"を呼ぶと
-        // (既定ウィンドウとは別に)新規ウィンドウがもう1枚開いてしまい、ウィンドウが2枚になる
-        // (かつ中継スクリプトが実行されるのは新規ウィンドウ側だけで、既定ウィンドウは未接続のまま
-        // 残るため、そちらへ入力しても無反応に見える)。既存ウィンドウの有無を確認し、
-        // あれば流用(in window 1)することで常に1枚に抑える.
+        // "do script"は"in window"句を付けない限り、既存ウィンドウの有無やTerminal.appの
+        // 最前面状態に関わらず常に専用の新規ウィンドウ(タブ1枚だけ)を作る、というのが
+        // AppleScript辞書上の定義であり、実機での繰り返し検証でもこれが確実だった。
+        // 以前の実装は"count of windows"の判定結果に応じて既存window 1を明示的に再利用する
+        // 分岐(else節でin window 1)を持っていたが、これが既存タブを上書きする事故の原因だった
+        // (加えて、閉じたはずのウィンドウがvisible=falseのまま`windows`コレクションに残り
+        // "count of windows"に含まれ続ける"ゴーストウィンドウ"の挙動があり、"0件"判定が
+        // 意図せずfalseになって既存ウィンドウ再利用分岐へ落ちるケースがあったことも実機で確認)。
+        // "in window"句を一切使わず無条件に"do script"を呼ぶことで、この分岐自体を無くす.
+        // "activate"は"do script"の後に呼ぶ(先に呼ぶと、Terminal.app未起動時にそれ自体が
+        // 起動のトリガーとなって既定の空ウィンドウが開き、続く"do script"がそれを再利用する
+        // 既知の経路を踏むことがあるため).
+        // 実行前後のウィンドウID一覧を比較し、新しく増えたウィンドウのIDを呼び出し元へ返す。
+        // CloseLaunchedTerminal側はこのIDを使って対象ウィンドウを直接指定するため、
+        // custom titleでの全ウィンドウ探索が不要になり、より確実に対象を特定できる
+        // (custom titleは万一の食い違いを検出するための保険として引き続き書き込む).
         private const string MacLauncherScriptTemplate = @"on run argv
     set relayPath to item 1 of argv
     set thePort to item 2 of argv
     set tokenPath to item 3 of argv
+    set sessionMarker to item 4 of argv
     set theCommand to (quoted form of relayPath) & "" "" & thePort & "" "" & (quoted form of tokenPath)
     tell application ""Terminal""
+        set beforeIds to id of windows
+        set targetTab to do script theCommand
+        -- セッション終了時にこのタブだけを閉じられるよう、custom titleへ目印を書き込む
+        -- (do scriptが返すタブ参照はこのosascriptプロセスの終了とともに失効するため、
+        -- 後から`WriteMacCloserScript`側で検索するための識別子が別途必要になる).
+        set custom title of targetTab to sessionMarker
         activate
-        if (count of windows) is 0 then
-            do script theCommand
-        else
-            do script theCommand in window 1
-        end if
+        set newWindowId to 0
+        repeat with w in windows
+            if beforeIds does not contain (id of w) then
+                set newWindowId to id of w
+                exit repeat
+            end if
+        end repeat
+        return newWindowId as string
+    end tell
+end run
+";
+
+        // MacLauncherScriptTemplateが返したウィンドウIDを頼りに、対象ウィンドウを直接指定して
+        // 閉じる(全ウィンドウをcustom titleで検索する必要が無くなり、より確実に対象を特定できる)。
+        // 手動で(BuildConnectionCommandの案内から)別ターミナルを繋いだウィンドウはこのIDを
+        // 知り得ないため、誤って閉じることはない。指定IDのウィンドウが既に存在しない場合
+        // (利用者が既にウィンドウを閉じていた場合等)は何もしない。custom titleが一致するかも
+        // 念のため確認する(万一同じIDが別セッションで再利用された場合の保険).
+        // Terminal.appのAppleScript辞書には""tab""単体を閉じるコマンドが無く(closeは
+        // windowにしか効かない。実機で-1708 "".. can't understand the close message""を確認済み)、
+        // 該当タブが所属するウィンドウをまるごと閉じるしかない。対象ウィンドウは常に専用の
+        // 新規ウィンドウ(タブ1枚だけ)のはずだが、万一他のタブが追加されていた場合に備え、
+        // タブ数が1のときだけ閉じるガードは維持する.
+        //
+        // 中継スクリプトは、プロンプト表示後は次のユーザー入力をターミナルの標準入力から
+        // read で待つ(ソケットとは別のfdを読む)ため、サーバー側でソケットを閉じても
+        // 「ユーザーの入力待ち」の間はそれに気づけない(=busyが解けない)。これは実機検証で
+        // 判明した設計限界で、単純なbusyポーリングでは解決しない。
+        // そこでcloseの前に、対象タブのtty上で動いている「ログインシェル自身を除く」
+        // プロセス(=中継スクリプトのbash)へSIGTERMを送って先に終わらせておく。これにより
+        // closeの時点でTerminal.appからは「シェルだけが残っている(既定の無視対象)」状態に
+        // 見えるため、確認シート自体が最初から出ない(実機で確認済み。killしない場合、
+        // closeで一瞬でも確認シートが描画されうる).
+        // 万一kill後もbusyが解けない場合(SIGTERMを無視するプロセスがいた等)に備え、
+        // 確認シートが出た場合はSystem Events経由で自動的にボタンをクリックするフォールバックも
+        // 残す。ボタンの判別は名前一致を第一優先とし、既知のCancel名のどちらとも一致しない
+        // (未知のロケール等の)場合のみ、位置(Cancelは左・実行アクションは右というmacOSの
+        // 標準的なダイアログ配置)にフォールバックする。Accessibility APIにはCancel/既定ボタンを
+        // 区別する属性が存在しないことを実機で確認済み(sheetのbuttonsのfocusedプロパティは、
+        // むしろCancel側がtrueになっていた。which自体は当てにならない)ため、位置は
+        // 「名前で判別できない場合の次善のフォールバック」として使うに留める.
+        private const string MacCloserScriptTemplate = @"property KillMaxAttempts : 25
+property KillRetryDelaySeconds : 0.15
+property SheetPollMaxAttempts : 20
+property SheetPollDelaySeconds : 0.2
+property CancelButtonNames : {""Cancel"", ""キャンセル""}
+
+on run argv
+    set targetWindowId to (item 1 of argv) as integer
+    set sessionMarker to item 2 of argv
+    tell application ""Terminal""
+        try
+            set theWindow to window id targetWindowId
+        on error
+            return -- 対象ウィンドウが既に存在しない(利用者が手動で閉じた場合等).
+        end try
+        try
+            set theTab to tab 1 of theWindow
+            if (custom title of theTab) is sessionMarker then
+                if (count of tabs of theWindow) is 1 then
+                    set theWindowName to name of theWindow
+                            -- mise/direnv/starship等、プロンプト描画のたびにフック用の子プロセスを
+                            -- 一瞬だけ起動するシェル拡張が入っている環境では、1回killしただけでは
+                            -- 「killした直後にフックが新規起動して busy に戻る」ことがある(実機で
+                            -- 確認済み)。busyが解けるか一定回数試すまで、都度その時点で動いている
+                            -- (ログインシェル自身を除く)プロセスへSIGTERMを送り続ける.
+                            repeat KillMaxAttempts times
+                                if not busy of theTab then exit repeat
+                                try
+                                    set theTty to tty of theTab
+                                    do shell script ""ps -t "" & (quoted form of theTty) & "" -o pid=,comm= | tail -n +2 | awk '{print $1}' | xargs -I{} kill -TERM {} > /dev/null 2>&1; true""
+                                end try
+                                delay KillRetryDelaySeconds
+                            end repeat
+                            close theWindow
+                            -- killが効かなかった場合の保険。closeの直後は確認シートの描画が
+                            -- まだ間に合っていないことがあるため、固定delayではなく
+                            -- 「シートが見つかる」か「ウィンドウ自体が無くなる(=確認なしで
+                            -- 閉じ切った)」まで短い間隔でポーリングする(実機検証で、
+                            -- 固定0.3秒待機だと確認シートを取りこぼすケースを確認済み).
+                            repeat SheetPollMaxAttempts times
+                                set sheetHandled to false
+                                set windowGone to true
+                                tell application ""System Events""
+                                    if exists process ""Terminal"" then
+                                        tell process ""Terminal""
+                                            repeat with sysWindow in windows
+                                                if name of sysWindow is theWindowName then
+                                                    set windowGone to false
+                                                    if exists sheet 1 of sysWindow then
+                                                        set sheetButtons to buttons of sheet 1 of sysWindow
+                                                        set targetButton to missing value
+                                                        if (count of sheetButtons) is 2 then
+                                                            set button1 to item 1 of sheetButtons
+                                                            set button2 to item 2 of sheetButtons
+                                                            set isCancel1 to (name of button1) is in CancelButtonNames
+                                                            set isCancel2 to (name of button2) is in CancelButtonNames
+                                                            if isCancel1 and not isCancel2 then
+                                                                set targetButton to button2
+                                                            else if isCancel2 and not isCancel1 then
+                                                                set targetButton to button1
+                                                            else if (not isCancel1) and (not isCancel2) then
+                                                                if (item 1 of (position of button1)) > (item 1 of (position of button2)) then
+                                                                    set targetButton to button1
+                                                                else
+                                                                    set targetButton to button2
+                                                                end if
+                                                            end if
+                                                        else
+                                                            repeat with theButton in sheetButtons
+                                                                if (name of theButton) is not in CancelButtonNames then
+                                                                    set targetButton to theButton
+                                                                    exit repeat
+                                                                end if
+                                                            end repeat
+                                                        end if
+                                                        if targetButton is not missing value then
+                                                            click targetButton
+                                                            set sheetHandled to true
+                                                        end if
+                                                    end if
+                                                    exit repeat
+                                                end if
+                                            end repeat
+                                        end tell
+                                    end if
+                                end tell
+                                if windowGone or sheetHandled then exit repeat
+                                delay SheetPollDelaySeconds
+                            end repeat
+                end if
+            end if
+        end try
     end tell
 end run
 ";
@@ -947,5 +1093,27 @@ end run
             File.WriteAllText(path, NormalizeToLf(MacLauncherScriptTemplate));
             return path;
         }
+
+        /// <summary>
+        /// <see cref="WriteMacLauncherScript"/>が起動したウィンドウをセッション終了時に
+        /// 閉じるためのAppleScriptを一時ディレクトリへ書き出し、そのパスを返す.
+        /// </summary>
+        public static string WriteMacCloserScript()
+        {
+            var path = Path.Combine(EnsureScriptDirectory(), MacCloserFileName);
+            File.WriteAllText(path, NormalizeToLf(MacCloserScriptTemplate));
+            return path;
+        }
+
+        /// <summary>
+        /// Launch時に開いたウィンドウ/タブを後から識別するための目印を新規生成する.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="ScriptDirectory"/>はプロセス生存中固定(ドメインリロードのたびに新しくなるのみ)のため、
+        /// それをそのまま目印に使うと、同一プロセス内で複数の<c>CommandLineSession</c>が並行して
+        /// 外部ターミナルを起動した場合に全セッションが同じ目印を持ってしまい、closerスクリプトが
+        /// 別セッションの窓を誤って閉じかねない。呼び出しごとに一意な値を生成することでこれを避ける.
+        /// </remarks>
+        public static string CreateSessionMarker() => Guid.NewGuid().ToString("N");
     }
 }
