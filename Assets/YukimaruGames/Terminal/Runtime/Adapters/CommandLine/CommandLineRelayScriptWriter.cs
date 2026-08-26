@@ -715,10 +715,15 @@ end run
         // 中継スクリプトは、プロンプト表示後は次のユーザー入力をターミナルの標準入力から
         // read で待つ(ソケットとは別のfdを読む)ため、サーバー側でソケットを閉じても
         // 「ユーザーの入力待ち」の間はそれに気づけない(=busyが解けない)。これは実機検証で
-        // 判明した設計限界で、単純なbusyポーリングでは解決しない。そのためcloseで
-        // 「実行中のプロセスを終了しますか?」の確認シートが出た場合は、System Events経由で
-        // 「キャンセル」以外のボタン(ロケール非依存にするため名前で決め打ちしない)を
-        // 自動でクリックして確実に閉じる.
+        // 判明した設計限界で、単純なbusyポーリングでは解決しない。
+        // そこでcloseの前に、対象タブのtty上で動いている「ログインシェル自身を除く」
+        // プロセス(=中継スクリプトのbash)へSIGTERMを送って先に終わらせておく。これにより
+        // closeの時点でTerminal.appからは「シェルだけが残っている(既定の無視対象)」状態に
+        // 見えるため、確認シート自体が最初から出ない(実機で確認済み。killしない場合、
+        // closeで一瞬でも確認シートが描画されうる).
+        // 万一kill後もbusyが解けない場合(SIGTERMを無視するプロセスがいた等)に備え、
+        // 確認シートが出た場合はSystem Events経由で「キャンセル」以外のボタン
+        // (ロケール非依存にするため名前で決め打ちしない)を自動でクリックするフォールバックも残す.
         private const string MacCloserScriptTemplate = @"on run argv
     set sessionMarker to item 1 of argv
     tell application ""Terminal""
@@ -728,10 +733,19 @@ end run
                     if (custom title of theTab) is sessionMarker then
                         if (count of tabs of theWindow) is 1 then
                             set theWindowName to name of theWindow
+                            try
+                                set theTty to tty of theTab
+                                do shell script ""ps -t "" & (quoted form of theTty) & "" -o pid=,comm= | tail -n +2 | awk '{print $1}' | xargs -I{} kill -TERM {} > /dev/null 2>&1; true""
+                                -- killからプロセス終了・Terminal.app側のbusy状態更新までの
+                                -- 短いラグを吸収する(実機で、直後にcloseすると稀に確認シートが
+                                -- 一瞬だけ描画されることがあったための猶予).
+                                delay 0.15
+                            end try
                             close theWindow
-                            -- closeの直後は確認シートの描画がまだ間に合っていないことがあるため、
-                            -- 固定delayではなく「シートが見つかる」か「ウィンドウ自体が無くなる
-                            -- (=確認なしで閉じ切った)」まで短い間隔でポーリングする(実機検証で、
+                            -- killが効かなかった場合の保険。closeの直後は確認シートの描画が
+                            -- まだ間に合っていないことがあるため、固定delayではなく
+                            -- 「シートが見つかる」か「ウィンドウ自体が無くなる(=確認なしで
+                            -- 閉じ切った)」まで短い間隔でポーリングする(実機検証で、
                             -- 固定0.3秒待機だと確認シートを取りこぼすケースを確認済み).
                             repeat 20 times
                                 set sheetHandled to false
