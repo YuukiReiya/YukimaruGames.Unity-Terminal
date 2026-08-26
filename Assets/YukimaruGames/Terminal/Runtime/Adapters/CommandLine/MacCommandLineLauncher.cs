@@ -31,6 +31,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         private const int LaunchTimeoutMilliseconds = 15000;
 
         private string _launchedSessionMarker;
+        private int? _launchedWindowId;
 
         public bool IsSupported => true;
 
@@ -98,18 +99,25 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                 Arguments = $"\"{launcherPath}\" \"{relayPath}\" {port} \"{tokenPath}\" \"{sessionMarker}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true,
+                RedirectStandardOutput = true,
             };
 
             var process = Process.Start(startInfo);
 
-            // osascript(launcherスクリプト)はTerminal.appのactivate・do script・custom title設定まで
-            // 完了してから終了する。ここで完了を待たずに戻ると、直後にCloseLaunchedTerminalが
-            // 呼ばれた場合(起動直後に接続が切れた等)、まだ目印が付いていないタブを探しに行って
-            // 見つけられず、ウィンドウが残ってしまう。これを確実に避けるため完了を待つ
+            // osascript(launcherスクリプト)はTerminal.appのdo script・custom title設定・
+            // activateまで完了してから、新規作成したウィンドウのIDを標準出力へ返して終了する。
+            // ここで完了を待たずに戻ると、直後にCloseLaunchedTerminalが呼ばれた場合
+            // (起動直後に接続が切れた等)、まだウィンドウIDを受け取れておらず見つけられず、
+            // ウィンドウが残ってしまう。これを確実に避けるため完了を待つ
             // (Terminal.appの起動が遅い環境ではその分Openの呼び出し元をブロックするが、
             // 「閉じ忘れうる」より「起動が少し遅い」方を選ぶ).
+            var windowIdText = process?.StandardOutput.ReadToEnd().Trim();
             process?.WaitForExit(LaunchTimeoutMilliseconds);
+
             _launchedSessionMarker = sessionMarker;
+            _launchedWindowId = int.TryParse(windowIdText, out var windowId) && windowId != 0
+                ? windowId
+                : null;
 
             return process;
         }
@@ -118,8 +126,8 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// <remarks>
         /// <see cref="Launch"/>が起動するosascriptプロセス自体はTerminal.appへ<c>do script</c>を
         /// 依頼した直後に終了するため(Terminal.appのウィンドウそのものではない)、Killしても
-        /// ウィンドウには影響しない。代わりに<see cref="Launch"/>がタブのcustom titleへ
-        /// 書き込んだ目印を頼りに、別のosascriptで対象タブを探して閉じる。
+        /// ウィンドウには影響しない。代わりに<see cref="Launch"/>が受け取ったウィンドウIDを
+        /// 頼りに、別のosascriptで対象ウィンドウを直接指定して閉じる。
         /// Terminal.appの仕様上タブ単体は閉じられないため、そのタブがウィンドウ内で唯一の
         /// タブの場合のみウィンドウごと閉じる(詳細は<see cref="CommandLineRelayScriptWriter"/>の
         /// MacCloserScriptTemplateを参照)。
@@ -127,9 +135,11 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         public void CloseLaunchedTerminal()
         {
             var sessionMarker = _launchedSessionMarker;
+            var windowId = _launchedWindowId;
             _launchedSessionMarker = null;
+            _launchedWindowId = null;
 
-            if (string.IsNullOrEmpty(sessionMarker))
+            if (string.IsNullOrEmpty(sessionMarker) || windowId is null)
             {
                 return;
             }
@@ -152,7 +162,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                 using var closer = Process.Start(new ProcessStartInfo
                 {
                     FileName = "osascript",
-                    Arguments = $"\"{closerPath}\" \"{sessionMarker}\"",
+                    Arguments = $"\"{closerPath}\" {windowId.Value} \"{sessionMarker}\"",
                     UseShellExecute = false,
                     CreateNoWindow = true,
                 });

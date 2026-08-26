@@ -675,22 +675,22 @@ done
 printf 'Disconnected from Unity Terminal.\r\n'
 ";
 
-        // 常に専用の新規ウィンドウを作る方式(window指定なしのdo script / make new window)を
-        // 実機で検証したが、いずれもTerminal.appのフォーカス状態等に応じて既存ウィンドウの
-        // 既存タブへ意図せず相乗りし、利用者の既存セッションを上書きしてしまう事故を複数回
-        // 再現した(do scriptにwindow指定を省略した場合、"常に新規ウィンドウ"にはならない。
-        // make new windowも直後のdo scriptとの組み合わせで対象ウィンドウが安定しない)。
-        // データ破壊のリスクがあるため採用を見送り、以下の明示的な分岐に戻している.
-        //
-        // 'tell application "Terminal"' はTerminal.app未起動時にそれ自体が起動のトリガーとなり、
-        // 起動直後は既定の空ウィンドウが1枚自動で開く。ここで無条件に"do script"を呼ぶと
-        // (既定ウィンドウとは別に)新規ウィンドウがもう1枚開いてしまい、ウィンドウが2枚になる
-        // (かつ中継スクリプトが実行されるのは新規ウィンドウ側だけで、既定ウィンドウは未接続のまま
-        // 残るため、そちらへ入力しても無反応に見える)。既存ウィンドウの有無を確認し、
-        // あれば流用(in window 1)することで常に1枚に抑える.
-        // なお、既存ウィンドウを流用した場合にそこへ他のタブが同居していると、
-        // CloseLaunchedTerminal側の「ウィンドウ内で唯一のタブのときだけ閉じる」ガードにより
-        // 自動クローズは働かない(既知の制約。他タブを巻き込まないための安全側の挙動).
+        // "do script"は"in window"句を付けない限り、既存ウィンドウの有無やTerminal.appの
+        // 最前面状態に関わらず常に専用の新規ウィンドウ(タブ1枚だけ)を作る、というのが
+        // AppleScript辞書上の定義であり、実機での繰り返し検証でもこれが確実だった。
+        // 以前の実装は"count of windows"の判定結果に応じて既存window 1を明示的に再利用する
+        // 分岐(else節でin window 1)を持っていたが、これが既存タブを上書きする事故の原因だった
+        // (加えて、閉じたはずのウィンドウがvisible=falseのまま`windows`コレクションに残り
+        // "count of windows"に含まれ続ける"ゴーストウィンドウ"の挙動があり、"0件"判定が
+        // 意図せずfalseになって既存ウィンドウ再利用分岐へ落ちるケースがあったことも実機で確認)。
+        // "in window"句を一切使わず無条件に"do script"を呼ぶことで、この分岐自体を無くす.
+        // "activate"は"do script"の後に呼ぶ(先に呼ぶと、Terminal.app未起動時にそれ自体が
+        // 起動のトリガーとなって既定の空ウィンドウが開き、続く"do script"がそれを再利用する
+        // 既知の経路を踏むことがあるため).
+        // 実行前後のウィンドウID一覧を比較し、新しく増えたウィンドウのIDを呼び出し元へ返す。
+        // CloseLaunchedTerminal側はこのIDを使って対象ウィンドウを直接指定するため、
+        // custom titleでの全ウィンドウ探索が不要になり、より確実に対象を特定できる
+        // (custom titleは万一の食い違いを検出するための保険として引き続き書き込む).
         private const string MacLauncherScriptTemplate = @"on run argv
     set relayPath to item 1 of argv
     set thePort to item 2 of argv
@@ -698,29 +698,36 @@ printf 'Disconnected from Unity Terminal.\r\n'
     set sessionMarker to item 4 of argv
     set theCommand to (quoted form of relayPath) & "" "" & thePort & "" "" & (quoted form of tokenPath)
     tell application ""Terminal""
-        activate
-        if (count of windows) is 0 then
-            set targetTab to do script theCommand
-        else
-            set targetTab to do script theCommand in window 1
-        end if
+        set beforeIds to id of windows
+        set targetTab to do script theCommand
         -- セッション終了時にこのタブだけを閉じられるよう、custom titleへ目印を書き込む
         -- (do scriptが返すタブ参照はこのosascriptプロセスの終了とともに失効するため、
         -- 後から`WriteMacCloserScript`側で検索するための識別子が別途必要になる).
         set custom title of targetTab to sessionMarker
+        activate
+        set newWindowId to 0
+        repeat with w in windows
+            if beforeIds does not contain (id of w) then
+                set newWindowId to id of w
+                exit repeat
+            end if
+        end repeat
+        return newWindowId as string
     end tell
 end run
 ";
 
-        // MacLauncherScriptTemplateがcustom titleへ書き込んだ目印を頼りに、該当ウィンドウを
-        // 閉じる。手動で(BuildConnectionCommandの案内から)別ターミナルを繋いだタブには
-        // この目印が付かないため、誤って閉じることはない。目印が見つからない場合
-        // (利用者が既にウィンドウを閉じていた場合等)は何もしない.
+        // MacLauncherScriptTemplateが返したウィンドウIDを頼りに、対象ウィンドウを直接指定して
+        // 閉じる(全ウィンドウをcustom titleで検索する必要が無くなり、より確実に対象を特定できる)。
+        // 手動で(BuildConnectionCommandの案内から)別ターミナルを繋いだウィンドウはこのIDを
+        // 知り得ないため、誤って閉じることはない。指定IDのウィンドウが既に存在しない場合
+        // (利用者が既にウィンドウを閉じていた場合等)は何もしない。custom titleが一致するかも
+        // 念のため確認する(万一同じIDが別セッションで再利用された場合の保険).
         // Terminal.appのAppleScript辞書には""tab""単体を閉じるコマンドが無く(closeは
         // windowにしか効かない。実機で-1708 "".. can't understand the close message""を確認済み)、
-        // 該当タブが所属するウィンドウをまるごと閉じるしかない。そのウィンドウに利用者が
-        // 追加した他のタブが同居している場合にそれらまで巻き込まないよう、対象タブが
-        // ウィンドウ内で唯一のタブのとき(=起動時に作り出した専用ウィンドウのとき)に限って閉じる.
+        // 該当タブが所属するウィンドウをまるごと閉じるしかない。対象ウィンドウは常に専用の
+        // 新規ウィンドウ(タブ1枚だけ)のはずだが、万一他のタブが追加されていた場合に備え、
+        // タブ数が1のときだけ閉じるガードは維持する.
         //
         // 中継スクリプトは、プロンプト表示後は次のユーザー入力をターミナルの標準入力から
         // read で待つ(ソケットとは別のfdを読む)ため、サーバー側でソケットを閉じても
@@ -746,14 +753,19 @@ property SheetPollDelaySeconds : 0.2
 property CancelButtonNames : {""Cancel"", ""キャンセル""}
 
 on run argv
-    set sessionMarker to item 1 of argv
+    set targetWindowId to (item 1 of argv) as integer
+    set sessionMarker to item 2 of argv
     tell application ""Terminal""
-        repeat with theWindow in windows
-            repeat with theTab in tabs of theWindow
-                try
-                    if (custom title of theTab) is sessionMarker then
-                        if (count of tabs of theWindow) is 1 then
-                            set theWindowName to name of theWindow
+        try
+            set theWindow to window id targetWindowId
+        on error
+            return -- 対象ウィンドウが既に存在しない(利用者が手動で閉じた場合等).
+        end try
+        try
+            set theTab to tab 1 of theWindow
+            if (custom title of theTab) is sessionMarker then
+                if (count of tabs of theWindow) is 1 then
+                    set theWindowName to name of theWindow
                             -- mise/direnv/starship等、プロンプト描画のたびにフック用の子プロセスを
                             -- 一瞬だけ起動するシェル拡張が入っている環境では、1回killしただけでは
                             -- 「killした直後にフックが新規起動して busy に戻る」ことがある(実機で
@@ -823,12 +835,9 @@ on run argv
                                 if windowGone or sheetHandled then exit repeat
                                 delay SheetPollDelaySeconds
                             end repeat
-                        end if
-                        return
-                    end if
-                end try
-            end repeat
-        end repeat
+                end if
+            end if
+        end try
     end tell
 end run
 ";
