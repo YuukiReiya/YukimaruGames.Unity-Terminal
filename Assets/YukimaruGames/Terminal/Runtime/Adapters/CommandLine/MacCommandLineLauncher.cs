@@ -15,8 +15,13 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
     /// </remarks>
     public sealed class MacCommandLineLauncher : ICommandLineLauncher
     {
-        /// <summary>タブを閉じるosascriptの完了待ち上限(後始末処理をこれ以上引き延ばさないため).</summary>
-        private const int CloseTimeoutMilliseconds = 3000;
+        /// <summary>
+        /// タブを閉じるosascriptの完了待ち上限。closer側は確認シート出現をポーリングして
+        /// 待つ場合があり最大で数秒かかりうるため、それより余裕を持った値にする
+        /// (この待ち上限を超えてもosascript自体はバックグラウンドで動き続けて処理を完了させる。
+        /// ここで打ち切られるのはC#側の待機だけ).
+        /// </summary>
+        private const int CloseTimeoutMilliseconds = 6000;
 
         /// <summary>
         /// 起動用osascriptの完了待ち上限。Terminal.appのactivate・custom title設定まで含めて

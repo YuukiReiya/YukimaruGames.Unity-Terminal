@@ -729,24 +729,37 @@ end run
                         if (count of tabs of theWindow) is 1 then
                             set theWindowName to name of theWindow
                             close theWindow
-                            delay 0.3
-                            tell application ""System Events""
-                                if exists process ""Terminal"" then
-                                    tell process ""Terminal""
-                                        repeat with sysWindow in windows
-                                            if (name of sysWindow is theWindowName) and (exists sheet 1 of sysWindow) then
-                                                repeat with theButton in (buttons of sheet 1 of sysWindow)
-                                                    if (name of theButton) is not in {""Cancel"", ""キャンセル""} then
-                                                        click theButton
-                                                        exit repeat
+                            -- closeの直後は確認シートの描画がまだ間に合っていないことがあるため、
+                            -- 固定delayではなく「シートが見つかる」か「ウィンドウ自体が無くなる
+                            -- (=確認なしで閉じ切った)」まで短い間隔でポーリングする(実機検証で、
+                            -- 固定0.3秒待機だと確認シートを取りこぼすケースを確認済み).
+                            repeat 20 times
+                                set sheetHandled to false
+                                set windowGone to true
+                                tell application ""System Events""
+                                    if exists process ""Terminal"" then
+                                        tell process ""Terminal""
+                                            repeat with sysWindow in windows
+                                                if name of sysWindow is theWindowName then
+                                                    set windowGone to false
+                                                    if exists sheet 1 of sysWindow then
+                                                        repeat with theButton in (buttons of sheet 1 of sysWindow)
+                                                            if (name of theButton) is not in {""Cancel"", ""キャンセル""} then
+                                                                click theButton
+                                                                set sheetHandled to true
+                                                                exit repeat
+                                                            end if
+                                                        end repeat
                                                     end if
-                                                end repeat
-                                                exit repeat
-                                            end if
-                                        end repeat
-                                    end tell
-                                end if
-                            end tell
+                                                    exit repeat
+                                                end if
+                                            end repeat
+                                        end tell
+                                    end if
+                                end tell
+                                if windowGone or sheetHandled then exit repeat
+                                delay 0.2
+                            end repeat
                         end if
                         return
                     end if
