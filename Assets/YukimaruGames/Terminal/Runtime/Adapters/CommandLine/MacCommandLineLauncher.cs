@@ -15,6 +15,11 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
     /// </remarks>
     public sealed class MacCommandLineLauncher : ICommandLineLauncher
     {
+        /// <summary>タブを閉じるosascriptの完了待ち上限(後始末処理をこれ以上引き延ばさないため).</summary>
+        private const int CloseTimeoutMilliseconds = 3000;
+
+        private string _launchedSessionMarker;
+
         public bool IsSupported => true;
 
         /// <inheritdoc/>
@@ -73,16 +78,71 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
             CommandLineRelayScriptWriter.WritePortFile(port);
 
             var launcherPath = CommandLineRelayScriptWriter.WriteMacLauncherScript();
+            var sessionMarker = CommandLineRelayScriptWriter.SessionMarker;
 
             var startInfo = new ProcessStartInfo
             {
                 FileName = "osascript",
-                Arguments = $"\"{launcherPath}\" \"{relayPath}\" {port} \"{tokenPath}\"",
+                Arguments = $"\"{launcherPath}\" \"{relayPath}\" {port} \"{tokenPath}\" \"{sessionMarker}\"",
                 UseShellExecute = false,
                 CreateNoWindow = true,
             };
 
-            return Process.Start(startInfo);
+            // sessionMarkerは起動前に確定しているため、osascriptの完了を待たずに記録できる
+            // (Launch呼び出し直後にCloseLaunchedTerminalが呼ばれる極端なケースでは、
+            // osascript側のcustom title書き込みがまだ終わっておらず閉じ損なう可能性はあるが、
+            // Terminal.appのactivateを待って毎回メインスレッドを止めるより実害が小さい).
+            var process = Process.Start(startInfo);
+            _launchedSessionMarker = sessionMarker;
+
+            return process;
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// <see cref="Launch"/>が起動するosascriptプロセス自体はTerminal.appへ<c>do script</c>を
+        /// 依頼した直後に終了するため(Terminal.appのウィンドウそのものではない)、Killしても
+        /// ウィンドウには影響しない。代わりに<see cref="Launch"/>がタブのcustom titleへ
+        /// 書き込んだ目印を頼りに、別のosascriptで対象タブだけを検索して閉じる.
+        /// </remarks>
+        public void CloseLaunchedTerminal()
+        {
+            var sessionMarker = _launchedSessionMarker;
+            _launchedSessionMarker = null;
+
+            if (string.IsNullOrEmpty(sessionMarker))
+            {
+                return;
+            }
+
+            string closerPath;
+
+            try
+            {
+                closerPath = CommandLineRelayScriptWriter.WriteMacCloserScript();
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+            {
+                // セッションディレクトリが既に無い等。ウィンドウは残ってしまうが、
+                // 中継そのものは正常に終わっているので握りつぶす.
+                return;
+            }
+
+            try
+            {
+                using var closer = Process.Start(new ProcessStartInfo
+                {
+                    FileName = "osascript",
+                    Arguments = $"\"{closerPath}\" \"{sessionMarker}\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                });
+                closer?.WaitForExit(CloseTimeoutMilliseconds);
+            }
+            catch (Exception e) when (e is Win32Exception or InvalidOperationException)
+            {
+                // 後始末なので、失敗してもセッション終了処理自体は継続する.
+            }
         }
 
         private static void MakeExecutable(string path) => Chmod("+x", path);

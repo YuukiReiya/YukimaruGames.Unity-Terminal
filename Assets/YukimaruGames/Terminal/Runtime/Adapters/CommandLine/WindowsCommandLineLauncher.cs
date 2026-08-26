@@ -1,5 +1,6 @@
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 
@@ -10,6 +11,8 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
     /// </summary>
     public sealed class WindowsCommandLineLauncher : ICommandLineLauncher
     {
+        private Process _launchedProcess;
+
         public bool IsSupported => true;
 
         /// <inheritdoc/>
@@ -63,7 +66,34 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                 CreateNoWindow = false,
             };
 
-            return Process.Start(startInfo);
+            _launchedProcess = Process.Start(startInfo);
+            return _launchedProcess;
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// <see cref="Launch"/>が返す<see cref="Process"/>はcmd.exeウィンドウそのものを指すため
+        /// (<c>UseShellExecute = true</c>で起動している)、これをKillすればウィンドウごと閉じる。
+        /// macOSと異なりウィンドウの識別に別途目印は要らない.
+        /// </remarks>
+        public void CloseLaunchedTerminal()
+        {
+            try
+            {
+                if (_launchedProcess is { HasExited: false })
+                {
+                    _launchedProcess.Kill();
+                }
+            }
+            catch (Exception e) when (e is InvalidOperationException or Win32Exception)
+            {
+                // 利用者が既に手動でウィンドウを閉じていた場合等。後始末なので握りつぶす.
+            }
+            finally
+            {
+                _launchedProcess?.Dispose();
+                _launchedProcess = null;
+            }
         }
     }
 }

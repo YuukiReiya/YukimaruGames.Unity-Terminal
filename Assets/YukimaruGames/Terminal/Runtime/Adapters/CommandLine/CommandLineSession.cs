@@ -121,11 +121,14 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
                 : $"To open another terminal, run:\n  {connectionCommand}";
 
         /// <summary>
-        /// 中継を終了する. 外部ターミナルのウィンドウ自体は(ユーザーの作業を強制的に
-        /// 奪わないよう)強制終了しない。接続が切れた中継スクリプトは自然に入力待ちへ戻る.
+        /// 中継を終了する. <see cref="Open"/>で自動起動した外部ターミナルのウィンドウは
+        /// ここで閉じる。<see cref="ConnectionCommand"/>の案内から利用者が手動で開いた
+        /// ターミナルは対象外(<see cref="ICommandLineLauncher.CloseLaunchedTerminal"/>参照).
         /// </summary>
         public void Close()
         {
+            _launcher.CloseLaunchedTerminal();
+
             _process?.Dispose();
             _process = null;
 

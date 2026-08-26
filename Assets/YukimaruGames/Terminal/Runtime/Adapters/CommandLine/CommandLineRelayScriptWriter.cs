@@ -18,6 +18,7 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         private const string WindowsRelayFileName = "yukimaru_terminal_relay.ps1";
         private const string MacRelayFileName = "yukimaru_terminal_relay.sh";
         private const string MacLauncherFileName = "yukimaru_terminal_launcher.applescript";
+        private const string MacCloserFileName = "yukimaru_terminal_closer.applescript";
         private const string TokenFileName = "yukimaru_terminal_token.txt";
         private const string PortFileName = "yukimaru_terminal_port.txt";
 
@@ -684,14 +685,40 @@ printf 'Disconnected from Unity Terminal.\r\n'
     set relayPath to item 1 of argv
     set thePort to item 2 of argv
     set tokenPath to item 3 of argv
+    set sessionMarker to item 4 of argv
     set theCommand to (quoted form of relayPath) & "" "" & thePort & "" "" & (quoted form of tokenPath)
     tell application ""Terminal""
         activate
         if (count of windows) is 0 then
-            do script theCommand
+            set targetTab to do script theCommand
         else
-            do script theCommand in window 1
+            set targetTab to do script theCommand in window 1
         end if
+        -- セッション終了時にこのタブだけを閉じられるよう、custom titleへ目印を書き込む
+        -- (do scriptが返すタブ参照はこのosascriptプロセスの終了とともに失効するため、
+        -- 後から`WriteMacCloserScript`側で検索するための識別子が別途必要になる).
+        set custom title of targetTab to sessionMarker
+    end tell
+end run
+";
+
+        // MacLauncherScriptTemplateがcustom titleへ書き込んだ目印を頼りに、該当タブだけを
+        // 閉じる。手動で(BuildConnectionCommandの案内から)別ターミナルを繋いだタブには
+        // この目印が付かないため、誤って閉じることはない。目印が見つからない場合
+        // (利用者が既にウィンドウを閉じていた場合等)は何もしない.
+        private const string MacCloserScriptTemplate = @"on run argv
+    set sessionMarker to item 1 of argv
+    tell application ""Terminal""
+        repeat with theWindow in windows
+            repeat with theTab in tabs of theWindow
+                try
+                    if (custom title of theTab) is sessionMarker then
+                        close theTab
+                        return
+                    end if
+                end try
+            end repeat
+        end repeat
     end tell
 end run
 ";
@@ -947,5 +974,18 @@ end run
             File.WriteAllText(path, NormalizeToLf(MacLauncherScriptTemplate));
             return path;
         }
+
+        public static string WriteMacCloserScript()
+        {
+            var path = Path.Combine(EnsureScriptDirectory(), MacCloserFileName);
+            File.WriteAllText(path, NormalizeToLf(MacCloserScriptTemplate));
+            return path;
+        }
+
+        /// <summary>
+        /// 現在のセッションディレクトリ名(プロセス毎に一意)。
+        /// Launch時に開いたウィンドウ/タブを後から識別するための目印として使う.
+        /// </summary>
+        public static string SessionMarker => Path.GetFileName(ScriptDirectory);
     }
 }
