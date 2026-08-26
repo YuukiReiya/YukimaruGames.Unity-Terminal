@@ -711,6 +711,14 @@ end run
         // 該当タブが所属するウィンドウをまるごと閉じるしかない。そのウィンドウに利用者が
         // 追加した他のタブが同居している場合にそれらまで巻き込まないよう、対象タブが
         // ウィンドウ内で唯一のタブのとき(=起動時に作り出した専用ウィンドウのとき)に限って閉じる.
+        //
+        // 中継スクリプトは、プロンプト表示後は次のユーザー入力をターミナルの標準入力から
+        // read で待つ(ソケットとは別のfdを読む)ため、サーバー側でソケットを閉じても
+        // 「ユーザーの入力待ち」の間はそれに気づけない(=busyが解けない)。これは実機検証で
+        // 判明した設計限界で、単純なbusyポーリングでは解決しない。そのためcloseで
+        // 「実行中のプロセスを終了しますか?」の確認シートが出た場合は、System Events経由で
+        // 「キャンセル」以外のボタン(ロケール非依存にするため名前で決め打ちしない)を
+        // 自動でクリックして確実に閉じる.
         private const string MacCloserScriptTemplate = @"on run argv
     set sessionMarker to item 1 of argv
     tell application ""Terminal""
@@ -719,7 +727,26 @@ end run
                 try
                     if (custom title of theTab) is sessionMarker then
                         if (count of tabs of theWindow) is 1 then
+                            set theWindowName to name of theWindow
                             close theWindow
+                            delay 0.3
+                            tell application ""System Events""
+                                if exists process ""Terminal"" then
+                                    tell process ""Terminal""
+                                        repeat with sysWindow in windows
+                                            if (name of sysWindow is theWindowName) and (exists sheet 1 of sysWindow) then
+                                                repeat with theButton in (buttons of sheet 1 of sysWindow)
+                                                    if (name of theButton) is not in {""Cancel"", ""キャンセル""} then
+                                                        click theButton
+                                                        exit repeat
+                                                    end if
+                                                end repeat
+                                                exit repeat
+                                            end if
+                                        end repeat
+                                    end tell
+                                end if
+                            end tell
                         end if
                         return
                     end if

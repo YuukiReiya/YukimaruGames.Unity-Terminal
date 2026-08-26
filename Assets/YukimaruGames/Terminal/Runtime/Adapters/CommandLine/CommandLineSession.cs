@@ -125,15 +125,25 @@ namespace YukimaruGames.Terminal.Adapters.CommandLine
         /// ここで閉じる。<see cref="ConnectionCommand"/>の案内から利用者が手動で開いた
         /// ターミナルは対象外(<see cref="ICommandLineLauncher.CloseLaunchedTerminal"/>参照).
         /// </summary>
+        /// <remarks>
+        /// 先に<see cref="_bridge"/>を破棄してソケットを閉じてから<see cref="ICommandLineLauncher.CloseLaunchedTerminal"/>
+        /// を呼ぶ。中継スクリプト(bash)はプロンプト応答後、次のユーザー入力を標準入力から待つため
+        /// (ソケットとは別fd)、ソケットを閉じただけでは中継スクリプトが気づけない場合が多く
+        /// (=実行中扱いのまま)、Terminal.appは「実行中のプロセスを終了しますか?」という確認
+        /// ダイアログを出す。これ自体は<see cref="ICommandLineLauncher"/>実装側
+        /// (<c>MacCommandLineLauncher</c>)が確認ダイアログを自動で処理するため必須の前提ではないが、
+        /// ソケットを閉じておくことで中継スクリプトの状態を極力早くクリーンな側へ寄せておく
+        /// 意味はあるため、順序は維持する(実機で確認済み).
+        /// </remarks>
         public void Close()
         {
-            _launcher.CloseLaunchedTerminal();
-
             _process?.Dispose();
             _process = null;
 
             _bridge?.Dispose();
             _bridge = null;
+
+            _launcher.CloseLaunchedTerminal();
 
             // トークンファイルの後始末は中継スクリプト側では行わない(削除すると2つ目以降の
             // ターミナルが接続できなくなるため)。ここでセッションディレクトリごと片付ける.
