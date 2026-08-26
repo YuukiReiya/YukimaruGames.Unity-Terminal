@@ -392,7 +392,21 @@ printf '\033[2J\033[H'
 
 # カーソル形状を縦棒(I-beam)へ変更する(DECSCUSR)。既定のブロック型だと、行の途中へ
 # キャレットを戻した際に文字の上へ重なって表示され、上書き入力のように見えてしまうため.
-printf '\033[6 q'
+DECSCUSR_BAR=6
+DECSCUSR_DEFAULT=0
+printf '\033[%s q' ""$DECSCUSR_BAR""
+
+# 切断時にカーソル形状を既定へ戻す。cleanupをここで再定義し、早期終了パス
+# (Usage表示・トークン読み取り失敗・接続失敗)向けの元の定義(stty復元のみ、rawモードへの
+# 切り替えより前に置く必要があるため上で定義済み)を上書きする。trapは呼び出し時点で
+# 有効な定義を見るため、再定義後はこちらが使われる.
+cleanup() {
+    exec 3<&- 3>&- 2>/dev/null
+    if [ -n ""$ORIGINAL_STTY"" ]; then
+        stty ""$ORIGINAL_STTY"" 2>/dev/null
+    fi
+    printf '\033[%s q' ""$DECSCUSR_DEFAULT""
+}
 
 printf 'Connected to Unity Terminal (127.0.0.1:%s). Type commands below. Close this window or Ctrl+D to disconnect.\r\n' ""$PORT""
 
